@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: "pages#home"
+  root to: "landing_page#start"
 
   scope via: :all do
     get "/404", to: "errors#not_found"
