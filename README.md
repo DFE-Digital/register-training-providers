@@ -1,27 +1,5 @@
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# Register of training providers
+The service for managing the canonical list of training providers for Department for Education (DfE) and, more specifically, Becoming a teacher (BAT).
 
 ## Setup
 
@@ -37,7 +15,7 @@ This project depends on:
 
 ### asdf
 
-This project uses `asdf`. Use the following to install the required tools:
+This project uses `asdf`, refer to [.tool-versions](.tool-versions) for the actual versions in use. Use the following to install the required tools:
 
 ```sh
 # The first time
@@ -90,3 +68,10 @@ We use `rladr` to generate the boilerplate for new records:
 ```bash
 bin/bundle exec rladr new title
 ```
+
+### Running the app
+
+To run the application locally:
+
+1. Run `bin/setup --skip-server` to setup the app
+2. Run `bin/dev` to launch the app on <http://localhost:1025>
