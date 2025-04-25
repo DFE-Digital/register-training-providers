@@ -27,6 +27,15 @@
     <%= govuk_header(full_width_border: true, homepage_url: "#") { |header| header.with_product_name(name: "Register of training providers") } %>
 
     <div class="govuk-width-container">
+      <%= govuk_phase_banner(
+        tag: { text: "Beta" },
+        text: safe_join([
+          "This is a new service – your ",
+          govuk_link_to('feedback', 'mailto:becomingateacher@digital.education.gov.uk'),
+          " will help us to improve it."
+        ]),
+        classes: "no-border"
+      ) %>
       <main class="govuk-main-wrapper" id="main-content" role="main">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
