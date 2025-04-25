@@ -26,23 +26,16 @@
 
     <%= govuk_header(full_width_border: true) %>
 
-    <%=
-      govuk_service_navigation(
-        service_name: "GOV.UK Rails Boilerplate",
-        navigation_items: [
-          { text: "Navigation item 1", href: "#", active: true },
-          { text: "Navigation item 2", href: "#" },
-          { text: "Navigation item 3", href: "#" }
-        ]
-      )
-    %>
-
     <div class="govuk-width-container">
       <main class="govuk-main-wrapper" id="main-content" role="main">
-        <%= yield %>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= yield(:page_header) %>
+            <%= yield %>
+          </div>
+        </div>
       </main>
     </div>
-
     <%= govuk_footer %>
   </body>
 </html>
