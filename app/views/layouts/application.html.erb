@@ -38,14 +38,14 @@
       ) %>
     </div>
 
-    <%= govuk_service_navigation(current_path: request.path) do |service_navigation| %>
+    <% govuk_service_navigation(current_path: request.path) do |service_navigation| %>
       <% [
         { name: 'Providers', url: providers_path },
         { name: 'Support users', url: '#' }
       ].each do |navigation_item| %>
         <% service_navigation.with_navigation_item text: navigation_item[:name], href: navigation_item[:url], current: request.path == navigation_item[:url] %>
       <% end %>
-    <% end %>
+    <% end if @implemented %>
 
     <div class="govuk-width-container">
       <main class="govuk-main-wrapper" id="main-content" role="main">
