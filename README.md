@@ -87,6 +87,16 @@ which chromedriver
 
 ```
 
+#### Automated browser
+
+```bash
+WD_INSTALL_DIR=/usr/bin \
+RECORD_FEATURE_TESTS=false \
+SELENIUM_DRIVER=chrome \
+bundle exec rspec spec/features/landing_page_spec.rb
+```
+
+
 #### Linux based recording
 
 ```bash

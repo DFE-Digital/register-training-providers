@@ -1,4 +1,4 @@
-return unless ENV['RECORD_FEATURE_TESTS'] == 'true'
+return if ENV['SELENIUM_DRIVER'].nil?
 
 require 'capybara/rspec'
 require 'selenium-webdriver'
@@ -25,17 +25,21 @@ RSpec.configure do |config|
     file_name = "tmp/feature_videos/#{example.metadata[:full_description].parameterize}.webm"
     FileUtils.mkdir_p(File.dirname(file_name))
 
-    @recorder = ScreenRecorder::Desktop.new(
-      output: file_name,
-      input: ':99.0'
-    )
-    @recorder.start
+    if ENV['RECORD_FEATURE_TESTS'] == 'true'
+      @recorder = ScreenRecorder::Desktop.new(
+        output: file_name,
+        input: ':99.0'
+      )
+      @recorder.start
+    end
   end
 
   config.after(:each, type: :feature) do
-    if defined?(@recorder) && @recorder
-      @recorder.stop
-      @recorder = nil
+    if ENV['RECORD_FEATURE_TESTS'] == 'true'
+      if defined?(@recorder) && @recorder
+        @recorder.stop
+        @recorder = nil
+      end
     end
   end
 end
