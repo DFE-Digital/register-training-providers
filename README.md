@@ -75,3 +75,28 @@ To run the application locally:
 
 1. Run `bin/setup --skip-server` to setup the app
 2. Run `bin/dev` to launch the app on <http://localhost:1025>
+
+### Running selenium tests
+
+
+`WD_INSTALL_DIR` is the webdriver install dir
+
+```bash
+which chromedriver
+/usr/bin/chromedriver
+
+```
+
+#### Linux based recording
+
+```bash
+WD_INSTALL_DIR=/usr/bin /
+RECORD_FEATURE_TESTS=true /
+SELENIUM_DRIVER=chrome /
+xvfb-run -s "-screen 0 1920x1080x24" bundle exec rspec spec/features/landing_page_spec.rb"
+```
+
+
+```
+ls tmp/feature_videos/
+```
