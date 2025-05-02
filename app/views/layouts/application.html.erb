@@ -24,7 +24,7 @@
 
     <%= govuk_skip_link %>
 
-    <%= govuk_header(full_width_border: true, homepage_url: "#") { |header| header.with_product_name(name: "Register of training providers") } %>
+    <%= govuk_header(full_width_border: true, homepage_url: root_path) { |header| header.with_product_name(name: t('service.name')) } %>
 
     <div class="govuk-width-container">
       <%= govuk_phase_banner(
