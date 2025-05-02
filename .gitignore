@@ -33,3 +33,16 @@ tmp/*
 tmp/pids/*
 !tmp/pids/
 !tmp/pids/.keep
+
+# Terraform
+.terraform
+terraform/application/vendor
+terraform/domains/environment_domains/vendor
+terraform/domains/infrastructure/vendor
+terraform.tfstate*
+
+# Downloaded commands
+bin/konduit.sh
+
+# Maintenance page manifests
+maintenance_page/manifests/maintenance/deployment_maintenance.yml
