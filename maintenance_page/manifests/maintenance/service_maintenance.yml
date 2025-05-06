@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: register-training-providers-maintenance
+spec:
+  selector:
+    app: register-training-providers-maintenance
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
