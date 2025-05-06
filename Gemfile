@@ -55,6 +55,9 @@ group :development do
   gem "solargraph-rails", require: false
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Generates entity-relationship diagram based on the Active Records.
+  gem "rails-erd"
 end
 
 group :test do
