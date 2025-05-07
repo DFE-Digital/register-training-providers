@@ -61,6 +61,10 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
+
+  # Add a comment summarising the current schema to each Active Record
+  gem "annotate"
+
   # Generates entity-relationship diagram based on the Active Records.
   gem "rails-erd"
 end
