@@ -80,6 +80,7 @@ jobs:
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
     needs: [build]
     environment:
       name: review
