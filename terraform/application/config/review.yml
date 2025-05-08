@@ -1,2 +1,2 @@
----
-EXAMPLE_KEY: example value 1
+RAILS_ENV: review
+RACK_ENV: review
