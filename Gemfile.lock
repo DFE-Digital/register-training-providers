@@ -357,6 +357,8 @@ GEM
       websocket (~> 1.0)
     semantic_logger (4.16.1)
       concurrent-ruby (~> 1.0)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     solargraph (0.54.2)
       backport (~> 1.2)
       benchmark (~> 0.4)
@@ -474,6 +476,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails-omakase
   selenium-webdriver
+  shoulda-matchers
   solargraph
   solargraph-rails
   solid_cable
