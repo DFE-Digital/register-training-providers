@@ -77,6 +77,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 
+  # A library for generating fake data such as names, addresses, and phone numbers.
+  gem "faker"
+
   #  Simple one-liner tests for common Rails functionality
   gem "shoulda-matchers"
 end
