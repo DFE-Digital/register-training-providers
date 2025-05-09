@@ -79,6 +79,9 @@ GEM
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
     ast (2.4.3)
+    audited (5.8.0)
+      activerecord (>= 5.2, < 8.2)
+      activesupport (>= 5.2, < 8.2)
     backport (1.2.0)
     base64 (0.2.0)
     bcrypt_pbkdf (1.1.1)
@@ -453,6 +456,7 @@ PLATFORMS
 DEPENDENCIES
   amazing_print
   annotate
+  audited
   bootsnap
   brakeman
   capybara

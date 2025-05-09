@@ -40,6 +40,9 @@ gem "govuk_design_system_formbuilder"
 # Shim to load environment variables from .env into ENV
 gem "dotenv-rails"
 
+# Logs all changes to the models.
+gem "audited"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
