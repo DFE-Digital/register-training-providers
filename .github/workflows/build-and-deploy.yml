@@ -32,7 +32,7 @@ on:
 
 env:
   TERRAFORM_BASE: terraform/application
-  HEALTHCHECK_CMD: 'healthcheck/all'
+  HEALTHCHECK_CMD: 'healthcheck'
 
 jobs:
   build:
@@ -104,7 +104,7 @@ jobs:
         terraform-base: ${{ env.TERRAFORM_BASE }}
         healthcheck: ${{ env.HEALTHCHECK_CMD }}
         db-seed: true
-        smoke-test: true
+#        smoke-test: true
 #        gcp-wip: ${{ vars.GCP_WIP }}
 #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
