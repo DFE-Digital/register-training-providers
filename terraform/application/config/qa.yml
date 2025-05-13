@@ -1,2 +1,2 @@
----
-EXAMPLE_KEY: example value 2
+RAILS_ENV: qa
+RACK_ENV: qa
