@@ -12,5 +12,8 @@ Rails.application.routes.draw do
     get "/500", to: "errors#internal_server_error"
   end
 
+  get "/sign-in" => "sign_in#index"
+  get "/sign-out" => "sign_out#index"
+
   resources :providers, only: %i[index]
 end
