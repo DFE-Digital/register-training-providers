@@ -43,6 +43,8 @@ gem "dotenv-rails"
 # Logs all changes to the models.
 gem "audited"
 
+gem "rails_semantic_logger"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
@@ -89,5 +91,4 @@ end
 
 group :development, :production do
   gem "amazing_print"
-  gem "rails_semantic_logger"
 end
