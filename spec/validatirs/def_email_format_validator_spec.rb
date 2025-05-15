@@ -24,7 +24,8 @@ RSpec.describe DfeEmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter a Department for Education email address in the correct format, like name@education.gov.uk")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter a Department for Education email address in the correct format, like name@education.gov.uk")
       end
     end
   end

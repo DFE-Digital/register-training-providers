@@ -24,17 +24,19 @@ RSpec.describe EmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
     context 'when the email is too long' do
-      let(:email) { 'a' * 321 + '@example.com' }
+      let(:email) { "#{'a' * 321}@example.com" }
 
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -44,27 +46,30 @@ RSpec.describe EmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
     context 'when the hostname is too long' do
-      let(:email) { 'user@' + 'a' * 254 + '.com' }
+      let(:email) { "user@#{'a' * 254}.com" }
 
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
     context 'when the hostname part is too long' do
-      let(:email) { 'user@a' + 'a' * 64 + '.com' }
+      let(:email) { "user@a#{'a' * 64}.com" }
 
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -74,7 +79,8 @@ RSpec.describe EmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -94,7 +100,8 @@ RSpec.describe EmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, "Enter an email address in the correct format, like name@example.com")
+        expect(errors).to have_received(:add).with(:email, 
+"Enter an email address in the correct format, like name@example.com")
       end
     end
   end
