@@ -37,9 +37,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_12_144352) do
 
   create_table "users", force: :cascade do |t|
     t.string "dfe_sign_in_uid"
-    t.string "email"
-    t.string "first_name"
-    t.string "last_name"
+    t.string "email", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
     t.datetime "last_signed_in_at"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false

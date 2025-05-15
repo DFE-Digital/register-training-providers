@@ -4,9 +4,9 @@
 #
 #  id                :integer          not null, primary key
 #  dfe_sign_in_uid   :string
-#  email             :string
-#  first_name        :string
-#  last_name         :string
+#  email             :string           not null
+#  first_name        :string           not null
+#  last_name         :string           not null
 #  last_signed_in_at :datetime
 #  discarded_at      :datetime
 #  created_at        :datetime         not null
@@ -32,7 +32,6 @@ class User < ApplicationRecord
   validate do |record|
     DfeEmailFormatValidator.new(record).validate if email.present?
   end
-
 
   private
 
