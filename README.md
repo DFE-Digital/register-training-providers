@@ -1,4 +1,5 @@
 # Register of training providers
+
 The service for managing the canonical list of training providers for Department for Education (DfE) and, more specifically, Becoming a teacher (BAT).
 
 ## Setup
@@ -7,11 +8,11 @@ The service for managing the canonical list of training providers for Department
 
 This project depends on:
 
-  - [Ruby](https://www.ruby-lang.org/)
-  - [Ruby on Rails](https://rubyonrails.org/)
-  - [NodeJS](https://nodejs.org/)
-  - [Yarn](https://yarnpkg.com/)
-  - [Postgres](https://www.postgresql.org/)
+- [Ruby](https://www.ruby-lang.org/)
+- [Ruby on Rails](https://rubyonrails.org/)
+- [NodeJS](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/)
+- [Postgres](https://www.postgresql.org/)
 
 ### asdf
 
@@ -58,6 +59,7 @@ You'll also need to configure your editor's `solargraph` plugin to
 ```diff
 +  "solargraph.useBundler": true,
 ```
+
 ## How the application works
 
 We keep track of architecture decisions in [Architecture Decision Records

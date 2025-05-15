@@ -5,12 +5,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: staging.register-of-training-providers.education.gov.uk
-    http:
-      paths:
-      - pathType: ImplementationSpecific
-        backend:
-          service:
-            name: register-training-providers-staging
-            port:
-              number: 80
+    - host: staging.register-of-training-providers.education.gov.uk
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: register-training-providers-staging
+                port:
+                  number: 80
