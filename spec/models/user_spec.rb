@@ -5,13 +5,16 @@ RSpec.describe User, type: :model do
   it { is_expected.to be_audited }
   it { is_expected.to be_kept }
 
-  context "dscarded" do
+  context "user is discarded" do
     before do
-      debugger
       user.discard!
     end
-  it { is_expected.to be_discarded }
+
+    it "the user is discarded" do
+      expect(user).to be_discarded
+    end
   end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:first_name).with_message("Enter first name") }
     it { is_expected.to validate_presence_of(:last_name).with_message("Enter last name") }
