@@ -10,10 +10,10 @@ on:
         type: choice
         default: review
         options:
-        - review
-        - qa
-        - staging
-        - production
+          - review
+          - qa
+          - staging
+          - production
       docker-image-tag:
         description: "Docker image tag to deploy (optional)"
         required: true
@@ -23,16 +23,16 @@ on:
         required: false
         type: string
   push:
-   branches:
-    - main
+    branches:
+      - main
   pull_request:
     branches:
-    - main
+      - main
     types: [opened, reopened, synchronize, labeled]
 
 env:
   TERRAFORM_BASE: terraform/application
-  HEALTHCHECK_CMD: 'healthcheck'
+  HEALTHCHECK_CMD: "healthcheck"
 
 jobs:
   build:
@@ -45,19 +45,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      name: Checkout
+      - uses: actions/checkout@v4
+        name: Checkout
 
-    - name: Build and push docker image
-      id: build-image
-      uses: DFE-Digital/github-actions/build-docker-image@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        context: .
-        docker-repository: ${{ env.DOCKER_REPOSITORY }}
-        max-cache: true
-        reuse-cache: true
-        snyk-token: ${{ secrets.SNYK_TOKEN }}
+      - name: Build and push docker image
+        id: build-image
+        uses: DFE-Digital/github-actions/build-docker-image@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          context: .
+          docker-repository: ${{ env.DOCKER_REPOSITORY }}
+          max-cache: true
+          reuse-cache: true
+          snyk-token: ${{ secrets.SNYK_TOKEN }}
 
   test:
     name: Run tests
@@ -69,8 +69,8 @@ jobs:
     # The steps can be moved to a separate action if preferred
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
     # - name: Run tests
     #   shell: bash
@@ -91,22 +91,22 @@ jobs:
       pull-requests: write
 
     steps:
-    - name: Deploy App to Review
-      id: deploy_review
-      uses: DFE-Digital/github-actions/deploy-to-aks@master
-      with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        environment: review
-        pr-number: ${{ github.event.pull_request.number }}
-        sha: ${{ needs.build.outputs.docker-image-tag }}
-        terraform-base: ${{ env.TERRAFORM_BASE }}
-        healthcheck: ${{ env.HEALTHCHECK_CMD }}
-        db-seed: true
-#        smoke-test: true
-#        gcp-wip: ${{ vars.GCP_WIP }}
-#        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      - name: Deploy App to Review
+        id: deploy_review
+        uses: DFE-Digital/github-actions/deploy-to-aks@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment: review
+          pr-number: ${{ github.event.pull_request.number }}
+          sha: ${{ needs.build.outputs.docker-image-tag }}
+          terraform-base: ${{ env.TERRAFORM_BASE }}
+          healthcheck: ${{ env.HEALTHCHECK_CMD }}
+          db-seed: true
+  #        smoke-test: true
+  #        gcp-wip: ${{ vars.GCP_WIP }}
+  #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
   deploy:
     name: Deploy environments
@@ -125,51 +125,51 @@ jobs:
         environment: [qa]
 
     steps:
-    - name: Deploy app to ${{ matrix.environment }}
-      id: deploy_app
-      uses: DFE-Digital/github-actions/deploy-to-aks@master
-      with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        environment: ${{ matrix.environment }}
-        sha: ${{ needs.build.outputs.docker-image-tag }}
-        terraform-base: ${{ env.TERRAFORM_BASE }}
-        healthcheck: ${{ env.HEALTHCHECK_CMD }}
-#        slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
-#        smoke-test: true
-#        gcp-wip: ${{ vars.GCP_WIP }}
-#        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      - name: Deploy app to ${{ matrix.environment }}
+        id: deploy_app
+        uses: DFE-Digital/github-actions/deploy-to-aks@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment: ${{ matrix.environment }}
+          sha: ${{ needs.build.outputs.docker-image-tag }}
+          terraform-base: ${{ env.TERRAFORM_BASE }}
+          healthcheck: ${{ env.HEALTHCHECK_CMD }}
+  #        slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+  #        smoke-test: true
+  #        gcp-wip: ${{ vars.GCP_WIP }}
+  #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
-#   manual_deploy:
-#     name: Manual deploy
-#     if: ${{ github.event_name == 'workflow_dispatch' }}
-#     environment:
-#       name: ${{ inputs.environment }}
-#       url: ${{ steps.deploy_manual.outputs.environment_url }}
-#     runs-on: ubuntu-latest
-#     permissions:
-#       id-token: write
-#       pull-requests: write
+  #   manual_deploy:
+  #     name: Manual deploy
+  #     if: ${{ github.event_name == 'workflow_dispatch' }}
+  #     environment:
+  #       name: ${{ inputs.environment }}
+  #       url: ${{ steps.deploy_manual.outputs.environment_url }}
+  #     runs-on: ubuntu-latest
+  #     permissions:
+  #       id-token: write
+  #       pull-requests: write
 
-#     steps:
-#     - name: Deploy app to ${{ inputs.environment }}
-#       id: deploy_manual
-#       uses: DFE-Digital/github-actions/deploy-to-aks@master
-#       with:
-#         azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#         azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-#         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-#         environment: ${{ inputs.environment }}
-#         pr-number: ${{ inputs.pull-request-number }}
-#         sha: ${{ inputs.docker-image-tag }}
-#         terraform-base: ${{ env.TERRAFORM_BASE }}
-#         healthcheck: ${{ env.HEALTHCHECK_CMD }}
-#         slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
-#         smoke-test: true
-#         db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
-# #        gcp-wip: ${{ vars.GCP_WIP }}
-# #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+  #     steps:
+  #     - name: Deploy app to ${{ inputs.environment }}
+  #       id: deploy_manual
+  #       uses: DFE-Digital/github-actions/deploy-to-aks@master
+  #       with:
+  #         azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         environment: ${{ inputs.environment }}
+  #         pr-number: ${{ inputs.pull-request-number }}
+  #         sha: ${{ inputs.docker-image-tag }}
+  #         terraform-base: ${{ env.TERRAFORM_BASE }}
+  #         healthcheck: ${{ env.HEALTHCHECK_CMD }}
+  #         slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+  #         smoke-test: true
+  #         db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
+  # #        gcp-wip: ${{ vars.GCP_WIP }}
+  # #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
   deploy_domains_infra:
     name: Deploy Domains Infrastructure
@@ -183,12 +183,12 @@ jobs:
       id-token: write
 
     steps:
-    - name: Deploy Domains Infrastructure
-      uses: DFE-Digital/github-actions/deploy-domains-infra@master
-      with:
-        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID  }}
-        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
-        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
+      - name: Deploy Domains Infrastructure
+        uses: DFE-Digital/github-actions/deploy-domains-infra@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID  }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID   }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
 #        slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
 
 #   deploy_domains_env:
