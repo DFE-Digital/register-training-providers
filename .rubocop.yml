@@ -17,3 +17,8 @@ Style/NumericLiterals:
 Rails/CreateTableWithTimestamps:
   Exclude:
     - db/migrate/20250512104418_install_audited.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: never
+  SafeAutoCorrect: true
