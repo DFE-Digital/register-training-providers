@@ -9,7 +9,9 @@
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
   },
   "devDependencies": {
-    "esbuild": "^0.25.3"
+    "@prettier/plugin-ruby": "^4.0.4",
+    "esbuild": "^0.25.3",
+    "prettier": "^3.5.3"
   },
   "packageManager": "yarn@4.9.1"
 }
