@@ -49,7 +49,8 @@ RSpec.describe User, type: :model do
         let(:hostname) { "badeducation.gov.uk" }
         it 'is not valid email' do
           expect(user).not_to be_valid
-          expect(user.errors[:email]).to include("Enter a Department for Education email address in the correct format, like name@education.gov.uk")
+          expect(user.errors[:email]).to include(
+            "Enter a Department for Education email address in the correct format, like name@education.gov.uk")
         end
       end
     end
@@ -59,7 +60,8 @@ RSpec.describe User, type: :model do
 
         it 'is not valid with an invalid email format' do
           expect(user).not_to be_valid
-          expect(user.errors[:email]).to include("Enter a Department for Education email address in the correct format, like name@education.gov.uk")
+          expect(user.errors[:email]).to include(
+            "Enter a Department for Education email address in the correct format, like name@education.gov.uk")
         end
     end
   end
