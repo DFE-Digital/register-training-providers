@@ -75,3 +75,11 @@ To run the application locally:
 
 1. Run `bin/setup --skip-server` to setup the app
 2. Run `bin/dev` to launch the app on <http://localhost:1025>
+
+### Linting
+
+To run the linters:
+
+```bash
+bin/lint
+```
