@@ -34,9 +34,19 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Lint code for consistent style
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Install Node.js dependencies
+        run: yarn install
+
+      - name: Lint ruby code for consistent style
         run: bin/rubocop -f github
 
+      - name: Run Prettier check
+        run: yarn prettier --check --ignore-unknown '**/*'
   test:
     runs-on: ubuntu-latest
 
