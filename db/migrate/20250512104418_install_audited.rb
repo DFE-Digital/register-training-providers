@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class InstallAudited < ActiveRecord::Migration[8.0]
   def self.up
     create_table :audits, force: true do |t|
@@ -11,7 +9,7 @@ class InstallAudited < ActiveRecord::Migration[8.0]
       t.column :user_type, :string
       t.column :username, :string
       t.column :action, :string
-      t.column :audited_changes, :text
+      t.column :audited_changes, :jsonb
       t.column :version, :integer, default: 0
       t.column :comment, :string
       t.column :remote_address, :string
