@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   get "/sign-in" => "sign_in#index"
   get "/sign-out" => "sign_out#index"
+  get "/sign-in/user-not-found", to: "sign_in#new"
 
   resources :providers, only: %i[index]
 end
