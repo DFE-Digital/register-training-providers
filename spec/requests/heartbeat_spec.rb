@@ -49,9 +49,8 @@ RSpec.describe "heartbeat requests", type: :request do
     end
   end
 
-  describe "GET /sha" do
+  describe "GET /sha", env: {commit_sha: "deadbeef"} do
     it "returns the sha from the env var COMMIT_SHA" do
-      allow(ENV).to receive(:fetch).with("COMMIT_SHA", nil).and_return("deadbeef")
 
       get "/sha"
 
