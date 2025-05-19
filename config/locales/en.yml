@@ -3,6 +3,11 @@ en:
     name: Register of training providers
     email: becomingateacher@digital.education.gov.uk
   sign_in:
+    new:
+      heading: Ask for an account to register trainee teachers
+      body: Although you have a DfE Sign-in account, you also need an account for this service.
+      contact_us_html: Contact us at %{link} to ask for an account.
+      home_button: Return home
     index:
       heading: Sign in to Register of training providers
       body: Use DfE Sign-in to access your account.
