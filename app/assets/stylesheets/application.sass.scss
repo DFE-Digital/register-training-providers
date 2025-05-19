@@ -3,7 +3,3 @@ $govuk-new-link-styles: true;
 $govuk-assets-path: "/";
 
 @use "govuk-frontend/dist/govuk";
-
-.no-border.govuk-phase-banner {
-  border-bottom: none;
-}
