@@ -42,6 +42,9 @@ jobs:
       DOCKER_REPOSITORY: ghcr.io/dfe-digital/register-training-providers
     outputs:
       docker-image-tag: ${{ steps.build-image.outputs.tag }}
+    permissions:
+      packages: write
+      pull-requests: write
     runs-on: ubuntu-latest
 
     steps:
