@@ -37,5 +37,9 @@ module RegisterTrainingProviders
     config.assets.paths << Rails.root.join("node_modules/govuk-frontend/dist/govuk/assets")
 
     config.exceptions_app = routes
+
+    config.view_component.preview_paths = [Rails.root.join("spec/components")]
+    config.view_component.preview_route = "/view_components"
+    config.view_component.show_previews = !Rails.env.production?
   end
 end
