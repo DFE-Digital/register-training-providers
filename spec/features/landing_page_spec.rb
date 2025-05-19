@@ -6,7 +6,7 @@ RSpec.feature "landing page" do
     and_i_should_see_the_service_name
     and_i_should_see_the_phase_banner
     when_i_click_on("Sign in")
-    then_i_am_take_to("/")
+    then_i_am_take_to("/sign-in")
   end
 
   def given_i_am_on_the_start_page
