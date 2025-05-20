@@ -15,5 +15,12 @@ Rails.application.routes.draw do
   get "/sign-in" => "sign_in#index"
   get "/sign-out" => "sign_out#index"
 
+  case Env.sign_in_method
+  when "persona"
+    get("/personas", to: "personas#index")
+    get("/auth/developer/sign-out", to: "sessions#signout")
+    post("/auth/developer/callback", to: "sessions#callback")
+  end
+
   resources :providers, only: %i[index]
 end
