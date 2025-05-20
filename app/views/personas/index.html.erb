@@ -1,0 +1,8 @@
+
+<%= render PageTitle::View.new(text: "Test users") %>
+
+<h1 class="govuk-heading-xl">
+  Test users
+</h1>
+
+<%= render Personas::View.with_collection(@personas) %>
