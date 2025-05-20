@@ -33,6 +33,10 @@ class User < ApplicationRecord
     DfEEmailFormatValidator.new(record).validate if email.present?
   end
 
+  def name
+    "#{first_name} #{last_name}"
+  end
+
   private
 
   def sanitise_email
