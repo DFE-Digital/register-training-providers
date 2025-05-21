@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   get "/sign-in/user-not-found", to: "sign_in#new"
 
   case Env.sign_in_method("dfe-sign-in")
+  when "dfe-sign-in"
+    get("/auth/dfe/callback" => "sessions#callback")
+    get("/auth/dfe/sign-out" => "sessions#signout")
   when "persona"
     get("/personas", to: "personas#index")
     get("/auth/developer/sign-out", to: "sessions#signout")
