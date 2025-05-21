@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= sign_in_user
+    @current_user ||= sign_in_user.user
   end
 
   def audit_user
