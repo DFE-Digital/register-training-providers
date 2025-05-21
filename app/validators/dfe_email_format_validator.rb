@@ -1,7 +1,5 @@
-class DfeEmailFormatValidator < EmailFormatValidator
+class DfEEmailFormatValidator < EmailFormatValidator
   DFE_HOSTNAME = "education.gov.uk".freeze
-
-  
 
   def validate
     return unless email
@@ -16,10 +14,10 @@ private
       parts_length_valid? &&
       parts_match_regex? &&
       parts.count == 3
-  hostname == DFE_HOSTNAME
-else
-  hostname.ends_with?(DFE_HOSTNAME)
-end
+      hostname == DFE_HOSTNAME
+    else
+      hostname.ends_with?(DFE_HOSTNAME)
+    end
   end
 
   def error_message
