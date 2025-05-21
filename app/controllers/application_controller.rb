@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate
 
-  helper_method :current_user, :authenticated?
+  helper_method :current_user, :authenticated?, :audit_user
 
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
@@ -19,6 +19,10 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= sign_in_user&.user
+  end
+
+  def audit_user
+    current_user
   end
 
   def authenticated?
