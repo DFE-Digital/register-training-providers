@@ -35,13 +35,51 @@ RSpec.describe Env do
 
     it "logs a warning" do
       Env.some_environment_variables("default-value")
-      expect(logger).to have_received(:warn).with("[Env] ENV['SOME_ENVIRONMENT_VARIABLES'] is missing")
+      expect(logger).to have_received(:warn).with(
+        "[Env.some_environment_variables] ENV['SOME_ENVIRONMENT_VARIABLES'] is missing")
     end
   end
 
   describe ".respond_to_missing?" do
     it "returns true for any method" do
       expect(Env.respond_to?(:anything)).to be true
+    end
+  end
+
+  describe "boolean accessor via method_missing" do
+    after { ENV.delete("SOME_FEATURE") }
+
+    context "when ENV[SOME_FEATURE] is set to a truthy value" do
+      ["true", "1", "yes", "on"].each do |truthy|
+        it "returns true for #{truthy.inspect}" do
+          ENV["SOME_FEATURE"] = truthy
+          expect(Env.some_feature?).to be true
+        end
+      end
+    end
+
+    context "when ENV[SOME_FEATURE] is set to a falsey value" do
+      ["false", "0", "no", "off", "", nil].each do |falsey|
+        it "returns false for #{falsey.inspect}" do
+          ENV["SOME_FEATURE"] = falsey unless falsey.nil?
+          expect(Env.some_feature?).to be false
+        end
+      end
+    end
+
+    context "when ENV[SOME_FEATURE] is missing" do
+      it "returns false by default" do
+        expect(Env.some_feature?).to be false
+      end
+
+      it "returns the fallback if given" do
+        expect(Env.some_feature?(true)).to be true
+      end
+
+      it "logs a warning" do
+        Env.some_feature?
+        expect(logger).to have_received(:warn).with("[Env.some_feature?] ENV['SOME_FEATURE'] is missing")
+      end
     end
   end
 end
