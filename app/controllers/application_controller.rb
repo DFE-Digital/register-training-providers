@@ -3,10 +3,19 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :authenticated?
 
+  before_action :enforce_basic_auth, if: -> { BasicAuthenticable.required? }
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
   private
+
+  def enforce_basic_auth
+    authenticate_or_request_with_http_basic do |username, password|
+      BasicAuthenticable.authenticate(username, password)
+    end
+  end
+
   # dfe and otp objects can both be instantiated as `.begin_session!` will always create
   # a session with a dfe/otp_sign_in_user hash regardless of there being a user/email.
   # We only want to memoize the instance that responds to #user hence the `.select`
