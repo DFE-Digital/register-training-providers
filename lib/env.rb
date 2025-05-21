@@ -4,18 +4,44 @@ module Env
   end
 
   def self.method_missing(name, *args)
-    key = name.to_s.upcase
-    default = args.first
+    method = name.to_s
+    fallback = args.first
+
+    key = env_key(method)
+    val = ENV[key]
+
+    if boolean_query?(method)
+      return interpret_bool(val) unless val.nil?
+
+      logger.warn("[Env.#{method}] ENV['#{key}'] is missing")
+      return fallback.nil? ? false : fallback
+    end
 
     if ENV.key?(key)
-      ENV.fetch(key)
+      val
     else
-      logger.warn("[Env] ENV['#{key}'] is missing")
-      default
+      logger.warn("[Env.#{method}] ENV['#{key}'] is missing")
+      fallback
     end
   end
 
   def self.respond_to_missing?(_name, _include_private = false)
     true
+  end
+
+  private_class_method def self.boolean_query?(method)
+    method.end_with?("?")
+  end
+
+  private_class_method def self.env_key(method)
+    method.chomp("?").upcase
+  end
+
+  private_class_method def self.interpret_bool(val)
+    case val.to_s.strip.downcase
+    when "true", "1", "yes", "on" then true
+    when "false", "0", "no", "off", "" then false
+    else false
+    end
   end
 end
