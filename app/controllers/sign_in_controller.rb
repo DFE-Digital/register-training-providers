@@ -1,5 +1,5 @@
 class SignInController < ApplicationController
-  # skip_before_action :authenticate
+  skip_before_action :authenticate
 
   def index
     sign_in_method
