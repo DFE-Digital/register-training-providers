@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DfeEmailFormatValidator do
+RSpec.describe DfEEmailFormatValidator do
   let(:record) { double('Record', email: email, errors: errors) }
   let(:errors) { double('Errors') }
   let(:validator) { described_class.new(record) }
@@ -24,7 +24,7 @@ RSpec.describe DfeEmailFormatValidator do
       it 'adds an error to the record' do
         allow(errors).to receive(:add)
         subject
-        expect(errors).to have_received(:add).with(:email, 
+        expect(errors).to have_received(:add).with(:email,
 "Enter a Department for Education email address in the correct format, like name@education.gov.uk")
       end
     end

@@ -30,7 +30,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
 
   validate do |record|
-    DfeEmailFormatValidator.new(record).validate if email.present?
+    DfEEmailFormatValidator.new(record).validate if email.present?
   end
 
   private
