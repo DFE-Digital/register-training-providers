@@ -1,8 +1,8 @@
 module BasicAuthenticable
   class << self
 
-    def required?(_path)
-      Env.basic_auth
+    def required?
+      Env.basic_auth?
     end
 
     def authenticate(username, password)
