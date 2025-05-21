@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   get "/sign-out" => "sign_out#index"
 
   case Env.sign_in_method
+  when "dfe-sign-in"
+    get("/auth/dfe/callback" => "sessions#callback")
+    get("/auth/dfe/sign-out" => "sessions#signout")
   when "otp"
     resource(:otp, only: %i[show create], controller: :otp, path: "request-sign-in-code")
     resource(:otp_verifications, only: %i[show create], path: "sign-in-code")
