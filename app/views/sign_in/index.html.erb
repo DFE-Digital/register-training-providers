@@ -9,13 +9,17 @@
 
 <h1 class="govuk-heading-l"><%= t(".heading") %></h1>
 
-<p class="govuk-body-m"><%= t(".body") %></p>
-
 <% case @sign_in_method %>
 <% when "otp" %>
-  <%= govuk_button_to(t(".otp_sign_in_button"), "/otp_path", method: :get) %>
+  <p class="govuk-body-m"><%= t(".otp.body") %></p>
+
+  <%= govuk_button_to(t(".otp.button"), "/otp_path", method: :get) %>
 <% when "dfe-sign-in" %>
-  <%= govuk_button_to(t(".dfe_sign_in_button"), "/auth/dfe") %>
+  <p class="govuk-body-m"><%= t(".dfe_sign_in.body") %></p>
+
+  <%= govuk_button_to(t(".dfe_sign_in.button"), "/auth/dfe") %>
 <% when "persona"%>
-  <%= govuk_button_to(t(".persona_sign_in_button"), "/personas", method: :get) %>
+  <p class="govuk-body-m"><%= t(".persona.body") %></p>
+
+  <%= govuk_button_to(t(".persona.button"), "/personas", method: :get) %>
 <% end %>
