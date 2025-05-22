@@ -5,10 +5,15 @@ en:
   sign_in:
     index:
       heading: Sign in to Register of training providers
-      body: Use DfE Sign-in to access your account.
-      dfe_sign_in_button: Sign in using DfE Sign-in
-      persona_sign_in_button: Sign in using Persona
-      otp_sign_in_button: Sign in using your email
+      dfe_sign_in:
+        body: Sign in using DfE Sign-in to access the service.
+        button: Sign in using DfE Sign-in
+      persona:
+        body: Sign in using a test user to access the service.
+        button: Sign in using a test user
+      otp:
+        body: Sign in using your email address and a one-time password.
+        button: Sign in using your email
   activerecord:
     errors:
       models:
