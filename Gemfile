@@ -82,16 +82,18 @@ group :development do
   gem 'syntax_tree-rbs', require: false
 end
 
+group :review, :test do
+    # Rails integration for https://github.com/thoughtbot/factory_bot
+    gem "factory_bot_rails"
+
+    # A library for generating fake data such as names, addresses, and phone numbers.
+    gem "faker"
+end
+
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-
-  # Rails integration for https://github.com/thoughtbot/factory_bot
-  gem "factory_bot_rails"
-
-  # A library for generating fake data such as names, addresses, and phone numbers.
-  gem "faker"
 
   #  Simple one-liner tests for common Rails functionality
   gem "shoulda-matchers"
