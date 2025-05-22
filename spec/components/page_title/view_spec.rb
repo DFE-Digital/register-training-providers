@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PageTitle::View, type: :component do
+RSpec.describe PageTitle::View, type: :component do
   before do
     allow(I18n).to receive(:t).with("service.name").and_return("Cool Service")
   end
