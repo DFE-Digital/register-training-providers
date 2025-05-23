@@ -34,6 +34,15 @@ describe DfESignInUser do
     end
   end
 
+  describe ".end_session!" do
+    it "delete the dfe_sign_in_user from session" do
+      session = { "dfe_sign_in_user" => nil }
+
+      DfESignInUser.end_session!(session)
+      expect(session).to be_empty
+    end
+  end
+
   describe "#logout_url" do
     it "returns the dfe logout url" do
       session = {
