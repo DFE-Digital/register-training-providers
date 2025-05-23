@@ -35,6 +35,8 @@ module RegisterTrainingProviders
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.assets.paths << Rails.root.join("node_modules/govuk-frontend/dist/govuk/assets")
+    config.assets.paths << Rails.root.join("node_modules/govuk-frontend/dist/govuk/assets/fonts")
+    config.assets.paths << Rails.root.join("node_modules/govuk-frontend/dist/govuk/assets/images")
 
     config.exceptions_app = routes
 
