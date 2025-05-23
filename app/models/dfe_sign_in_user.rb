@@ -90,7 +90,7 @@ private
   end
 
   def dfe_logout_url(request)
-    uri = URI("#{Settings.dfe_sign_in.issuer}/session/end")
+    uri = URI("#{Env.dfe_sign_in_issuer}/session/end")
     uri.query = {
       id_token_hint: @id_token,
       post_logout_redirect_uri: "#{request.base_url}/auth/dfe/sign-out",
