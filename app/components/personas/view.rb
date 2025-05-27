@@ -17,7 +17,7 @@ module Personas
         {text: "Active", colour: "blue"}
       else
         {text: "Non existence", colour: "red"}
-      end
+      end.merge(classes: "govuk-tag__heading")
     end
 
     def not_last?
