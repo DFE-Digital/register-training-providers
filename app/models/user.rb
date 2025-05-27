@@ -33,6 +33,8 @@ class User < ApplicationRecord
     DfEEmailFormatValidator.new(record).validate if email.present?
   end
 
+  scope :order_by_first_then_last_name, -> { order(:first_name, :last_name) }
+
   def name
     "#{first_name} #{last_name}"
   end
