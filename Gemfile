@@ -82,7 +82,7 @@ group :development do
   gem 'syntax_tree-rbs', require: false
 end
 
-group :review, :test do
+group :development, :review, :test do
     # Rails integration for https://github.com/thoughtbot/factory_bot
     gem "factory_bot_rails"
 
