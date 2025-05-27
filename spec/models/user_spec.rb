@@ -68,4 +68,24 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "scopes" do
+    describe '.order_by_first_then_last_name' do
+      let!(:albert_einstein)   { create(:user, first_name: 'Albert', last_name: 'Einstein') }
+      let!(:marie_curie)       { create(:user, first_name: 'Marie', last_name: 'Curie') }
+      let!(:isaac_newton)      { create(:user, first_name: 'Isaac', last_name: 'Newton') }
+      let!(:albert_schweitzer) { create(:user, first_name: 'Albert', last_name: 'Schweitzer') }
+
+      subject { described_class.order_by_first_then_last_name }
+
+      it "returns users ordered by first_name, then last_name ascending" do
+        expect(subject).to eq([
+          albert_einstein,
+          albert_schweitzer,
+          isaac_newton,
+          marie_curie
+        ])
+      end
+    end
+  end
 end
