@@ -30,6 +30,7 @@ module "web_application" {
   environment  = var.environment
   service_name = var.service_name
   probe_path = null
+  replicas     = var.replicas
 
   cluster_configuration_map  = module.cluster_data.configuration_map
   kubernetes_config_map_name = module.application_configuration.kubernetes_config_map_name

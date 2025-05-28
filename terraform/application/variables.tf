@@ -79,3 +79,22 @@ locals {
   postgres_ssl_mode = var.enable_postgres_ssl ? "require" : "disable"
 
 }
+variable "enable_logit" { default = true }
+
+variable "replicas" {
+  default = 1
+  type = number
+}
+
+variable "azure_maintenance_window" {
+  default = null
+}
+
+variable "postgres_flexible_server_sku" {
+  default = "B_Standard_B1ms"
+}
+
+variable "postgres_enable_high_availability" {
+  default = false
+}
+
