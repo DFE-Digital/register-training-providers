@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require "rubygems"
+require "bundler/setup"
+
+# Prepend ERB Lint config path to ARGV if not already passed
+unless ARGV.include?("--config")
+  ARGV.unshift("--config", File.expand_path("../.erb_lint.yml", __dir__))
+end
+
+# Load the erblint executable from the installed gem
+load Gem.bin_path("erb_lint", "erb_lint")
