@@ -125,7 +125,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        environment: [qa, staging]
+        environment: [qa, staging, production]
 
     steps:
       - name: Deploy app to ${{ matrix.environment }}
