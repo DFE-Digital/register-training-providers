@@ -84,11 +84,11 @@ group :development do
 end
 
 group :development, :review, :test do
-    # Rails integration for https://github.com/thoughtbot/factory_bot
-    gem "factory_bot_rails"
+  # Rails integration for https://github.com/thoughtbot/factory_bot
+  gem "factory_bot_rails"
 
-    # A library for generating fake data such as names, addresses, and phone numbers.
-    gem "faker"
+  # A library for generating fake data such as names, addresses, and phone numbers.
+  gem "faker"
 end
 
 group :test do

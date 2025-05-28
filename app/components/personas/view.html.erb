@@ -1,4 +1,4 @@
-<h2 class="govuk-heading-l"><%= persona.name %> <%=govuk_tag(**tag_args)%> </h2>
+<h2 class="govuk-heading-l"><%= persona.name %> <%= govuk_tag(**tag_args) %> </h2>
 
 <%= form_with url: "/auth/developer/callback" do |f| %>
   <%= hidden_field_tag "email", persona.email %>
