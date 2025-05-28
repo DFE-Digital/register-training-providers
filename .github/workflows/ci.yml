@@ -45,6 +45,9 @@ jobs:
       - name: Lint ruby code for consistent style
         run: bin/rubocop -f github
 
+      - name: Lint erb ruby code for consistent style
+        run: bin/erb_lint --lint-all
+
       - name: Run Prettier check
         run: yarn prettier --check --ignore-unknown '**/*'
   test:
