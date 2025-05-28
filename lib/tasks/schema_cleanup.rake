@@ -5,7 +5,7 @@ Rake::Task["db:schema:dump"].clear
 
 namespace :db do
   task "schema:dump" => [ "environment" ] do
-     require "active_record/tasks/database_tasks"
+    require "active_record/tasks/database_tasks"
 
      config = ActiveRecord::Base.connection_db_config
      ActiveRecord::Tasks::DatabaseTasks.dump_schema(config)
