@@ -32,3 +32,22 @@ Environment/NoDirectEnvAccess:
     - config/**/*
     - spec/**/*
     - lib/env.rb
+
+Layout/IndentationWidth:
+  Enabled: true
+  Width: 2
+
+Layout/FirstHashElementIndentation:
+  Enabled: true
+
+Layout/ArgumentAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+
+Layout/LineLength:
+  Enabled: true
+  Exclude:
+    - "app/views/**/*.erb"
