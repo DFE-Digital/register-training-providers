@@ -76,6 +76,7 @@ group :development do
   # Generates entity-relationship diagram based on the Active Records.
   gem "rails-erd"
 
+  gem "erb_lint"
   gem 'prettier_print', require: false
   gem 'rubocop-govuk', require: false
   gem 'syntax_tree', require: false
