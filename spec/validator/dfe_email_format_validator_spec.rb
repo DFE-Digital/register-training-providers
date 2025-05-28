@@ -25,7 +25,7 @@ RSpec.describe DfEEmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email,
-"Enter a Department for Education email address in the correct format, like name@education.gov.uk")
+          "Enter a Department for Education email address in the correct format, like name@education.gov.uk")
       end
     end
   end

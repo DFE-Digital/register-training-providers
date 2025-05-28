@@ -18,7 +18,7 @@
   <p class="govuk-body-m"><%= t(".dfe_sign_in.body") %></p>
 
   <%= govuk_button_to(t(".dfe_sign_in.button"), "/auth/dfe") %>
-<% when "persona"%>
+<% when "persona" %>
   <p class="govuk-body-m"><%= t(".persona.body") %></p>
 
   <%= govuk_button_to(t(".persona.button"), "/personas", method: :get) %>

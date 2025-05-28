@@ -3,7 +3,7 @@ module ApplicationHelper
     page_title = if error
                    "Error: #{title}"
     else
-                   title
+      title
     end
 
     content_for(:page_title) { page_title }

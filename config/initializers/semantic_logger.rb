@@ -4,6 +4,6 @@ if Rails.env.development? || Rails.env.production?
   end
 
   SemanticLogger.add_appender(io: $stdout, level: Rails.application.config.log_level, 
-formatter: Rails.application.config.log_format)
+    formatter: Rails.application.config.log_format)
   Rails.application.config.logger.info("Application logging to STDOUT")
 end

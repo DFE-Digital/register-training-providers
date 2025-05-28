@@ -25,7 +25,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -36,7 +36,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe EmailFormatValidator do
         allow(errors).to receive(:add)
         subject
         expect(errors).to have_received(:add).with(:email, 
-"Enter an email address in the correct format, like name@example.com")
+          "Enter an email address in the correct format, like name@example.com")
       end
     end
   end
