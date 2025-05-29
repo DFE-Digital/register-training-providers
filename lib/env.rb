@@ -10,7 +10,7 @@ module Env
     key = env_key(method)
     val = ENV[key]
 
-    if boolean_query?(method)
+    if boolean_method(method)
       return interpret_bool(val) unless val.nil?
 
       logger.warn("[Env.#{method}] ENV['#{key}'] is missing")
@@ -29,7 +29,7 @@ module Env
     true
   end
 
-  private_class_method def self.boolean_query?(method)
+  private_class_method def self.boolean_method(method)
     method.end_with?("?")
   end
 
