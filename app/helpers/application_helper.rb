@@ -16,4 +16,12 @@ module ApplicationHelper
 
     { page_title:, page_header: }
   end
+
+  def govuk_number(number, precision: nil)
+    if precision
+      number_with_precision(number, precision: precision, delimiter: ',')
+    else
+      number_with_delimiter(number)
+    end
+  end
 end
