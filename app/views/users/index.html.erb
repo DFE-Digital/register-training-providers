@@ -1,4 +1,4 @@
-<% page_data(title: "Support users (#{@pagy.count})") %>
+<% page_data(title: "Support users (#{govuk_number(@pagy.count)})") %>
 
 <%= govuk_table do |table|
         table.with_head do |head|
