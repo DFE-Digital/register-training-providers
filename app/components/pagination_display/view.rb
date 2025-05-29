@@ -1,4 +1,5 @@
 class PaginationDisplay::View < ViewComponent::Base
+  include ApplicationHelper
   def initialize(pagy:)
     @pagy = pagy
     super
