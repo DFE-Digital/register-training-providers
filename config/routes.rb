@@ -17,4 +17,5 @@ Rails.application.routes.draw do
   get "/sign-in/user-not-found", to: "sign_in#new"
 
   resources :providers, only: %i[index]
+  resources :users, only: %i[index]
 end
