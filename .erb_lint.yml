@@ -10,7 +10,7 @@ linters:
   StrictLocals:
     enabled: true
   Rubocop:
-    enabled: false
+    enabled: true
     rubocop_config:
       inherit_from:
         - .rubocop.yml
