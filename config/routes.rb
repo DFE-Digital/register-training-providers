@@ -24,5 +24,5 @@ Rails.application.routes.draw do
   end
 
   resources :providers, only: %i[index]
-  resources :users, only: %i[index]
+  resources :users, only: %i[index new create]
 end
