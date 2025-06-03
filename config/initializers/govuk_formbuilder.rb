@@ -1,13 +1,15 @@
 GOVUKDesignSystemFormBuilder.configure do |config|
+
+
   # for more info see:
   #
   # https://www.rubydoc.info/gems/govuk_design_system_formbuilder/GOVUKDesignSystemFormBuilder
 
   # config.brand: 'govuk'
   #
-  # config.default_legend_size: 'm'
-  # config.default_legend_tag: nil
-  # config.default_caption_size: 'm'
+  config.default_legend_size          = 'l'
+  config.default_legend_tag           = 'h1'
+  config.default_caption_size         = 'l'
   # config.default_submit_button_text: 'Continue'
   # config.default_radio_divider_text: 'or'
   # config.default_check_box_divider_text: 'or'
@@ -28,3 +30,5 @@ GOVUKDesignSystemFormBuilder.configure do |config|
   # config.enable_logger: true
   # config.trust_error_messages: false
 end
+
+ActionView::Base.default_form_builder = GOVUKDesignSystemFormBuilder::FormBuilder
