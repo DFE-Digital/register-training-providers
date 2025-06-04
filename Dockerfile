@@ -5,10 +5,6 @@
 # Build builder image
 FROM ruby:3.4.4-alpine AS builder
 
-# RUN apk -U upgrade && \
-#     apk add --update --no-cache gcc git libc6-compat libc-dev make nodejs \
-#     postgresql13-dev yarn
-
 WORKDIR /app
 
 # Add the timezone (builder image) as it's not configured by default in Alpine
