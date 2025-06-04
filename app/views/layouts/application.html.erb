@@ -51,6 +51,15 @@
       <main class="govuk-main-wrapper" id="main-content" role="main">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-full">
+            <% if flash.any? %>
+              <% flash.each do |key, message| %>
+                <% if key == "success" %>
+                  <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+                    <% nb.with_heading(text: message) %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
             <%= yield(:page_alerts) %>
           </div>
         </div>
