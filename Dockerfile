@@ -33,6 +33,9 @@ RUN bundler -v && \
     bundle install --retry=5 --jobs=4 && \
     rm -rf /usr/local/bundle/cache
 
+RUN yarn global add corepack
+RUN corepack enable && corepack prepare yarn@4.9.1 --activate
+
 # Install node packages defined in package.json
 COPY package.json yarn.lock ./
 RUN yarn install --immutable
