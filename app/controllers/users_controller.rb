@@ -12,7 +12,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params.require(:user).permit(:first_name, :last_name, :email))
     if @user.valid?
-      # todo
+      @user.save!
+
+      redirect_to users_path, flash: { success: "Support user added" }
     else
       render(:new)
     end
