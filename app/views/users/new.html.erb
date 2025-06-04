@@ -1,3 +1,9 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: users_path,
+  ) %>
+<% end %>
 
 <%= form_for @user  do  |f| %>
   <% page_data(title: "Add support user", header: false, error: @user.errors.present? ) %>
