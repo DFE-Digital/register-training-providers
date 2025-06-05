@@ -29,7 +29,7 @@ module "web_application" {
   namespace    = var.namespace
   environment  = var.environment
   service_name = var.service_name
-  probe_path = null
+  probe_path = "/ping"
   replicas     = var.replicas
 
   cluster_configuration_map  = module.cluster_data.configuration_map
