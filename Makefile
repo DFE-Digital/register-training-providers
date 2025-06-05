@@ -154,10 +154,21 @@ disable-maintenance: get-cluster-credentials
 	$(eval export CONFIG)
 	./maintenance_page/scripts/failback.sh
 
-db-seed: get-cluster-credentials # Example db seed for review apps, modify as required
-	$(if $(PR_NUMBER), , $(error can only run with PR_NUMBER))
+db-seed: get-cluster-credentials
 	$(eval NAMESPACE=$(shell jq -r '.namespace' terraform/application/config/$(CONFIG).tfvars.json))
-	kubectl -n ${NAMESPACE} exec deployment/${SERVICE_NAME}-pr-${PR_NUMBER} -- /bin/sh -c "cd /app && bundle exec rake db:seed && bundle exec rake example_data:generate"
+	@if [ "$(ENVIRONMENT)" = "qa" ]; then \
+		echo "Seeding for QA environment..."; \
+		kubectl -n $(NAMESPACE) exec deployment/${SERVICE_NAME}-qa -- \
+			/bin/sh -c "cd /app && bundle exec rake example_data:generate"; \
+	else \
+		echo "Seeding for PR deployment..."; \
+		if [ -z "$(PR_NUMBER)" ]; then \
+			echo "Error: PR_NUMBER is required for non-QA deployments."; \
+			exit 1; \
+		fi; \
+		kubectl -n $(NAMESPACE) exec deployment/${SERVICE_NAME}-pr-${PR_NUMBER} -- \
+			/bin/sh -c "cd /app && bundle exec rake db:seed && bundle exec rake example_data:generate"; \
+	fi
 
 action-group: set-azure-account # make production action-group ACTION_GROUP_EMAIL=notificationemail@domain.com . Must be run before setting enable_monitoring=true. Use any non-prod environment to create in the test subscription.
 	$(if $(ACTION_GROUP_EMAIL), , $(error Please specify a notification email for the action group))
