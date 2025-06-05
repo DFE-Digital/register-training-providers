@@ -140,6 +140,7 @@ jobs:
           terraform-base: ${{ env.TERRAFORM_BASE }}
           healthcheck: ${{ env.HEALTHCHECK_CMD }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+          db-seed: ${{ matrix.environment == 'qa' && 'true' || 'false'}}
   #        smoke-test: true
   #        gcp-wip: ${{ vars.GCP_WIP }}
   #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
@@ -169,7 +170,7 @@ jobs:
           terraform-base: ${{ env.TERRAFORM_BASE }}
           healthcheck: ${{ env.HEALTHCHECK_CMD }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
-          db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
+          db-seed: ${{ contains(fromJson('["review", "qa"]'), inputs.environment) && 'true' || 'false' }}
   #        smoke-test: true
   #        gcp-wip: ${{ vars.GCP_WIP }}
   #        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
