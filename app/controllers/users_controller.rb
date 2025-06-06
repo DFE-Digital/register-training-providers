@@ -12,9 +12,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params.expect(user: [:first_name, :last_name, :email]))
     if @user.valid?
-      @user.save!
-
-      redirect_to users_path, flash: { success: "Support user added" }
+      redirect_to new_user_check_path
     else
       render(:new)
     end
