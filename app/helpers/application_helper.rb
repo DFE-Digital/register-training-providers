@@ -1,5 +1,5 @@
 module ApplicationHelper
-  def page_data(title:, header: nil, header_size: "l", error: false)
+  def page_data(title:, header: nil, header_size: "l", error: false, caption: nil)
     page_title = if error
                    "Error: #{title}"
                  else
@@ -10,7 +10,8 @@ module ApplicationHelper
 
     return { page_title: } if header == false
 
-    page_header = tag.h1(header || title, class: "govuk-heading-#{header_size}")
+    span = caption.present? ? tag.span(caption, class: "govuk-caption-#{header_size}") : ""
+    page_header = tag.h1(span + (header || title), class: "govuk-heading-#{header_size}")
 
     content_for(:page_header) { page_header }
 
