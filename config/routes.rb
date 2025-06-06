@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  def checkable(model)
+    collection do
+      scope module: model do
+        resource :check, only: %i[new create], path: "/check", as: "#{model.to_s.singularize}_check",
+                         controller: "check"
+      end
+    end
+  end
+
   root to: "landing_page#start"
 
   get :ping, controller: :heartbeat
@@ -26,6 +35,11 @@ Rails.application.routes.draw do
     post("/auth/developer/callback", to: "sessions#callback")
   end
 
-  resources :providers, only: %i[index]
-  resources :users, only: %i[index new create]
+  resources :users, only: %i[index new create] do
+    checkable(:users)
+  end
+
+  resources :providers, only: %i[index] do
+    checkable(:providers)
+  end
 end
