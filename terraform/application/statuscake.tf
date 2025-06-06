@@ -1,4 +1,4 @@
-/* module "statuscake" {
+module "statuscake" {
   count = var.enable_monitoring ? 1 : 0
 
   source = "./vendor/modules/aks//monitoring/statuscake"
@@ -8,4 +8,3 @@
 
   contact_groups = var.statuscake_contact_groups
 }
- */
