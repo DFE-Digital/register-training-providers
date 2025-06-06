@@ -7,6 +7,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     let(:header) { nil }
     let(:header_size) { "l" }
     let(:error) { false }
+    let(:caption) { nil }
 
     subject(:result) do
       helper.page_data(title: title, header: header, header_size: header_size, error: error, caption: caption)
@@ -37,8 +38,21 @@ RSpec.describe ApplicationHelper, type: :helper do
     it "returns page_title and page_header" do
       expect(result[:page_title]).to eq("Larry Page")
       expect(result[:page_header]).to include("govuk-heading-l")
+      expect(result[:page_header]).to include("Larry Page")
+      expect(result[:page_header]).not_to include("govuk-caption-l")
+      expect(result[:page_header]).not_to include("Caption")
     end
 
+    context "when caption is set" do
+      let(:caption) { "Caption" }
+      it "returns page_title and page_header" do
+        expect(result[:page_title]).to eq("Larry Page")
+        expect(result[:page_header]).to include("govuk-heading-l")
+        expect(result[:page_header]).to include("Larry Page")
+        expect(result[:page_header]).to include("govuk-caption-l")
+        expect(result[:page_header]).to include("Caption")
+      end
+    end
     context "when error is true" do
       let(:error) { true }
 
