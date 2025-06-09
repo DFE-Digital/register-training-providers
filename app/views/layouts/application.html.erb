@@ -24,7 +24,9 @@
 
     <%= govuk_skip_link %>
 
-    <%= govuk_header(full_width_border: true, homepage_url: root_path) %>
+    <%= govuk_header(full_width_border: true, homepage_url: root_path, navigation_classes: "govuk-header__navigation--end") do |header|
+          header.with_navigation_item(text: "Sign out", href: sign_out_path, active: false) if @current_user.present?
+        end %>
 
     <%= govuk_service_navigation(
           service_name: t('service.name'),
