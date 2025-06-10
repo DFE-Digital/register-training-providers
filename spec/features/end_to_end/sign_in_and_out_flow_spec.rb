@@ -13,11 +13,12 @@ RSpec.feature "Sign in and_out flow" do
     and_i_click_on("Support users")
     and_i_go_to_the_support_users_page
     and_i_click_on("Register of training providers")
-    and_i_am_take_to("/providers")
+    and_i_am_taken_to("/providers")
 
     when_i_click_on("Sign out")
-    then_i_am_signed_out
-    and_there_is_no_sign_out_link
+    then_i_logout_via_sso
+    and_i_am_taken_to("/")
+    and_i_am_not_signed_in
   end
 
   def given_i_am_on_the_start_page
@@ -32,12 +33,7 @@ RSpec.feature "Sign in and_out flow" do
     expect(page).to have_current_path("/users")
   end
 
-  def then_i_am_signed_out
-    simulate_external_sso_logout
-    then_i_am_take_to("/")
-  end
-
-  def simulate_external_sso_logout
+  def then_i_logout_via_sso
     # NOTE: 1, signs out via external sso
     expect(current_url).to start_with("https://test-oidc.signin.education.gov.uk/session/end")
     uri = URI.parse(current_url)
@@ -54,7 +50,7 @@ RSpec.feature "Sign in and_out flow" do
 
   def and_i_am_not_signed_in
     expect(page).to have_link("Sign in")
-    expect(page).not_to have_link("Sign out")
+    and_there_is_no_sign_out_link
   end
 
   def and_i_am_redirect_to_provider_page
