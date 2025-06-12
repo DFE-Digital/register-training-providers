@@ -1,5 +1,5 @@
 module ApplicationHelper
-  def page_data(title:, header: nil, header_size: "l", error: false, caption: nil)
+  def page_data(title:, subtitle: nil, header: nil, header_size: "l", error: false, caption: nil)
     page_title = if error
                    "Error: #{title}"
                  else
@@ -7,6 +7,7 @@ module ApplicationHelper
                  end
 
     content_for(:page_title) { page_title }
+    content_for(:page_subtitle) { subtitle }
 
     return { page_title: } if header == false
 
