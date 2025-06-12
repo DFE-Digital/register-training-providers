@@ -6,7 +6,7 @@
 <% end %>
 
 <%= form_for @user  do  |f| %>
-  <% page_data(title: "Add support user", header: false, error: @user.errors.present?) %>
+  <% page_data(title: "Add support user", subtitle: "personal details", header: false, error: @user.errors.present?) %>
 
   <%= content_for(:page_alerts) { f.govuk_error_summary } %>
 
