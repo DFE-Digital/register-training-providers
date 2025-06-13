@@ -1,3 +1,7 @@
+plugins:
+  - rubocop-rails
+  - rubocop-performance
+
 require:
   - ./lib/rubocop/cop/environment/no_direct_env_access.rb
 
@@ -13,18 +17,22 @@ inherit_mode:
   merge:
     - Exclude
 
-Style/NumericLiterals:
-  Exclude:
-    - db/schema.rb
+AllCops:
+  NewCops: enable
 
-Rails/CreateTableWithTimestamps:
-  Exclude:
-    - db/migrate/20250512104418_install_audited.rb
-
-Style/FrozenStringLiteralComment:
+Layout:
   Enabled: true
-  EnforcedStyle: never
-  SafeAutoCorrect: true
+
+Style:
+  Enabled: true
+
+Rails:
+  Enabled: true
+
+Performance:
+  Enabled: true
+
+# --- Project-specific customisations ---
 
 Environment/NoDirectEnvAccess:
   Enabled: true
@@ -33,21 +41,38 @@ Environment/NoDirectEnvAccess:
     - spec/**/*
     - lib/env.rb
 
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: never
+  SafeAutoCorrect: true
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/NumericLiterals:
+  Exclude:
+    - db/schema.rb
+
+Rails/CreateTableWithTimestamps:
+  Exclude:
+    - db/migrate/20250512104418_install_audited.rb
+
 Layout/IndentationWidth:
   Enabled: true
   Width: 2
 
-Layout/FirstHashElementIndentation:
-  Enabled: true
-
-Layout/ArgumentAlignment:
-  Enabled: true
-  EnforcedStyle: with_fixed_indentation
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: true
-
-Layout/LineLength:
-  Enabled: true
+Layout/InitialIndentation:
   Exclude:
     - "app/views/**/*.erb"
+    - "app/components/**/*.erb"
+
+Layout/TrailingEmptyLines:
+  Exclude:
+    - "app/views/**/*.erb"
+    - "app/components/**/*.erb"
+
+Layout/LineLength:
+  Exclude:
+    - "app/views/**/*.erb"
+    - "app/components/**/*.erb"
