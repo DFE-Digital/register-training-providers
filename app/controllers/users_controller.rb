@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params.require(:user).permit(:first_name, :last_name, :email))
+    @user = User.new(params.expect(user: [:first_name, :last_name, :email]))
     if @user.valid?
       @user.save!
 

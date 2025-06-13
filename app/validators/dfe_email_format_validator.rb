@@ -11,9 +11,9 @@ private
 
   def hostname_valid?
     if hostname_length_valid? &&
-      parts_length_valid? &&
-      parts_match_regex? &&
-      parts.count == 3
+        parts_length_valid? &&
+        parts_match_regex? &&
+        parts.count == 3
       hostname == DFE_HOSTNAME
     else
       hostname.ends_with?(DFE_HOSTNAME)

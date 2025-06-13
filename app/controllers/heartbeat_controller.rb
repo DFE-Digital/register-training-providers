@@ -11,9 +11,9 @@ class HeartbeatController < ActionController::API
     status = checks.values.all? ? :ok : :service_unavailable
 
     render(status: status,
-      json: {
-        checks:
-      })
+           json: {
+             checks:
+           })
   end
 
   def sha

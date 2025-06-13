@@ -49,9 +49,8 @@ RSpec.describe "heartbeat requests", type: :request do
     end
   end
 
-  describe "GET /sha", env: {commit_sha: "deadbeef"} do
+  describe "GET /sha", env: { commit_sha: "deadbeef" } do
     it "returns the sha from the env var COMMIT_SHA" do
-
       get "/sha"
 
       expect(response.body).to eq '{"sha":"deadbeef"}'

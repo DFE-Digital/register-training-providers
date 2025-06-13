@@ -8,7 +8,7 @@ module Env
     fallback = args.first
 
     key = env_key(method)
-    val = ENV[key]
+    val = ENV.fetch(key, nil)
 
     if boolean_method(method)
       return interpret_bool(val) unless val.nil?
@@ -41,7 +41,6 @@ module Env
     case val.to_s.strip.downcase
     when "true", "1", "yes", "on" then true
     when "false", "0", "no", "off", "" then false
-    else false
     end
   end
 end

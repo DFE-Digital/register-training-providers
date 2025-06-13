@@ -7,4 +7,4 @@ PERSONAS = [
 
 NON_EXISTING_PERSONA = { first_name: "Tyler", last_name: "Durden", email: "test5@education.gov.uk" }.freeze
 
-PERSONA_EMAILS = PERSONAS.map { |persona| persona[:email] }
+PERSONA_EMAILS = PERSONAS.pluck(:email)

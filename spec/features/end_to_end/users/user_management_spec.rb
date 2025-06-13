@@ -11,7 +11,7 @@ RSpec.feature "User management" do
   end
 
   def when_i_click_on_the_the_support_users_in_the_navigation_bar
-    click_link('Support users', class: 'govuk-service-navigation__link')
+    click_link("Support users", class: "govuk-service-navigation__link")
   end
 
   def and_there_are_a_number_of_support_users
@@ -31,12 +31,12 @@ RSpec.feature "User management" do
   end
 
   def and_a_table_of_support_users
-    row_count = all('.govuk-table__body .govuk-table__row').count
+    row_count = all(".govuk-table__body .govuk-table__row").count
     expect(row_count).to eq(25)
   end
 
   def and_the_table_has_header_for_name_and_email
-    expect(page).to have_selector('.govuk-table__header', text: 'Name')
-    expect(page).to have_selector('.govuk-table__header', text: 'Email')
+    expect(page).to have_selector(".govuk-table__header", text: "Name")
+    expect(page).to have_selector(".govuk-table__header", text: "Email")
   end
 end

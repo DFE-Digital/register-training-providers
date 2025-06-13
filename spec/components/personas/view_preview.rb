@@ -17,7 +17,7 @@ module Personas
       render(Personas::View.with_collection([non_existence_user]))
     end
 
-    private
+  private
 
     def active_user
       @active_user ||= ::FactoryBot.create(:user)

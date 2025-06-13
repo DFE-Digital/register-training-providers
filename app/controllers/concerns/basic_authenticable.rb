@@ -1,6 +1,5 @@
 module BasicAuthenticable
   class << self
-
     def required?
       Env.basic_auth?(false)
     end

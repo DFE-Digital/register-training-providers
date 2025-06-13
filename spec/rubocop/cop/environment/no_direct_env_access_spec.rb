@@ -1,4 +1,3 @@
-
 require "rubocop"
 require "rubocop/rspec/support"
 
