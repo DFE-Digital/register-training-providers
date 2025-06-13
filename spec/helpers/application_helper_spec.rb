@@ -3,12 +3,30 @@ require "rails_helper"
 RSpec.describe ApplicationHelper, type: :helper do
   describe "#page_data" do
     let(:title) { "Larry Page" }
+    let(:caption) { nil }
     let(:header) { nil }
     let(:header_size) { "l" }
     let(:error) { false }
 
     subject(:result) do
-      helper.page_data(title: title, header: header, header_size: header_size, error: error)
+      helper.page_data(title: title, header: header, header_size: header_size, error: error, caption: caption)
+    end
+
+    context "when caption is provided" do
+      let(:caption) { "Caption this" }
+      let(:header_size) { "m" }
+
+      subject(:result) do
+        helper.page_data(title: title, header: header, header_size: header_size, error: error, caption: caption)
+      end
+
+      it "includes the caption in a span with the correct class inside the page_header" do
+        expect(result[:page_header]).to include('<span class="govuk-caption-m">Caption this</span>')
+      end
+
+      it "includes the header text after the caption" do
+        expect(result[:page_header]).to match(/Caption this.*Larry Page/)
+      end
     end
 
     it "sets the page title in content_for" do

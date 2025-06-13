@@ -11,7 +11,10 @@ RSpec.describe "users/new.html.erb", type: :view do
   end
 
   it "calls page_data" do
-    expect(view).to have_received(:page_data).with({ error: false, header: false, title: "Add support user" })
+    expect(view).to have_received(:page_data).with({ error: false,
+                                                     header: false,
+                                                     subtitle: "personal details",
+                                                     title: "Add support user" })
   end
 
   it "renders the continue button" do
@@ -40,7 +43,10 @@ RSpec.describe "users/new.html.erb", type: :view do
     end
 
     it "calls page_data with error" do
-      expect(view).to have_received(:page_data).with({ error: true, header: false, title: "Add support user" })
+      expect(view).to have_received(:page_data).with({ error: true,
+                                                       header: false,
+                                                       subtitle: "personal details",
+                                                       title: "Add support user" })
     end
 
     it "renders the error summary" do
