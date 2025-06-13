@@ -3,7 +3,7 @@ RSpec::Matchers.define :have_pagination do
 
   match do |page_or_html|
     node = wrap_as_capybara_node(page_or_html)
-    node.has_css?('.govuk-pagination')
+    node.has_css?(".govuk-pagination")
   end
 
   failure_message do |_page|

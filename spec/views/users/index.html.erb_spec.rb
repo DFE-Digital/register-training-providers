@@ -4,7 +4,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   let(:user_1) { build_stubbed(:user, first_name: "Alice") }
   let(:user_2) { build_stubbed(:user, first_name: "Bob") }
   let(:users) { [user_1, user_2] }
-  let(:count) {users.size}
+  let(:count) { users.size }
   let(:pagy) { Pagy.new(count: count, page: 1) }
 
   let(:pagination_component) { instance_double(PaginationDisplay::View) }
@@ -42,7 +42,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   end
 
   context "when pagy count is over 25" do
-    let(:count) {1_000_000}
+    let(:count) { 1_000_000 }
     it "calls page_data with govuk_number count" do
       expect(view).to have_received(:page_data).with(title: "Support users (1,000,000)")
     end

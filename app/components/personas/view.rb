@@ -12,11 +12,11 @@ module Personas
 
     def tag_args
       if persona.discarded?
-        {text: "Soft deleted", colour: "grey"}
+        { text: "Soft deleted", colour: "grey" }
       elsif persona.persisted?
-        {text: "Active", colour: "blue"}
+        { text: "Active", colour: "blue" }
       else
-        {text: "Non existence", colour: "red"}
+        { text: "Non existence", colour: "red" }
       end.merge(classes: "govuk-tag__heading")
     end
 

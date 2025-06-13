@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  private
+private
 
   def enforce_basic_auth
     authenticate_or_request_with_http_basic do |username, password|
@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   def sign_in_user
     @sign_in_user ||= [
       DfESignInUser.load_from_session(session),
-    ].select { |x| x.try(:user) }.first
+    ].find { |x| x.try(:user) }
   end
 
   def current_user

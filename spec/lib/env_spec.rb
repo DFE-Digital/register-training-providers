@@ -36,7 +36,8 @@ RSpec.describe Env do
     it "logs a warning" do
       Env.some_environment_variables("default-value")
       expect(logger).to have_received(:warn).with(
-        "[Env.some_environment_variables] ENV['SOME_ENVIRONMENT_VARIABLES'] is missing")
+        "[Env.some_environment_variables] ENV['SOME_ENVIRONMENT_VARIABLES'] is missing"
+      )
     end
   end
 

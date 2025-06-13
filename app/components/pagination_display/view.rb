@@ -11,5 +11,5 @@ class PaginationDisplay::View < ViewComponent::Base
 
   attr_reader :pagy
 
-  delegate :from,  :to, :count, :pages, to: :pagy
+  delegate :from, :to, :count, :pages, to: :pagy
 end

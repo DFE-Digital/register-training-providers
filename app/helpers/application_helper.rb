@@ -2,9 +2,9 @@ module ApplicationHelper
   def page_data(title:, header: nil, header_size: "l", error: false)
     page_title = if error
                    "Error: #{title}"
-    else
-      title
-    end
+                 else
+                   title
+                 end
 
     content_for(:page_title) { page_title }
 
@@ -19,7 +19,7 @@ module ApplicationHelper
 
   def govuk_number(number, precision: nil)
     if precision
-      number_with_precision(number, precision: precision, delimiter: ',')
+      number_with_precision(number, precision: precision, delimiter: ",")
     else
       number_with_delimiter(number)
     end

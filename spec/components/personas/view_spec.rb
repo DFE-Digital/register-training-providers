@@ -4,10 +4,11 @@ RSpec.describe Personas::View, type: :component do
   alias_method :component, :page
 
   let(:persona1) { create(:user) }
-  let(:persona2) do persona = create(:user)
-                    persona.discard
-                    persona
-                  end
+  let(:persona2) do
+    persona = create(:user)
+    persona.discard
+    persona
+  end
   let(:persona3) { build(:user, :discarded) }
   let(:personas) { [persona1, persona2, persona3] }
 
@@ -22,7 +23,6 @@ RSpec.describe Personas::View, type: :component do
   end
 
   it "renders a sign-in button to login" do
-
     items = component.find_all("form").each do |form|
       expect(form["action"]).to eq("/auth/developer/callback")
       expect(form).to have_button

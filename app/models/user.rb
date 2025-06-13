@@ -39,7 +39,7 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  private
+private
 
   def sanitise_email
     self.email = email.gsub(/\s+/, "").downcase unless email.nil?
