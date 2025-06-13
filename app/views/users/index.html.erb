@@ -3,21 +3,20 @@
 <%= govuk_button_link_to("Add user", new_user_path) %>
 
 <%= govuk_table do |table|
-  table.with_head do |head|
-    head.with_row do |row|
-      row.with_cell(text: 'Name')
-    row.with_cell(text: 'Email')
-
-    end
-  end
-  table.with_body do |body|
-    @records.each do |user|
-      body.with_row do |row|
-        row.with_cell(text: user.name)
-      row.with_cell(text: user.email)
+      table.with_head do |head|
+        head.with_row do |row|
+          row.with_cell(text: "Name")
+          row.with_cell(text: "Email")
+        end
       end
-    end
-  end
-end %>
+      table.with_body do |body|
+        @records.each do |user|
+          body.with_row do |row|
+            row.with_cell(text: user.name)
+            row.with_cell(text: user.email)
+          end
+        end
+      end
+    end %>
 
 <%= render PaginationDisplay::View.new(pagy: @pagy) %>

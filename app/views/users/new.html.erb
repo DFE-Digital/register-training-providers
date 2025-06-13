@@ -2,18 +2,19 @@
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
         href: users_path,
-  ) %>
+      ) %>
 <% end %>
 
 <%= form_for @user  do  |f| %>
-  <% page_data(title: "Add support user", header: false, error: @user.errors.present? ) %>
+  <% page_data(title: "Add support user", header: false, error: @user.errors.present?) %>
 
   <%= content_for(:page_alerts) { f.govuk_error_summary } %>
 
   <%= f.govuk_fieldset legend: { text: "Personal Details" }, caption: { text: "Add support user" } do %>
-    <%= f.govuk_text_field :first_name,   width: 'two-thirds',    label: { size: 's', text: 'First name' } %>
-    <%= f.govuk_text_field :last_name,   width: 'two-thirds',    label: { size: 's', text: 'Last name' } %>
-    <%= f.govuk_text_field :email, width: 'full',    label: { size: 's', text: 'Email' }, hint: {text: "Email must be a valid Department for Education address, like name@education.gov.uk"} %>
+    <%= f.govuk_text_field :first_name, width: "two-thirds", label: { size: "s", text: "First name" } %>
+    <%= f.govuk_text_field :last_name, width: "two-thirds", label: { size: "s", text: "Last name" } %>
+    <%= f.govuk_text_field :email, width: "full", label: { size: "s", text: "Email" },
+                                   hint: { text: "Email must be a valid Department for Education address, like name@education.gov.uk" } %>
     <%= f.govuk_submit %>
   <% end %>
 <% end %>
