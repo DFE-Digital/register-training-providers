@@ -98,6 +98,16 @@ variable "postgres_enable_high_availability" {
   default = false
 }
 
+variable "worker_memory_max" {
+  type    = string
+  default = "1Gi"
+}
+
+variable "worker_replicas" {
+  type = number
+  default = 1
+}
+
 variable "commands" {
   description = "list of required docker image commands for k8s job to run"
   type        = list(string)

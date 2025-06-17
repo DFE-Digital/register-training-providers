@@ -58,3 +58,28 @@ module "web_application" {
 
   send_traffic_to_maintenance_page = var.send_traffic_to_maintenance_page
 }
+
+module "worker_application" {
+  source     = "./vendor/modules/aks//aks/application"
+
+  is_web = false
+
+  name         = "worker"
+  namespace    = var.namespace
+  environment  = var.environment
+  service_name = var.service_name
+
+  cluster_configuration_map  = module.cluster_data.configuration_map
+  kubernetes_config_map_name = module.application_configuration.kubernetes_config_map_name
+  kubernetes_secret_name     = module.application_configuration.kubernetes_secret_name
+
+  docker_image = var.docker_image
+
+  command       = ["bundle", "exec", "rake", "solid_queue:start"]
+  probe_command = ["pgrep", "-f", "solid-queue-worker"]
+
+  replicas   = var.worker_replicas
+  max_memory = var.worker_memory_max
+
+  enable_logit   = true
+}
