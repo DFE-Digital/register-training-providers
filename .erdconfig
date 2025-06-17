@@ -4,7 +4,22 @@ attributes:
   - content
   - foreign_key
   - inheritance
-exclude: "ActiveRecord::SchemaMigration, ActiveRecord::InternalMetadata, primary::SchemaMigration, Persona"
+exclude:
+  - ActiveRecord::SchemaMigration
+  - ActiveRecord::InternalMetadata
+  - primary::SchemaMigration
+  - Persona
+  - SolidQueue::BlockedExecution
+  - SolidQueue::ClaimedExecution
+  - SolidQueue::FailedExecution
+  - SolidQueue::Job
+  - SolidQueue::Pause
+  - SolidQueue::Process
+  - SolidQueue::ReadyExecution
+  - SolidQueue::RecurringExecution
+  - SolidQueue::RecurringTask
+  - SolidQueue::ScheduledExecution
+  - SolidQueue::Semaphore
 filename: docs/database-diagram
 filetype: jpg
 title: Register of training providers database diagram
