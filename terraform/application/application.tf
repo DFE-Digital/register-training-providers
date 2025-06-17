@@ -40,6 +40,7 @@ module "migration" {
 
 module "web_application" {
   source = "./vendor/modules/aks//aks/application"
+  depends_on = [module.migration]
 
   is_web = true
 
@@ -61,6 +62,7 @@ module "web_application" {
 
 module "worker_application" {
   source     = "./vendor/modules/aks//aks/application"
+  depends_on = [module.migration]
 
   is_web = false
 
