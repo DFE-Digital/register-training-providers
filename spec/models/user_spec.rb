@@ -99,4 +99,113 @@ RSpec.describe User, type: :model do
       }
     end
   end
+
+  describe "#load_temporary" do
+    let(:user) { create(:user) }
+
+    before do
+      stub_const("DummyModel", Class.new do
+        include ActiveModel::Model
+        include ActiveModel::Attributes
+
+        attribute :foo, :string
+        attribute :bar, :integer
+
+        def ==(other)
+          other.is_a?(DummyModel) && foo == other.foo && bar == other.bar
+        end
+      end)
+    end
+
+    context "when a valid temporary record exists" do
+      let!(:temp_record) do
+        create(:temporary_record,
+               creator: user,
+               record_type: "DummyModel",
+               data: { "foo" => "bar", "bar" => 123 },
+               expires_at: 1.hour.from_now)
+      end
+
+      it "rehydrates and returns the temporary record" do
+        result = user.load_temporary(DummyModel, purpose: :check_your_answers)
+
+        expect(result).to be_a(DummyModel)
+        expect(result).to have_attributes(foo: "bar", bar: 123)
+      end
+
+      context "when reset is true" do
+        it "deletes existing temporary record and returns a fresh model instance" do
+          expect(user.temporary_records.count).to eq(1)
+
+          result = user.load_temporary(DummyModel, purpose: :check_your_answers, reset: true)
+
+          expect(result).to be_a(DummyModel)
+          expect(result).to have_attributes(foo: nil, bar: nil)
+          expect(user.temporary_records.reload.count).to eq(0)
+        end
+      end
+    end
+
+    context "when the temporary record is expired" do
+      let!(:temp_record) do
+        create(:temporary_record,
+               creator: user,
+               record_type: "DummyModel",
+               data: { "foo" => "bar" },
+               expires_at: 2.hours.ago)
+      end
+
+      it "returns a new instance of the model" do
+        result = user.load_temporary(DummyModel, purpose: :check_your_answers)
+
+        expect(result).to be_a(DummyModel)
+        expect(result).to have_attributes(foo: nil, bar: nil)
+      end
+    end
+
+    context "when no temporary record exists" do
+      it "returns a new instance of the model" do
+        result = user.load_temporary(DummyModel, purpose: :check_your_answers)
+
+        expect(result).to be_a(DummyModel)
+        expect(result).to have_attributes(foo: nil, bar: nil)
+      end
+    end
+  end
+
+  describe "#clear_temporary" do
+    let(:user) { create(:user) }
+
+    before do
+      stub_const("DummyModel", Class.new do
+        include ActiveModel::Model
+        include ActiveModel::Attributes
+
+        attribute :foo, :string
+        attribute :bar, :integer
+
+        def ==(other)
+          other.is_a?(DummyModel) && foo == other.foo && bar == other.bar
+        end
+      end)
+    end
+
+    context "when a valid temporary record exists" do
+      let!(:temp_record) do
+        create(:temporary_record,
+               creator: user,
+               record_type: "DummyModel",
+               data: { "foo" => "bar", "bar" => 123 },
+               expires_at: 1.hour.from_now)
+      end
+
+      it "deletes existing temporary record and returns a fresh model instance" do
+        expect(user.temporary_records.count).to eq(1)
+
+        user.clear_temporary(DummyModel, purpose: :check_your_answers)
+
+        expect(user.temporary_records.reload.count).to eq(0)
+      end
+    end
+  end
 end

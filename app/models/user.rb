@@ -42,6 +42,24 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def load_temporary(record_class, purpose:, reset: false)
+    clear_temporary(record_class, purpose:) if reset
+
+    record_type = record_class.name
+    record = temporary_records.find_by(record_type: record_type, purpose: purpose)
+
+    if record&.expired?
+      temporary_records.where(record_type: record_type, purpose: purpose).delete_all
+      return record_class.new
+    end
+
+    record&.rehydrate || record_class.new
+  end
+
+  def clear_temporary(record_class, purpose:)
+    temporary_records.where(record_type: record_class.name, purpose: purpose).delete_all
+  end
+
 private
 
   def sanitise_email
