@@ -89,4 +89,14 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  include_examples "a model that saves as temporary", :check_your_answers do
+    let(:valid_attributes) do
+      {
+        first_name: "Test",
+        last_name: "User",
+        email: "test@education.gov.uk"
+      }
+    end
+  end
 end
