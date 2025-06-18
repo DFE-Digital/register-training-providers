@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_17_085424) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_18_104016) do
   # These are extensions that must be enabled in order to support this database
 
   create_table "audits", force: :cascade do |t|
@@ -156,6 +156,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_085424) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "temporary_records", force: :cascade do |t|
+    t.string "record_type", null: false
+    t.jsonb "data", default: {}, null: false
+    t.integer "created_by", null: false
+    t.datetime "expires_at", null: false
+    t.string "purpose", default: "0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by", "record_type", "purpose"], name: "index_temp_records_on_creator_type_purpose", unique: true
+    t.index ["created_by"], name: "index_temporary_records_on_created_by"
+    t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "dfe_sign_in_uid"
     t.string "email", null: false
@@ -175,4 +188,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_085424) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "temporary_records", "users", column: "created_by"
 end
