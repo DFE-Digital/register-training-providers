@@ -15,9 +15,9 @@ module CheckYourAnswers
 
     def rows
       [
-        { key: { text: "First name" }, value: { text: new_user.first_name } },
-        { key: { text: "Last name" }, value: { text: new_user.last_name } },
-        { key: { text: "Email address" }, value: { text: new_user.email } },
+        { key: { text: "First name" }, value: { text: new_user.first_name }, actions: [{ href: new_user_path }] },
+        { key: { text: "Last name" }, value: { text: new_user.last_name }, actions: [{ href: new_user_path }] },
+        { key: { text: "Email address" }, value: { text: new_user.email }, actions: [{ href: new_user_path }] },
       ]
     end
 
