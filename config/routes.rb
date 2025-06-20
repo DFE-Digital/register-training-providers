@@ -39,7 +39,7 @@ Rails.application.routes.draw do
 
   resources :providers, only: %i[index]
 
-  resources :users, only: %i[index new create] do
+  resources :users, only: %i[index new create show] do
     checkable(:users)
   end
 end
