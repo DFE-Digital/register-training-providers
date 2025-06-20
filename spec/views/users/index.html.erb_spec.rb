@@ -32,7 +32,7 @@ RSpec.describe "users/index.html.erb", type: :view do
 
   it "renders each user in the table" do
     users.each do |user|
-      expect(rendered).to have_selector("td", text: user.name)
+      expect(rendered).to have_link(user.name, href: user_path(user))
       expect(rendered).to have_selector("td", text: user.email)
     end
   end
