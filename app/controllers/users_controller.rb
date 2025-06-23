@@ -6,6 +6,10 @@ class UsersController < ApplicationController
     @pagy, @records = pagy(User.kept.order_by_first_then_last_name)
   end
 
+  def show
+    @user = User.find(params[:id])
+  end
+
   def new
     @user = current_user.load_temporary(User, purpose: :check_your_answers)
   end

@@ -18,13 +18,13 @@ module UserSummary
       [
         { key: { text: "First name" },
           value: { text: @user.first_name },
-          actions: editable ? [{ href: "#", visually_hidden_text: "first name" }] : [] },
+          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "first name" }] : [] },
         { key: { text: "Last name" },
           value: { text: @user.last_name },
-          actions: editable ? [{ href: "#", visually_hidden_text: "last name" }] : [] },
+          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "last name" }] : [] },
         { key: { text: "Email address" },
           value: { text: @user.email },
-          actions: editable ? [{ href: "#", visually_hidden_text: "email address" }] : [] },
+          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "email address" }] : [] },
       ]
     end
 

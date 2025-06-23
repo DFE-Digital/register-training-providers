@@ -10,6 +10,7 @@ FactoryBot.define do
     end
 
     trait :math_magician do
+      id { 42 }
       first_name { "Mathilda" }
       last_name { "Mathmagician" }
     end
