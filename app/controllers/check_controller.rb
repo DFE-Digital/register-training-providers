@@ -47,11 +47,11 @@ private
   end
 
   def new_model_path
-    url_for([:new, model_name.to_sym])
+    @new_model_path ||= url_for([:new, model_name.to_sym])
   end
 
   def success_path
-    url_for([model_name_pluralized.to_sym])
+    @success_path ||= url_for([model_name_pluralized.to_sym])
   end
 
   def save_path
@@ -59,7 +59,7 @@ private
   end
 
   def new_model_check_path
-    url_for([model_name.to_sym, :confirm])
+    @new_model_check_path ||= url_for([model_name.to_sym, :confirm])
   end
 
   def rows
