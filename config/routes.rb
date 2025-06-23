@@ -35,6 +35,8 @@ Rails.application.routes.draw do
     post("/auth/developer/callback", to: "sessions#callback")
   end
 
+  resource :account, only: [:show]
+
   resources :providers, only: %i[index]
 
   resources :users, only: %i[index new create] do
