@@ -1,0 +1,17 @@
+<%= content_for(:breadcrumbs) do %>
+  <% if use_breadcrumbs? %>
+    <%= govuk_breadcrumbs(breadcrumbs: { "Home" => back_path }) %>
+  <% else %>
+    <%= govuk_back_link(text: "Back", href: back_path) %>
+  <% end %>
+<% end %>
+
+<% if show_delete_link? %>
+<p class="govuk-body">
+  <%= govuk_link_to("Delete user", delete_path) %>
+</p>
+<% end %>
+
+<% page_data(title: title, caption: caption, header: header) %>
+
+<%= govuk_summary_list(rows: rows) %>
