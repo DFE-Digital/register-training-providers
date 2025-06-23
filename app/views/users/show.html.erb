@@ -1,0 +1,4 @@
+<%= render UserSummary::View.new(
+      title: "View support user", caption: "Support user", back_path: users_path,
+      delete_path: @current_user == @user ? nil : user_delete_path(@user), editable: @current_user != @user, user: @user
+    ) %>
