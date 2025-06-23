@@ -1,11 +1,10 @@
 RSpec::Matchers.define :have_notification_banner do |expected_title, expected_content|
   match do |page|
-    element = page.find(".govuk-notification-banner", text: expected_title)
-    expect(element).not_to be_nil
-    within element do
-      content_element = find(".govuk-heading-m", text: expected_content)
-      expect(content_element).to be_visible
-    end
+    banner = page.find(".govuk-notification-banner")
+    expect(banner).not_to be_nil
+
+    expect(banner).to have_css(".govuk-notification-banner__header", text: expected_title)
+    expect(banner).to have_css(".govuk-notification-banner__content", text: expected_content)
   end
 
   failure_message do |_page|

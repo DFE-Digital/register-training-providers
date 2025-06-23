@@ -37,3 +37,8 @@ en:
           invalid: Enter a Department for Education email address in the correct format, like name@education.gov.uk
         email:
           invalid: Enter an email address in the correct format, like name@example.com
+  flash_message:
+    success:
+      check:
+        user:
+          add: "Support user added"
