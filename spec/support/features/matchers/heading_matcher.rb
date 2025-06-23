@@ -1,18 +1,22 @@
 RSpec::Matchers.define :have_heading do |tag, text|
-  match do |page|
-    # Check for the tag with the correct text
-    has_correct_text = page.has_selector?(tag, text: text)
+  include CapybaraNodeHelper
+
+  match do |page_or_html|
+    node = wrap_as_capybara_node(page_or_html)
+    has_correct_text = node.has_selector?(tag, text: text)
 
     # If it's an h1, also check that there's only one
     if tag.downcase == "h1"
-      has_correct_text && page.all(tag).size == 1
+      has_correct_text && node.all(tag).size == 1
     else
       has_correct_text
     end
   end
 
-  failure_message do |page|
-    count = page.all(tag).size
+  failure_message do |page_or_html|
+    node = wrap_as_capybara_node(page_or_html)
+
+    count = node.all(tag).size
     if count == 0
       "expected page to have a #{tag} heading with text '#{text}', but none was found"
     elsif tag.downcase == "h1" && count > 1

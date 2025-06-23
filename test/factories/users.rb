@@ -8,5 +8,10 @@ FactoryBot.define do
     trait :discarded do
       discarded_at { Time.zone.now }
     end
+
+    trait :math_magician do
+      first_name { "Mathilda" }
+      last_name { "Mathmagician" }
+    end
   end
 end
