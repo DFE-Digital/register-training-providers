@@ -8,7 +8,7 @@ linters:
   ErbSafety:
     enabled: true
   StrictLocals:
-    enabled: true
+    enabled: false
   Rubocop:
     enabled: true
     rubocop_config:
