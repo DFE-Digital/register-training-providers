@@ -42,7 +42,7 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def load_temporary(record_class, purpose:, reset: false)
+  def load_temporary(record_class, purpose:, id: nil, reset: false)
     clear_temporary(record_class, purpose:) if reset
 
     record_type = record_class.name
@@ -53,7 +53,13 @@ class User < ApplicationRecord
       return record_class.new
     end
 
-    record&.rehydrate || record_class.new
+    if id.present?
+      existing_record = record_class.find(id)
+      existing_record.assign_attributes(record.rehydrate.attributes.except("id")) if record.present?
+      existing_record
+    else
+      record&.rehydrate || record_class.new
+    end
   end
 
   def clear_temporary(record_class, purpose:)
