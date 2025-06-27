@@ -39,7 +39,9 @@ class User < ApplicationRecord
   scope :order_by_first_then_last_name, -> { order(:first_name, :last_name) }
 
   def name
-    "#{first_name} #{last_name}"
+    first_name_to_use = first_name_was || first_name
+    last_name_to_use = last_name_was || last_name
+    "#{first_name_to_use} #{last_name_to_use}"
   end
 
   def load_temporary(record_class, purpose:, id: nil, reset: false)

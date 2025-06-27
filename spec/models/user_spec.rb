@@ -257,4 +257,31 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#name" do
+    let(:user) { create(:user, first_name: "John", last_name: "Doe") }
+
+    it "returns full name when unchanged" do
+      expect(user.name).to eq "John Doe"
+    end
+
+    it "returns original name when changed but not saved" do
+      user.first_name = "Jane"
+      expect(user.name).to eq "John Doe"
+
+      user.last_name = "Smith"
+      expect(user.name).to eq "John Doe"
+    end
+
+    it "returns new name after saving" do
+      user.update!(first_name: "Jane", last_name: "Smith")
+      expect(user.name).to eq "Jane Smith"
+    end
+
+    it "handles new records with changes" do
+      new_user = build(:user, first_name: "Alice", last_name: "Wonder")
+      new_user.first_name = "Alicia"
+      expect(new_user.name).to eq "Alicia Wonder"
+    end
+  end
 end

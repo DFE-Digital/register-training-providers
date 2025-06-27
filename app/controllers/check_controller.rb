@@ -1,5 +1,5 @@
 class CheckController < ApplicationController
-  helper_method :rows, :save_path, :back_path, :cancel_path, :method
+  helper_method :rows, :save_path, :back_path, :cancel_path, :method, :model
 
   def show
     redirect_to back_path if model.invalid?
