@@ -42,3 +42,4 @@ en:
       check:
         user:
           add: "Support user added"
+          update: "Support user updated"

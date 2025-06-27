@@ -59,7 +59,7 @@ RSpec.feature "User management" do
 
   def and_i_can_see_the_error_summary
     expect(page).to have_error_summary(
-      "Enter last name",
+      "Enter first name",
       "Enter last name",
       "Enter email address"
     )
