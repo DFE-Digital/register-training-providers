@@ -1,37 +1,57 @@
 class CheckController < ApplicationController
-  def new
-    if model.invalid?
-      redirect_to new_model_path
-    end
+  helper_method :rows, :save_path, :back_path, :cancel_path, :method
 
-    save_path
-    model
-    rows
+  def show
+    redirect_to back_path if model.invalid?
+  end
+
+  def new
+    redirect_to back_path if model.invalid?
   end
 
   def create
+    save
+  end
+
+  def update
+    save
+  end
+
+private
+
+  def save
     if model.save
 
       redirect_to success_path, flash: flash_message
     else
       # NOTE: if it failed there is something really wrong send them back to the form
       # and let them trigger the validation again
-      redirect_to new_model_path
+      redirect_to back_path
     end
   end
 
-private
+  def method
+    model_id.present? ? :patch : :post
+  end
 
   def flash_message
     { success: I18n.t("flash_message.success.check.#{model_name}.#{mode}") }
   end
 
+  def cancel_path
+    success_path
+  end
+
   def mode
-    model.persisted? ? "add" : "update"
+    model_id.present? ? "update" : "add"
+  end
+
+  def model_id
+    @model_id ||= params["#{model_name}_id"]
   end
 
   def model
-    @model ||= current_user.load_temporary(model_class, purpose: :check_your_answers)
+    @model ||= current_user.load_temporary(model_class, id: model_id, purpose: :check_your_answers)
   end
 
   def model_class
@@ -42,24 +62,41 @@ private
     model_class.name.underscore
   end
 
-  def model_name_pluralized
-    model_name.pluralize
-  end
-
   def new_model_path
     @new_model_path ||= url_for([:new, model_name.to_sym])
   end
 
+  def edit_model_path
+    @edit_model_path ||= Rails.application.routes.url_helpers.url_for(
+      controller: model_name.pluralize,
+      action: "edit",
+      id: model,
+      only_path: true
+    )
+  end
+
+  def back_path
+    model_id.present? ? edit_model_path : new_model_path
+  end
+
   def success_path
-    @success_path ||= url_for([model_name_pluralized.to_sym])
+    @success_path ||= url_for([model_name.pluralize.to_sym])
   end
 
   def save_path
-    @save_path ||= new_model_check_path
+    @save_path ||= if model_id.present?
+                     model_check_path
+                   else
+                     new_model_check_path
+                   end
   end
 
   def new_model_check_path
     @new_model_check_path ||= url_for([model_name.to_sym, :confirm])
+  end
+
+  def model_check_path
+    @model_check_path ||= url_for([model, :check])
   end
 
   def rows

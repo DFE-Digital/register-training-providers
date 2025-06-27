@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   def checkable(model)
+    resource :check, only: %i[show update], path: "/check", controller: "#{model}/check"
+
     collection do
       scope module: model do
         resource :check, only: %i[new create], path: "/check", as: "#{model.to_s.singularize}_confirm",
