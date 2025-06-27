@@ -32,6 +32,8 @@ RSpec.feature "User management" do
 
     and_i_am_taken_to("/users/#{user_to_edit.id}/check")
 
+    and_i_can_see_the_page_title_for_check_your_answers
+    and_i_show_see_new_first_name
     when_i_click_on("Save user")
 
     then_i_see_the_success_message
@@ -41,6 +43,10 @@ RSpec.feature "User management" do
     and_i_cannot_find(old_user_to_edit_name)
     and_the_user_to_edit_is_edited
     and_i_see_my_changes(user_to_edit.name)
+  end
+
+  def and_i_show_see_new_first_name
+    expect(page).to have_css(".govuk-summary-list__value", text: new_first_name)
   end
 
   def and_i_fill_in_the_first_name_incorrectly
@@ -95,7 +101,9 @@ RSpec.feature "User management" do
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
-    expect(page).to have_title("Check your answers - Add support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("Change support user - Register of training providers - GOV.UK")
+
+    expect(page).to have_heading("h1", "Support user - #{user_to_edit.name}Check your answers")
   end
 
   def and_i_can_see_the_page_title_for_view_support_user
