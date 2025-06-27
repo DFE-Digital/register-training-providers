@@ -9,6 +9,7 @@ RSpec.describe CheckYourAnswers::View, type: :component do
   let(:save_path) { "/save/path" }
   let(:cancel_path) { "/cancel/path" }
   let(:title) { "Check your answers" }
+  let(:method) { :post }
 
   subject(:component_instance) do
     described_class.new(
@@ -19,7 +20,8 @@ RSpec.describe CheckYourAnswers::View, type: :component do
       save_button_text: save_button_text,
       save_path: save_path,
       cancel_path: cancel_path,
-      title: title
+      title: title,
+      method: method
     )
   end
 
@@ -36,6 +38,20 @@ RSpec.describe CheckYourAnswers::View, type: :component do
 
     it "renders cancel link" do
       expect(rendered_component).to have_link("Cancel", href: cancel_path)
+    end
+
+    it "has correct form method" do
+      expect(rendered_component).to have_css('form[method="post"]')
+      expect(rendered_component).not_to have_css('input[name="_method"][value="patch"]', visible: false)
+    end
+
+    context "when method is patch" do
+      let(:method) { :patch }
+
+      it "has correct form method" do
+        expect(rendered_component).to have_css('form[method="post"]')
+        expect(rendered_component).to have_css('input[name="_method"][value="patch"]', visible: false)
+      end
     end
 
     context "when rows are empty" do

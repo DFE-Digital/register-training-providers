@@ -2,11 +2,11 @@
   <%= govuk_back_link(text: "Back", href: back_path) %>
 <% end %>
 
-<% page_data(title: title, subtitle: subtitle, caption: caption) %>
+<% page_data(title:, subtitle:, caption:, header:) %>
 
 <%= govuk_summary_list(rows: rows) %>
 
-<%= govuk_button_to(save_button_text, save_path) %>
+<%= govuk_button_to(save_button_text, save_path, method:) %>
 
 <p class="govuk-body">
   <%= govuk_link_to("Cancel", cancel_path) %>
