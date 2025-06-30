@@ -19,7 +19,7 @@ RUN apk add --update --no-cache tzdata && \
 RUN apk add --no-cache build-base yarn postgresql16-dev yaml-dev
 
 # Install gems defined in Gemfile
-COPY .ruby-version Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock ./
 
 # Install gems and remove gem cache
 RUN bundler -v && \
