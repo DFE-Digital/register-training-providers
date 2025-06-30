@@ -5,9 +5,33 @@ on:
   push:
     branches: [main]
 
+env:
+  TOOL_VERSIONS_FILE: .tool-versions
+
 jobs:
-  scan_ruby:
+  quality_checks:
+    name: ${{ matrix.check.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - name: "Security Scan"
+            type: "security"
+            commands: "bin/brakeman --no-pager"
+            needs_node: false
+
+          - name: "Ruby Linting"
+            type: "ruby_lint"
+            commands: |
+              bin/rubocop -f github
+              bin/erb_lint --lint-all
+            needs_node: true
+
+          - name: "JavaScript Linting"
+            type: "js_lint"
+            commands: "yarn prettier --check --ignore-unknown '**/*'"
+            needs_node: true
 
     steps:
       - name: Checkout code
@@ -16,80 +40,117 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
+      - name: Verify Ruby version matches .tool-versions
+        run: |
+          EXPECTED_RUBY=$(grep ruby ${{ env.TOOL_VERSIONS_FILE }} | cut -d' ' -f2)
+          ACTUAL_RUBY=$(ruby --version | cut -d' ' -f2)
+          echo "Expected Ruby version: $EXPECTED_RUBY"
+          echo "Actual Ruby version: $ACTUAL_RUBY"
+          if [[ "$ACTUAL_RUBY" == "$EXPECTED_RUBY"* ]]; then
+            echo "✅ Ruby version matches .tool-versions"
+          else
+            echo "❌ Ruby version does NOT match .tool-versions"
+            exit 1
+          fi
 
-  lint:
+      - name: Set up Node.js
+        if: matrix.check.needs_node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
+          cache: "yarn"
+
+      - name: Install Node.js dependencies
+        if: matrix.check.needs_node
+        run: yarn install --frozen-lockfile
+
+      - name: Run ${{ matrix.check.name }}
+        run: ${{ matrix.check.commands }}
+
+  # Test job with screenshot capture on failure
+  test:
+    name: Test Suite
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
+      CI: true
+
     steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential \
+            git \
+            libpq-dev \
+            libyaml-dev \
+            node-gyp \
+            pkg-config \
+            python-is-python3 \
+            google-chrome-stable
+
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
           bundler-cache: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
+          cache: "yarn"
+
+      - name: Verify Node.js version matches .tool-versions
+        run: |
+          EXPECTED_NODE=$(grep nodejs ${{ env.TOOL_VERSIONS_FILE }} | cut -d' ' -f2)
+          ACTUAL_NODE=$(node --version | sed 's/v//')
+          echo "Expected Node.js version: $EXPECTED_NODE"
+          echo "Actual Node.js version: $ACTUAL_NODE"
+          if [[ "$ACTUAL_NODE" == "$EXPECTED_NODE"* ]]; then
+            echo "✅ Node.js version matches .tool-versions"
+          else
+            echo "❌ Node.js version does NOT match .tool-versions"
+            exit 1
+          fi
 
       - name: Install Node.js dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
-      - name: Lint ruby code for consistent style
-        run: bin/rubocop -f github
-
-      - name: Lint erb ruby code for consistent style
-        run: bin/erb_lint --lint-all
-
-      - name: Run Prettier check
-        run: yarn prettier --check --ignore-unknown '**/*'
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 google-chrome-stable
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          CI: true
+      - name: Prepare database and assets
         run: |
           bin/rails db:prepare
-          RAILS_ENV=test bin/rails assets:precompile
-          bundle exec rspec
+          bin/rails assets:precompile
 
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
+      - name: Run test suite
+        run: bundle exec rspec
+
+      - name: Upload test failure screenshots
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
+          name: test-failure-screenshots
+          path: tmp/screenshots/
           if-no-files-found: ignore
+          retention-days: 7
