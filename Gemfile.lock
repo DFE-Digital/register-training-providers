@@ -458,7 +458,7 @@ GEM
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
     smart_properties (1.17.0)
-    solargraph (0.55.3)
+    solargraph (0.55.4)
       backport (~> 1.2)
       benchmark (~> 0.4)
       bundler (~> 2.0)
