@@ -62,6 +62,10 @@ private
     model_class.name.underscore
   end
 
+  def change_path
+    back_path
+  end
+
   def new_model_path(query_params = {})
     send("new_#{model_name}_path", query_params)
   end
