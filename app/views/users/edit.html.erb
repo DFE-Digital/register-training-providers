@@ -1,7 +1,7 @@
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: user_path(@user),
+        href: params[:goto] == "confirm" ? user_check_path(@user) : user_path(@user),
       ) %>
 <% end %>
 
