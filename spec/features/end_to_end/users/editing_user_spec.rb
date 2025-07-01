@@ -31,6 +31,10 @@ RSpec.feature "User management" do
     and_i_click_on("Continue")
 
     and_i_am_taken_to("/users/#{user_to_edit.id}/check")
+    and_i_click_on("Back")
+
+    and_i_am_taken_to("/users/#{user_to_edit.id}/edit?goto=confirm")
+    and_i_click_on("Continue")
 
     and_i_can_see_the_page_title_for_check_your_answers
     and_i_show_see_new_first_name
