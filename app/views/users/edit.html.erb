@@ -9,7 +9,7 @@
   <% page_data(title: "Change support user", subtitle: "personal details", header: false, error: @user.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  <%= form.govuk_fieldset legend: { text: "Personal Details" }, caption: { text: "Support user - #{@user.name}" } do %>
+  <%= form.govuk_fieldset legend: { text: "Personal details" }, caption: { text: "Support user - #{@user.name}" } do %>
     <%= render partial: "fields", locals: { form: form } %>
     <%= form.govuk_submit %>
   <% end %>
