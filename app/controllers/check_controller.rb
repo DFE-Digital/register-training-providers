@@ -62,21 +62,16 @@ private
     model_class.name.underscore
   end
 
-  def new_model_path
-    @new_model_path ||= url_for([:new, model_name.to_sym])
+  def new_model_path(query_params = {})
+    send("new_#{model_name}_path", query_params)
   end
 
-  def edit_model_path
-    @edit_model_path ||= Rails.application.routes.url_helpers.url_for(
-      controller: model_name.pluralize,
-      action: "edit",
-      id: model,
-      only_path: true
-    )
+  def edit_model_path(query_params = {})
+    send("edit_#{model_name}_path", model, query_params)
   end
 
   def back_path
-    model_id.present? ? edit_model_path : new_model_path
+    model_id.present? ? edit_model_path(goto: "confirm") : new_model_path(goto: "confirm")
   end
 
   def success_path

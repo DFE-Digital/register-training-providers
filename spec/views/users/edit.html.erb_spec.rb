@@ -1,11 +1,13 @@
 require "rails_helper"
 
-RSpec.describe "users/new.html.erb", type: :view do
-  let(:user) { User.new }
+RSpec.describe "users/edit.html.erb", type: :view do
+  let(:user) { create(:user) }
+  let(:goto) { nil }
 
   before do
     assign(:user, user)
     allow(view).to receive(:page_data)
+    controller.params.merge!(goto: goto).compact!
 
     render
   end
@@ -14,7 +16,7 @@ RSpec.describe "users/new.html.erb", type: :view do
     expect(view).to have_received(:page_data).with({ error: false,
                                                      header: false,
                                                      subtitle: "personal details",
-                                                     title: "Add support user" })
+                                                     title: "Change support user" })
   end
 
   it "renders the continue button" do
@@ -22,7 +24,7 @@ RSpec.describe "users/new.html.erb", type: :view do
   end
 
   it "renders heading" do
-    caption = "Add support user"
+    caption = "Support user - #{user.name}"
     heading = "Personal details"
     expect(rendered).to have_heading("h1", "#{caption}#{heading}")
   end
@@ -35,15 +37,27 @@ RSpec.describe "users/new.html.erb", type: :view do
   end
 
   it "renders the cancel link" do
-    expect(rendered).to have_link("Cancel", href: users_path)
+    expect(rendered).to have_link("Cancel", href: user_path(user))
   end
+
   it "renders the back link" do
-    expect(view.content_for(:breadcrumbs)).to have_back_link(users_path)
+    expect(view.content_for(:breadcrumbs)).to have_back_link(user_path(user))
+  end
+
+  context "when goto is confirm" do
+    let(:goto) { "confirm" }
+
+    it "renders the back link" do
+      expect(view.content_for(:breadcrumbs)).to have_back_link(user_check_path(user))
+    end
   end
 
   context "with validation errors" do
     let(:user) do
-      user = User.new
+      user = create(:user)
+      user.first_name = ""
+      user.last_name = ""
+      user.email = ""
       user.valid?
       user
     end
@@ -52,7 +66,7 @@ RSpec.describe "users/new.html.erb", type: :view do
       expect(view).to have_received(:page_data).with({ error: true,
                                                        header: false,
                                                        subtitle: "personal details",
-                                                       title: "Add support user" })
+                                                       title: "Change support user" })
     end
 
     it "renders the error summary" do
