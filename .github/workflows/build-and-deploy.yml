@@ -189,6 +189,24 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  merge-dependabot:
+    name: Merge dependabot
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'dependencies') }}
+    needs: [quality_checks, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Merge minor dependency updates
+        uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: minor
+          exclude: "govuk-components,govuk_design_system_formbuilder,govuk-frontend,@ministryofjustice/frontend,dfe-analytics"
+          merge-method: merge
+
+
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}
