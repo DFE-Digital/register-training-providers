@@ -9,6 +9,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require "rspec/rails"
 require "audited-rspec"
+require "capybara-screenshot/rspec"
+
 Rails.root.glob("spec/support/**/*.rb").each { |f| require f }
 
 # Add additional requires below this line. Rails is not loaded until this point!
