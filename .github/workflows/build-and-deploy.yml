@@ -191,6 +191,9 @@ jobs:
 
   merge-dependabot:
     name: Merge dependabot
+    permissions:
+      pull-requests: write
+      contents: write
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'dependencies') }}
     needs: [quality_checks, test]
     runs-on: ubuntu-latest
