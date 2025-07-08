@@ -31,15 +31,12 @@ Alternatives such as Docker-based development environments were considered but r
 ## Consequences
 
 - **Positive:**
-
   - Provides consistent environments across development and CI/CD.
   - Facilitates future team growth by standardizing tooling.
   - Aligns with planned automation and deployment practices.
 
 - **Negative:**
-
   - Introduces an additional dependency on asdf for version management.
 
 - **Neutral:**
-
   - Formalizes existing asdf usage and consolidates version configuration.
