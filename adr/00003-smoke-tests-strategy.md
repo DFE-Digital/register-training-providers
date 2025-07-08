@@ -37,17 +37,14 @@ Additional considerations include:
 ## Consequences
 
 - **Positive:**
-
   - Maintains simplicity and clarity in the testing strategy.
   - Allocates resources toward higher-value testing and monitoring activities.
   - Encourages reliance on proactive monitoring and alerting, improving operational readiness.
 
 - **Negative:**
-
   - Potential initial risk exists if certain integration issues are detectable only in early smoke testing stages; this risk is mitigated by comprehensive integration and feature tests.
 
 - **Neutral:**
-
   - Testing and deployment pipelines remain aligned with agile and continuous delivery practices.
 
 Prioritizing load testing as a future initiative ensures the application remains robust and scalable, making smoke tests increasingly unnecessary.
