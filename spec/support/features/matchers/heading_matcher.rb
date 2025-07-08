@@ -3,7 +3,7 @@ RSpec::Matchers.define :have_heading do |tag, text|
 
   match do |page_or_html|
     node = wrap_as_capybara_node(page_or_html)
-    has_correct_text = node.has_selector?(tag, text: text)
+    has_correct_text = node.has_selector?(tag, text:)
 
     # If it's an h1, also check that there's only one
     if tag.downcase == "h1"

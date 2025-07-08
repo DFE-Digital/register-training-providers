@@ -13,15 +13,15 @@ RSpec.describe CheckYourAnswers::View, type: :component do
 
   subject(:component_instance) do
     described_class.new(
-      rows: rows,
-      subtitle: subtitle,
-      caption: caption,
-      back_path: back_path,
-      save_button_text: save_button_text,
-      save_path: save_path,
-      cancel_path: cancel_path,
-      title: title,
-      method: method
+      rows:,
+      subtitle:,
+      caption:,
+      back_path:,
+      save_button_text:,
+      save_path:,
+      cancel_path:,
+      title:,
+      method:
     )
   end
 

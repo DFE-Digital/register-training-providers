@@ -10,7 +10,7 @@
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
   <%= form.govuk_fieldset legend: { text: "Personal details" }, caption: { text: "Support user - #{@user.name}" } do %>
-    <%= render partial: "fields", locals: { form: form } %>
+    <%= render partial: "fields", locals: { form: } %>
     <%= form.govuk_submit %>
   <% end %>
 <% end %>
