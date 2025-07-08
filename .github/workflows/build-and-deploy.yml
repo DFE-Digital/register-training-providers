@@ -207,7 +207,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           target: minor
           exclude: "govuk-components,govuk_design_system_formbuilder,govuk-frontend,@ministryofjustice/frontend,dfe-analytics"
-          merge-method: merge
+          merge-method: rebase
 
   deploy-review-app:
     name: Deployment To Review
