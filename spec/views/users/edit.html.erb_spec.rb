@@ -7,7 +7,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
   before do
     assign(:user, user)
     allow(view).to receive(:page_data)
-    controller.params.merge!(goto: goto).compact!
+    controller.params.merge!(goto:).compact!
 
     render
   end

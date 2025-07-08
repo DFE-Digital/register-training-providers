@@ -54,6 +54,12 @@ Style/NumericLiterals:
   Exclude:
     - db/schema.rb
 
+Style/HashSyntax:
+  EnforcedShorthandSyntax: consistent
+
+Style/SafeNavigationChainLength:
+  Max: 3
+
 Rails/CreateTableWithTimestamps:
   Exclude:
     - db/migrate/20250512104418_install_audited.rb

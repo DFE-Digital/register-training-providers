@@ -10,7 +10,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     let(:caption) { nil }
 
     subject(:result) do
-      helper.page_data(title: title, header: header, header_size: header_size, error: error, caption: caption)
+      helper.page_data(title:, header:, header_size:, error:, caption:)
     end
 
     context "when caption is provided" do
@@ -18,7 +18,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       let(:header_size) { "m" }
 
       subject(:result) do
-        helper.page_data(title: title, header: header, header_size: header_size, error: error, caption: caption)
+        helper.page_data(title:, header:, header_size:, error:, caption:)
       end
 
       it "includes the caption in a span with the correct class inside the page_header" do

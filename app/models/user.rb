@@ -48,10 +48,10 @@ class User < ApplicationRecord
     clear_temporary(record_class, purpose:) if reset
 
     record_type = record_class.name
-    record = temporary_records.find_by(record_type: record_type, purpose: purpose)
+    record = temporary_records.find_by(record_type:, purpose:)
 
     if record&.expired?
-      temporary_records.where(record_type: record_type, purpose: purpose).delete_all
+      temporary_records.where(record_type:, purpose:).delete_all
       return record_class.new
     end
 

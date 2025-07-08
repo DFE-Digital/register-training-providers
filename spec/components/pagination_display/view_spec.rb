@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PaginationDisplay::View, type: :component do
   before do
-    @result = render_inline(described_class.new(pagy: pagy))
+    @result = render_inline(described_class.new(pagy:))
   end
 
   context "when there are less than 26 items" do

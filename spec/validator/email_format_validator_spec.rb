@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe EmailFormatValidator do
-  let(:record) { double("Record", email: email, errors: errors) }
+  let(:record) { double("Record", email:, errors:) }
   let(:errors) { double("Errors") }
   let(:validator) { described_class.new(record) }
 
