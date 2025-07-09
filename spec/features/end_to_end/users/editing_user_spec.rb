@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "User management" do
-  scenario "deleting users" do
+  scenario "editing users" do
     given_i_am_an_authenticated_user
     and_i_have_a_user_to_edit
     and_i_am_on_the_user_support_listing_page
