@@ -30,6 +30,26 @@ en:
             email:
               blank: "Enter email address"
               taken: "Email address already in use"
+        provider:
+          attributes:
+            accreditation_status:
+              invalid_provider_type: "School cannot be accredited"
+              blank: "Select if the provider is accredited"
+            provider_type:
+              invalid_accreditation_status: "School cannot be accredited"
+              blank: "Select provider type"
+            operating_name:
+              blank: "Enter operating name"
+            ukprn:
+              blank: "Enter UK provider reference number (UKPRN)"
+              invalid: "Enter UK provider reference number (UKPRN)"
+            urn:
+              blank: "Enter unique reference number (URN)"
+              invalid: "Enter unique reference number (URN)"
+            code:
+              blank: "Enter provider code"
+              invalid: "Enter provider code"
+              taken: "Enter a unique provider code"
   activemodel:
     errors:
       validators:
