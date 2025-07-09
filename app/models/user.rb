@@ -2,13 +2,13 @@
 #
 # Table name: users
 #
-#  id                :integer          not null, primary key
+#  id                :bigint           not null, primary key
 #  dfe_sign_in_uid   :string
+#  discarded_at      :datetime
 #  email             :string           not null
 #  first_name        :string           not null
 #  last_name         :string           not null
 #  last_signed_in_at :datetime
-#  discarded_at      :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #
