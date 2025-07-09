@@ -76,7 +76,7 @@ group :development do
   gem "web-console"
 
   # Add a comment summarising the current schema to each Active Record
-  gem "annotate"
+  gem "annotaterb"
 
   # Generates entity-relationship diagram based on the Active Records.
   gem "rails-erd"

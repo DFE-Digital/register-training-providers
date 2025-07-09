@@ -39,7 +39,7 @@ Environment/NoDirectEnvAccess:
   Exclude:
     - config/**/*
     - spec/**/*
-    - lib/env.rb
+    - lib/**/*
 
 Style/FrozenStringLiteralComment:
   Enabled: true

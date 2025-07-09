@@ -76,9 +76,9 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
     amazing_print (1.8.1)
-    annotate (2.6.5)
-      activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
+    annotaterb (4.16.0)
+      activerecord (>= 6.0.0)
+      activesupport (>= 6.0.0)
     ast (2.4.3)
     attr_required (1.0.2)
     audited (5.8.0)
@@ -576,7 +576,7 @@ PLATFORMS
 
 DEPENDENCIES
   amazing_print
-  annotate
+  annotaterb
   audited
   bootsnap
   brakeman
