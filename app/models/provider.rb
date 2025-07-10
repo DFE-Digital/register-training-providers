@@ -1,3 +1,31 @@
+# == Schema Information
+#
+# Table name: providers
+#
+#  id                   :bigint           not null, primary key
+#  accreditation_status :string           not null
+#  archived_at          :datetime
+#  code                 :string(3)        not null
+#  discarded_at         :datetime
+#  legal_name           :string
+#  operating_name       :string
+#  provider_type        :string           not null
+#  ukprn                :string(8)        not null
+#  urn                  :string(6)
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#
+# Indexes
+#
+#  index_providers_on_accreditation_status  (accreditation_status)
+#  index_providers_on_archived_at           (archived_at)
+#  index_providers_on_code                  (code) UNIQUE
+#  index_providers_on_discarded_at          (discarded_at)
+#  index_providers_on_legal_name            (legal_name)
+#  index_providers_on_provider_type         (provider_type)
+#  index_providers_on_ukprn                 (ukprn)
+#  index_providers_on_urn                   (urn)
+#
 class Provider < ApplicationRecord
   include Discard::Model
   include SaveAsTemporary
