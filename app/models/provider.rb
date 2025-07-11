@@ -35,12 +35,14 @@ class Provider < ApplicationRecord
   audited
 
   enum :provider_type, hei: "hei", scitt: "scitt", school: "school", other: "other"
-  enum :accreditation_status, accredited: "accredited", unaccredited: "unaccredited"
+  include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
 
   validates :provider_type, presence: true
-  validates :accreditation_status, presence: true
+
+  include AccreditationStatusValidator
+
   validates :operating_name, presence: true
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }
   validates :code, presence: true, uniqueness: { case_sensitive: false }, format: { with: /\A[A-Z0-9]{3}\z/i }
