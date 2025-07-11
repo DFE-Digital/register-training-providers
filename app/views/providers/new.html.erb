@@ -1,0 +1,25 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: providers_path,
+      ) %>
+<% end %>
+
+<%= form_for @form do |form| %>
+  <% page_data(title: "Is the provider accredited?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_fieldset legend: { text: "Is the provider accredited?" }, caption: { text: "Add provider" } do %>
+
+    <%= form.govuk_collection_radio_buttons(:accreditation_status, form.object.accreditation_status_options_for_radios,
+                                            :key,
+                                            :value, legend: nil) %>
+
+    <%= form.govuk_submit %>
+  <% end %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", providers_path) %>
+</p>
