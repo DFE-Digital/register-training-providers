@@ -1,9 +1,11 @@
 module Providers
   class IsTheProviderAccredited
     include ActiveModel::Model
+    include ActiveModel::Attributes
     include AccreditationStatusValidator
+    include SaveAsTemporary
 
-    attr_accessor :accreditation_status
+    attribute :accreditation_status, :string
 
     def self.model_name
       ActiveModel::Name.new(self, nil, "Provider")
@@ -21,5 +23,7 @@ module Providers
         )
       end
     end
+
+    alias_method :serializable_hash, :attributes
   end
 end
