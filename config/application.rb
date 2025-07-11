@@ -43,5 +43,10 @@ module RegisterTrainingProviders
     config.view_component.show_previews = !Rails.env.production?
 
     config.active_job.queue_adapter = :solid_queue
+
+    config.autoload_paths += %W[
+      #{config.root}/app/models/concerns/enums
+      #{config.root}/app/models/concerns/validators
+    ]
   end
 end
