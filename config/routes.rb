@@ -39,7 +39,7 @@ Rails.application.routes.draw do
 
   resource :account, only: [:show]
 
-  resources :providers, only: %i[index]
+  resources :providers
 
   resources :users do
     checkable(:users)
