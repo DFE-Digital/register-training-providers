@@ -42,17 +42,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_151114) do
     t.string "urn", limit: 6
     t.string "code", limit: 3, null: false
     t.string "provider_type", null: false
-    t.string "accreditation_status", default: "unaccredited", null: false
+    t.string "accreditation_status", null: false
     t.datetime "discarded_at"
     t.datetime "archived_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
+    t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
     t.index ["discarded_at"], name: "index_providers_on_discarded_at"
     t.index ["legal_name"], name: "index_providers_on_legal_name"
     t.index ["provider_type"], name: "index_providers_on_provider_type"
-    t.index ["ukprn"], name: "index_providers_on_ukprn", unique: true
+    t.index ["ukprn"], name: "index_providers_on_ukprn"
+    t.index ["urn"], name: "index_providers_on_urn"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
