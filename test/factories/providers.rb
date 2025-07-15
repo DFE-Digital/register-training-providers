@@ -1,14 +1,6 @@
 FactoryBot.define do
   factory :provider do
-    provider_type { %i[school scitt hei other].sample }
-
-    accreditation_status do
-      if %i[school].include?(provider_type)
-        :unaccredited
-      else
-        %i[accredited unaccredited].sample
-      end
-    end
+    accredited
 
     legal_name do
       case provider_type.to_s
@@ -38,6 +30,16 @@ FactoryBot.define do
 
     trait :discarded do
       discarded_at { Time.zone.now }
+    end
+
+    trait :unaccredited do
+      accreditation_status { :unaccredited }
+      provider_type { ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys.sample }
+    end
+
+    trait :accredited do
+      accreditation_status { :accredited }
+      provider_type { ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys.sample }
     end
   end
 end

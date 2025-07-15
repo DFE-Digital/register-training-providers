@@ -17,10 +17,24 @@ RSpec.describe Provider, type: :model do
   end
 
   describe "enums" do
-    it do
-      is_expected.to define_enum_for(:provider_type)
-        .with_values(hei: "hei", scitt: "scitt", school: "school", other: "other")
-        .backed_by_column_of_type(:string)
+    context "provider is accredited" do
+      let(:provider) { create(:provider, :accredited) }
+
+      it do
+        expect(subject).to define_enum_for(:provider_type)
+          .with_values(hei: "hei", scitt: "scitt", school: "school", other: "other")
+          .backed_by_column_of_type(:string)
+      end
+    end
+
+    context "provider is unaccredited" do
+      let(:provider) { create(:provider, :unaccredited) }
+
+      it do
+        expect(subject).to define_enum_for(:provider_type)
+          .with_values(hei: "hei", scitt: "scitt", school: "school", other: "other")
+          .backed_by_column_of_type(:string)
+      end
     end
     it do
       is_expected.to define_enum_for(:accreditation_status)
