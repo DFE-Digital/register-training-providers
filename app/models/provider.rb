@@ -34,12 +34,12 @@ class Provider < ApplicationRecord
 
   audited
 
-  enum :provider_type, hei: "hei", scitt: "scitt", school: "school", other: "other"
+  include ProviderTypeEnum
   include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
 
-  validates :provider_type, presence: true
+  validates :provider_type, presence: true, provider_type: true
 
   include AccreditationStatusValidator
 
