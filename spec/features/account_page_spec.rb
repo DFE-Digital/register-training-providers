@@ -7,8 +7,6 @@ RSpec.feature "landing page" do
     then_i_am_taken_to("/account")
   end
 
-  alias_method :when_i_click_on, :click_on
-
   def and_the_table_has_header_for_name_and_email
     expect(subject).to have_css("dt.govuk-summary-list__key", text: "First name")
     expect(subject).to have_css("dd.govuk-summary-list__value", text: current_user.first_name)

@@ -17,8 +17,6 @@ RSpec.feature "landing page" do
     page.click_on("Sign in")
   end
 
-  alias_method :when_i_click_on, :click_on
-
   def and_i_should_see_the_service_name
     expect(page).to have_heading("h1", "Register of training providers")
     expect(page).to have_heading("h2", "Before you start")
