@@ -69,3 +69,9 @@ en:
         accreditation_status:
           accredited: "Yes"
           unaccredited: "No"
+      provider_type:
+        provider_type:
+          hei: "Higher education institution (HEI)"
+          scitt: "School-centred initial teacher training (SCITT)"
+          school: "School"
+          other: "Other"
