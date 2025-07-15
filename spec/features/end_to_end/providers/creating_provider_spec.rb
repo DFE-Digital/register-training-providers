@@ -20,10 +20,12 @@ RSpec.feature "Add Provider" do
 
     def and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
       info = get_provider_information_for_the_forms(accreditation_status:)
+
       and_i_answer_the_accreditation_question(select_if_the_provider_is_accredited: info[:select_if_the_provider_is_accredited])
 
+      and_i_select_the_provider_type(select_provider_type: info[:select_provider_type])
+
       # NOTE: this should be in place once the user journey is implemented
-      # and_i_select_the_provider_type(select_provider_type: info[:select_provider_type])
       # and_i_fill_in_the_provider_details(provider_details: info[:provider_details])
     end
 
@@ -35,9 +37,34 @@ RSpec.feature "Add Provider" do
         unaccredited: "No",
       }[@provider_details_to_use.accreditation_status.to_sym]
 
+      select_provider_type = {
+        hei: "Higher education institution (HEI)",
+        scitt: "School-centred initial teacher training (SCITT)",
+        school: "School",
+        other: "Other",
+      }[@provider_details_to_use.provider_type.to_sym]
+
       {
         select_if_the_provider_is_accredited:,
+        select_provider_type:,
       }
+    end
+
+    def and_i_select_the_provider_type(select_provider_type:)
+      expect(TemporaryRecord.count).to eq(1)
+
+      and_i_am_taken_to("/providers/new/type")
+      and_i_can_see_the_title("Provider type - Add provider - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      and_i_can_see_the_error_summary("Select provider type")
+      and_i_can_see_the_title("Error: Provider type - Add provider - Register of training providers - GOV.UK")
+
+      and_i_choose(select_provider_type)
+
+      and_i_click_on("Continue")
     end
 
     def and_i_answer_the_accreditation_question(select_if_the_provider_is_accredited:)
