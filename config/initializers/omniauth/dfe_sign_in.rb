@@ -1,8 +1,12 @@
-if ENV["SIGN_IN_METHOD"] == "dfe-sign-in"
+issuer = ENV.fetch("DFE_SIGN_IN_ISSUER", nil)
+identifier = ENV.fetch("DFE_SIGN_IN_IDENTIFIER", nil)
+secret = ENV.fetch("DFE_SIGN_IN_SECRET", nil)
+
+if ENV["SIGN_IN_METHOD"] == "dfe-sign-in" && issuer.present? && identifier.present? && secret.present?
 
   OmniAuth.config.logger = Rails.logger
 
-  issuer_uri = URI.parse(ENV.fetch("DFE_SIGN_IN_ISSUER", nil))
+  issuer_uri = URI.parse(issuer)
   issuer_uri_with_port = "#{issuer_uri}:#{issuer_uri.port}" if issuer_uri.present?
 
   SETUP_PROC = lambda do |env|
@@ -14,8 +18,8 @@ if ENV["SIGN_IN_METHOD"] == "dfe-sign-in"
       port: issuer_uri.port,
       scheme: issuer_uri.scheme,
       host: issuer_uri.host,
-      identifier: ENV.fetch("DFE_SIGN_IN_IDENTIFIER", nil),
-      secret: ENV.fetch("DFE_SIGN_IN_SECRET", nil),
+      identifier: identifier,
+      secret: secret,
       redirect_uri: redirect_uri,
     }
   end
