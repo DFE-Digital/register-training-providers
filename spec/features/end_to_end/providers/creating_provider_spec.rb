@@ -25,8 +25,38 @@ RSpec.feature "Add Provider" do
 
       and_i_select_the_provider_type(select_provider_type: info[:select_provider_type])
 
-      # NOTE: this should be in place once the user journey is implemented
-      # and_i_fill_in_the_provider_details(provider_details: info[:provider_details])
+      and_i_fill_in_the_provider_details(provider_details: info[:provider_details], select_provider_type: info[:select_provider_type])
+    end
+
+    def and_i_fill_in_the_provider_details(provider_details:, select_provider_type:)
+      expect(TemporaryRecord.count).to eq(2)
+      and_i_am_taken_to("/providers/new/details")
+      and_i_can_see_the_title("Provider details - Add provider - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      error_messages = provider_details_error_messages(select_provider_type:)
+      and_i_can_see_the_error_summary(*error_messages)
+      and_i_can_see_the_title("Error: Provider details - Add provider - Register of training providers - GOV.UK")
+
+      and_i_fill_in_the_provider_details_form_correctly(provider_details:)
+
+      and_i_click_on("Continue")
+    end
+
+    def and_i_fill_in_the_provider_details_form_correctly(provider_details:)
+      provider_details.each do |label, value|
+        page.fill_in label, with: value
+      end
+    end
+
+    def provider_details_error_messages(select_provider_type:)
+      errors = ["Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code"]
+
+      errors += ["Enter unique reference number (URN)"] if ["School", "School-centred initial teacher training (SCITT)"].include?(select_provider_type)
+
+      errors
     end
 
     def get_provider_information_for_the_forms(accreditation_status:)
@@ -44,9 +74,18 @@ RSpec.feature "Add Provider" do
         other: "Other",
       }[@provider_details_to_use.provider_type.to_sym]
 
+      provider_details = [
+        ["Operating name", @provider_details_to_use.operating_name],
+        ["Legal name (optional)", @provider_details_to_use.legal_name],
+        ["UK provider reference number (UKPRN)", @provider_details_to_use.ukprn],
+        ["Unique reference number (URN)#{" (optional)" unless @provider_details_to_use.requires_urn?}", @provider_details_to_use.urn],
+        ["Provider code", @provider_details_to_use.code],
+      ]
+
       {
         select_if_the_provider_is_accredited:,
         select_provider_type:,
+        provider_details:
       }
     end
 
