@@ -1,0 +1,43 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: new_provider_type_path,
+      ) %>
+<% end %>
+
+<%= form_for @provider, url: new_provider_details_path, method: :post do |form| %>
+  <% page_data(title: "Provider details", subtitle: "Add provider", header: false, error: @provider.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.hidden_field :accreditation_status %>
+  <%= form.hidden_field :provider_type %>
+
+<%= form.govuk_fieldset legend: { text: "Provider details" }, caption: { text: "Add provider" } do %>
+  <%= form.govuk_text_field :operating_name, width: "full", label: { size: "s", text: " Operating name" },
+                                             hint: { text: "The name the provider uses in public facing activities" } %>
+  <%= form.govuk_text_field :legal_name, width: "full", label: { size: "s", text: "Legal name (optional)" },
+                                         hint: { text: "The name the provider uses in official activities" } %>
+  <%= form.govuk_text_field :ukprn, width: "one-quarter", label: { size: "s", text: "UK provider reference number (UKPRN)" },
+                                    hint: { text: "A unique 8 digit number allocated to providers by the UK register of learning providers" } %>
+
+  <p class="govuk-body">
+    Find UKPRNs on the <%= govuk_link_to("UK register of learning providers", "https://ukrlp.co.uk/", new_tab: true) %>
+  </p>
+
+  <%= form.govuk_text_field :urn, width: "one-quarter", label: { size: "s", text: "Unique reference number (URN)#{" (optional)" unless @provider.requires_urn?}" }, hint: { text: "A unique 5 or 6 digit number used by the UK government to identify educational establishments in the United Kingdom" } %>
+
+  <p class="govuk-body">
+    Find URNs on the <%= govuk_link_to("Get information about schools", "https://get-information-schools.service.gov.uk/", new_tab: true) %>
+  </p>
+
+  <%= form.govuk_text_field :code, width: "one-quarter", label: { size: "s", text: "Provider code" }, hint: { text: "A unique 3 digit alphanumeric code assigned by DfE to providers" } %>
+<% end %>
+
+<%= form.govuk_submit %>
+
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", providers_path) %>
+</p>
