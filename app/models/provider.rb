@@ -47,12 +47,16 @@ class Provider < ApplicationRecord
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }
   validates :code, presence: true, uniqueness: { case_sensitive: false }, format: { with: /\A[A-Z0-9]{3}\z/i }
   validates :urn, presence: true, format: { with: /\A[0-9]{5,6}\z/ },
-                  if: -> { [:school, :scitt].include?(provider_type&.to_sym) }
+                  if: -> { requires_urn? }
 
   validate :school_accreditation_status
 
   def code=(cde)
     self[:code] = cde.to_s.upcase
+  end
+
+  def requires_urn?
+    [:school, :scitt].include?(provider_type&.to_sym)
   end
 
 private
