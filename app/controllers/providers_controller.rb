@@ -12,7 +12,7 @@ class ProvidersController < ApplicationController
   end
 
   def create
-    @form = Providers::IsTheProviderAccredited.new(create_provider_params)
+    @form = Providers::IsTheProviderAccredited.new(accreditation_status_params)
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
@@ -51,7 +51,7 @@ class ProvidersController < ApplicationController
 
 private
 
-  def create_provider_params
+  def accreditation_status_params
     params.expect(provider: [:accreditation_status])
   end
 
