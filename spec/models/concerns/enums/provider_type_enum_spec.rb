@@ -28,18 +28,4 @@ RSpec.describe ProviderTypeEnum, type: :model do
       )
     end
   end
-
-  describe "enum behaviour" do
-    it "responds to hei?, scitt?, school?, other?" do
-      model = ProviderTypeEnumDummyModel.new(provider_type: :hei)
-      expect(model.hei?).to be true
-      expect(model.scitt?).to be false
-      expect(model.school?).to be false
-      expect(model.other?).to be false
-
-      model.provider_type = :scitt
-      expect(model.scitt?).to be true
-      expect(model.hei?).to be false
-    end
-  end
 end

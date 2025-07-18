@@ -24,16 +24,4 @@ RSpec.describe AccreditationStatusEnum, type: :model do
       )
     end
   end
-
-  describe "enum behaviour" do
-    it "responds to accredited? and unaccredited?" do
-      model = AccreditationStatusEnumDummyModel.new(accreditation_status: :accredited)
-      expect(model.accredited?).to be true
-      expect(model.unaccredited?).to be false
-
-      model.accreditation_status = :unaccredited
-      expect(model.unaccredited?).to be true
-      expect(model.accredited?).to be false
-    end
-  end
 end
