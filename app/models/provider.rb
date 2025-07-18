@@ -8,7 +8,7 @@
 #  code                 :string(3)        not null
 #  discarded_at         :datetime
 #  legal_name           :string
-#  operating_name       :string
+#  operating_name       :string           not null
 #  provider_type        :string           not null
 #  ukprn                :string(8)        not null
 #  urn                  :string(6)

@@ -1,7 +1,7 @@
 class CreateProviders < ActiveRecord::Migration[8.0]
   def change
     create_table :providers do |t|
-      t.string :operating_name
+      t.string :operating_name, null: false
       t.string :legal_name
       t.string :ukprn, limit: 8, null: false
       t.string :urn, limit: 6
