@@ -1,0 +1,44 @@
+class Providers::DetailsController < CheckController
+  def new
+    is_the_provider_accredited_form = current_user.load_temporary(Providers::IsTheProviderAccredited,
+                                                                  purpose: :check_your_answers)
+
+    if is_the_provider_accredited_form.nil? || is_the_provider_accredited_form.invalid?
+
+      # NOTE: Something is really wrong if we reach here, redirect to the new provider form
+      redirect_to new_provider_onboarding_path
+      return
+    end
+
+    provider_type = current_user.load_temporary(Providers::ProviderType,
+                                                purpose: :check_your_answers)
+
+    if provider_type.nil? || provider_type.invalid?
+
+      # NOTE: Something is really wrong if we reach here, redirect to the new provider form
+      redirect_to new_provider_type_path
+      return
+    end
+
+    @provider = Provider.new(provider_type.attributes)
+
+    render :new
+  end
+
+  def create
+    @provider = Provider.new(create_new_provider_params)
+
+    if @provider.valid?
+      @provider.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
+      redirect_to providers_path, flash: { success: "Provider added" }
+    else
+      render :new
+    end
+  end
+
+private
+
+  def create_new_provider_params
+    params.expect(provider: [:provider_type, :accreditation_status, :operating_name, :ukprn, :code, :urn, :legal_name])
+  end
+end

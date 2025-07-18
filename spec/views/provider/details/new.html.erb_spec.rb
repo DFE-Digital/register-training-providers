@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "providers/new_details.html.erb", type: :view do
+RSpec.describe "providers/details/new.html.erb", type: :view do
   let(:provider) { build(:provider, :school) }
 
   before do
@@ -41,7 +41,7 @@ RSpec.describe "providers/new_details.html.erb", type: :view do
     expect(rendered).to have_link("Cancel", href: providers_path)
   end
   it "renders the back link" do
-    expect(view.content_for(:breadcrumbs)).to have_back_link(new_type_providers_path)
+    expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_type_path)
   end
 
   context "with validation errors" do

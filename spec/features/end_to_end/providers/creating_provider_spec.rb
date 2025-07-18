@@ -110,6 +110,7 @@ RSpec.feature "Add Provider" do
       expect(TemporaryRecord.count).to eq(0)
 
       and_i_am_taken_to("/providers/new")
+
       and_i_can_see_the_title("Is the provider accredited? - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
 
