@@ -32,11 +32,12 @@ RSpec.describe ProviderTypeValidator, type: :model do
     end
 
     context "with invalid provider types" do
-      let(:provider_type) { (ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values - ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values).first }
-
-      it "is invalid when provider_type is #{(ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values - ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values).first}" do
-        expect(subject).not_to be_valid
-        expect(subject.errors[:provider_type]).to include("is not included in the list")
+      (ProviderTypeEnum::PROVIDER_TYPES.values - ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values).each do |invalid_type|
+        let(:provider_type) { invalid_type }
+        it "is invalid when provider_type is #{invalid_type}" do
+          expect(subject).not_to be_valid
+          expect(subject.errors[:provider_type]).to include("is not included in the list")
+        end
       end
     end
   end
@@ -53,11 +54,12 @@ RSpec.describe ProviderTypeValidator, type: :model do
       end
     end
     context "with invalid provider types" do
-      let(:provider_type) { (ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values - ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values).first }
-
-      it "is invalid when provider_type is #{(ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values - ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values).first}" do
-        expect(subject).not_to be_valid
-        expect(subject.errors[:provider_type]).to include("is not included in the list")
+      (ProviderTypeEnum::PROVIDER_TYPES.values - ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values).each do |invalid_type|
+        let(:provider_type) { invalid_type }
+        it "is invalid when provider_type is #{invalid_type}" do
+          expect(subject).not_to be_valid
+          expect(subject.errors[:provider_type]).to include("is not included in the list")
+        end
       end
     end
   end
