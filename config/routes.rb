@@ -39,12 +39,16 @@ Rails.application.routes.draw do
 
   resource :account, only: [:show]
 
-  resources :providers do
-    collection do
-      get "new/type", to: "providers#new_type", as: :new_type
-      post "new/type", to: "providers#create_type"
-    end
-  end
+  get "/providers/new", to: "providers/onboarding#new", as: :new_provider_onboarding
+  post "/providers/new", to: "providers/onboarding#create"
+
+  get "/providers/new/type", to: "providers/type#new", as: :new_provider_type
+  post "/providers/new/type", to: "providers/type#create"
+
+  get "/providers/new/details", to: "providers/details#new", as: :new_provider_details
+  post "/providers/new/details", to: "providers/details#create"
+
+  resources :providers, except: [:new, :create]
 
   resources :users do
     checkable(:users)

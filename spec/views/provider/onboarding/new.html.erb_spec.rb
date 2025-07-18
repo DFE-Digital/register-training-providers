@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "providers/new.html.erb", type: :view do
+RSpec.describe "providers/onboarding/new.html.erb", type: :view do
   let(:form) { Providers::IsTheProviderAccredited.new }
 
   before do
