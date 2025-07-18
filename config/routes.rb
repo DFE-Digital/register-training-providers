@@ -43,6 +43,9 @@ Rails.application.routes.draw do
     collection do
       get "new/type", to: "providers#new_type", as: :new_type
       post "new/type", to: "providers#create_type"
+
+      get "new/details", to: "providers#new_details", as: :new_details
+      post "new/details", to: "providers#create_details"
     end
   end
 
