@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<%= form_for @form do |form| %>
+<%= form_for @form, url: new_provider_onboarding_path do |form| %>
   <% page_data(title: "Is the provider accredited?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>

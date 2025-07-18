@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "providers/new_type.html.erb", type: :view do
+RSpec.describe "providers/type/new.html.erb", type: :view do
   let(:form) { Providers::ProviderType.new(accreditation_status: :accredited) }
 
   before do
@@ -53,7 +53,7 @@ RSpec.describe "providers/new_type.html.erb", type: :view do
     expect(rendered).to have_link("Cancel", href: providers_path)
   end
   it "renders the back link" do
-    expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_path)
+    expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_onboarding_path)
   end
 
   context "with validation errors" do
