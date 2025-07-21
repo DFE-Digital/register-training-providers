@@ -2,10 +2,12 @@ require "rails_helper"
 
 RSpec.describe "providers/type/new.html.erb", type: :view do
   let(:form) { Providers::ProviderType.new(accreditation_status: :accredited) }
+  let(:goto) { nil }
 
   before do
     assign(:form, form)
     allow(view).to receive(:page_data)
+    controller.params.merge!(goto:).compact!
 
     render
   end
@@ -54,6 +56,14 @@ RSpec.describe "providers/type/new.html.erb", type: :view do
   end
   it "renders the back link" do
     expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_onboarding_path)
+  end
+
+  context "when goto is confirm" do
+    let(:goto) { "confirm" }
+
+    it "renders the back link" do
+      expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_confirm_path)
+    end
   end
 
   context "with validation errors" do
