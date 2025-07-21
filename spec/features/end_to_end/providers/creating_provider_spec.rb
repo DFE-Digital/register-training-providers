@@ -12,10 +12,7 @@ RSpec.feature "Add Provider" do
     end
 
     def when_i_navigate_to_the_add_provider_page
-      # NOTE: this should be in place once the user journey is implemented
-      # and_i_click_on("Add provider")
-
-      visit "/providers/new"
+      click_on("Add provider")
     end
 
     def and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
@@ -137,6 +134,7 @@ RSpec.feature "Add Provider" do
     def then_i_should_be_redirected_to_the_provider_list_page
       and_i_am_taken_to("/providers")
       and_the_temporary_record_should_be_cleared
+      expect(Provider.count).to eq(1)
     end
 
     def and_the_temporary_record_should_be_cleared
@@ -148,7 +146,9 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_checked_my_answers
-      # NOTE: To be implemented
+      and_i_am_taken_to("/providers/check/new")
+      and_i_can_see_the_title("Check your answers - Add provider - Register of training providers - GOV.UK")
+      when_i_click_on("Save provider")
     end
 
     def then_i_see_the_success_message
