@@ -195,7 +195,7 @@ jobs:
       pull-requests: write
       contents: write
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'dependencies') }}
-    needs: [quality_checks, test]
+    needs: [quality_checks, test, build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
