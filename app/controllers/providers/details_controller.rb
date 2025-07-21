@@ -20,17 +20,21 @@ class Providers::DetailsController < CheckController
       return
     end
 
-    @provider = Provider.new(provider_type.attributes)
+    @provider = current_user.load_temporary(Provider, purpose: :check_your_answers)
+
+    @provider.assign_attributes(provider_type.attributes)
 
     render :new
   end
 
   def create
-    @provider = Provider.new(create_new_provider_params)
+    @provider = current_user.load_temporary(Provider, purpose: :check_your_answers)
+
+    @provider.assign_attributes(create_new_provider_params)
 
     if @provider.valid?
       @provider.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
-      redirect_to providers_path, flash: { success: "Provider added" }
+      redirect_to new_provider_confirm_path
     else
       render :new
     end
