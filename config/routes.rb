@@ -48,7 +48,9 @@ Rails.application.routes.draw do
   get "/providers/new/details", to: "providers/details#new", as: :new_provider_details
   post "/providers/new/details", to: "providers/details#create"
 
-  resources :providers, except: [:new, :create]
+  resources :providers, except: [:new, :create] do
+    checkable(:providers)
+  end
 
   resources :users do
     checkable(:users)
