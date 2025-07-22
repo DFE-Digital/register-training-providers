@@ -47,7 +47,7 @@ class Provider < ApplicationRecord
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }
   validates :code, presence: true, uniqueness: { case_sensitive: false }, format: { with: /\A[A-Z0-9]{3}\z/i }
   validates :urn, presence: true, format: { with: /\A[0-9]{5,6}\z/ },
-                  if: -> { requires_urn? }
+                  if: :requires_urn?
 
   validate :school_accreditation_status
 
