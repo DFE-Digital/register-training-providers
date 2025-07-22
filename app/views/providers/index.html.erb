@@ -2,7 +2,7 @@
 
 <%= govuk_button_link_to("Add provider", new_provider_onboarding_path) %>
 
-<% @govuk_summary_cards.each do |summary_card| %>
+<% provider_summary_cards(@records).each do |summary_card| %>
   <%= govuk_summary_card(title: summary_card[:title]) do |card|
         card.with_summary_list(rows: summary_card[:rows])
       end %>

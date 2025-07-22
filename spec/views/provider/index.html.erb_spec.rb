@@ -1,19 +1,16 @@
 require "rails_helper"
 
 RSpec.describe "providers/index.html.erb", type: :view do
-  include SummaryHelpers
-
-  let(:provider_1) { build_stubbed(:provider, operating_name: "Academy") }
-  let(:provider_2) { build_stubbed(:provider, operating_name: "Big School") }
+  let(:provider_1) { build_stubbed(:provider, operating_name: "Academy", legal_name: "Academy", urn: "50001") }
+  let(:provider_2) { build_stubbed(:provider, operating_name: "Big School", legal_name: "Big old school", urn: "50002") }
   let(:providers) { [provider_1, provider_2] }
-  let(:govuk_summary_cards) { provider_summary_cards(providers) }
   let(:count) { providers.size }
   let(:pagy) { Pagy.new(count: count, page: 1) }
 
   let(:pagination_component) { instance_double(PaginationDisplay::View) }
 
   before do
-    assign(:govuk_summary_cards, govuk_summary_cards)
+    assign(:records, providers)
     assign(:pagy, pagy)
     allow(view).to receive(:page_data)
 
@@ -37,11 +34,11 @@ RSpec.describe "providers/index.html.erb", type: :view do
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Operating name")
       expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.operating_name)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Legal name")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: optional_value(provider.legal_name)[:text])
+      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.legal_name)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "UK provider reference number (UKPRN)")
       expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.ukprn)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Unique reference number (URN)")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: optional_value(provider.urn)[:text])
+      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.urn)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Provider code")
       expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.code)
     end

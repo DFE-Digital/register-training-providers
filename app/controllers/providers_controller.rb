@@ -1,6 +1,5 @@
 class ProvidersController < ApplicationController
   include Pagy::Backend
-  include SummaryHelpers
 
   def index
     [Providers::IsTheProviderAccredited,
@@ -9,8 +8,6 @@ class ProvidersController < ApplicationController
       current_user.clear_temporary(form, purpose: :create_provider)
     end
 
-    @pagy, providers = pagy(Provider.kept.order_by_operating_name)
-
-    @govuk_summary_cards = provider_summary_cards(providers)
+    @pagy, @records = pagy(Provider.kept.order_by_operating_name)
   end
 end

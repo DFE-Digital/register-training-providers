@@ -1,5 +1,5 @@
 class CheckController < ApplicationController
-  helper_method :rows, :save_path, :back_path, :cancel_path, :method, :model
+  helper_method :rows, :save_path, :back_path, :cancel_path, :method, :model, :change_path
 
   def show
     redirect_to back_path if model.invalid?
@@ -100,13 +100,5 @@ private
 
   def model_check_path
     @model_check_path ||= url_for([model, :check])
-  end
-
-  def rows
-    @rows = generate_rows
-  end
-
-  def generate_rows
-    raise NotImplementedError
   end
 end
