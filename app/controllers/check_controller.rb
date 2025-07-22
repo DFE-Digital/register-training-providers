@@ -51,7 +51,11 @@ private
   end
 
   def model
-    @model ||= current_user.load_temporary(model_class, id: model_id, purpose: :check_your_answers)
+    @model ||= current_user.load_temporary(model_class, id: model_id, purpose: purpose)
+  end
+
+  def purpose
+    :check_your_answers
   end
 
   def model_class
