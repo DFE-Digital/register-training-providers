@@ -13,7 +13,7 @@ FactoryBot.define do
       end
     end
 
-    operating_name { [legal_name, Faker::Company.name].sample }
+    operating_name { [legal_name, Faker::Company.name].compact.sample }
 
     urn do
       if %i[school scitt].include?(provider_type)

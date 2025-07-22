@@ -1,3 +1,11 @@
-<% page_data(title: "Providers") %>
+<% page_data(title: "Providers (#{govuk_number(@pagy.count)})") %>
 
 <%= govuk_button_link_to("Add provider", new_provider_onboarding_path) %>
+
+<% @govuk_summary_cards.each do |summary_card| %>
+  <%= govuk_summary_card(title: summary_card[:title]) do |card|
+        card.with_summary_list(rows: summary_card[:rows])
+      end %>
+<% end %>
+
+<%= render PaginationDisplay::View.new(pagy: @pagy) %>
