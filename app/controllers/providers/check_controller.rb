@@ -8,10 +8,6 @@ private
   end
 
   def back_path
-    new_provider_details_path
-  end
-
-  def change_path
     new_provider_details_path(goto: "confirm")
   end
 
