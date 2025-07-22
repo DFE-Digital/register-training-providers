@@ -99,6 +99,8 @@ group :development, :review, :test do
 
   # A library for generating fake data such as names, addresses, and phone numbers.
   gem "faker"
+
+  gem "csv"
 end
 
 group :test do
