@@ -126,7 +126,7 @@ RSpec.describe Providers::ProviderType, type: :model do
           expect(option).to be_a(SelectOption)
           expect(option.key).to be_a(Symbol)
           expect(option.value).to eq(
-            I18n.t("forms.providers.provider_type.provider_type.#{option.key}")
+            I18n.t("providers.provider_types.#{option.key}")
           )
         end
       end
@@ -143,7 +143,7 @@ RSpec.describe Providers::ProviderType, type: :model do
           expect(option).to be_a(SelectOption)
           expect(option.key).to be_a(Symbol)
           expect(option.value).to eq(
-            I18n.t("forms.providers.provider_type.provider_type.#{option.key}")
+            I18n.t("providers.provider_types.#{option.key}")
           )
         end
       end

@@ -1,9 +1,10 @@
 class Providers::CheckController < CheckController
+  include SummaryHelpers
   def generate_rows
     [
 
       { key: { text: "Provider type" },
-        value: { text: provider_type_text },
+        value: { text: model.provider_type_label },
         actions: [{ href: new_provider_type_path(goto: "confirm"), visually_hidden_text: "provider type" }] },
       { key: { text: "Operating name" },
         value: { text: model.operating_name },
@@ -33,19 +34,5 @@ class Providers::CheckController < CheckController
 
   def purpose
     :create_provider
-  end
-
-private
-
-  def not_entered
-    { text: "Not entered", classes: "govuk-hint" }
-  end
-
-  def optional_value(value)
-    value.present? ? { text: value } : not_entered
-  end
-
-  def provider_type_text
-    I18n.t("forms.providers.provider_type.provider_type.#{model.provider_type}")
   end
 end
