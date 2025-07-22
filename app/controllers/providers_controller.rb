@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
     [Providers::IsTheProviderAccredited,
      Providers::ProviderType,
      Provider,].each do |form|
-      current_user.clear_temporary(form, purpose: :check_your_answers)
+      current_user.clear_temporary(form, purpose: :create_provider)
     end
   end
 end

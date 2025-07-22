@@ -1,7 +1,7 @@
 class Providers::DetailsController < CheckController
   def new
     is_the_provider_accredited_form = current_user.load_temporary(Providers::IsTheProviderAccredited,
-                                                                  purpose: :check_your_answers)
+                                                                  purpose: :create_provider)
 
     if is_the_provider_accredited_form.nil? || is_the_provider_accredited_form.invalid?
 
@@ -11,7 +11,7 @@ class Providers::DetailsController < CheckController
     end
 
     provider_type = current_user.load_temporary(Providers::ProviderType,
-                                                purpose: :check_your_answers)
+                                                purpose: :create_provider)
 
     if provider_type.nil? || provider_type.invalid?
 
@@ -20,7 +20,7 @@ class Providers::DetailsController < CheckController
       return
     end
 
-    @provider = current_user.load_temporary(Provider, purpose: :check_your_answers)
+    @provider = current_user.load_temporary(Provider, purpose: :create_provider)
 
     @provider.assign_attributes(provider_type.attributes)
 
@@ -28,12 +28,12 @@ class Providers::DetailsController < CheckController
   end
 
   def create
-    @provider = current_user.load_temporary(Provider, purpose: :check_your_answers)
+    @provider = current_user.load_temporary(Provider, purpose: :create_provider)
 
     @provider.assign_attributes(create_new_provider_params)
 
     if @provider.valid?
-      @provider.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
+      @provider.save_as_temporary!(created_by: current_user, purpose: :create_provider)
       redirect_to new_provider_confirm_path
     else
       render :new

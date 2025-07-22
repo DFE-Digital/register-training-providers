@@ -31,6 +31,10 @@ class Providers::CheckController < CheckController
     new_provider_details_path(goto: "confirm")
   end
 
+  def purpose
+    :create_provider
+  end
+
 private
 
   def not_entered

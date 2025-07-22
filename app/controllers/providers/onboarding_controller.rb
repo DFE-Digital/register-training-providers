@@ -1,14 +1,14 @@
 class Providers::OnboardingController < CheckController
   def new
     @form = current_user.load_temporary(Providers::IsTheProviderAccredited,
-                                        purpose: :check_your_answers)
+                                        purpose: :create_provider)
   end
 
   def create
     @form = Providers::IsTheProviderAccredited.new(accreditation_status_params)
 
     if @form.valid?
-      @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
+      @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
       redirect_to new_provider_type_path
     else
       render :new
