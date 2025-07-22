@@ -9,4 +9,10 @@ module ProviderTypeEnum
   included do
     enum :provider_type, PROVIDER_TYPES
   end
+
+  def provider_type_label
+    return "Not entered" if provider_type.blank?
+
+    I18n.t("providers.provider_types.#{provider_type}")
+  end
 end

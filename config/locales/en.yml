@@ -18,6 +18,12 @@ en:
       otp:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
+  providers:
+    provider_types:
+      hei: "Higher education institution (HEI)"
+      scitt: "School-centred initial teacher training (SCITT)"
+      school: "School"
+      other: "Other"
   activerecord:
     errors:
       models:
@@ -71,9 +77,3 @@ en:
         accreditation_status:
           accredited: "Yes"
           unaccredited: "No"
-      provider_type:
-        provider_type:
-          hei: "Higher education institution (HEI)"
-          scitt: "School-centred initial teacher training (SCITT)"
-          school: "School"
-          other: "Other"

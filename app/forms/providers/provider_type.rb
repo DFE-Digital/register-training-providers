@@ -23,7 +23,7 @@ module Providers
       provider_types.keys.map do |key|
         SelectOption.new(
           key: key,
-          value: I18n.t("forms.providers.provider_type.provider_type.#{key}"),
+          value: I18n.t("providers.provider_types.#{key}"),
         )
       end
     end
