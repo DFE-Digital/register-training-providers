@@ -174,23 +174,28 @@ RSpec.describe SummaryHelper, type: :helper do
         {
           key: { text: "Operating name" },
           value: { text: provider.operating_name },
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
         },
         {
           key: { text: "Legal name" },
           value: { text: "Not entered", classes: "govuk-hint" },
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
         },
         {
           key: { text: "UK provider reference number (UKPRN)" },
           value: { text: provider.ukprn },
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "UK provider reference number (UKPRN)" }],
         },
         {
           key: { text: "Unique reference number (URN)" },
           value: { text: "Not entered", classes: "govuk-hint" },
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
         },
         {
           key: { text: "Provider code" },
           value: { text: provider.code },
-        }
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+        },
       ])
     end
 
@@ -210,23 +215,28 @@ RSpec.describe SummaryHelper, type: :helper do
           {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
           },
           {
             key: { text: "Legal name" },
             value: { text: provider.legal_name },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
           },
           {
             key: { text: "UK provider reference number (UKPRN)" },
             value: { text: provider.ukprn },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "UK provider reference number (UKPRN)" }],
           },
           {
             key: { text: "Unique reference number (URN)" },
             value: { text: provider.urn },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
           },
           {
             key: { text: "Provider code" },
             value: { text: provider.code },
-          }
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+          },
         ])
       end
     end
