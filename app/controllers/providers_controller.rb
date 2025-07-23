@@ -10,4 +10,8 @@ class ProvidersController < ApplicationController
 
     @pagy, @records = pagy(Provider.kept.order_by_operating_name)
   end
+
+  def show
+    @provider = Provider.kept.find(params[:id])
+  end
 end
