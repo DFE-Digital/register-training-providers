@@ -1,0 +1,8 @@
+<%= content_for(:breadcrumbs) do %>
+    <%= govuk_back_link(text: "Back", href: providers_path) %>
+<% end %>
+
+<% page_data(title: @provider.operating_name, caption: "Provider", subtitle: "Provider") %>
+
+<h2 class="govuk-heading-m">Provider details</h2>
+<%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
