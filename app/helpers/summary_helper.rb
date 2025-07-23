@@ -10,7 +10,7 @@ module SummaryHelper
   def provider_summary_cards(providers)
     providers.map do |provider|
       {
-        title: provider.operating_name,
+        title: govuk_link_to(provider.operating_name, provider_path(provider)),
         rows: [
 
           { key: { text: "Provider type" },
@@ -67,6 +67,18 @@ module SummaryHelper
       { key: { text: "Provider code" },
         value: { text: provider.code },
         actions: [{ href: change_path, visually_hidden_text: "provider code" }] },
+    ]
+  end
+
+  def provider_details_rows(provider)
+    [
+      { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
+      { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
+      { key: { text: "Operating name" }, value: { text: provider.operating_name } },
+      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) },
+      { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
+      { key: { text: "Unique reference number (URN)" }, value: optional_value(provider.urn) },
+      { key: { text: "Provider code" }, value: { text: provider.code } },
     ]
   end
 end
