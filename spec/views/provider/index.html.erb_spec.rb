@@ -31,6 +31,8 @@ RSpec.describe "providers/index.html.erb", type: :view do
 
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Provider type")
       expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.provider_type_label)
+      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Accreditation type")
+      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.accreditation_status_label)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Operating name")
       expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.operating_name)
       expect(rendered).to have_selector(".govuk-summary-list__key", text: "Legal name")

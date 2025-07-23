@@ -11,4 +11,8 @@ module AccreditationStatusEnum
   included do
     enum :accreditation_status, ACCREDITATION_STATUSES
   end
+
+  def accreditation_status_label
+    I18n.t("providers.accreditation_statuses.#{accreditation_status}")
+  end
 end
