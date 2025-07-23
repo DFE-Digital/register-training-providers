@@ -16,7 +16,7 @@ FactoryBot.define do
     operating_name { [legal_name, Faker::Company.name].compact.sample }
 
     urn do
-      if %i[school scitt].include?(provider_type)
+      if %i[school scitt].include?(provider_type.to_sym)
         Faker::Number.unique.number(digits: rand(5..6)).to_s
       end
     end

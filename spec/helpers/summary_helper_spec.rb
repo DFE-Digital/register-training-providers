@@ -30,7 +30,7 @@ RSpec.describe SummaryHelper, type: :helper do
     let(:providers) { [provider] }
     it "returns the expected not entered hash" do
       expect(helper.provider_summary_cards(providers)).to match_array([{
-        title: provider.operating_name,
+        title: "<a class=\"govuk-link\" href=\"/providers/#{provider.id}\">#{provider.operating_name}</a>",
         rows: [
 
           { key: { text: "Provider type" },
@@ -119,7 +119,7 @@ RSpec.describe SummaryHelper, type: :helper do
     end
 
     context "when all values are present" do
-      let(:provider) { build_stubbed(:provider, legal_name: "Legal Name", urn: "12345") }
+      let(:provider) { build_stubbed(:provider, :scitt) }
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_rows(provider, change_provider_type_path, change_path)).to eq([
@@ -152,6 +152,80 @@ RSpec.describe SummaryHelper, type: :helper do
             key: { text: "Provider code" },
             value: { text: provider.code },
             actions: [{ href: change_path, visually_hidden_text: "provider code" }]
+          }
+        ])
+      end
+    end
+  end
+
+  describe "#provider_details_rows" do
+    let(:provider) { build_stubbed(:provider, legal_name: nil, urn: nil) }
+
+    it "returns the expected rows with 'Not entered' where applicable" do
+      expect(helper.provider_details_rows(provider)).to eq([
+        {
+          key: { text: "Provider type" },
+          value: { text: provider.provider_type_label },
+        },
+        {
+          key: { text: "Accreditation type" },
+          value: { text: provider.accreditation_status_label },
+        },
+        {
+          key: { text: "Operating name" },
+          value: { text: provider.operating_name },
+        },
+        {
+          key: { text: "Legal name" },
+          value: { text: "Not entered", classes: "govuk-hint" },
+        },
+        {
+          key: { text: "UK provider reference number (UKPRN)" },
+          value: { text: provider.ukprn },
+        },
+        {
+          key: { text: "Unique reference number (URN)" },
+          value: { text: "Not entered", classes: "govuk-hint" },
+        },
+        {
+          key: { text: "Provider code" },
+          value: { text: provider.code },
+        }
+      ])
+    end
+
+    context "when all values are present" do
+      let(:provider) { build_stubbed(:provider, :scitt) }
+
+      it "returns the expected rows without 'Not entered'" do
+        expect(helper.provider_details_rows(provider)).to eq([
+          {
+            key: { text: "Provider type" },
+            value: { text: provider.provider_type_label },
+          },
+          {
+            key: { text: "Accreditation type" },
+            value: { text: provider.accreditation_status_label },
+          },
+          {
+            key: { text: "Operating name" },
+            value: { text: provider.operating_name },
+          },
+          {
+            key: { text: "Legal name" },
+            value: { text: provider.legal_name },
+          },
+          {
+            key: { text: "UK provider reference number (UKPRN)" },
+            value: { text: provider.ukprn },
+          },
+          {
+            key: { text: "Unique reference number (URN)" },
+            value: { text: provider.urn },
+          },
+          {
+            key: { text: "Provider code" },
+            value: { text: provider.code },
           }
         ])
       end
