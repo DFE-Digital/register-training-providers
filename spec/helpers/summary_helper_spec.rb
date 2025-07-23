@@ -35,6 +35,8 @@ RSpec.describe SummaryHelper, type: :helper do
 
           { key: { text: "Provider type" },
             value: { text: provider.provider_type_label }, },
+          { key: { text: "Accreditation type" },
+            value: { text: provider.accreditation_status_label }, },
           { key: { text: "Operating name" },
             value: { text: provider.operating_name }, },
           { key: { text: "Legal name" },

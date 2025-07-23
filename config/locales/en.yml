@@ -19,6 +19,9 @@ en:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
   providers:
+    accreditation_statuses:
+      accredited: "Accredited"
+      unaccredited: "Not accredited"
     provider_types:
       hei: "Higher education institution (HEI)"
       scitt: "School-centred initial teacher training (SCITT)"
