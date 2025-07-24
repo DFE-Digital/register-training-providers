@@ -1,0 +1,21 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: params[:goto] == "confirm" ? provider_check_path(@provider) : provider_path(@provider),
+      ) %>
+<% end %>
+
+<%= form_for @provider  do  |form| %>
+  <% page_data(title: @provider.operating_name_was || @provider.operating_name, subtitle: "Provider details", header: false, error: @provider.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+  <%= form.govuk_fieldset legend: { text: "Provider details" }, caption: { text: @provider.operating_name_was || @provider.operating_name } do %>
+    <%= render partial: "providers/details/fields", locals: { form: } %>
+  <% end %>
+  <%= form.govuk_submit %>
+
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
