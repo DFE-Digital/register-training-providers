@@ -3,18 +3,19 @@ class ProvidersController < ApplicationController
 
   def index
     [
-      [Providers::IsTheProviderAccredited, :create_provider],
-      [Providers::ProviderType, :create_provider],
-      [Provider, :create_provider],
-      [Provider, :edit_provider],
-    ].each do |form, purpose|
-      current_user.clear_temporary(form, purpose:)
+      Providers::IsTheProviderAccredited,
+      Providers::ProviderType,
+      Provider,
+    ].each do |form|
+      current_user.clear_temporary(form, purpose: :create_provider)
     end
 
     @pagy, @records = pagy(Provider.kept.order_by_operating_name)
   end
 
   def show
+    current_user.clear_temporary(Provider, purpose: :edit_provider)
+
     @provider = Provider.kept.find(id)
   end
 

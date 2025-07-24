@@ -5,11 +5,11 @@ RSpec.feature "Change Provider Details" do
     when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
     and_i_fill_out_the_provider_form_with_updated_details
     and_i_checked_my_answers
-    then_i_should_be_redirected_to_the_provider_list_page
+    then_i_should_be_redirected_to_the_provider_details_page
     then_i_see_the_success_message
   end
 
-  def     when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
+  def when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
     visit "/providers"
     and_i_click_on(provider.operating_name)
     and_i_am_taken_to("/providers/#{provider.id}")
@@ -57,8 +57,9 @@ RSpec.feature "Change Provider Details" do
     expect(page).not_to have_error_summary
   end
 
-  def then_i_should_be_redirected_to_the_provider_list_page
-    and_i_am_taken_to("/providers")
+  def then_i_should_be_redirected_to_the_provider_details_page
+    and_i_am_taken_to("/providers/#{provider.id}")
+
     and_the_temporary_record_should_be_cleared
     expect(Provider.count).to eq(1)
     and_i_should_see_all_details_of_the_updated_provider
