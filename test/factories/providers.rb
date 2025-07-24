@@ -21,7 +21,7 @@ FactoryBot.define do
       end
     end
 
-    code { Faker::Alphanumeric.alphanumeric(number: 3).upcase }
+    code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
 
     trait :archived do
