@@ -6,6 +6,7 @@ class ProvidersController < ApplicationController
       [Providers::IsTheProviderAccredited, :create_provider],
       [Providers::ProviderType, :create_provider],
       [Provider, :create_provider],
+      [Provider, :edit_provider],
     ].each do |form, purpose|
       current_user.clear_temporary(form, purpose:)
     end
