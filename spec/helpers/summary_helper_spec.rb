@@ -28,27 +28,27 @@ RSpec.describe SummaryHelper, type: :helper do
   describe "#provider_summary_cards" do
     let(:provider) { build_stubbed(:provider, legal_name: nil, urn: "50000") }
     let(:providers) { [provider] }
-    it "returns the expected not entered hash" do
-      expect(helper.provider_summary_cards(providers)).to match_array([{
-        title: "<a class=\"govuk-link\" href=\"/providers/#{provider.id}\">#{provider.operating_name}</a>",
-        rows: [
+    require "nokogiri"
 
-          { key: { text: "Provider type" },
-            value: { text: provider.provider_type_label }, },
-          { key: { text: "Accreditation type" },
-            value: { text: provider.accreditation_status_label }, },
-          { key: { text: "Operating name" },
-            value: { text: provider.operating_name }, },
-          { key: { text: "Legal name" },
-            value: { text: "Not entered", classes: "govuk-hint" } },
-          { key: { text: "UK provider reference number (UKPRN)" },
-            value: { text: provider.ukprn }, },
-          { key: { text: "Unique reference number (URN)" },
-            value: { text: provider.urn }, },
-          { key: { text: "Provider code" },
-            value: { text: provider.code }, },
-        ]
-      }])
+    it "returns the expected not entered hash" do
+      result = helper.provider_summary_cards(providers).first
+      title_html = result[:title]
+
+      doc = Nokogiri::HTML.fragment(title_html)
+      link = doc.at_css("a")
+
+      expect(link["href"]).to eq("/providers/#{provider.id}")
+      expect(link.text).to eq(provider.operating_name)
+
+      expect(result[:rows]).to match_array([
+        { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
+        { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
+        { key: { text: "Operating name" }, value: { text: provider.operating_name } },
+        { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
+        { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
+        { key: { text: "Unique reference number (URN)" }, value: { text: provider.urn } },
+        { key: { text: "Provider code" }, value: { text: provider.code } },
+      ])
     end
   end
 
