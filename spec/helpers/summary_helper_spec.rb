@@ -80,16 +80,11 @@ RSpec.describe SummaryHelper, type: :helper do
   describe "#provider_rows" do
     let(:provider) { build_stubbed(:provider, legal_name: nil, urn: nil) }
 
-    let(:change_provider_type_path) { "/providers/type/edit" }
+    let(:change_provider_type_path) { nil }
     let(:change_path) { "/providers/details/edit" }
 
-    it "returns the expected rows with 'Not entered' where applicable" do
-      expect(helper.provider_rows(provider, change_provider_type_path, change_path)).to eq([
-        {
-          key: { text: "Provider type" },
-          value: { text: provider.provider_type_label },
-          actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }]
-        },
+    it "returns the expected rows and with 'Not entered' where applicable" do
+      expect(helper.provider_rows(provider, change_path, change_provider_type_path:)).to eq([
         {
           key: { text: "Operating name" },
           value: { text: provider.operating_name },
@@ -120,9 +115,10 @@ RSpec.describe SummaryHelper, type: :helper do
 
     context "when all values are present" do
       let(:provider) { build_stubbed(:provider, :scitt) }
+      let(:change_provider_type_path) { "/providers/type/edit" }
 
       it "returns the expected rows without 'Not entered'" do
-        expect(helper.provider_rows(provider, change_provider_type_path, change_path)).to eq([
+        expect(helper.provider_rows(provider, change_path, change_provider_type_path:)).to eq([
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },

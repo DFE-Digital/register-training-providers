@@ -46,12 +46,19 @@ module SummaryHelper
     ]
   end
 
-  def provider_rows(provider, change_provider_type_path, change_path)
-    [
+  def provider_rows(provider, change_path, change_provider_type_path: nil)
+    provider_type_row = if change_provider_type_path
+                          [{
+                            key: { text: "Provider type" },
+                            value: { text: provider.provider_type_label },
+                            actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }]
+                          }]
+                        else
+                          []
+                        end
 
-      { key: { text: "Provider type" },
-        value: { text: provider.provider_type_label },
-        actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }] },
+    [
+      *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },
         actions: [{ href: change_path, visually_hidden_text: "operating name" }] },
