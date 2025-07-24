@@ -74,6 +74,7 @@ en:
           update: "Support user updated"
         provider:
           add: "Provider added"
+          update: "Provider updated"
   forms:
     providers:
       is_the_provider_accredited:
