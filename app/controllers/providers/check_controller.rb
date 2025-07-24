@@ -22,4 +22,12 @@ private
   def purpose
     model_id.present? ? :edit_provider : :create_provider
   end
+
+  def success_path
+    if model_id.present?
+      provider_path(model)
+    else
+      providers_path
+    end
+  end
 end
