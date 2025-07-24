@@ -78,7 +78,7 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
       end
     end
 
-    context "for school provider" do
+    context "for scitt provider" do
       let(:provider) do
         provider = Provider.new(accreditation_status: :accredited,
                                 provider_type: :scitt)
