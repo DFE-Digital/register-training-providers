@@ -1,4 +1,4 @@
 <%= render CheckYourAnswers::View.new(
-      rows: provider_rows(model, change_provider_type_path, change_path), subtitle: "Add provider", caption: "Add provider", back_path: back_path,
+      rows: provider_rows(model, change_path, change_provider_type_path:), subtitle: "Add provider", caption: "Add provider", back_path: back_path,
       save_button_text: "Save provider", save_path: save_path, cancel_path: providers_path, method: method
     ) %>

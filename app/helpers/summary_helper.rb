@@ -46,12 +46,19 @@ module SummaryHelper
     ]
   end
 
-  def provider_rows(provider, change_provider_type_path, change_path)
-    [
+  def provider_rows(provider, change_path, change_provider_type_path: nil)
+    provider_type_row = if change_provider_type_path
+                          [{
+                            key: { text: "Provider type" },
+                            value: { text: provider.provider_type_label },
+                            actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }]
+                          }]
+                        else
+                          []
+                        end
 
-      { key: { text: "Provider type" },
-        value: { text: provider.provider_type_label },
-        actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }] },
+    [
+      *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },
         actions: [{ href: change_path, visually_hidden_text: "operating name" }] },
@@ -73,12 +80,24 @@ module SummaryHelper
   def provider_details_rows(provider)
     [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
-      { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
-      { key: { text: "Operating name" }, value: { text: provider.operating_name } },
-      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) },
-      { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
-      { key: { text: "Unique reference number (URN)" }, value: optional_value(provider.urn) },
-      { key: { text: "Provider code" }, value: { text: provider.code } },
+      { key: { text: "Accreditation type" },
+        value: { text: provider.accreditation_status_label } },
+      { key: { text: "Operating name" },
+        value: { text: provider.operating_name },
+        actions: [{ href: edit_provider_path(provider), visually_hidden_text: "operating name" }] },
+      { key: { text: "Legal name" },
+        value: optional_value(provider.legal_name),
+        actions: [{ href: edit_provider_path(provider), visually_hidden_text: "legal name" }] },
+      { key: { text: "UK provider reference number (UKPRN)" },
+        value: { text: provider.ukprn },
+        actions: [{ href: edit_provider_path(provider),
+                    visually_hidden_text: "UK provider reference number (UKPRN)" }] },
+      { key: { text: "Unique reference number (URN)" },
+        value: optional_value(provider.urn),
+        actions: [{ href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }] },
+      { key: { text: "Provider code" },
+        value: { text: provider.code },
+        actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }] },
     ]
   end
 end

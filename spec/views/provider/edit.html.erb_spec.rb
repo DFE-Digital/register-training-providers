@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "providers/details/new.html.erb", type: :view do
-  let(:provider) { build(:provider, :school) }
+RSpec.describe "providers/edit.html.erb", type: :view do
+  let(:provider) { create(:provider) }
   let(:goto) { nil }
 
   before do
@@ -15,8 +15,8 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
   it "calls page_data" do
     expect(view).to have_received(:page_data).with({ error: false,
                                                      header: false,
-                                                     title: "Provider details",
-                                                     subtitle: "Add provider" })
+                                                     subtitle: "Provider details",
+                                                     title: provider.operating_name })
   end
 
   it "renders the continue button" do
@@ -24,7 +24,7 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
   end
 
   it "renders heading" do
-    caption = "Add provider"
+    caption = provider.operating_name
     heading = "Provider details"
     expect(rendered).to have_heading("h1", "#{caption}#{heading}")
   end
@@ -40,25 +40,28 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
   end
 
   it "renders the cancel link" do
-    expect(rendered).to have_link("Cancel", href: providers_path)
+    expect(rendered).to have_link("Cancel", href: provider_path(provider))
   end
   it "renders the back link" do
-    expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_type_path)
+    expect(view.content_for(:breadcrumbs)).to have_back_link(provider_path(provider))
   end
 
   context "when goto is confirm" do
     let(:goto) { "confirm" }
 
     it "renders the back link" do
-      expect(view.content_for(:breadcrumbs)).to have_back_link(new_provider_confirm_path)
+      expect(view.content_for(:breadcrumbs)).to have_back_link(provider_check_path(provider))
     end
   end
 
   context "with validation errors" do
     context "for school provider" do
       let(:provider) do
-        provider = Provider.new(accreditation_status: :unaccredited,
-                                provider_type: :school)
+        provider = create(:provider, :unaccredited, :school)
+        provider.operating_name = nil
+        provider.ukprn = nil
+        provider.urn = nil
+        provider.code = nil
         provider.valid?
         provider
       end
@@ -66,13 +69,15 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
       it "calls page_data with error" do
         expect(view).to have_received(:page_data).with({ error: true,
                                                          header: false,
-                                                         title: "Provider details",
-                                                         subtitle: "Add provider" })
+                                                         subtitle: "Provider details",
+                                                         title: provider.operating_name_was })
       end
 
       it "renders the error summary" do
         expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code",
+          "Enter operating name",
+          "Enter UK provider reference number (UKPRN)",
+          "Enter provider code",
           "Enter unique reference number (URN)"
         )
       end
@@ -80,8 +85,11 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
 
     context "for scitt provider" do
       let(:provider) do
-        provider = Provider.new(accreditation_status: :accredited,
-                                provider_type: :scitt)
+        provider = create(:provider, :scitt)
+        provider.operating_name = nil
+        provider.ukprn = nil
+        provider.urn = nil
+        provider.code = nil
         provider.valid?
         provider
       end
@@ -89,13 +97,15 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
       it "calls page_data with error" do
         expect(view).to have_received(:page_data).with({ error: true,
                                                          header: false,
-                                                         title: "Provider details",
-                                                         subtitle: "Add provider" })
+                                                         subtitle: "Provider details",
+                                                         title: provider.operating_name_was })
       end
 
       it "renders the error summary" do
         expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code",
+          "Enter operating name",
+          "Enter UK provider reference number (UKPRN)",
+          "Enter provider code",
           "Enter unique reference number (URN)"
         )
       end
@@ -103,8 +113,13 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
 
     context "for non school or non scitt provider" do
       let(:provider) do
-        provider = Provider.new(accreditation_status: [:unaccredited, :accredited].sample,
-                                provider_type: (ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys - %i[scitt school]).sample)
+        provider = create(:provider,
+                          accreditation_status: [:unaccredited, :accredited].sample,
+                          provider_type: (ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys - %i[scitt school]).sample)
+        provider.operating_name = nil
+        provider.ukprn = nil
+        provider.urn = nil
+        provider.code = nil
         provider.valid?
         provider
       end
@@ -112,13 +127,15 @@ RSpec.describe "providers/details/new.html.erb", type: :view do
       it "calls page_data with error" do
         expect(view).to have_received(:page_data).with({ error: true,
                                                          header: false,
-                                                         title: "Provider details",
-                                                         subtitle: "Add provider" })
+                                                         subtitle: "Provider details",
+                                                         title: provider.operating_name_was })
       end
 
       it "renders the error summary" do
         expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code"
+          "Enter operating name",
+          "Enter UK provider reference number (UKPRN)",
+          "Enter provider code",
         )
       end
     end
