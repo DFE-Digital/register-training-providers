@@ -236,5 +236,14 @@ RSpec.describe SummaryHelper, type: :helper do
         ])
       end
     end
+
+    context "when the provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived) }
+
+      it "returns the expected rows without actions" do
+        rows = helper.provider_details_rows(provider)
+        expect(rows).to all(satisfy { |row| !row.key?(:actions) })
+      end
+    end
   end
 end
