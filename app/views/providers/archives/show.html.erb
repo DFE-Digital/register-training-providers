@@ -1,0 +1,14 @@
+<%= content_for(:breadcrumbs) do %>
+    <%= govuk_back_link(text: "Back", href: provider_path(@provider)) %>
+<% end %>
+
+<% page_data(title: "Confirm you want to archive #{@provider.operating_name}", caption: @provider.operating_name, subtitle: @provider.operating_name) %>
+
+<p class="govuk-body">After archiving the provider, you will not be able to make changes to it.</p>
+
+<p class="govuk-body">You can restore the provider at any time.</p>
+
+<%= govuk_button_to("Archive provider", provider_archive_path(@provider), method: :patch) %>
+<p class="govuk-body">
+    <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
