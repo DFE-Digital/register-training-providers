@@ -2,7 +2,18 @@
   <%= govuk_back_link(text: "Back", href: providers_path) %>
 <% end %>
 
-<% page_data(title: @provider.operating_name, caption: "Provider", subtitle: "Provider") %>
+<% provider_page_data(@provider) %>
 
 <h2 class="govuk-heading-m">Provider details</h2>
+
+<div class="govuk-button-group">
+    <% if @provider.archived? %>
+        <%= govuk_button_link_to("Restore provider", provider_restore_path(@provider)) %>
+        <%= govuk_link_to("Delete", provider_delete_path(@provider)) %>
+
+    <% else %>
+        <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
+    <% end %>
+</div>
+
 <%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
