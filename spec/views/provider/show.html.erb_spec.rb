@@ -19,6 +19,21 @@ RSpec.describe "providers/show.html.erb", type: :view do
     expect(rendered).to have_heading("h2", "Provider details")
   end
 
+  it "renders the archive button" do
+    expect(rendered).to have_link("Archive provider", href: provider_archive_path(provider))
+  end
+
+  context "when the provider is archived" do
+    let(:provider) { build_stubbed(:provider, :archived) }
+
+    it "renders the restore button" do
+      expect(rendered).to have_link("Restore", href: provider_restore_path(provider))
+    end
+    it "renders the delete link" do
+      expect(rendered).to have_link("Delete", href: provider_delete_path(provider))
+    end
+  end
+
   it "renders the provider" do
     expect(rendered).to have_selector(".govuk-summary-list__key", text: "Provider type")
     expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.provider_type_label)
