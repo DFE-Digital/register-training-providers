@@ -1,0 +1,13 @@
+<%= content_for(:breadcrumbs) do %>
+    <%= govuk_back_link(text: "Back", href: provider_path(@provider)) %>
+<% end %>
+
+<% page_data(title: "Confirm you want to restore #{@provider.operating_name}", caption: "Restore provider", subtitle: "Restore provider") %>
+
+<p class="govuk-body"> After restoring the provider, you will be able to make changes to it.</p>
+
+<%= govuk_button_to("Restore provider", provider_restore_path(@provider), method: :patch) %>
+
+<p class="govuk-body">
+    <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
