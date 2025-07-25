@@ -126,6 +126,37 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  describe "#archive!" do
+    it "sets archived_at" do
+      expect { provider.archive! }.to change { provider.archived_at }.from(nil).to(
+        be_within(1.second).of(Time.zone.now.utc)
+      )
+    end
+  end
+
+  describe "#archived?" do
+    let(:provider) { build(:provider, :archived) }
+
+    context "when archived_at is present" do
+      it "returns true" do
+        expect(provider.archived?).to be true
+      end
+    end
+    context "when archived_at is nil" do
+      let(:provider) { build(:provider) }
+      it "returns false" do
+        expect(provider.archived?).to be false
+      end
+    end
+  end
+
+  describe "#restore!" do
+    let(:provider) { build(:provider, :archived) }
+    it "sets archived_at to nil" do
+      expect { provider.restore! }.to change { provider.archived_at }.to(nil)
+    end
+  end
+
   describe ".order_by_operating_name" do
     let!(:p1) { create(:provider, operating_name: "Zed") }
     let!(:p2) { create(:provider, operating_name: "Alpha") }

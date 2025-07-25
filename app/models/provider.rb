@@ -59,6 +59,18 @@ class Provider < ApplicationRecord
     [:school, :scitt].include?(provider_type&.to_sym)
   end
 
+  def archive!
+    update!(archived_at: Time.zone.now.utc)
+  end
+
+  def archived?
+    archived_at.present?
+  end
+
+  def restore!
+    update!(archived_at: nil)
+  end
+
 private
 
   def school_accreditation_status
