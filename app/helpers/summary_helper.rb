@@ -78,10 +78,9 @@ module SummaryHelper
   end
 
   def provider_details_rows(provider)
-    [
+    rows = [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
-      { key: { text: "Accreditation type" },
-        value: { text: provider.accreditation_status_label } },
+      { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },
         actions: [{ href: edit_provider_path(provider), visually_hidden_text: "operating name" }] },
@@ -99,5 +98,11 @@ module SummaryHelper
         value: { text: provider.code },
         actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }] },
     ]
+
+    if provider.archived?
+      rows.each { |row| row.delete(:actions) }
+    end
+
+    rows
   end
 end
