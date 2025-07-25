@@ -6,18 +6,13 @@ RSpec.describe "providers/show.html.erb", type: :view do
 
   before do
     assign(:provider, provider)
-    allow(view).to receive(:page_data)
+    allow(view).to receive(:provider_page_data)
 
     render
   end
 
-  it "calls page_data" do
-    expect(view).to have_received(:page_data).with({
-      title: provider.operating_name,
-      subtitle: "Provider",
-      caption: "Provider",
-
-    })
+  it "calls provider_page_data" do
+    expect(view).to have_received(:provider_page_data).with(provider)
   end
 
   it "renders heading" do

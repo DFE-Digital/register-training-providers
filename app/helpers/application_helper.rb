@@ -1,4 +1,14 @@
 module ApplicationHelper
+  def provider_page_data(provider)
+    tag = []
+    tag = [" ", govuk_tag(text: "Archived", classes: "govuk-tag__heading")] if provider.archived?
+
+    tag = [" ", govuk_tag(text: "Soft deleted", colour: "red", classes: "govuk-tag__heading")] if provider.discarded?
+
+    page_data(title: provider.operating_name, caption: "Provider", subtitle: "Provider",
+              header: safe_join([provider.operating_name] + tag))
+  end
+
   def page_data(title:, subtitle: nil, header: nil, header_size: "l", error: false, caption: nil)
     page_title = if error
                    "Error: #{title}"

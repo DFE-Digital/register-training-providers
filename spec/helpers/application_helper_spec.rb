@@ -1,6 +1,44 @@
 require "rails_helper"
 
 RSpec.describe ApplicationHelper, type: :helper do
+  describe "#provider_page_data" do
+    let(:provider) { build_stubbed(:provider, operating_name: "Test College") }
+
+    it "sets the page title and header to the provider's operating name" do
+      result = helper.provider_page_data(provider)
+      expect(result[:page_title]).to eq("Test College")
+      expect(result[:page_header]).to include("Test College")
+    end
+
+    context "when provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived) }
+
+      it "includes the Archived tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Archived")
+      end
+    end
+
+    context "when provider is discarded" do
+      let(:provider) { build_stubbed(:provider, :discarded) }
+
+      it "includes the Soft deleted tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Soft deleted")
+      end
+    end
+
+    context "when both archived and discarded" do
+      let(:provider) { build_stubbed(:provider, :archived, :discarded) }
+
+      it "prefers Soft deleted over Archived" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Soft deleted")
+        expect(result[:page_header]).not_to include("Archived")
+      end
+    end
+  end
+
   describe "#page_data" do
     let(:title) { "Larry Page" }
     let(:caption) { nil }
