@@ -50,6 +50,9 @@ Rails.application.routes.draw do
 
   resources :providers, except: [:new, :create] do
     checkable(:providers)
+    resource :archive, only: [:show, :update], module: :providers
+    resource :restore, only: [:show, :update], module: :providers
+    resource :delete, only: [:show, :destroy], module: :providers
   end
 
   resources :users do
