@@ -9,7 +9,7 @@
 <div class="govuk-button-group">
     <% if @provider.archived? %>
         <%= govuk_button_link_to("Restore provider", provider_restore_path(@provider)) %>
-        <%= govuk_link_to("Delete", provider_delete_path(@provider)) %>
+        <%= govuk_link_to("Delete provider", provider_delete_path(@provider)) %>
 
     <% else %>
         <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
