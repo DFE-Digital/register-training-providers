@@ -18,8 +18,8 @@ RSpec.feature "Delete Provider" do
 
   def and_i_should_see_the_archive_status
     expect(page).to have_css(".govuk-tag__heading", text: "Archived")
-    expect(page).to have_link("Restore", href: provider_restore_path(provider))
-    expect(page).to have_link("Delete", href: provider_delete_path(provider))
+    expect(page).to have_link("Restore provider", href: provider_restore_path(provider))
+    expect(page).to have_link("Delete provider", href: provider_delete_path(provider))
   end
 
   def when_i_navigate_to_the_delete_provider_page_for_a_specific_provider
@@ -27,7 +27,7 @@ RSpec.feature "Delete Provider" do
     click_on provider.operating_name
     and_i_am_taken_to("/providers/#{provider.id}")
     and_i_should_see_the_archive_status
-    and_i_click_on "Delete"
+    and_i_click_on "Delete provider"
   end
 
   def and_i_confirm_archiving_the_provider
