@@ -51,13 +51,13 @@ en:
               blank: "Enter operating name"
             ukprn:
               blank: "Enter UK provider reference number (UKPRN)"
-              invalid: "Enter UK provider reference number (UKPRN)"
+              invalid: "Enter a valid UK provider reference number (UKPRN)"
             urn:
               blank: "Enter unique reference number (URN)"
-              invalid: "Enter unique reference number (URN)"
+              invalid: "Enter a valid unique reference number (URN)"
             code:
               blank: "Enter provider code"
-              invalid: "Enter provider code"
+              invalid: "Enter a valid provider code"
               taken: "Enter a unique provider code"
   activemodel:
     errors:
