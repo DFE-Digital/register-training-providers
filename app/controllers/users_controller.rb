@@ -4,23 +4,24 @@ class UsersController < ApplicationController
   def index
     current_user.clear_temporary(User, purpose: :check_your_answers)
 
-    @pagy, @records = pagy(User.kept.order_by_first_then_last_name)
+    @pagy, @records = pagy(policy_scope(scoped_user.order_by_first_then_last_name))
   end
 
   def show
-    @user = User.find(id)
+    @user = scoped_user.find(id)
+    authorize @user
   end
 
   def new
-    @user = current_user.load_temporary(User, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, purpose: :check_your_answers)
   end
 
   def edit
-    @user = current_user.load_temporary(User, id: id, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, id: id, purpose: :check_your_answers)
   end
 
   def create
-    @user = User.new(params.expect(user: [:first_name, :last_name, :email]))
+    @user = scoped_user.new(params.expect(user: [:first_name, :last_name, :email]))
     if @user.valid?
       @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to new_user_confirm_path
@@ -30,7 +31,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = current_user.load_temporary(User, id: id, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, id: id, purpose: :check_your_answers)
 
     @user.assign_attributes(params.expect(user: [:first_name, :last_name, :email]))
 
@@ -42,7 +43,13 @@ class UsersController < ApplicationController
     end
   end
 
+private
+
   def id
     params[:id].to_i
+  end
+
+  def scoped_user
+    @scoped_user || policy_scope(User)
   end
 end
