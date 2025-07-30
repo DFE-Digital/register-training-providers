@@ -135,9 +135,9 @@ RSpec.describe Provider, type: :model do
   end
 
   describe "#archived?" do
-    let(:provider) { build(:provider, :archived) }
-
     context "when archived_at is present" do
+      let(:provider) { build(:provider, :archived) }
+
       it "returns true" do
         expect(provider.archived?).to be true
       end
@@ -146,6 +146,22 @@ RSpec.describe Provider, type: :model do
       let(:provider) { build(:provider) }
       it "returns false" do
         expect(provider.archived?).to be false
+      end
+    end
+  end
+
+  describe "#not_archived?" do
+    context "when archived_at is present" do
+      let(:provider) { build(:provider, :archived) }
+
+      it "returns false" do
+        expect(provider.not_archived?).to be false
+      end
+    end
+    context "when archived_at is nil" do
+      let(:provider) { build(:provider) }
+      it "returns true" do
+        expect(provider.not_archived?).to be true
       end
     end
   end

@@ -67,6 +67,10 @@ class Provider < ApplicationRecord
     archived_at.present?
   end
 
+  def not_archived?
+    !archived?
+  end
+
   def restore!
     update!(archived_at: nil)
   end
