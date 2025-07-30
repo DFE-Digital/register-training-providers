@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Pundit::Authorization
+
   before_action :authenticate
 
   helper_method :current_user, :authenticated?

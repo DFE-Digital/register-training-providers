@@ -115,3 +115,5 @@ end
 group :development, :production do
   gem "amazing_print"
 end
+
+gem "pundit", "~> 2.5"
