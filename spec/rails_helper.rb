@@ -10,6 +10,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "rspec/rails"
 require "audited-rspec"
 require "capybara-screenshot/rspec"
+require "pundit/rspec"
 
 Rails.root.glob("spec/support/**/*.rb").each { |f| require f }
 
