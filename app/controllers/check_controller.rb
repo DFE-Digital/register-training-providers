@@ -20,6 +20,7 @@ class CheckController < ApplicationController
 private
 
   def save
+    authorize model
     if model.save
 
       redirect_to success_path, flash: flash_message

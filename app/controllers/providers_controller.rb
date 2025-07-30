@@ -10,21 +10,23 @@ class ProvidersController < ApplicationController
       current_user.clear_temporary(form, purpose: :create_provider)
     end
 
-    @pagy, @records = pagy(Provider.kept.order_by_operating_name)
+    @pagy, @records = pagy(scoped_provider.order_by_operating_name)
   end
 
   def show
-    current_user.clear_temporary(Provider, purpose: :edit_provider)
+    current_user.clear_temporary(scoped_provider, purpose: :edit_provider)
 
-    @provider = Provider.kept.find(id)
+    @provider = scoped_provider.find(id)
+    authorize @provider
   end
 
   def edit
-    @provider = current_user.load_temporary(Provider, id: id, purpose: :edit_provider)
+    @provider = current_user.load_temporary(scoped_provider, id: id, purpose: :edit_provider)
+    authorize @provider
   end
 
   def update
-    @provider = current_user.load_temporary(Provider, id: id, purpose: :edit_provider)
+    @provider = current_user.load_temporary(scoped_provider, id: id, purpose: :edit_provider)
 
     @provider.assign_attributes(params.expect(provider: [:provider_type,
                                                          :accreditation_status,
@@ -42,7 +44,13 @@ class ProvidersController < ApplicationController
     end
   end
 
+private
+
   def id
     params[:id].to_i
+  end
+
+  def scoped_provider
+    @scoped_provider ||= policy_scope(Provider)
   end
 end
