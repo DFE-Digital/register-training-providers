@@ -10,7 +10,7 @@ class ProvidersController < ApplicationController
       current_user.clear_temporary(form, purpose: :create_provider)
     end
 
-    @pagy, @records = pagy(scoped_provider.order_by_operating_name)
+    @pagy, @records = pagy(scoped_provider.order_by_operating_name, limit: 10)
   end
 
   def show
