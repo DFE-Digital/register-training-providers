@@ -21,8 +21,9 @@ RSpec.feature "Providers List" do
 
   def and_i_should_see_pagination_controls
     expect(page).to have_selector(".govuk-pagination")
-    expect(page).to have_selector(".govuk-pagination__item", count: 2)
+    expect(page).to have_selector(".govuk-pagination__item", count: 3)
     expect(page).to have_link("Next", href: providers_path(page: 2))
+    expect(page).to have_link("3", href: providers_path(page: 3))
     expect(page).to have_link("2", href: providers_path(page: 2))
     expect(page).to have_link("1", href: providers_path(page: 1))
   end
