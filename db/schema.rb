@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_151114) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_174733) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
 
   create_table "audits", force: :cascade do |t|
     t.integer "auditable_id"
@@ -40,7 +41,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_151114) do
     t.string "legal_name"
     t.string "ukprn", limit: 8, null: false
     t.string "urn", limit: 6
-    t.string "code", limit: 3, null: false
+    t.citext "code", null: false
     t.string "provider_type", null: false
     t.string "accreditation_status", null: false
     t.datetime "discarded_at"

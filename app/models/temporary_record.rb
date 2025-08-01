@@ -30,6 +30,10 @@ class TemporaryRecord < ApplicationRecord
 
   scope :expired, -> { where(expires_at: ..Time.current) }
 
+  validates :record_type, presence: true
+  validates :expires_at, presence: true
+  validates :purpose, uniqueness: { scope: [:created_by, :record_type] }
+
   def expired?
     expires_at <= Time.current
   end
