@@ -51,8 +51,10 @@ class Provider < ApplicationRecord
 
   validate :school_accreditation_status
 
-  def code=(cde)
-    self[:code] = cde.to_s.upcase
+  before_save :upcase_code
+
+  def upcase_code
+    self.code = code.upcase
   end
 
   def requires_urn?

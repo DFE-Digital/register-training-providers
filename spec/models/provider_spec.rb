@@ -90,11 +90,15 @@ RSpec.describe Provider, type: :model do
     end
   end
 
-  describe "#code=" do
+  describe "upcase_code callback" do
     let(:provider) { build(:provider, code: "abc") }
 
-    it "upcases the code" do
-      expect(subject.code).to eq("ABC")
+    it "upcases the code before saving" do
+      expect(provider.code).to eq("abc")
+
+      provider.save!
+
+      expect(provider.code).to eq("ABC")
     end
   end
 
