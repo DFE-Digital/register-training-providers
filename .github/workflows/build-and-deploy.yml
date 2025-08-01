@@ -177,6 +177,9 @@ jobs:
           bin/rails db:prepare
           bin/rails assets:precompile
 
+      - name: Run database consistency check
+        run: bin/db_consistency_check
+
       - name: Run test suite
         run: bundle exec rspec
 
