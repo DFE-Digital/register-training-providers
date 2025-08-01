@@ -91,6 +91,8 @@ group :development do
 
   gem "syntax_tree", require: false
   gem "syntax_tree-rbs", require: false
+
+  gem "database_consistency", require: false
 end
 
 group :development, :review, :test do
