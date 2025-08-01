@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_174733) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_180705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
 
   create_table "audits", force: :cascade do |t|
-    t.integer "auditable_id"
+    t.bigint "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
     t.string "associated_type"
@@ -182,13 +182,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_174733) do
   create_table "temporary_records", force: :cascade do |t|
     t.string "record_type", null: false
     t.jsonb "data", default: {}, null: false
-    t.integer "created_by", null: false
+    t.bigint "created_by", null: false
     t.datetime "expires_at", null: false
     t.string "purpose", default: "0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by", "record_type", "purpose"], name: "index_temp_records_on_creator_type_purpose", unique: true
-    t.index ["created_by"], name: "index_temporary_records_on_created_by"
     t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
   end
 
