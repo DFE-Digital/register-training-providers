@@ -12,11 +12,11 @@ RSpec.feature "User management" do
 
     and_i_click_on("Back")
     and_i_click_on(user_to_delete.name)
-    and_i_am_taken_to("/users/#{user_to_delete.id}")
+    and_i_am_taken_to("/users/#{user_to_delete.uuid}")
 
     and_i_can_see_the_page_title_for_view_support_user
     and_i_click_on("Delete user")
-    and_i_am_taken_to("/users/#{user_to_delete.id}/delete")
+    and_i_am_taken_to("/users/#{user_to_delete.uuid}/delete")
 
     and_i_can_see_the_page_title_for_confirm_you_want_to_delete_support_user
     and_i_can_see_the_warning_text

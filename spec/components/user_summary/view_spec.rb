@@ -6,9 +6,9 @@ RSpec.describe UserSummary::View, type: :component do
   describe "preview" do
     let(:expected_summary_rows) do
       [
-        { label: "First name", value: user.first_name, link_text: "Change first name", href: "/users/#{user.id}/edit" },
-        { label: "Last name", value: user.last_name, link_text: "Change last name", href: "/users/#{user.id}/edit" },
-        { label: "Email address", value: user.email, link_text: "Change email address", href: "/users/#{user.id}/edit" }
+        { label: "First name", value: user.first_name, link_text: "Change first name", href: "/users/#{user.uuid}/edit" },
+        { label: "Last name", value: user.last_name, link_text: "Change last name", href: "/users/#{user.uuid}/edit" },
+        { label: "Email address", value: user.email, link_text: "Change email address", href: "/users/#{user.uuid}/edit" }
       ]
     end
 

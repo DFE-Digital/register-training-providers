@@ -10,7 +10,7 @@ RSpec.feature "View Provider" do
   def when_i_navigate_to_the_view_provider_page_for_a_specific_provider
     visit "/providers"
     click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.id}")
+    and_i_am_taken_to("/providers/#{provider.uuid}")
   end
 
   def then_i_should_see_the_page_title
