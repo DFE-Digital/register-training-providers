@@ -31,6 +31,7 @@
 class Provider < ApplicationRecord
   include Discard::Model
   include SaveAsTemporary
+  include UuidIdentifiable
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
 

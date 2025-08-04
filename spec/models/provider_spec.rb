@@ -3,6 +3,9 @@ require "rails_helper"
 RSpec.describe Provider, type: :model do
   let(:provider) { create(:provider) }
   subject { provider }
+
+  it_behaves_like "uuid identifiable"
+
   it { is_expected.to be_audited }
   it { is_expected.to be_kept }
 
