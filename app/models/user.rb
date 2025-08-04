@@ -9,6 +9,7 @@
 #  first_name        :string           not null
 #  last_name         :string           not null
 #  last_signed_in_at :datetime
+#  uuid              :uuid             not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #
@@ -16,6 +17,7 @@
 #
 #  index_users_on_discarded_at  (discarded_at)
 #  index_users_on_email         (email) UNIQUE
+#  index_users_on_uuid          (uuid) UNIQUE
 #
 
 class User < ApplicationRecord
