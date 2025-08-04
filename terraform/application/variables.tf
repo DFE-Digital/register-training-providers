@@ -98,6 +98,10 @@ variable "postgres_enable_high_availability" {
   default = false
 }
 
+variable "postgres_extensions"{
+  default = ["PGCRYPTO","BTREE_GIST","CITEXT","PG_TRGM"]
+}
+
 variable "worker_memory_max" {
   type    = string
   default = "1Gi"
