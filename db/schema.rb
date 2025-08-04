@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_180705) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_04_092306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
+  enable_extension "pgcrypto"
 
   create_table "audits", force: :cascade do |t|
     t.bigint "auditable_id"
@@ -48,6 +49,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_180705) do
     t.datetime "archived_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
@@ -56,6 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_180705) do
     t.index ["provider_type"], name: "index_providers_on_provider_type"
     t.index ["ukprn"], name: "index_providers_on_ukprn"
     t.index ["urn"], name: "index_providers_on_urn"
+    t.index ["uuid"], name: "index_providers_on_uuid", unique: true
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -200,8 +203,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_180705) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

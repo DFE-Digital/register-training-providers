@@ -5,13 +5,14 @@
 #  id                   :bigint           not null, primary key
 #  accreditation_status :string           not null
 #  archived_at          :datetime
-#  code                 :string(3)        not null
+#  code                 :citext           not null
 #  discarded_at         :datetime
 #  legal_name           :string
 #  operating_name       :string           not null
 #  provider_type        :string           not null
 #  ukprn                :string(8)        not null
 #  urn                  :string(6)
+#  uuid                 :uuid             not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
@@ -25,6 +26,7 @@
 #  index_providers_on_provider_type         (provider_type)
 #  index_providers_on_ukprn                 (ukprn)
 #  index_providers_on_urn                   (urn)
+#  index_providers_on_uuid                  (uuid) UNIQUE
 #
 class Provider < ApplicationRecord
   include Discard::Model
