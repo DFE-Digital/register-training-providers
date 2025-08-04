@@ -2,6 +2,9 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   let(:user) { create(:user) }
+
+  it_behaves_like "uuid identifiable"
+
   it { is_expected.to be_audited }
   it { is_expected.to be_kept }
 
@@ -108,7 +111,7 @@ RSpec.describe User, type: :model do
         include ActiveModel::Model
         include ActiveModel::Attributes
 
-        attribute :id, :integer
+        attribute :uuid, :string
         attribute :foo, :string
         attribute :bar, :integer
 
@@ -116,7 +119,7 @@ RSpec.describe User, type: :model do
           other.is_a?(DummyModel) && foo == other.foo && bar == other.bar
         end
 
-        def self.find(id)
+        def self.find_by(uuid:)
         end
       end)
     end
@@ -187,36 +190,36 @@ RSpec.describe User, type: :model do
       end
 
       before do
-        allow(DummyModel).to receive(:find).with(42).and_return(
+        allow(DummyModel).to receive(:find_by).with(uuid: "00000000-0000-0000-0000-000000000042").and_return(
           DummyModel.new.tap do |model|
             model.foo = "existing_value"
             model.bar = 999
-            model.id = 42
+            model.uuid = "00000000-0000-0000-0000-000000000042"
           end
         )
       end
 
       it "finds the existing record and merges temporary data into it" do
-        result = user.load_temporary(DummyModel, purpose: :check_your_answers, id: 42)
+        result = user.load_temporary(DummyModel, purpose: :check_your_answers, uuid: "00000000-0000-0000-0000-000000000042")
 
-        expect(DummyModel).to have_received(:find).with(42)
+        expect(DummyModel).to have_received(:find_by).with(uuid: "00000000-0000-0000-0000-000000000042")
         expect(result).to be_a(DummyModel)
         expect(result.foo).to eq("temp_value")
         expect(result.bar).to eq(456)
-        expect(result.id).to eq(42)
+        expect(result.uuid).to eq("00000000-0000-0000-0000-000000000042")
       end
 
       context "when no temporary record exists for the purpose" do
         let!(:temp_record) { nil }
 
         it "returns the found record without any merging" do
-          result = user.load_temporary(DummyModel, purpose: :check_your_answers, id: 42)
+          result = user.load_temporary(DummyModel, purpose: :check_your_answers, uuid: "00000000-0000-0000-0000-000000000042")
 
-          expect(DummyModel).to have_received(:find).with(42)
+          expect(DummyModel).to have_received(:find_by).with(uuid: "00000000-0000-0000-0000-000000000042")
           expect(result).to be_a(DummyModel)
           expect(result.foo).to eq("existing_value")
           expect(result.bar).to eq(999)
-          expect(result.id).to eq(42)
+          expect(result.uuid).to eq("00000000-0000-0000-0000-000000000042")
         end
       end
     end

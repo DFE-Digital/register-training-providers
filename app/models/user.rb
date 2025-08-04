@@ -23,6 +23,7 @@
 class User < ApplicationRecord
   include Discard::Model
   include SaveAsTemporary
+  include UuidIdentifiable
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
 
@@ -46,7 +47,7 @@ class User < ApplicationRecord
     "#{first_name_to_use} #{last_name_to_use}"
   end
 
-  def load_temporary(record_class, purpose:, id: nil, reset: false)
+  def load_temporary(record_class, purpose:, uuid: nil, reset: false)
     clear_temporary(record_class, purpose:) if reset
 
     record_type = record_class.name
@@ -57,9 +58,9 @@ class User < ApplicationRecord
       return record_class.new
     end
 
-    if id.present?
-      existing_record = record_class.find(id)
-      existing_record.assign_attributes(record.rehydrate.attributes.except("id")) if record.present?
+    if uuid.present?
+      existing_record = record_class.find_by(uuid:)
+      existing_record.assign_attributes(record.rehydrate.attributes.except("id", "uuid")) if record.present?
       existing_record
     else
       record&.rehydrate || record_class.new
