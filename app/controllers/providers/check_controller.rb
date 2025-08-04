@@ -4,7 +4,7 @@ class Providers::CheckController < CheckController
 private
 
   def change_provider_type_path
-    if model_id.present?
+    if model_uuid.present?
       edit_provider_path(model, goto: "confirm")
     else
       new_provider_type_path(goto: "confirm")
@@ -12,7 +12,7 @@ private
   end
 
   def back_path
-    if model_id.present?
+    if model_uuid.present?
       edit_provider_path(model, goto: "confirm")
     else
       new_provider_details_path(goto: "confirm")
@@ -20,11 +20,11 @@ private
   end
 
   def purpose
-    model_id.present? ? :edit_provider : :create_provider
+    model_uuid.present? ? :edit_provider : :create_provider
   end
 
   def success_path
-    if model_id.present?
+    if model_uuid.present?
       provider_path(model)
     else
       providers_path

@@ -32,7 +32,7 @@ private
   end
 
   def method
-    model_id.present? ? :patch : :post
+    model_uuid.present? ? :patch : :post
   end
 
   def flash_message
@@ -44,15 +44,15 @@ private
   end
 
   def mode
-    model_id.present? ? "update" : "add"
+    model_uuid.present? ? "update" : "add"
   end
 
-  def model_id
-    @model_id ||= params["#{model_name}_id"]
+  def model_uuid
+    @model_uuid ||= params["#{model_name}_id"]
   end
 
   def model
-    @model ||= current_user.load_temporary(model_class, id: model_id, purpose: purpose)
+    @model ||= current_user.load_temporary(model_class, uuid: model_uuid, purpose: purpose)
   end
 
   def purpose
@@ -80,7 +80,7 @@ private
   end
 
   def back_path
-    model_id.present? ? edit_model_path(goto: "confirm") : new_model_path(goto: "confirm")
+    model_uuid.present? ? edit_model_path(goto: "confirm") : new_model_path(goto: "confirm")
   end
 
   def success_path
@@ -88,7 +88,7 @@ private
   end
 
   def save_path
-    @save_path ||= if model_id.present?
+    @save_path ||= if model_uuid.present?
                      model_check_path
                    else
                      new_model_check_path

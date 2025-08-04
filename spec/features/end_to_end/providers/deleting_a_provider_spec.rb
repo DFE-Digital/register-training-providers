@@ -25,13 +25,13 @@ RSpec.feature "Delete Provider" do
   def when_i_navigate_to_the_delete_provider_page_for_a_specific_provider
     visit "/providers"
     click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.id}")
+    and_i_am_taken_to("/providers/#{provider.uuid}")
     and_i_should_see_the_archive_status
     and_i_click_on "Delete provider"
   end
 
   def and_i_confirm_archiving_the_provider
-    and_i_am_taken_to("/providers/#{provider.id}/delete")
+    and_i_am_taken_to("/providers/#{provider.uuid}/delete")
     and_i_click_on "Delete provider"
   end
 

@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :provider do
+    uuid { SecureRandom.uuid }
     accredited
 
     legal_name do

@@ -12,11 +12,11 @@ RSpec.feature "User management" do
 
     and_i_click_on("Back")
     and_i_click_on(user_to_edit.name)
-    and_i_am_taken_to("/users/#{user_to_edit.id}")
+    and_i_am_taken_to("/users/#{user_to_edit.uuid}")
 
     and_i_can_see_the_page_title_for_view_support_user
     and_i_click_on("Change first name")
-    and_i_am_taken_to("/users/#{user_to_edit.id}/edit")
+    and_i_am_taken_to("/users/#{user_to_edit.uuid}/edit")
 
     and_i_can_see_the_page_title_for_personal_details
     and_i_do_not_see_error_summary
@@ -30,10 +30,10 @@ RSpec.feature "User management" do
 
     and_i_click_on("Continue")
 
-    and_i_am_taken_to("/users/#{user_to_edit.id}/check")
+    and_i_am_taken_to("/users/#{user_to_edit.uuid}/check")
     and_i_click_on("Back")
 
-    and_i_am_taken_to("/users/#{user_to_edit.id}/edit?goto=confirm")
+    and_i_am_taken_to("/users/#{user_to_edit.uuid}/edit?goto=confirm")
     and_i_click_on("Continue")
 
     and_i_can_see_the_page_title_for_check_your_answers

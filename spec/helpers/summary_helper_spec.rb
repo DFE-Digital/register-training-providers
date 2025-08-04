@@ -37,7 +37,7 @@ RSpec.describe SummaryHelper, type: :helper do
       doc = Nokogiri::HTML.fragment(title_html)
       link = doc.at_css("a")
 
-      expect(link["href"]).to eq("/providers/#{provider.id}")
+      expect(link["href"]).to eq("/providers/#{provider.uuid}")
       expect(link.text).to eq(provider.operating_name)
 
       expect(result[:rows]).to match_array([
@@ -54,7 +54,7 @@ RSpec.describe SummaryHelper, type: :helper do
 
   describe "#user_rows" do
     let(:user) { build_stubbed(:user) }
-    let(:change_path) { "/users/#{user.id}/edit" }
+    let(:change_path) { "/users/#{user.uuid}/edit" }
 
     it "returns the expected rows" do
       expect(helper.user_rows(user, change_path)).to eq([
