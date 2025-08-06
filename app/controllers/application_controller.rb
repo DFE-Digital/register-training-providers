@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
+  before_action :touch_session
+
   before_action :authenticate
 
   helper_method :current_user, :authenticated?
@@ -46,5 +48,10 @@ private
 
   def authenticate
     save_requested_path_and_redirect unless authenticated?
+  end
+
+  def touch_session
+    # This changes the session to force cookie renewal
+    session[:last_seen_at] = Time.current
   end
 end
