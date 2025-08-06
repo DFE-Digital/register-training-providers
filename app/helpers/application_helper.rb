@@ -36,4 +36,12 @@ module ApplicationHelper
       number_with_delimiter(number)
     end
   end
+
+  def page_data_from_front_matter(yaml)
+    parsed_yaml = YAML.safe_load(yaml, permitted_classes: [Date, Time], aliases: true)&.transform_keys(&:to_sym)
+
+    return unless parsed_yaml
+
+    page_data(**parsed_yaml)
+  end
 end
