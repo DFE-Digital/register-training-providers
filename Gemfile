@@ -35,6 +35,7 @@ gem "thruster", require: false
 # Govuk design system
 gem "govuk-components"
 gem "govuk_design_system_formbuilder"
+gem "govuk_markdown"
 
 # Shim to load environment variables from .env into ENV
 gem "dotenv-rails"
