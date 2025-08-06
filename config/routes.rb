@@ -12,6 +12,10 @@ Rails.application.routes.draw do
 
   root to: "landing_page#start"
 
+  get "/cookies", to: "pages#cookies"
+  get "/accessibility", to: "pages#accessibility"
+  get "/privacy", to: "pages#privacy"
+
   get :ping, controller: :heartbeat
   get :healthcheck, controller: :heartbeat
   get :sha, controller: :heartbeat
