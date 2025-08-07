@@ -1,7 +1,8 @@
 class ErrorsController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate
 
   def not_found
+    check_user_is_authenticated
     render "not_found", status: :not_found
   end
 
@@ -11,5 +12,11 @@ class ErrorsController < ApplicationController
 
   def internal_server_error
     render "internal_server_error", status: :internal_server_error
+  end
+
+private
+
+  def check_user_is_authenticated
+    nil if authenticated?
   end
 end
