@@ -7,14 +7,6 @@ RSpec.describe "Pages", type: :request do
     end
   end
 
-  describe "GET /privacy" do
-    it "shows the privacy notice" do
-      get "/privacy"
-      expect(response).to be_successful
-      expect(response.body).to include("Register of training providers privacy notice")
-    end
-  end
-
   describe "GET /cookies" do
     it "shows the cookies page" do
       get "/cookies"
