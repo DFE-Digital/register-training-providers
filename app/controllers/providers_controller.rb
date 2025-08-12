@@ -1,6 +1,8 @@
 class ProvidersController < ApplicationController
   include Pagy::Backend
 
+  helper_method :provider_filters
+
   def index
     [
       Providers::IsTheProviderAccredited,
@@ -10,7 +12,8 @@ class ProvidersController < ApplicationController
       current_user.clear_temporary(form, purpose: :create_provider)
     end
 
-    @pagy, @records = pagy(scoped_provider.order_by_operating_name, limit: 10)
+    provider_query = ProvidersQuery.call(filters: provider_filters)
+    @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
   end
 
   def show
@@ -51,5 +54,13 @@ private
 
   def scoped_provider
     @scoped_provider ||= policy_scope(Provider)
+  end
+
+  def provider_filters
+    @provider_filters ||= params.fetch(:filters, {}).permit(
+      provider_types: [],
+      accreditation_statuses: [],
+      show_archived: []
+    ).to_h.with_indifferent_access.transform_values! { |v| Array(v).compact_blank }
   end
 end

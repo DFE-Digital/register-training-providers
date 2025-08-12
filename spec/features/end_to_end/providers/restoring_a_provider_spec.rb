@@ -24,6 +24,10 @@ RSpec.feature "Restore Provider" do
 
   def when_i_navigate_to_the_restore_provider_page_for_a_specific_provider
     visit "/providers"
+    and_i_do_not_see_link provider.operating_name
+    and_i_check "Include archived providers"
+    click_on "Apply filters"
+
     click_on provider.operating_name
     and_i_am_taken_to("/providers/#{provider.uuid}")
     and_i_should_see_the_archive_status
@@ -43,4 +47,10 @@ RSpec.feature "Restore Provider" do
   def provider
     @provider ||= create(:provider, :archived)
   end
+
+  def and_i_do_not_see_link(operating_name)
+    expect(page).not_to have_link(operating_name)
+  end
+
+  alias_method :and_i_check, :check
 end
