@@ -1,0 +1,16 @@
+<% if values.present? %>
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-0"><%= title %></h3>
+  <ul class="app-filter-tags">
+    <% Array(values).each do |val| %>
+      <li>
+        <%= govuk_link_to(
+              remove_path.call(val),
+              class: "app-filter__tag"
+            ) do %>
+          <span class="govuk-visually-hidden">Remove this filter</span>
+          <%= labels[val] || val.humanize %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
