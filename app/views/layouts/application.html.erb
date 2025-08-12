@@ -69,12 +69,17 @@
             <%= yield(:page_alerts) %>
           </div>
         </div>
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-two-thirds">
-            <%= yield(:page_header) %>
-            <%= yield %>
+
+        <% if content_for?(:custom_layout) %>
+          <%= yield(:custom_layout) %>
+        <% else %>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+              <%= yield(:page_header) %>
+              <%= yield %>
+            </div>
           </div>
-        </div>
+        <% end %>
       </main>
     </div>
 

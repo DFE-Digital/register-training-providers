@@ -9,10 +9,14 @@ RSpec.describe "providers/index.html.erb", type: :view do
 
   let(:pagination_component) { instance_double(PaginationDisplay::View) }
 
+  let(:rendered_custom_layout) { view.content_for(:custom_layout) }
   before do
     assign(:records, providers)
     assign(:pagy, pagy)
     allow(view).to receive(:page_data)
+    def view.provider_filters
+      {}
+    end
 
     render
   end
@@ -22,32 +26,33 @@ RSpec.describe "providers/index.html.erb", type: :view do
   end
 
   it "renders the add provider button" do
-    expect(rendered).to have_link("Add provider", href: "/providers/new")
+    expect(rendered_custom_layout).to have_link("Add provider", href: "/providers/new")
   end
 
   it "renders each provider in the summary card" do
     providers.each do |provider|
-      expect(rendered).to have_selector("h2", text: provider.operating_name)
+      expect(rendered_custom_layout).to have_selector("h2", text: provider.operating_name)
 
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Provider type")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.provider_type_label)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Accreditation type")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.accreditation_status_label)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Operating name")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.operating_name)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Legal name")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.legal_name)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "UK provider reference number (UKPRN)")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.ukprn)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Unique reference number (URN)")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.urn)
-      expect(rendered).to have_selector(".govuk-summary-list__key", text: "Provider code")
-      expect(rendered).to have_selector(".govuk-summary-list__value", text: provider.code)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Provider type")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.provider_type_label)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Accreditation type")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.accreditation_status_label)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Operating name")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.operating_name)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Legal name")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.legal_name)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "UK provider reference number (UKPRN)")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.ukprn)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Unique reference number (URN)")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.urn)
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Provider code")
+      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.code)
     end
   end
 
   it "does not renders the pagination component" do
-    expect(rendered).not_to have_pagination
+    rendered_custom_layout = view.content_for(:custom_layout)
+    expect(rendered_custom_layout).not_to have_pagination
   end
 
   context "when pagy count is over 25" do
@@ -56,7 +61,8 @@ RSpec.describe "providers/index.html.erb", type: :view do
       expect(view).to have_received(:page_data).with(title: "Providers (1,000,000)")
     end
     it "does renders the pagination component" do
-      expect(rendered).to have_pagination
+      rendered_custom_layout = view.content_for(:custom_layout)
+      expect(rendered_custom_layout).to have_pagination
     end
   end
 end

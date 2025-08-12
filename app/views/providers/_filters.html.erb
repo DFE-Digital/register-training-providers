@@ -1,0 +1,69 @@
+<div class="app-filter">
+  <div class="app-filter__header">
+    <div class="app-filter__header-title">
+      <h2 class="govuk-heading-m">Filter</h2>
+    </div>
+    <div class="app-filter__header-action"></div>
+  </div>
+
+  <div class="app-filter__content">
+    <% if provider_filters.values.any?(&:present?) %>
+      <div class="app-filter__selected">
+        <div class="app-filter__selected-heading">
+          <div class="app-filter__heading-title">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Selected filters</h2>
+            <p class="govuk-body">
+              <%= govuk_link_to "Clear filters", providers_path, no_visited_state: true %>
+            </p>
+          </div>
+        </div>
+
+        <%= render "selected_filter_list",
+                   title: "Provider type",
+                   values: provider_filters[:provider_types],
+                   labels: provider_type_labels,
+                   remove_path: ->(type) {
+                     providers_path_filters_without(:provider_types, type)
+                   } %>
+
+        <%= render "selected_filter_list",
+                   title: "Accreditation type",
+                   values: provider_filters[:accreditation_statuses],
+                   labels: accreditation_labels,
+                   remove_path: ->(status) {
+                     providers_path_filters_without(:accreditation_statuses, status)
+                   } %>
+
+        <%= render "selected_filter_list",
+                   title: "Archived providers",
+                   values: provider_filters[:show_archived],
+                   labels: show_archived_labels,
+                   remove_path: ->(_flag) {
+                     providers_path_filters_without(:show_archived)
+                   } %>
+      </div>
+    <% end %>
+
+    <div class="app-filter__options">
+      <%= form_with url: providers_path, method: :get, scope: :filters, local: true, html: { novalidate: true } do |f| %>
+        <%= f.govuk_submit "Apply filters" %>
+
+        <%= f.govuk_check_boxes_fieldset :provider_types, small: true, legend: { text: "Provider type", size: "s" }, form_group: { classes: "app-filter__group" } do %>
+          <% provider_type_labels.each do |value, label| %>
+            <%= f.govuk_check_box :provider_types, value, label: { text: label }, checked: filter_checked?(:provider_types, value) %>
+          <% end %>
+        <% end %>
+
+        <%= f.govuk_check_boxes_fieldset :accreditation_statuses, small: true, legend: { text: "Accreditation type", size: "s" } do %>
+          <% accreditation_labels.each do |value, label| %>
+            <%= f.govuk_check_box :accreditation_statuses, value, label: { text: label }, checked: filter_checked?(:accreditation_statuses, value) %>
+          <% end %>
+        <% end %>
+
+        <%= f.govuk_check_boxes_fieldset :show_archived, small: true, legend: { text: "Archived providers", size: "s" } do %>
+          <%= f.govuk_check_box :show_archived, "show_archived_provider", label: { text: "Include archived providers" }, checked: filter_checked?(:show_archived, "show_archived_provider") %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
