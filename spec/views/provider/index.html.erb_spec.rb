@@ -10,6 +10,7 @@ RSpec.describe "providers/index.html.erb", type: :view do
   let(:pagination_component) { instance_double(PaginationDisplay::View) }
 
   let(:rendered_custom_layout) { view.content_for(:custom_layout) }
+
   before do
     assign(:records, providers)
     assign(:pagy, pagy)
@@ -51,7 +52,6 @@ RSpec.describe "providers/index.html.erb", type: :view do
   end
 
   it "does not renders the pagination component" do
-    rendered_custom_layout = view.content_for(:custom_layout)
     expect(rendered_custom_layout).not_to have_pagination
   end
 
@@ -61,7 +61,6 @@ RSpec.describe "providers/index.html.erb", type: :view do
       expect(view).to have_received(:page_data).with(title: "Providers (1,000,000)")
     end
     it "does renders the pagination component" do
-      rendered_custom_layout = view.content_for(:custom_layout)
       expect(rendered_custom_layout).to have_pagination
     end
   end
