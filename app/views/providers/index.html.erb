@@ -15,13 +15,19 @@
     </div>
     <div class="app-filter-layout__content">
 
-    <% provider_summary_cards(@records).each do |summary_card| %>
-      <%= govuk_summary_card(title: summary_card[:title]) do |card|
-            card.with_summary_list(rows: summary_card[:rows])
-          end %>
-    <% end %>
+    <% if @records.empty? %>
+      <p class="govuk-body">
+        There are no providers.
+      </p>
+    <% else %>
+      <% provider_summary_cards(@records).each do |summary_card| %>
+        <%= govuk_summary_card(title: summary_card[:title]) do |card|
+              card.with_summary_list(rows: summary_card[:rows])
+            end %>
+      <% end %>
 
-    <%= render PaginationDisplay::View.new(pagy: @pagy) %>
+      <%= render PaginationDisplay::View.new(pagy: @pagy) %>
+    <% end %>
   </div>
 
 <% end %>
