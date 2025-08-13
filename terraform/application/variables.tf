@@ -130,3 +130,4 @@ variable "job_name" {
   default     = "migrations"
 }
 
+variable "postgres_version" { default = 16 }
