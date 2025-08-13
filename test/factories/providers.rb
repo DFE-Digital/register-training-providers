@@ -42,5 +42,15 @@ FactoryBot.define do
       accreditation_status { :accredited }
       provider_type { ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys.sample }
     end
+
+    trait :school do
+      provider_type { :school }
+      accreditation_status { :unaccredited }
+    end
+
+    trait :scitt do
+      provider_type { :scitt }
+      accreditation_status { :accredited }
+    end
   end
 end
