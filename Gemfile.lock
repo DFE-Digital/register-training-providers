@@ -311,6 +311,9 @@ GEM
     pg (1.6.1-x86_64-darwin)
     pg (1.6.1-x86_64-linux)
     pg (1.6.1-x86_64-linux-musl)
+    pg_search (2.3.7)
+      activerecord (>= 6.1)
+      activesupport (>= 6.1)
     pp (0.6.2)
       prettyprint
     prettier_print (1.2.1)
@@ -613,6 +616,7 @@ DEPENDENCIES
   omniauth_openid_connect
   pagy (~> 9.4)
   pg (~> 1.6)
+  pg_search
   prettier_print
   propshaft
   puma (>= 5.0)
