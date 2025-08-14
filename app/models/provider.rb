@@ -10,6 +10,7 @@
 #  legal_name           :string
 #  operating_name       :string           not null
 #  provider_type        :string           not null
+#  searchable           :tsvector
 #  ukprn                :string(8)        not null
 #  urn                  :string(6)
 #  uuid                 :uuid             not null
@@ -24,12 +25,15 @@
 #  index_providers_on_discarded_at          (discarded_at)
 #  index_providers_on_legal_name            (legal_name)
 #  index_providers_on_provider_type         (provider_type)
+#  index_providers_on_searchable            (searchable) USING gin
 #  index_providers_on_ukprn                 (ukprn)
 #  index_providers_on_urn                   (urn)
 #  index_providers_on_uuid                  (uuid) UNIQUE
 #
 class Provider < ApplicationRecord
+  include PgSearch::Model
   include Discard::Model
+
   include SaveAsTemporary
   include UuidIdentifiable
 
@@ -55,6 +59,16 @@ class Provider < ApplicationRecord
   validate :school_accreditation_status
 
   before_save :upcase_code
+  before_save :update_searchable
+
+  pg_search_scope :search,
+                  against: %i[operating_name urn ukprn legal_name],
+                  using: {
+                    tsearch: {
+                      prefix: true,
+                      tsvector_column: "searchable",
+                    },
+                  }
 
   def upcase_code
     self.code = code.upcase
@@ -87,5 +101,39 @@ private
       errors.add(:provider_type, :invalid_accreditation_status)
       errors.add(:accreditation_status, :invalid_provider_type)
     end
+  end
+
+  def update_searchable
+    ts_vector_value = [
+      operating_name,
+      operating_name_normalised,
+      urn,
+      ukprn,
+      legal_name,
+      legal_name_normalised,
+    ].join(" ")
+
+    to_tsvector = Arel::Nodes::NamedFunction.new(
+      "TO_TSVECTOR", [
+        Arel::Nodes::Quoted.new("pg_catalog.simple"),
+        Arel::Nodes::Quoted.new(ts_vector_value),
+      ]
+    )
+
+    self.searchable =
+      ActiveRecord::Base
+        .connection
+        .execute(Arel::SelectManager.new.project(to_tsvector).to_sql)
+        .first
+        .values
+        .first
+  end
+
+  def operating_name_normalised
+    ReplaceAbbreviation.call(string: StripPunctuation.call(string: operating_name))
+  end
+
+  def legal_name_normalised
+    ReplaceAbbreviation.call(string: StripPunctuation.call(string: legal_name))
   end
 end

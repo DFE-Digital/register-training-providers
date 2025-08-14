@@ -188,4 +188,58 @@ RSpec.describe Provider, type: :model do
       expect(described_class.order_by_operating_name).to eq([p2, p1])
     end
   end
+
+  describe ".search" do
+    let!(:provider_alpha) { create(:provider, operating_name: "Alpha Teaching Trust", urn: "123456", ukprn: "78901234") }
+    let!(:provider_bravo) { create(:provider, operating_name: "Bravo Academy", urn: "654321", ukprn: "43210987") }
+    let!(:provider_obrave) { create(:provider, operating_name: "Brave Academy", legal_name: "O'Brave school", urn: "654322", ukprn: "53210987") }
+
+    context "when searching by operating_name" do
+      it "returns providers whose operating_name matches the term" do
+        expect(described_class.search("Alpha")).to contain_exactly(provider_alpha)
+      end
+    end
+
+    context "when searching by partial operating_name" do
+      it "returns providers matching the prefix" do
+        expect(described_class.search("Alp")).to contain_exactly(provider_alpha)
+      end
+    end
+
+    context "when searching by legal_name" do
+      it "returns providers matching the prefix" do
+        expect(described_class.search("OBrave")).to contain_exactly(provider_obrave)
+      end
+    end
+    context "when searching by partial legal_name" do
+      it "returns providers matching the prefix" do
+        expect(described_class.search("Obr")).to contain_exactly(provider_obrave)
+      end
+    end
+
+    context "when searching by urn" do
+      it "returns the provider with that URN" do
+        expect(described_class.search("123456")).to contain_exactly(provider_alpha)
+      end
+    end
+
+    context "when searching by ukprn" do
+      it "returns the provider with that UKPRN" do
+        expect(described_class.search("78901234")).to contain_exactly(provider_alpha)
+      end
+    end
+
+    context "when searching with no matches" do
+      it "returns an empty result" do
+        expect(described_class.search("Nonexistent")).to be_empty
+      end
+    end
+
+    context "when search term is nil or blank" do
+      it "returns all providers" do
+        expect(described_class.search(nil)).to match_array([])
+        expect(described_class.search("")).to match_array([])
+      end
+    end
+  end
 end
