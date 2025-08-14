@@ -8,11 +8,12 @@ class ProvidersQuery
   VALID_PROVIDER_TYPES = %w[hei scitt school other].freeze
   VALID_ACCREDITATION_STATUSES = %w[accredited unaccredited].freeze
 
-  attr_reader :relation, :filters
+  attr_reader :relation, :filters, :search_term
 
-  def initialize(relation = Provider.all, filters: {})
+  def initialize(relation = Provider.all, filters: {}, search_term: nil)
     @relation = relation
     @filters  = filters
+    @search_term = search_term
   end
 
   def call
@@ -20,7 +21,10 @@ class ProvidersQuery
 
     scope = filter_by_provider_type(relation)
     scope = filter_by_accreditation_status(scope)
-    filter_by_archived(scope)
+    scope = filter_by_archived(scope)
+
+    scope = scope.search(search_term) if search_term.present?
+    scope
   end
 
 private

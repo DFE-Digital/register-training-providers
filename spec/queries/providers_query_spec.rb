@@ -1,16 +1,21 @@
 require "rails_helper"
 
 RSpec.describe ProvidersQuery do
-  describe "#call" do
-    subject(:results) { described_class.call(filters:) }
+  subject(:results) { described_class.call(filters:, search_term:) }
+  let(:filters) { {} }
 
-    let!(:scitt)    { create(:provider, :scitt, accreditation_status: :accredited) }
-    let!(:school)   { create(:provider, :school, accreditation_status: :unaccredited) }
-    let!(:accredited_hei) { create(:provider, :hei, accreditation_status: :accredited) }
-    let!(:unaccredited_hei) { create(:provider, :hei, accreditation_status: :unaccredited) }
-    let!(:accredited_other) { create(:provider, :other, accreditation_status: :accredited) }
-    let!(:unaccredited_other) { create(:provider, :other, accreditation_status: :unaccredited) }
-    let!(:archived_accredited_hei) { create(:provider, :hei, accreditation_status: :accredited, archived_at: 1.week.ago) }
+  let(:search_term) { nil }
+
+  describe "#call (filters only)" do
+    let!(:scitt)                { create(:provider, :scitt, accreditation_status: :accredited) }
+    let!(:school)               { create(:provider, :school, accreditation_status: :unaccredited) }
+    let!(:accredited_hei)       { create(:provider, :hei, accreditation_status: :accredited) }
+    let!(:unaccredited_hei)     { create(:provider, :hei, accreditation_status: :unaccredited) }
+    let!(:accredited_other)     { create(:provider, :other, accreditation_status: :accredited) }
+    let!(:unaccredited_other)   { create(:provider, :other, accreditation_status: :unaccredited) }
+    let!(:archived_accredited_hei) do
+      create(:provider, :hei, accreditation_status: :accredited, archived_at: 1.week.ago)
+    end
 
     context "without filters" do
       let(:filters) { {} }
@@ -43,8 +48,9 @@ RSpec.describe ProvidersQuery do
         { types: ["hei", "other"], expected: -> { [accredited_hei, unaccredited_hei, accredited_other, unaccredited_other] } },
         { types: ["hei", "other", "scitt_or_school"], expected: -> { [scitt, school, accredited_hei, unaccredited_hei, accredited_other, unaccredited_other] } }
       ].each do |case_data|
-        context "when provider_types is #{case_data[:types]}" do
+        context "when provider_types is #{case_data[:types].inspect}" do
           let(:filters) { { provider_types: case_data[:types] } }
+
           it "returns only matching providers" do
             expect(results).to match_array(instance_exec(&case_data[:expected]))
           end
@@ -88,6 +94,66 @@ RSpec.describe ProvidersQuery do
       it "returns an empty result set" do
         expect(results).to be_empty
       end
+    end
+  end
+
+  describe "#call (search term)" do
+    let!(:matching_provider) { create(:provider, operating_name: "Bright Future Academy", urn: "123456", ukprn: "78901234") }
+    let!(:other_provider)    { create(:provider, operating_name: "Sunshine School", urn: "654321", ukprn: "43210987") }
+
+    context "when search term matches operating_name" do
+      it "returns matching providers" do
+        results = described_class.call(search_term: "Bright Future")
+        expect(results).to contain_exactly(matching_provider)
+      end
+    end
+
+    context "when search term matches part of operating_name" do
+      it "returns matching providers" do
+        results = described_class.call(search_term: "Bright")
+        expect(results).to contain_exactly(matching_provider)
+      end
+    end
+
+    context "when search term matches urn" do
+      it "returns matching providers" do
+        results = described_class.call(search_term: "123456")
+        expect(results).to contain_exactly(matching_provider)
+      end
+    end
+
+    context "when search term matches ukprn" do
+      it "returns matching providers" do
+        results = described_class.call(search_term: "78901234")
+        expect(results).to contain_exactly(matching_provider)
+      end
+    end
+
+    context "when search term does not match anything" do
+      it "returns an empty result" do
+        results = described_class.call(search_term: "Nonexistent")
+
+        expect(results).to be_empty
+      end
+    end
+
+    context "when search term is nil" do
+      it "returns all providers" do
+        results = described_class.call(search_term: nil)
+        expect(results).to match_array([matching_provider, other_provider])
+      end
+    end
+  end
+
+  context "with filters and a search term" do
+    let!(:scitt_accredited) { create(:provider, :scitt, accreditation_status: :accredited, operating_name: "Alpha Teaching Trust") }
+    let!(:school_unaccredited) { create(:provider, :school, accreditation_status: :unaccredited, operating_name: "Alpha Academy") }
+
+    let(:filters) { { provider_types: ["scitt_or_school"], accreditation_statuses: ["accredited"] } }
+    let(:search_term) { "Alpha" }
+
+    it "returns only providers matching both filters and search term" do
+      expect(results).to contain_exactly(scitt_accredited)
     end
   end
 end
