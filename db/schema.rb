@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_04_092306) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_14_151518) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -50,12 +50,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_092306) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
+    t.tsvector "searchable"
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
     t.index ["discarded_at"], name: "index_providers_on_discarded_at"
     t.index ["legal_name"], name: "index_providers_on_legal_name"
     t.index ["provider_type"], name: "index_providers_on_provider_type"
+    t.index ["searchable"], name: "index_providers_on_searchable", using: :gin
     t.index ["ukprn"], name: "index_providers_on_ukprn"
     t.index ["urn"], name: "index_providers_on_urn"
     t.index ["uuid"], name: "index_providers_on_uuid", unique: true
