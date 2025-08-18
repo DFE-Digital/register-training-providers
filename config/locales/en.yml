@@ -81,3 +81,12 @@ en:
         accreditation_status:
           accredited: "Yes"
           unaccredited: "No"
+  provider_types_labels:
+    hei: "Higher education institution (HEI)"
+    scitt_or_school: "School"
+    other: "Other"
+  accreditation_labels:
+    accredited: "Accredited"
+    unaccredited: "Not accredited"
+  show_archived_labels:
+    show_archived_provider: "Include archived providers"
