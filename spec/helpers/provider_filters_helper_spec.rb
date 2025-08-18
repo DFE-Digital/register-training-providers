@@ -1,30 +1,30 @@
 require "rails_helper"
 
 RSpec.describe ProviderFiltersHelper, type: :helper do
-  describe "#provider_type_labels" do
-    it "returns the correct labels" do
-      expect(helper.provider_type_labels).to eq({
+  describe "PROVIDER_TYPE_LABELS" do
+    it "contains the correct labels" do
+      expect(ProviderFiltersHelper::PROVIDER_TYPE_LABELS).to eq(
         "hei" => "Higher education institution (HEI)",
         "scitt_or_school" => "School",
         "other" => "Other"
-      })
+      )
     end
   end
 
-  describe "#accreditation_labels" do
-    it "returns the correct labels" do
-      expect(helper.accreditation_labels).to eq({
+  describe "ACCREDITATION_LABELS" do
+    it "contains the correct labels" do
+      expect(ProviderFiltersHelper::ACCREDITATION_LABELS).to eq(
         "accredited" => "Accredited",
         "unaccredited" => "Not accredited"
-      })
+      )
     end
   end
 
-  describe "#show_archived_labels" do
-    it "returns the correct label" do
-      expect(helper.show_archived_labels).to eq({
+  describe "SHOW_ARCHIVED_LABELS" do
+    it "contains the correct label" do
+      expect(ProviderFiltersHelper::SHOW_ARCHIVED_LABELS).to eq(
         "show_archived_provider" => "Include archived providers"
-      })
+      )
     end
   end
 
