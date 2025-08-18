@@ -21,7 +21,7 @@
         <%= render "selected_filter_list",
                    title: "Provider type",
                    values: provider_filters[:provider_types],
-                   labels: provider_type_labels,
+                   labels: ProviderFiltersHelper::PROVIDER_TYPE_LABELS,
                    remove_path: ->(type) {
                      providers_path_filters_without(:provider_types, type)
                    } %>
@@ -29,7 +29,7 @@
         <%= render "selected_filter_list",
                    title: "Accreditation type",
                    values: provider_filters[:accreditation_statuses],
-                   labels: accreditation_labels,
+                   labels: ProviderFiltersHelper::ACCREDITATION_LABELS,
                    remove_path: ->(status) {
                      providers_path_filters_without(:accreditation_statuses, status)
                    } %>
@@ -37,7 +37,7 @@
         <%= render "selected_filter_list",
                    title: "Archived providers",
                    values: provider_filters[:show_archived],
-                   labels: show_archived_labels,
+                   labels: ProviderFiltersHelper::SHOW_ARCHIVED_LABELS,
                    remove_path: ->(_flag) {
                      providers_path_filters_without(:show_archived)
                    } %>
@@ -49,13 +49,13 @@
         <%= f.govuk_submit "Apply filters" %>
 
         <%= f.govuk_check_boxes_fieldset :provider_types, small: true, legend: { text: "Provider type", size: "s" }, form_group: { classes: "app-filter__group" } do %>
-          <% provider_type_labels.each do |value, label| %>
+          <% ProviderFiltersHelper::PROVIDER_TYPE_LABELS.each do |value, label| %>
             <%= f.govuk_check_box :provider_types, value, label: { text: label }, checked: filter_checked?(:provider_types, value) %>
           <% end %>
         <% end %>
 
         <%= f.govuk_check_boxes_fieldset :accreditation_statuses, small: true, legend: { text: "Accreditation type", size: "s" } do %>
-          <% accreditation_labels.each do |value, label| %>
+          <% ProviderFiltersHelper::ACCREDITATION_LABELS.each do |value, label| %>
             <%= f.govuk_check_box :accreditation_statuses, value, label: { text: label }, checked: filter_checked?(:accreditation_statuses, value) %>
           <% end %>
         <% end %>

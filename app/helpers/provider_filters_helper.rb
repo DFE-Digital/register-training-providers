@@ -1,25 +1,18 @@
 module ProviderFiltersHelper
-  def provider_type_labels
-    {
-      "hei" => "Higher education institution (HEI)",
-      "scitt_or_school" => "School",
-      "other" => "Other"
-    }
-  end
+  PROVIDER_TYPE_LABELS = {
+    "hei" => "Higher education institution (HEI)",
+    "scitt_or_school" => "School",
+    "other" => "Other"
+  }.freeze
 
-  def accreditation_labels
-    {
-      "accredited" => "Accredited",
-      "unaccredited" => "Not accredited"
-    }
-  end
+  ACCREDITATION_LABELS = {
+    "accredited" => "Accredited",
+    "unaccredited" => "Not accredited"
+  }.freeze
 
-  def show_archived_labels
-    {
-      "show_archived_provider" => "Include archived providers"
-    }
-  end
-
+  SHOW_ARCHIVED_LABELS = {
+    "show_archived_provider" => "Include archived providers"
+  }.freeze
   def filter_checked?(filter_key, value)
     Array(provider_filters[filter_key]).include?(value)
   end
