@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         name: Checkout
 
       - name: Build and push docker image
@@ -92,7 +92,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -156,7 +156,7 @@ jobs:
             google-chrome-stable
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -202,7 +202,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Merge minor dependency updates
         uses: fastify/github-action-merge-dependabot@v3
