@@ -34,6 +34,7 @@ class Provider < ApplicationRecord
   include UuidIdentifiable
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
+  has_many :accreditations, dependent: :destroy
 
   audited
 
@@ -78,6 +79,19 @@ class Provider < ApplicationRecord
 
   def restore!
     update!(archived_at: nil)
+  end
+
+  def current_accreditations
+    accreditations.current.order_by_start_date
+  end
+
+  def has_current_accreditations?
+    current_accreditations.exists?
+  end
+
+  def sync_accreditation_status!
+    new_status = has_current_accreditations? ? 'accredited' : 'unaccredited'
+    update_column(:accreditation_status, new_status) if accreditation_status != new_status
   end
 
 private
