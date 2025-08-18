@@ -2,3 +2,8 @@ remove_temporary_record_command:
   command: "TemporaryRecord.expired.delete_all"
   priority: 100
   schedule: at 1am every day
+
+sync_provider_accreditation_status:
+  class_name: "Providers::SyncAccreditationStatusJob"
+  priority: 100
+  schedule: every 5 minutes

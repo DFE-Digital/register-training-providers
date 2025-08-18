@@ -56,6 +56,7 @@ Rails.application.routes.draw do
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
+    resources :accreditations, only: [:index], module: :providers
   end
 
   resources :users do

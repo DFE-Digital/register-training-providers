@@ -4,6 +4,23 @@
 
 <% provider_page_data(@provider) %>
 
+<%= content_for(:secondary_navigation) do %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <nav class="app-secondary-navigation" aria-label="Provider navigation">
+        <ul class="app-secondary-navigation__list">
+          <li class="app-secondary-navigation__item app-secondary-navigation__item--active">
+            <a class="app-secondary-navigation__link" aria-current="page" href="<%= provider_path(@provider) %>">Provider details</a>
+          </li>
+          <li class="app-secondary-navigation__item">
+            <a class="app-secondary-navigation__link" href="<%= provider_accreditations_path(@provider) %>">Accreditations</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+<% end %>
+
 <h2 class="govuk-heading-m">Provider details</h2>
 
 <div class="govuk-button-group">
