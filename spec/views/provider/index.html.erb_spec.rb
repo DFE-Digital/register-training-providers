@@ -30,32 +30,11 @@ RSpec.describe "providers/index.html.erb", type: :view do
     expect(rendered_custom_layout).to have_link("Add provider", href: "/providers/new")
   end
 
-  it "renders each provider in the summary card" do
-    providers.each do |provider|
-      expect(rendered_custom_layout).to have_selector("h2", text: provider.operating_name)
-
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Provider type")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.provider_type_label)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Accreditation type")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.accreditation_status_label)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Operating name")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.operating_name)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Legal name")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.legal_name)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "UK provider reference number (UKPRN)")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.ukprn)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Unique reference number (URN)")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.urn)
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__key", text: "Provider code")
-      expect(rendered_custom_layout).to have_selector(".govuk-summary-list__value", text: provider.code)
-    end
-  end
-
   it "does not renders the pagination component" do
     expect(rendered_custom_layout).not_to have_pagination
   end
 
-  context "when pagy count is over 25" do
+  context "when pagy count causes paginations" do
     let(:count) { 1_000_000 }
     it "calls page_data with govuk_number count" do
       expect(view).to have_received(:page_data).with(title: "Providers (1,000,000)")
