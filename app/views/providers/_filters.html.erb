@@ -46,6 +46,8 @@
 
     <div class="app-filter__options">
       <%= form_with url: providers_path, method: :get, scope: :filters, local: true, html: { novalidate: true } do |f| %>
+        <%= hidden_field_tag("keywords", keywords) if keywords %>
+
         <%= f.govuk_submit "Apply filters" %>
 
         <%= f.govuk_check_boxes_fieldset :provider_types, small: true, legend: { text: "Provider type", size: "s" }, form_group: { classes: "app-filter__group" } do %>

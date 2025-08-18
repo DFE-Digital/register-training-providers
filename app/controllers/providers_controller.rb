@@ -1,7 +1,7 @@
 class ProvidersController < ApplicationController
   include Pagy::Backend
 
-  helper_method :provider_filters
+  helper_method :provider_filters, :keywords
 
   def index
     [
@@ -11,8 +11,7 @@ class ProvidersController < ApplicationController
     ].each do |form|
       current_user.clear_temporary(form, purpose: :create_provider)
     end
-
-    provider_query = ProvidersQuery.call(filters: provider_filters)
+    provider_query = ProvidersQuery.call(filters: provider_filters, search_term: keywords)
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
   end
 
@@ -54,6 +53,10 @@ private
 
   def scoped_provider
     @scoped_provider ||= policy_scope(Provider)
+  end
+
+  def keywords
+    @keywords ||= params.permit(:keywords)[:keywords].presence
   end
 
   def provider_filters
