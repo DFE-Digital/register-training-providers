@@ -8,7 +8,7 @@
               class: "app-filter__tag"
             ) do %>
           <span class="govuk-visually-hidden">Remove this filter</span>
-          <%= labels[val] || val.humanize %>
+          <%= labels[val.to_sym] || val.humanize %>
         <% end %>
       </li>
     <% end %>
