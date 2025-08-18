@@ -4,7 +4,7 @@ module Providers
 
     def index
       authorize @provider
-      @accreditations = @provider.accreditations.order_by_start_date
+      @accreditations = policy_scope(@provider.accreditations).order_by_start_date
     end
 
   private
