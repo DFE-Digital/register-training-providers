@@ -106,7 +106,7 @@ module SummaryHelper
     rows
   end
 
-  def accreditation_summary_cards(accreditations, provider)
+  def accreditation_summary_cards(accreditations, _provider)
     return [] if accreditations.empty?
 
     accreditations.map do |accreditation|
@@ -122,7 +122,9 @@ module SummaryHelper
           { key: { text: "Date accreditation starts" },
             value: { text: accreditation.start_date.strftime("%-d %B %Y") } },
           { key: { text: "Date accreditation ends" },
-            value: accreditation.end_date.present? ? { text: accreditation.end_date.strftime("%-d %B %Y") } : not_entered }
+            value: accreditation.end_date.present? ? 
+              { text: accreditation.end_date.strftime("%-d %B %Y") } : 
+              not_entered }
         ]
       }
     end

@@ -33,9 +33,9 @@ RSpec.describe Accreditation, type: :model do
 
   describe "scopes" do
     let(:provider) { create(:provider) }
-    let!(:current_accreditation) { create(:accreditation, :current, provider: provider) }
-    let!(:expired_accreditation) { create(:accreditation, :expired, provider: provider) }
-    let!(:future_accreditation) { create(:accreditation, :future, provider: provider) }
+    let!(:current_accreditation) { create(:accreditation, :current, provider:) }
+    let!(:expired_accreditation) { create(:accreditation, :expired, provider:) }
+    let!(:future_accreditation) { create(:accreditation, :future, provider:) }
 
     describe ".current" do
       it "returns only current accreditations" do
@@ -43,7 +43,7 @@ RSpec.describe Accreditation, type: :model do
       end
 
       it "includes accreditations with no end date that have started" do
-        indefinite_accreditation = create(:accreditation, :indefinite, provider: provider)
+        indefinite_accreditation = create(:accreditation, :indefinite, provider:)
         expect(Accreditation.current).to include(indefinite_accreditation)
       end
     end
@@ -62,36 +62,36 @@ RSpec.describe Accreditation, type: :model do
       provider = create(:provider, :unaccredited)
       expect(provider.accreditation_status).to eq("unaccredited")
 
-      create(:accreditation, :current, provider: provider)
+      create(:accreditation, :current, provider:)
       provider.reload
       expect(provider.accreditation_status).to eq("accredited")
     end
 
     it "updates provider accreditation status to unaccredited when last current accreditation is destroyed" do
       provider = create(:provider, :unaccredited)
-      accreditation = create(:accreditation, :current, provider: provider)
+      accreditation = create(:accreditation, :current, provider:)
       provider.reload
       expect(provider.accreditation_status).to eq("accredited")
 
-      accreditation.destroy
+      accreditation.destroy!
       provider.reload
       expect(provider.accreditation_status).to eq("unaccredited")
     end
 
     it "handles destroy callback safely when provider is deleted first" do
       provider = create(:provider, :unaccredited)
-      accreditation = create(:accreditation, :current, provider: provider)
-      
+      accreditation = create(:accreditation, :current, provider:)
+
       # Delete the provider first
-      provider.destroy
-      
+      provider.destroy!
+
       # This should not raise an error
       expect { accreditation.destroy }.not_to raise_error
     end
 
     it "updates provider accreditation status when accreditation dates change" do
       provider = create(:provider, :unaccredited)
-      accreditation = create(:accreditation, :current, provider: provider)
+      accreditation = create(:accreditation, :current, provider:)
       provider.reload
       expect(provider.accreditation_status).to eq("accredited")
 
@@ -103,17 +103,17 @@ RSpec.describe Accreditation, type: :model do
 
     it "doesn't change status unnecessarily when provider already has correct status" do
       provider = create(:provider, :unaccredited)
-      create(:accreditation, :current, provider: provider)
+      create(:accreditation, :current, provider:)
       provider.reload
       expect(provider.accreditation_status).to eq("accredited")
-      
+
       # Spy on the update_column method to ensure it's not called unnecessarily
       allow(provider).to receive(:update_column)
-      
+
       # Create another current accreditation - status should remain accredited
-      create(:accreditation, :current, provider: provider)
+      create(:accreditation, :current, provider:)
       provider.reload
-      
+
       expect(provider).not_to have_received(:update_column)
     end
   end
