@@ -1,0 +1,224 @@
+// Secondary Navigation Component
+// Based on prototype design patterns
+
+.app-secondary-navigation {
+  margin-bottom: 40px;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.app-secondary-navigation__container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  @media (min-width: 40.0625em) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.app-secondary-navigation__item {
+  position: relative;
+  margin: 10px 0;
+  border: 0 solid #1a65a6;
+
+  @media (min-width: 40.0625em) {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 20px 0;
+
+    &:not(:last-child) {
+      margin-right: 20px;
+
+      @media (min-width: 40.0625em) {
+        margin-right: 30px;
+      }
+    }
+  }
+
+  &--active {
+    @media (max-width: 40.0525em) {
+      margin-left: -15px;
+      padding-left: 10px;
+      border-left-width: 5px;
+    }
+
+    @media (min-width: 40.0625em) {
+      padding-bottom: 15px;
+      border-bottom-width: 5px;
+    }
+  }
+}
+
+.app-secondary-navigation__link {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, .0625rem);
+
+  @media print {
+    font-family: sans-serif;
+  }
+
+  &:hover {
+    text-decoration-thickness: max(3px, .1875rem, .12em);
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration-skip: none;
+  }
+
+  &:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    text-decoration: none;
+
+    @media (min-width: 48.0625em) {
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+  }
+
+  &:not(:hover):not(:active) {
+    text-decoration: none;
+  }
+
+  &:link {
+    color: #1d70b8;
+  }
+
+  &:visited {
+    color: #1d70b8;
+  }
+
+  &:hover {
+    color: #003078;
+  }
+
+  &:active {
+    color: #0b0c0c;
+  }
+
+  &:focus {
+    color: #0b0c0c;
+  }
+
+  &:not(:hover):not(:focus) {
+    color: #1a65a6;
+  }
+}
+
+.app-secondary-navigation__toggle {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25;
+  cursor: pointer;
+  border: 1px solid #0b0c0c;
+  border-radius: 0;
+  color: #0b0c0c;
+  background-color: transparent;
+  text-align: left;
+  padding: 10px;
+
+  @media print {
+    font-family: sans-serif;
+  }
+
+  @media (min-width: 40.0625em) {
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+  }
+
+  @media print {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+
+  &:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    text-decoration: none;
+
+    @media (min-width: 48.0625em) {
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+  }
+
+  &::after {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 8.660254038px 5px 0 5px;
+    border-top-color: inherit;
+    content: "";
+    margin-left: 5px;
+  }
+
+  &[aria-expanded="true"]::after {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0 5px 8.660254038px 5px;
+    border-bottom-color: inherit;
+    content: "";
+    margin-left: 5px;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.app-secondary-navigation__list {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.25;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media print {
+    font-family: sans-serif;
+  }
+
+  @media (min-width: 40.0625em) {
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+  }
+
+  @media print {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+
+  @media (min-width: 40.0625em) {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+
+  @media screen and (min-width: 40.0625em) and (-ms-high-contrast: active),
+         (min-width: 40.0625em) and (-ms-high-contrast: none) {
+    display: block;
+  }
+}
+
+.app-secondary-navigation__active-fallback {
+  font-weight: inherit;
+}

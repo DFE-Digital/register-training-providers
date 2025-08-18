@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :provider do
     uuid { SecureRandom.uuid }
-    accredited
+    provider_type { :hei }
+    accreditation_status { :unaccredited }
 
     legal_name do
       case provider_type.to_s
@@ -33,24 +34,32 @@ FactoryBot.define do
       discarded_at { Time.zone.now }
     end
 
-    trait :unaccredited do
-      accreditation_status { :unaccredited }
-      provider_type { ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys.sample }
-    end
-
-    trait :accredited do
-      accreditation_status { :accredited }
-      provider_type { ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys.sample }
-    end
-
     trait :school do
       provider_type { :school }
-      accreditation_status { :unaccredited }
     end
 
     trait :scitt do
       provider_type { :scitt }
+    end
+
+    trait :hei do
+      provider_type { :hei }
+    end
+
+    trait :other do
+      provider_type { :other }
+    end
+
+    trait :unaccredited do
+      accreditation_status { :unaccredited }
+    end
+
+    trait :accredited do
       accreditation_status { :accredited }
+
+      after(:create) do |provider|
+        create(:accreditation, :current, provider:)
+      end
     end
   end
 end
