@@ -90,7 +90,7 @@ class Provider < ApplicationRecord
   end
 
   def sync_accreditation_status!
-    new_status = has_current_accreditations? ? 'accredited' : 'unaccredited'
+    new_status = has_current_accreditations? ? "accredited" : "unaccredited"
     update_column(:accreditation_status, new_status) if accreditation_status != new_status
   end
 

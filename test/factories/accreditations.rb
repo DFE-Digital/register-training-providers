@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :accreditation do
     association :provider
-    number { "#{Faker::Number.number(digits: 4)}" }
+    number { Faker::Number.number(digits: 4).to_s }
     start_date { 6.months.ago }
     end_date { 2.years.from_now }
 

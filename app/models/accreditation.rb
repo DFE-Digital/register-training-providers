@@ -33,11 +33,11 @@ class Accreditation < ApplicationRecord
   validates :number, presence: true
   validates :start_date, presence: true
 
-  scope :current, -> { where('start_date <= ? AND (end_date IS NULL OR end_date >= ?)', Date.current, Date.current) }
+  scope :current, -> { where("start_date <= ? AND (end_date IS NULL OR end_date >= ?)", Date.current, Date.current) }
   scope :order_by_start_date, -> { order(:start_date) }
 
-  after_save :sync_provider_accreditation_status
   after_destroy :sync_provider_accreditation_status_on_destroy
+  after_save :sync_provider_accreditation_status
   after_touch :sync_provider_accreditation_status
 
 private
@@ -48,8 +48,8 @@ private
 
   def sync_provider_accreditation_status_on_destroy
     # Use provider_id directly since the association might not be reliable after destroy
-    return unless provider_id.present?
-    
+    return if provider_id.blank?
+
     provider_record = Provider.find_by(id: provider_id)
     provider_record&.sync_accreditation_status!
   end
