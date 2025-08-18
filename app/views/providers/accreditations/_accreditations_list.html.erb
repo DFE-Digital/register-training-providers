@@ -1,0 +1,18 @@
+<% if accreditations.any? %>
+  <div class="govuk-button-group">
+    <%= govuk_button_link_to("Add accreditation", "#") %>
+  </div>
+
+  <% accreditation_summary_cards(accreditations, provider).each do |summary_card| %>
+    <%= govuk_summary_card(title: summary_card[:title]) do |card|
+          summary_card[:actions].each do |action|
+            card.with_action { govuk_link_to(action[:text], action[:href]) }
+          end
+          card.with_summary_list(rows: summary_card[:rows])
+        end %>
+  <% end %>
+<% else %>
+  <p class="govuk-body">This provider has no accreditations.</p>
+
+  <%= govuk_button_link_to("Add accreditation", "#") %>
+<% end %>

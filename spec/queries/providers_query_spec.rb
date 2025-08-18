@@ -1,20 +1,18 @@
 require "rails_helper"
 
 RSpec.describe ProvidersQuery do
-  subject(:results) { described_class.call(filters:, search_term:) }
-  let(:filters) { {} }
 
   let(:search_term) { nil }
 
   describe "#call (filters only)" do
-    let!(:scitt)                { create(:provider, :scitt, accreditation_status: :accredited) }
-    let!(:school)               { create(:provider, :school, accreditation_status: :unaccredited) }
-    let!(:accredited_hei)       { create(:provider, :hei, accreditation_status: :accredited) }
-    let!(:unaccredited_hei)     { create(:provider, :hei, accreditation_status: :unaccredited) }
-    let!(:accredited_other)     { create(:provider, :other, accreditation_status: :accredited) }
-    let!(:unaccredited_other)   { create(:provider, :other, accreditation_status: :unaccredited) }
+    let!(:scitt)                { create(:provider, :scitt, :accredited) }
+    let!(:school)               { create(:provider, :school, :unaccredited) }
+    let!(:accredited_hei)       { create(:provider, :hei, :accredited) }
+    let!(:unaccredited_hei)     { create(:provider, :hei, :unaccredited) }
+    let!(:accredited_other)     { create(:provider, :other, :accredited) }
+    let!(:unaccredited_other)   { create(:provider, :other, :unaccredited) }
     let!(:archived_accredited_hei) do
-      create(:provider, :hei, accreditation_status: :accredited, archived_at: 1.week.ago)
+      create(:provider, :hei, :accredited, archived_at: 1.week.ago)
     end
 
     context "without filters" do

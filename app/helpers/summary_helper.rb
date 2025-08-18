@@ -105,4 +105,30 @@ module SummaryHelper
 
     rows
   end
+
+  def accreditation_summary_cards(accreditations, _provider)
+    return [] if accreditations.empty?
+
+    accreditations.map do |accreditation|
+      {
+        title: "Accreditation #{accreditation.number}",
+        actions: [
+          { text: "Change", href: "#" },
+          { text: "Remove", href: "#" }
+        ],
+        rows: [
+          { key: { text: "Accreditation number" },
+            value: { text: accreditation.number } },
+          { key: { text: "Date accreditation starts" },
+            value: { text: accreditation.start_date.to_fs(:govuk) } },
+          { key: { text: "Date accreditation ends" },
+            value: if accreditation.end_date.present?
+                     { text: accreditation.end_date.to_fs(:govuk) }
+                   else
+                     not_entered
+                   end }
+        ]
+      }
+    end
+  end
 end

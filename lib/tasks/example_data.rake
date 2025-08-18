@@ -21,5 +21,11 @@ namespace :example_data do
 
     # Call the import:providers task
     Rake::Task["import:providers"].invoke
+
+    # Make sure accreditation task can be run again (in case it was run before)
+    Rake::Task["generate:accreditations"].reenable
+
+    # Call the generate:accreditations task
+    Rake::Task["generate:accreditations"].invoke
   end
 end
