@@ -66,14 +66,14 @@ RSpec.feature "Filter Training Providers" do
 
   def and_there_are_a_number_of_providers
     hei_providers
-    create_list(:provider, 5, :other)
+    create_list(:provider, 5, :other, :accredited)
     create_list(:provider, 5, :school)
-    create_list(:provider, 5, :scitt)
+    create_list(:provider, 5, :scitt, :accredited)
     archived_providers
   end
 
   def hei_providers
-    @hei_providers ||= create_list(:provider, 3, :hei)
+    @hei_providers ||= create_list(:provider, 3, :hei, :accredited)
   end
 
   def accredited_providers

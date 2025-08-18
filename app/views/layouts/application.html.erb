@@ -76,6 +76,11 @@
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
               <%= yield(:page_header) %>
+            </div>
+          </div>
+          <%= yield(:secondary_navigation) %>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
               <%= yield %>
             </div>
           </div>
