@@ -20,9 +20,8 @@
   }
 }
 
-// JavaScript
 .app-filter__legend {
-  overflow: visible; // Override govuk to allow for focus style to be seen
+  overflow: visible;
   width: 100%;
 
   button {
@@ -31,7 +30,7 @@
     box-sizing: border-box;
     border-radius: 0;
     border: 0 none;
-    cursor: pointer; // Adam would not approve
+    cursor: pointer;
     display: block;
     margin: 0;
     padding: 0;
@@ -40,7 +39,6 @@
     width: 100%;
     -webkit-appearance: none;
 
-    // Fix unwanted button padding in Firefox
     &::-moz-focus-inner {
       padding: 0;
       border: 0;
@@ -52,7 +50,7 @@
       content: "";
       display: block;
       height: 16px;
-      margin-top: -8px; // Half the height of the icon
+      margin-top: -8px;
       position: absolute;
       top: 50%;
       right: 0;
@@ -78,7 +76,7 @@
   @include govuk-font(19);
 
   color: govuk-colour("black");
-  cursor: pointer; // I know Adam won’t like this
+  cursor: pointer;
   background-color: transparent;
   border: none;
   border-radius: 0;
@@ -95,7 +93,6 @@
     outline: none;
   }
 
-  // Fix unwanted button padding in Firefox
   &::-moz-focus-inner {
     padding: 0;
     border: 0;
@@ -108,7 +105,7 @@
     height: 14px;
     margin-right: govuk-spacing(1);
     position: relative;
-    top: -1px; // Alignment tweak
+    top: -1px;
     vertical-align: middle;
     width: 14px;
   }
@@ -123,13 +120,13 @@
   border-bottom: 1px solid govuk-colour("mid-grey");
 
   ul:last-of-type {
-    margin-bottom: 0; // IE9 +
+    margin-bottom: 0;
   }
 }
 
 .app-filter__selected-heading {
-  font-size: 0; // Hide whitespace between elements
-  text-align: justify; // Trick to remove the need for floats
+  font-size: 0;
+  text-align: justify;
 
   &:after {
     content: "";
@@ -148,7 +145,7 @@
 
 .app-filter-tags {
   font-size: 0;
-  margin-bottom: govuk-spacing(2); // Needs to adjust to 15px on mobile
+  margin-bottom: govuk-spacing(2);
   padding-left: 0;
 
   li {
@@ -203,7 +200,7 @@
   padding: govuk-spacing(4) govuk-spacing(3);
 
   div:last-of-type {
-    margin-bottom: 0; // IE9 +
+    margin-bottom: 0;
   }
 
   .govuk-checkboxes__label,

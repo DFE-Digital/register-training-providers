@@ -5,7 +5,7 @@ $govuk-assets-path: "/";
 @import "govuk-frontend/dist/govuk";
 
 @import "filters";
-@import "filters-layout.scss";
+@import "filters-layout";
 
 .govuk-tag__heading {
   position: relative;
