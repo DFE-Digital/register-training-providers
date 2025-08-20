@@ -120,10 +120,10 @@ module SummaryHelper
           { key: { text: "Accreditation number" },
             value: { text: accreditation.number } },
           { key: { text: "Date accreditation starts" },
-            value: { text: accreditation.start_date.strftime("%-d %B %Y") } },
+            value: { text: accreditation.start_date.to_fs(:govuk) } },
           { key: { text: "Date accreditation ends" },
             value: if accreditation.end_date.present?
-                     { text: accreditation.end_date.strftime("%-d %B %Y") }
+                     { text: accreditation.end_date.to_fs(:govuk) }
                    else
                      not_entered
                    end }
