@@ -6,4 +6,7 @@ class PagesController < ApplicationController
 
   def accessibility
   end
+
+  def privacy
+  end
 end
