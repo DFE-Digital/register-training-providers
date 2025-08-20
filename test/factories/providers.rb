@@ -52,5 +52,15 @@ FactoryBot.define do
       provider_type { :scitt }
       accreditation_status { :accredited }
     end
+
+    trait :hei do
+      provider_type { :hei }
+      accreditation_status { :accredited }
+    end
+
+    trait :other do
+      provider_type { :other }
+      accreditation_status { :accredited }
+    end
   end
 end

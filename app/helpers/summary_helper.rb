@@ -122,9 +122,11 @@ module SummaryHelper
           { key: { text: "Date accreditation starts" },
             value: { text: accreditation.start_date.strftime("%-d %B %Y") } },
           { key: { text: "Date accreditation ends" },
-            value: accreditation.end_date.present? ? 
-              { text: accreditation.end_date.strftime("%-d %B %Y") } : 
-              not_entered }
+            value: if accreditation.end_date.present?
+                     { text: accreditation.end_date.strftime("%-d %B %Y") }
+                   else
+                     not_entered
+                   end }
         ]
       }
     end
