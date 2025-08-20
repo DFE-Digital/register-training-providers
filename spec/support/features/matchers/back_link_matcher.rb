@@ -1,5 +1,6 @@
 RSpec::Matchers.define :have_back_link do |expected_href|
   include CapybaraNodeHelper
+
   match do |content|
     node = wrap_as_capybara_node(content)
     node.has_link?("Back", href: expected_href)
