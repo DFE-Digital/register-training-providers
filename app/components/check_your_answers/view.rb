@@ -1,6 +1,7 @@
 module CheckYourAnswers
   class View < ViewComponent::Base
     include ApplicationHelper
+
     attr_reader :rows, :title, :subtitle, :caption, :back_path, :save_button_text, :save_path, :cancel_path, :method,
                 :header
 

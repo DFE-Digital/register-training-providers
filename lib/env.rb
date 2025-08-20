@@ -37,7 +37,6 @@ module Env
     method.chomp("?").upcase
   end
 
-  # rubocop:disable Naming/PredicateMethod
   # NOTE: It interprets a string as a boolean not interprets as a simple true or false
   private_class_method def self.interpret_bool(val)
     case val.to_s.strip.downcase
@@ -45,5 +44,4 @@ module Env
     when "false", "0", "no", "off", "" then false
     end
   end
-  # rubocop:enable Naming/PredicateMethod
 end
