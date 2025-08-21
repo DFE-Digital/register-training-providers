@@ -12,38 +12,37 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
       create(:accreditation,
              provider: provider,
              number: "ACC123",
-             start_date: Date.new(2023, 1, 1),
-             end_date: Date.new(2025, 12, 31))
+             start_date: 1.year.ago.to_date,
+             end_date: 1.year.from_now.to_date)
     end
 
     let!(:expired_accreditation) do
       create(:accreditation,
              provider: provider,
              number: "ACC456",
-             start_date: Date.new(2020, 1, 1),
-             end_date: Date.new(2022, 12, 31))
+             start_date: 4.years.ago.to_date,
+             end_date: 2.years.ago.to_date)
     end
 
     scenario "viewing accreditations from provider details page" do
       visit provider_path(provider)
 
       expect(page).to have_content(provider.operating_name)
-      expect(page).to have_link("Accreditations")
 
       click_link "Accreditations"
 
       expect(page).to have_content("Accreditations")
 
       within first(".govuk-summary-card") do
-        expect(page).to have_content("Accreditation ACC456")
-        expect(page).to have_content("1 January 2020")
-        expect(page).to have_content("31 December 2022")
+        expect(page).to have_content("Accreditation #{expired_accreditation.number}")
+        expect(page).to have_content(expired_accreditation.start_date.to_fs(:govuk))
+        expect(page).to have_content(expired_accreditation.end_date.to_fs(:govuk))
       end
 
       within all(".govuk-summary-card")[1] do
-        expect(page).to have_content("Accreditation ACC123")
-        expect(page).to have_content("1 January 2023")
-        expect(page).to have_content("31 December 2025")
+        expect(page).to have_content("Accreditation #{current_accreditation.number}")
+        expect(page).to have_content(current_accreditation.start_date.to_fs(:govuk))
+        expect(page).to have_content(current_accreditation.end_date.to_fs(:govuk))
       end
     end
 
