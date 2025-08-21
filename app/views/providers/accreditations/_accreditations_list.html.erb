@@ -4,7 +4,10 @@
   </div>
 
   <% accreditation_summary_cards(accreditations, provider).each do |summary_card| %>
-    <%= govuk_summary_card(title: summary_card[:title], actions: summary_card[:actions]) do |card|
+    <%= govuk_summary_card(title: summary_card[:title]) do |card|
+          summary_card[:actions].each do |action|
+            card.with_action { govuk_link_to(action[:text], action[:href]) }
+          end
           card.with_summary_list(rows: summary_card[:rows])
         end %>
   <% end %>

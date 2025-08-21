@@ -275,7 +275,7 @@ RSpec.describe SummaryHelper, type: :helper do
         expect(card[:title]).to eq("Accreditation ACC123")
         expect(card[:actions]).to include(
           { href: "#", text: "Change" },
-          { href: "#", text: "Remove", classes: "govuk-link--destructive" }
+          { href: "#", text: "Remove" }
         )
 
         rows = card[:rows]

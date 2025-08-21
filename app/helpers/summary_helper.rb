@@ -113,8 +113,8 @@ module SummaryHelper
       {
         title: "Accreditation #{accreditation.number}",
         actions: [
-          { href: "#", text: "Change" },
-          { href: "#", text: "Remove", classes: "govuk-link--destructive" }
+          { text: "Change", href: "#" },
+          { text: "Remove", href: "#" }
         ],
         rows: [
           { key: { text: "Accreditation number" },
