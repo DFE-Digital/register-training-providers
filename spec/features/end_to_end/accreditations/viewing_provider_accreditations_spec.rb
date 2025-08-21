@@ -11,7 +11,7 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
     let!(:current_accreditation) do
       create(:accreditation,
              provider: provider,
-             number: "ACC123",
+             number: "1234",
              start_date: 1.year.ago.to_date,
              end_date: 1.year.from_now.to_date)
     end
@@ -19,7 +19,7 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
     let!(:expired_accreditation) do
       create(:accreditation,
              provider: provider,
-             number: "ACC456",
+             number: "5123",
              start_date: 4.years.ago.to_date,
              end_date: 2.years.ago.to_date)
     end
@@ -55,7 +55,7 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
       click_link "Accreditations"
 
       expect(page).to have_css(".app-secondary-navigation__item--active a", text: "Accreditations")
-      expect(page).to have_content("ACC123")
+      expect(page).to have_content("1234")
     end
   end
 
