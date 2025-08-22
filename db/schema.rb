@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_04_092306) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_151627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
+
+  create_table "accreditations", force: :cascade do |t|
+    t.bigint "provider_id", null: false
+    t.string "number", null: false
+    t.date "start_date", null: false
+    t.date "end_date"
+    t.uuid "uuid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["end_date"], name: "index_accreditations_on_end_date"
+    t.index ["number"], name: "index_accreditations_on_number"
+    t.index ["provider_id"], name: "index_accreditations_on_provider_id"
+    t.index ["start_date"], name: "index_accreditations_on_start_date"
+    t.index ["uuid"], name: "index_accreditations_on_uuid", unique: true
+  end
 
   create_table "audits", force: :cascade do |t|
     t.bigint "auditable_id"
@@ -209,6 +224,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_092306) do
     t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
+  add_foreign_key "accreditations", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

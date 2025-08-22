@@ -15,4 +15,14 @@ module UuidIdentifiable
       self.uuid ||= SecureRandom.uuid
     end
   end
+
+  class_methods do
+    def find(id)
+      if id.to_s.match?(/\A[0-9a-f\-]{36}\z/i)
+        find_by!(uuid: id)
+      else
+        super
+      end
+    end
+  end
 end
