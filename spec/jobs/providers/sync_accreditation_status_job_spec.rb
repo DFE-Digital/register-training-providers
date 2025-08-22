@@ -13,7 +13,7 @@ RSpec.describe Providers::SyncAccreditationStatusJob, type: :job do
     end
 
     it "syncs providers with recently ended accreditations" do
-      provider = create(:provider, :accredited)
+      provider = create(:provider, :unaccredited)
       create(:accreditation, provider: provider, start_date: 1.year.ago, end_date: 1.day.ago)
       provider.update_column(:accreditation_status, "accredited")
 
@@ -24,7 +24,7 @@ RSpec.describe Providers::SyncAccreditationStatusJob, type: :job do
 
     it "processes multiple providers with status changes" do
       provider1 = create(:provider, :unaccredited)
-      provider2 = create(:provider, :accredited)
+      provider2 = create(:provider, :unaccredited)
 
       create(:accreditation, provider: provider1, start_date: 1.day.ago, end_date: 1.year.from_now)
       create(:accreditation, provider: provider2, start_date: 1.year.ago, end_date: 1.day.ago)

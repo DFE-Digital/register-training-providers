@@ -4,13 +4,13 @@ RSpec.describe ProvidersQuery do
   describe "#call" do
     subject(:results) { described_class.call(filters:) }
 
-    let!(:scitt)    { create(:provider, :scitt, accreditation_status: :accredited) }
-    let!(:school)   { create(:provider, :school, accreditation_status: :unaccredited) }
-    let!(:accredited_hei) { create(:provider, :hei, accreditation_status: :accredited) }
-    let!(:unaccredited_hei) { create(:provider, :hei, accreditation_status: :unaccredited) }
-    let!(:accredited_other) { create(:provider, :other, accreditation_status: :accredited) }
-    let!(:unaccredited_other) { create(:provider, :other, accreditation_status: :unaccredited) }
-    let!(:archived_accredited_hei) { create(:provider, :hei, accreditation_status: :accredited, archived_at: 1.week.ago) }
+    let!(:scitt)    { create(:provider, :scitt, :accredited) }
+    let!(:school)   { create(:provider, :school) }
+    let!(:accredited_hei) { create(:provider, :hei, :accredited) }
+    let!(:unaccredited_hei) { create(:provider, :hei, :unaccredited) }
+    let!(:accredited_other) { create(:provider, :other, :accredited) }
+    let!(:unaccredited_other) { create(:provider, :other, :unaccredited) }
+    let!(:archived_accredited_hei) { create(:provider, :hei, :accredited, archived_at: 1.week.ago) }
 
     context "without filters" do
       let(:filters) { {} }
