@@ -1,13 +1,13 @@
 require "rails_helper"
 
 RSpec.describe "Viewing provider accreditations", type: :feature do
-  let(:provider) { create(:provider, :accredited) }
-
   before do
     given_i_am_an_authenticated_user
   end
 
   context "when provider has accreditations" do
+    let(:provider) { create(:provider, :accredited) }
+
     let!(:current_accreditation) do
       create(:accreditation,
              provider: provider,
@@ -60,6 +60,8 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
   end
 
   context "when provider has no accreditations" do
+    let(:provider) { create(:provider, :unaccredited) }
+
     scenario "shows empty state" do
       visit provider_path(provider)
 

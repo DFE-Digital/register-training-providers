@@ -259,11 +259,7 @@ RSpec.describe SummaryHelper, type: :helper do
 
     context "with accreditations" do
       let(:accreditation) do
-        create(:accreditation,
-               provider: provider,
-               number: "ACC123",
-               start_date: Date.new(2023, 1, 1),
-               end_date: Date.new(2025, 12, 31))
+        create(:accreditation, :current, provider:)
       end
 
       it "returns summary card data" do
@@ -272,7 +268,7 @@ RSpec.describe SummaryHelper, type: :helper do
         expect(result.size).to eq(1)
 
         card = result.first
-        expect(card[:title]).to eq("Accreditation ACC123")
+        expect(card[:title]).to eq("Accreditation #{accreditation.number}")
         expect(card[:actions]).to include(
           { href: "#", text: "Change" },
           { href: "#", text: "Remove" }
@@ -280,9 +276,9 @@ RSpec.describe SummaryHelper, type: :helper do
 
         rows = card[:rows]
         expect(rows).to include(
-          { key: { text: "Accreditation number" }, value: { text: "ACC123" } },
-          { key: { text: "Date accreditation starts" }, value: { text: "1 January 2023" } },
-          { key: { text: "Date accreditation ends" }, value: { text: "31 December 2025" } }
+          { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
+          { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
+          { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
         )
       end
 
