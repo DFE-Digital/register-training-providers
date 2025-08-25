@@ -19,6 +19,10 @@ RSpec.describe "providers/index.html.erb", type: :view do
       {}
     end
 
+    def view.keywords
+      {}
+    end
+
     render
   end
 

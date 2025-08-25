@@ -1,0 +1,21 @@
+<div class="app-search">
+  <%= form_with url: providers_path, method: :get, class: "govuk-!-margin-bottom-4" do |f| %>
+    <% provider_filters.each do |key, values| %>
+      <% Array(values).each do |value| %>
+        <%= hidden_field_tag "filters[#{key}][]", value %>
+      <% end %>
+    <% end %>
+      <%= f.govuk_text_field :keywords,
+                             label: { text: "Search by provider name, UKPRN or URN", size: "m" },
+                             value: keywords,
+                             spellcheck: false %>
+
+      <%= f.govuk_submit "Search", class: "app-search__button" %>
+  <% end %>
+
+  <% if keywords %>
+    <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-4">
+      <%= govuk_link_to "Clear search", providers_path(filters: provider_filters), no_visited_state: true %>
+    </p>
+  <% end %>
+</div>
