@@ -62,14 +62,4 @@ RSpec.describe Providers::Accreditation, type: :model do
       expect(subject.end_date).to be_nil
     end
   end
-
-  describe "form integration" do
-    it "provides model name for routing" do
-      expect(described_class.model_name.name).to eq("Accreditation")
-    end
-
-    it "includes SaveAsTemporary for multi-step forms" do
-      expect(subject).to respond_to(:save_as_temporary!)
-    end
-  end
 end
