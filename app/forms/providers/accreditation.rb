@@ -44,6 +44,11 @@ module Providers
 
     alias_method :serializable_hash, :attributes
 
+    def initialize(attributes = {})
+      super
+      convert_date_components
+    end
+
   private
 
     def convert_date_components

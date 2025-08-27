@@ -10,11 +10,13 @@ module Providers
     def new
       @form = current_user.load_temporary(Providers::Accreditation, purpose: :create_accreditation)
       @form.provider_id = @provider.id
+      authorize @form
     end
 
     def create
       @form = Providers::Accreditation.new(provider_id: @provider.id)
       @form.assign_attributes(accreditation_params)
+      authorize @form
 
       if @form.valid?
         @form.save_as_temporary!(created_by: current_user, purpose: :create_accreditation)
