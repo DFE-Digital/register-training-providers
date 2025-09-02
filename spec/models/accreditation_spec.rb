@@ -21,13 +21,13 @@ RSpec.describe Accreditation, type: :model do
     it "requires a number" do
       accreditation = build(:accreditation, number: nil)
       expect(accreditation).not_to be_valid
-      expect(accreditation.errors[:number]).to include("can't be blank")
+      expect(accreditation.errors[:number]).to include("Enter an accredited provider number")
     end
 
     it "requires a start_date" do
       accreditation = build(:accreditation, start_date: nil)
       expect(accreditation).not_to be_valid
-      expect(accreditation.errors[:start_date]).to include("can't be blank")
+      expect(accreditation.errors[:start_date]).to include("Enter date accreditation starts")
     end
   end
 

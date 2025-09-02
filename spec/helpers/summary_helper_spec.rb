@@ -249,7 +249,6 @@ RSpec.describe SummaryHelper, type: :helper do
 
   describe "#accreditation_summary_cards" do
     let(:provider) { create(:provider, :accredited) }
-
     context "with no accreditations" do
       it "returns empty array" do
         result = helper.accreditation_summary_cards([], provider)
@@ -285,7 +284,6 @@ RSpec.describe SummaryHelper, type: :helper do
       it "handles accreditations without end dates" do
         accreditation.update!(end_date: nil)
         result = helper.accreditation_summary_cards([accreditation], provider)
-
         card = result.first
         end_date_row = card[:rows].find { |row| row[:key][:text] == "Date accreditation ends" }
         expect(end_date_row[:value]).to eq({ text: "Not entered", classes: "govuk-hint" })

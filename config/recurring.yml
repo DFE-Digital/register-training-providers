@@ -4,6 +4,6 @@ remove_temporary_record_command:
   schedule: at 1am every day
 
 sync_provider_accreditation_status:
-  class_name: "Providers::SyncAccreditationStatusJob"
+  class: "Providers::SyncAccreditationStatusJob"
   priority: 100
   schedule: every 5 minutes
