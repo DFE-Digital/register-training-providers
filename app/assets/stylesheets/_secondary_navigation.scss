@@ -55,14 +55,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-decoration: underline;
-  text-decoration-thickness: max(1px, .0625rem);
+  text-decoration-thickness: max(1px, 0.0625rem);
 
   @media print {
     font-family: sans-serif;
   }
 
   &:hover {
-    text-decoration-thickness: max(3px, .1875rem, .12em);
+    text-decoration-thickness: max(3px, 0.1875rem, 0.12em);
     -webkit-text-decoration-skip-ink: none;
     text-decoration-skip-ink: none;
     -webkit-text-decoration-skip: none;
@@ -73,7 +73,9 @@
     outline: 3px solid transparent;
     color: #0b0c0c;
     background-color: #ffdd00;
-    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #ffdd00,
+      0 4px #0b0c0c;
     text-decoration: none;
 
     @media (min-width: 48.0625em) {
@@ -144,7 +146,9 @@
     outline: 3px solid transparent;
     color: #0b0c0c;
     background-color: #ffdd00;
-    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #ffdd00,
+      0 4px #0b0c0c;
     text-decoration: none;
 
     @media (min-width: 48.0625em) {
@@ -214,7 +218,7 @@
   }
 
   @media screen and (min-width: 40.0625em) and (-ms-high-contrast: active),
-         (min-width: 40.0625em) and (-ms-high-contrast: none) {
+    (min-width: 40.0625em) and (-ms-high-contrast: none) {
     display: block;
   }
 }

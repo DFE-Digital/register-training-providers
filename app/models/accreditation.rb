@@ -25,12 +25,13 @@
 #
 class Accreditation < ApplicationRecord
   include UuidIdentifiable
+  include SaveAsTemporary
 
   belongs_to :provider
 
   audited
 
-  validates :number, presence: true
+  validates :number, presence: true, accreditation_number: true
   validates :start_date, presence: true
 
   scope :current, -> { where("start_date <= ? AND (end_date IS NULL OR end_date >= ?)", Date.current, Date.current) }

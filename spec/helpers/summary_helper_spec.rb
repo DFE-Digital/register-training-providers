@@ -269,7 +269,7 @@ RSpec.describe SummaryHelper, type: :helper do
         card = result.first
         expect(card[:title]).to eq("Accreditation #{accreditation.number}")
         expect(card[:actions]).to include(
-          { href: "#", text: "Change" },
+          { href: edit_provider_accreditation_path(provider, accreditation), text: "Change" },
           { href: "#", text: "Remove" }
         )
 

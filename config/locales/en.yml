@@ -86,6 +86,10 @@ en:
           update: "Provider updated"
         "providers/accreditation":
           add: "Accreditation added"
+          update: "Accreditation updated"
+        accreditation:
+          add: "Accreditation added"
+          update: "Accreditation updated"
   forms:
     providers:
       is_the_provider_accredited:

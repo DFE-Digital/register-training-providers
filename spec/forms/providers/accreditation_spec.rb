@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Providers::Accreditation, type: :model do
-  let(:provider) { create(:provider) }
+  let(:provider) { create(:provider, :hei) }
   let(:valid_attributes) do
     {
       number: "1234",
@@ -37,9 +37,13 @@ RSpec.describe Providers::Accreditation, type: :model do
     end
 
     it "validates end date is after start date" do
-      subject.end_date_year = Date.current.year - 4
-      expect(subject).not_to be_valid
-      expect(subject.errors[:end_date]).to be_present
+      form = described_class.new(valid_attributes.merge(
+                                   end_date_day: 31,
+                                   end_date_month: 12,
+                                   end_date_year: Date.current.year - 4
+                                 ))
+      expect(form).not_to be_valid
+      expect(form.errors[:end_date]).to be_present
     end
 
     it "allows missing end date" do
