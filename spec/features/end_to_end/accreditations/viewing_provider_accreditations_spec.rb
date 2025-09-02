@@ -6,7 +6,7 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
   end
 
   context "when provider has accreditations" do
-    let(:provider) { create(:provider, :accredited) }
+    let(:provider) { create(:provider, :hei, :accredited) }
 
     let!(:current_accreditation) do
       create(:accreditation,
@@ -19,7 +19,7 @@ RSpec.describe "Viewing provider accreditations", type: :feature do
     let!(:expired_accreditation) do
       create(:accreditation,
              provider: provider,
-             number: "5123",
+             number: "1235",
              start_date: 4.years.ago.to_date,
              end_date: 2.years.ago.to_date)
     end

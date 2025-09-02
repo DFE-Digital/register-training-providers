@@ -1,4 +1,10 @@
 <%= render CheckYourAnswers::View.new(
-      rows: accreditation_rows(model, change_path), subtitle: "Add accreditation", caption: "Add accreditation", back_path: back_path,
-      save_button_text: "Save accreditation", save_path: save_path, cancel_path: cancel_path, method: method
+      rows: accreditation_rows(model, change_path), 
+      subtitle: method == :patch ? "Edit accreditation" : "Add accreditation", 
+      caption: method == :patch ? "Edit accreditation" : "Add accreditation", 
+      back_path: back_path,
+      save_button_text: "Save accreditation", 
+      save_path: save_path, 
+      cancel_path: cancel_path, 
+      method: method
     ) %>
