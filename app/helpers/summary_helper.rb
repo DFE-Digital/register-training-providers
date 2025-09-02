@@ -127,14 +127,14 @@ module SummaryHelper
     ]
   end
 
-  def accreditation_summary_cards(accreditations, _provider)
+  def accreditation_summary_cards(accreditations, provider)
     return [] if accreditations.empty?
 
     accreditations.map do |accreditation|
       {
         title: "Accreditation #{accreditation.number}",
         actions: [
-          { text: "Change", href: "#" },
+          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
           { text: "Remove", href: "#" }
         ],
         rows: [

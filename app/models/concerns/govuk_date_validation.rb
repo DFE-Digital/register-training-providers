@@ -100,11 +100,11 @@ module GovukDateValidation
       if options[:same_or_after]
         other_date = record.public_send(options[:same_or_after])
         if other_date.is_a?(Date) && date_value < other_date
-          other_name = options[:same_or_after].to_s.humanize.downcase
+          options[:same_or_after].to_s.humanize.downcase
           add_date_error(
             :must_be_same_or_after,
-            "#{human_name.capitalize} must be the same as or after " \
-            "#{other_date.strftime('%-d %B %Y')} (#{other_name})"
+            "The #{human_name} must be the same as or after " \
+            "#{other_date.strftime('%-d %B %Y')} when the accreditation starts"
           )
         end
       end

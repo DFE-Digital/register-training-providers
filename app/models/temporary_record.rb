@@ -44,6 +44,14 @@ class TemporaryRecord < ApplicationRecord
 private
 
   def safe_data
-    record_type.constantize.attribute_names.index_with { |attr| data[attr] }
+    # Start with database attributes
+    safe_attrs = record_type.constantize.attribute_names.index_with { |attr| data[attr] }
+
+    # Add any other keys from data that might be virtual attributes
+    data.each do |key, value|
+      safe_attrs[key] = value unless safe_attrs.key?(key)
+    end
+
+    safe_attrs
   end
 end
