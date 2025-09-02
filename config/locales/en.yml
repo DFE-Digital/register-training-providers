@@ -39,6 +39,15 @@ en:
             email:
               blank: "Enter email address"
               taken: "Email address already in use"
+        accreditation:
+          attributes:
+            number:
+              blank: "Enter an accredited provider number"
+              invalid_format_hei: "Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234"
+              invalid_format_scitt: "Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678"
+              invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with 1 (for HEI) or 5 (for SCITT)"
+            start_date:
+              blank: "Enter date accreditation starts"
         provider:
           attributes:
             accreditation_status:
@@ -75,12 +84,21 @@ en:
         provider:
           add: "Provider added"
           update: "Provider updated"
+        "providers/accreditation":
+          add: "Accreditation added"
   forms:
     providers:
       is_the_provider_accredited:
         accreditation_status:
           accredited: "Yes"
           unaccredited: "No"
+      accreditation:
+        number:
+          label: "Accredited provider number"
+        start_date:
+          label: "Date accreditation starts"
+        end_date:
+          label: "Date accreditation ends (optional)"
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"
