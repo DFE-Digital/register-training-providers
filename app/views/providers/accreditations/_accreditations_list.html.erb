@@ -12,7 +12,7 @@
         end %>
   <% end %>
 <% else %>
-  <p class="govuk-body">This provider has no accreditations.</p>
-
   <%= govuk_button_link_to("Add accreditation", new_provider_accreditation_path(provider)) %>
+
+  <p class="govuk-body">There are no accreditations for <%= provider.operating_name %></p>
 <% end %>

@@ -19,6 +19,8 @@ class AccreditationPolicy < ApplicationPolicy
     provider_policy.edit?
   end
 
+  delegate :edit?, to: :provider_policy
+
   def update?
     provider_policy.edit?
   end
@@ -35,7 +37,7 @@ private
 
   def provider
     # Handle both real accreditations and form objects
-    if record.respond_to?(:provider)
+    if record.respond_to?(:provider) && record.provider.present?
       record.provider
     elsif record.respond_to?(:provider_id) && record.provider_id.present?
       Provider.find(record.provider_id)

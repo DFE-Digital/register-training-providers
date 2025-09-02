@@ -11,7 +11,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     scenario "HEI provider creates accreditation" do
       visit provider_accreditations_path(provider)
 
-      expect(page).to have_content("This provider has no accreditations")
+      expect(page).to have_content("There are no accreditations for #{provider.operating_name}")
 
       click_link "Add accreditation"
 
