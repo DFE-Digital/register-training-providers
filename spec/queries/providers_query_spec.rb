@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ProvidersQuery do
-
+  subject(:results) { described_class.call(filters:, search_term:) }
   let(:search_term) { nil }
 
   describe "#call (filters only)" do
