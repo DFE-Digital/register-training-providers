@@ -21,6 +21,8 @@
   </div>
 <% end %>
 
-<h2 class="govuk-heading-m">Accreditations (<%= @accreditations.count %>)</h2>
+<h2 class="govuk-heading-m">
+  Accreditations<%= " (#{@accreditations.count})" if @accreditations.any? %>
+</h2>
 
 <%= render "accreditations_list", accreditations: @accreditations, provider: @provider %>

@@ -129,7 +129,7 @@ RSpec.describe GovukDateValidation, type: :model do
       form.end_date_year = Date.current.year - 1
       form.send(:convert_date_components)
       expect(form).not_to be_valid
-      expect(form.errors[:end_date]).to include("End date must be the same as or after 1 January #{Date.current.year} (start date)")
+      expect(form.errors[:end_date]).to include("The end date must be the same as or after 1 January #{Date.current.year} when the accreditation starts")
     end
   end
 end
