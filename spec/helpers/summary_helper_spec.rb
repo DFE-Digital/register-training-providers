@@ -261,24 +261,45 @@ RSpec.describe SummaryHelper, type: :helper do
         create(:accreditation, :current, provider:)
       end
 
-      it "returns summary card data" do
-        result = helper.accreditation_summary_cards([accreditation], provider)
+      context "with actions (default)" do
+        it "returns summary card data with actions" do
+          result = helper.accreditation_summary_cards([accreditation], provider)
 
-        expect(result.size).to eq(1)
+          expect(result.size).to eq(1)
 
-        card = result.first
-        expect(card[:title]).to eq("Accreditation #{accreditation.number}")
-        expect(card[:actions]).to include(
-          { href: edit_provider_accreditation_path(provider, accreditation), text: "Change" },
-          { href: "#", text: "Remove" }
-        )
+          card = result.first
+          expect(card[:title]).to eq("Accreditation #{accreditation.number}")
+          expect(card[:actions]).to include(
+            { href: edit_provider_accreditation_path(provider, accreditation), text: "Change" },
+            { href: provider_accreditation_delete_path(provider, accreditation), text: "Remove" }
+          )
 
-        rows = card[:rows]
-        expect(rows).to include(
-          { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
-          { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
-          { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
-        )
+          rows = card[:rows]
+          expect(rows).to include(
+            { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
+            { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
+            { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
+          )
+        end
+      end
+
+      context "without actions" do
+        it "returns summary card data without actions" do
+          result = helper.accreditation_summary_cards([accreditation], provider, include_actions: false)
+
+          expect(result.size).to eq(1)
+
+          card = result.first
+          expect(card[:title]).to eq("Accreditation #{accreditation.number}")
+          expect(card).not_to have_key(:actions)
+
+          rows = card[:rows]
+          expect(rows).to include(
+            { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
+            { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
+            { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
+          )
+        end
       end
 
       it "handles accreditations without end dates" do
