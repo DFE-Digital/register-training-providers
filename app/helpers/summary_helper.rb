@@ -124,18 +124,14 @@ module SummaryHelper
     ]
   end
 
-  def accreditation_summary_cards(accreditations, provider)
+  def accreditation_summary_cards(accreditations, provider, include_actions: true)
     return [] if accreditations.empty?
 
     accreditations.map do |accreditation|
-      {
+      card = {
         title: "Accreditation #{accreditation.number}",
-        actions: [
-          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
-          { text: "Remove", href: "#" }
-        ],
         rows: [
-          { key: { text: "Accreditation number" },
+          { key: { text: "Accredited number" },
             value: { text: accreditation.number } },
           { key: { text: "Date accreditation starts" },
             value: { text: accreditation.start_date.to_fs(:govuk) } },
@@ -147,6 +143,15 @@ module SummaryHelper
                    end }
         ]
       }
+
+      if include_actions
+        card[:actions] = [
+          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
+          { text: "Remove", href: provider_accreditation_delete_path(provider, accreditation) }
+        ]
+      end
+
+      card
     end
   end
 end

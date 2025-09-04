@@ -77,6 +77,8 @@ en:
           invalid: Enter an email address in the correct format, like name@example.com
   flash_message:
     success:
+      accreditation:
+        remove: "Accreditation removed"
       check:
         user:
           add: "Support user added"
