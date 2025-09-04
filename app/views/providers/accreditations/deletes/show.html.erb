@@ -1,0 +1,14 @@
+<%= content_for(:breadcrumbs) do %>
+    <%= govuk_back_link(text: "Back", href: provider_accreditations_path(@provider)) %>
+<% end %>
+
+<% page_data(title: "Confirm you want to remove #{@provider.operating_name}'s accreditation", subtitle: "Remove accreditation",
+             caption: "Remove accreditation") %>
+
+<%= govuk_summary_list(rows: accreditation_summary_cards([@accreditation], @provider, include_actions: false).first[:rows]) %>
+
+<%= govuk_button_to("Remove accreditation", provider_accreditation_delete_path(@provider, @accreditation), method: :delete, warning: true) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_accreditations_path(@provider)) %>
+</p>
