@@ -15,7 +15,7 @@ module Providers
     end
 
     def edit
-      @accreditation = @provider.accreditations.find_by!(uuid: params[:id])
+      @accreditation = @provider.accreditations.kept.find_by!(uuid: params[:id])
       authorize @accreditation
 
       stored_form = current_user.load_temporary(
@@ -44,7 +44,7 @@ module Providers
     end
 
     def update
-      @accreditation = @provider.accreditations.find_by!(uuid: params[:id])
+      @accreditation = @provider.accreditations.kept.find_by!(uuid: params[:id])
       authorize @accreditation
 
       @form = Providers::Accreditation.new(accreditation_form_params)

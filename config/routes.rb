@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     resource :delete, only: [:show, :destroy], module: :providers
     resources :accreditations, only: [:index, :new, :create, :edit, :update], module: :providers do
       checkable(:accreditations)
+      resource :delete, only: [:show, :destroy], module: :accreditations
     end
   end
 

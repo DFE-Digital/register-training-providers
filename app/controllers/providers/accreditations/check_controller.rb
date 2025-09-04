@@ -31,7 +31,7 @@ module Providers
 
       def save
         if model_uuid.present?
-          accreditation = @provider.accreditations.find_by!(uuid: model_uuid)
+          accreditation = @provider.accreditations.kept.find_by!(uuid: model_uuid)
           authorize accreditation
 
           if accreditation.update(model.to_accreditation_attributes)
@@ -58,7 +58,7 @@ module Providers
       end
 
       def edit_model_path(query_params = {})
-        accreditation = @provider.accreditations.find_by!(uuid: model_uuid)
+        accreditation = @provider.accreditations.kept.find_by!(uuid: model_uuid)
         edit_provider_accreditation_path(@provider, accreditation, query_params)
       end
 
@@ -67,7 +67,7 @@ module Providers
       end
 
       def model_check_path
-        accreditation = @provider.accreditations.find_by!(uuid: model_uuid)
+        accreditation = @provider.accreditations.kept.find_by!(uuid: model_uuid)
         provider_accreditation_check_path(@provider, accreditation)
       end
     end
