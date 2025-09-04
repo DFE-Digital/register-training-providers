@@ -1,4 +1,8 @@
 class ProviderPolicy < ApplicationPolicy
+  def index?
+    true
+  end
+
   def show?
     record.kept?
   end
