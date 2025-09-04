@@ -96,7 +96,7 @@ class Provider < ApplicationRecord
   end
 
   def current_accreditations
-    accreditations.current.order_by_start_date
+    accreditations.kept.current.order_by_start_date
   end
 
   def has_current_accreditations?
