@@ -10,7 +10,7 @@ module Providers
 
       def destroy
         authorize @accreditation, :destroy?
-        @accreditation.destroy!
+        @accreditation.discard!
         redirect_to(provider_accreditations_path(@provider),
                     flash: { success: t("flash_message.success.accreditation.remove") })
       end

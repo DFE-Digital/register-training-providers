@@ -65,11 +65,11 @@ private
   end
 
   def and_the_accreditation_should_be_deleted
-    expect(Accreditation.exists?(accreditation.id)).to be false
+    expect(accreditation.reload).to be_discarded
   end
 
   def and_the_accreditation_should_still_exist
-    expect(Accreditation.exists?(accreditation.id)).to be true
+    expect(accreditation.reload).not_to be_discarded
   end
 
   def provider
