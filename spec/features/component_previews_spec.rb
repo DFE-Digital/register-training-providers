@@ -3,7 +3,7 @@ require "rails_helper"
 feature "component previews" do
   all_links = ViewComponent::Preview.all.map { |component|
     component.examples.map do |example|
-      "#{Rails.application.config.view_component.preview_route}/#{component.preview_name}/#{example}"
+      "/rails/view_components/#{Rails.application.config.view_component.preview_route}/#{component.preview_name}/#{example}"
     end
   }.flatten
 
