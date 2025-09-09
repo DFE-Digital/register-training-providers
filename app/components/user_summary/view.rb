@@ -1,7 +1,5 @@
 module UserSummary
-  class View < ViewComponent::Base
-    include ApplicationHelper
-
+  class View < ApplicationComponent
     attr_reader :title, :caption, :back_path, :delete_path, :user, :editable, :deletable
 
     def initialize(title:, back_path:, user:, caption: nil, delete_path: nil, editable: false, deletable: false)
@@ -12,7 +10,7 @@ module UserSummary
       @user = user
       @editable = editable
       @deletable = deletable
-      super
+      super()
     end
 
     def rows

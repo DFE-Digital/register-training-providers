@@ -1,9 +1,7 @@
-class PaginationDisplay::View < ViewComponent::Base
-  include ApplicationHelper
-
+class PaginationDisplay::View < ApplicationComponent
   def initialize(pagy:)
     @pagy = pagy
-    super
+    super()
   end
 
   def render?

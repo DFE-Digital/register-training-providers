@@ -1,7 +1,5 @@
 module CheckYourAnswers
-  class View < ViewComponent::Base
-    include ApplicationHelper
-
+  class View < ApplicationComponent
     attr_reader :rows, :title, :subtitle, :caption, :back_path, :save_button_text, :save_path, :cancel_path, :method,
                 :header
 
@@ -17,7 +15,7 @@ module CheckYourAnswers
       @title = title
       @header = header
       @method = method
-      super
+      super()
     end
   end
 end
