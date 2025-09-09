@@ -1,14 +1,12 @@
 module Personas
-  class View < ViewComponent::Base
-    include ApplicationHelper
-
+  class View < ApplicationComponent
     with_collection_parameter :persona
     attr_reader :persona, :persona_iteration
 
     def initialize(persona:, persona_iteration:)
       @persona = persona
       @persona_iteration = persona_iteration
-      super
+      super()
     end
 
     def tag_args
