@@ -34,9 +34,15 @@ module CheckYourAnswers
 
     def existing_user_rows
       [
-        { key: { text: "First name" }, value: { text: existing_user.first_name }, actions: [{ href: edit_user_path(existing_user) }] },
-        { key: { text: "Last name" }, value: { text: existing_user.last_name }, actions: [{ href: edit_user_path(existing_user) }] },
-        { key: { text: "Email address" }, value: { text: existing_user.email }, actions: [{ href: edit_user_path(existing_user) }] },
+        { key: { text: "First name" },
+          value: { text: existing_user.first_name },
+          actions: [{ href: edit_user_path(existing_user) }] },
+        { key: { text: "Last name" },
+          value: { text: existing_user.last_name },
+          actions: [{ href: edit_user_path(existing_user) }] },
+        { key: { text: "Email address" },
+          value: { text: existing_user.email },
+          actions: [{ href: edit_user_path(existing_user) }] },
       ]
     end
 

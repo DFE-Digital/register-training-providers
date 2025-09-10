@@ -38,8 +38,8 @@ RSpec.describe UserSummary::View, type: :component do
       end
     end
 
-    describe "your_acccount" do
-      subject { render_preview(:your_acccount) }
+    describe "your_account" do
+      subject { render_preview(:your_account) }
 
       it "renders heading" do
         expect(subject).to have_heading("h1", "Your account")

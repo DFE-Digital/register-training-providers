@@ -38,8 +38,6 @@ module RegisterTrainingProviders
 
     config.exceptions_app = routes
 
-    config.view_component.preview_paths = [Rails.root.join("spec/components")]
-    config.view_component.preview_route = "/view_components"
     config.view_component.show_previews = !Rails.env.production?
 
     config.active_job.queue_adapter = :solid_queue
