@@ -85,7 +85,7 @@ RSpec.describe "providers/edit.html.erb", type: :view do
 
     context "for scitt provider" do
       let(:provider) do
-        provider = create(:provider, :scitt)
+        provider = create(:provider, :scitt, :accredited)
         provider.operating_name = nil
         provider.ukprn = nil
         provider.urn = nil
