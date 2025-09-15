@@ -85,3 +85,27 @@ To run the linters:
 ```bash
 bin/lint
 ```
+
+### Ordnance Survey API Key Setup
+
+1. **Sign up** at [OS Data Hub](https://osdatahub.os.uk/) using your `education.gov.uk` email.
+
+2. When prompted:
+   - Select **Public Sector Plan**
+   - Set **Organisation** to `Department of Education`
+
+3. Wait for your account to be approved by the Department for Education account holder.
+
+4. Once approved, go to [API projects](https://osdatahub.os.uk/projects). You’ll see projects for each environment:
+   - **[Register of Training Providers - Prod](https://osdatahub.os.uk/projects/Register_of_Training_Providers_-_Prod)**
+   - **[Register of Training Providers - Staging](https://osdatahub.os.uk/projects/Register_of_Training_Providers_-_Staging)**
+   - **[Register of Training Providers - QA](https://osdatahub.os.uk/projects/Register_of_Training_Providers_-_QA)**
+   - **[Register of Training Providers - Review](https://osdatahub.os.uk/projects/Register_of_Training_Providers_-_Review)**
+   - **[Register of Training Providers - Dev](https://osdatahub.os.uk/projects/Register_of_Training_Providers_-_Dev)** → _use this one for local development_.
+
+5. Copy the API key from the relevant project and add it to your environment file:
+
+   ```dotenv
+   # .env.local
+   ORDNANCE_SURVEY_API_KEY=dev-api-key-here
+   ```
