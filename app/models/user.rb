@@ -2,14 +2,13 @@
 #
 # Table name: users
 #
-#  id                :bigint           not null, primary key
+#  id                :uuid             not null, primary key
 #  dfe_sign_in_uid   :string
 #  discarded_at      :datetime
 #  email             :string           not null
 #  first_name        :string           not null
 #  last_name         :string           not null
 #  last_signed_in_at :datetime
-#  uuid              :uuid             not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #
@@ -17,13 +16,13 @@
 #
 #  index_users_on_discarded_at  (discarded_at)
 #  index_users_on_email         (email) UNIQUE
-#  index_users_on_uuid          (uuid) UNIQUE
+#  index_users_on_id            (id) UNIQUE
 #
 
 class User < ApplicationRecord
+  self.primary_key = 'id'
   include Discard::Model
   include SaveAsTemporary
-  include UuidIdentifiable
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
 
@@ -47,7 +46,7 @@ class User < ApplicationRecord
     "#{first_name_to_use} #{last_name_to_use}"
   end
 
-  def load_temporary(record_class, purpose:, uuid: nil, reset: false)
+  def load_temporary(record_class, purpose:, id: nil, reset: false)
     clear_temporary(record_class, purpose:) if reset
 
     record_type = record_class.name
@@ -58,9 +57,9 @@ class User < ApplicationRecord
       return record_class.new
     end
 
-    if uuid.present?
-      existing_record = record_class.find_by(uuid:)
-      existing_record.assign_attributes(record.rehydrate.attributes.except("id", "uuid")) if record.present?
+    if id.present?
+      existing_record = record_class.find(id)
+      existing_record.assign_attributes(record.rehydrate.attributes.except("id")) if record.present?
       existing_record
     else
       record&.rehydrate || record_class.new

@@ -46,7 +46,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
     scenario "SCITT provider creates accreditation" do
       scitt_provider = create(:provider, :scitt, :accredited)
-      visit provider_accreditations_path(scitt_provider)
+      visit provider_path(scitt_provider)
 
       click_link "Add accreditation"
 
@@ -76,7 +76,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     let(:provider) { create(:provider, :hei, :unaccredited) }
 
     scenario "missing accreditation number" do
-      visit new_provider_accreditation_path(provider)
+      visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
       fill_in "accreditation_start_date_3i", with: "1"
@@ -90,7 +90,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     end
 
     scenario "missing start date" do
-      visit new_provider_accreditation_path(provider)
+      visit new_accreditation_path(provider_id: provider.id)
 
       fill_in "Accredited provider number", with: "1234"
 
@@ -101,7 +101,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     end
 
     scenario "invalid number format for HEI" do
-      visit new_provider_accreditation_path(provider)
+      visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "5234"
@@ -117,7 +117,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
     scenario "invalid number format for SCITT" do
       scitt_provider = create(:provider, :scitt, :accredited)
-      visit new_provider_accreditation_path(scitt_provider)
+      visit new_accreditation_path(provider_id: scitt_provider.id)
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1678"
@@ -136,7 +136,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     let(:provider) { create(:provider, :hei, :unaccredited) }
 
     scenario "can change values and resubmit" do
-      visit new_provider_accreditation_path(provider)
+      visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
@@ -166,7 +166,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     end
 
     scenario "can cancel and return to index" do
-      visit new_provider_accreditation_path(provider)
+      visit new_accreditation_path(provider_id: provider.id)
 
       fill_in "Accredited provider number", with: "1234"
 

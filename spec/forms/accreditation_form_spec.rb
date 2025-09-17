@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Accreditation, type: :model do
+RSpec.describe AccreditationForm, type: :model do
   let(:provider) { create(:provider, :hei) }
   let(:valid_attributes) do
     {

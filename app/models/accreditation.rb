@@ -2,32 +2,31 @@
 #
 # Table name: accreditations
 #
-#  id           :bigint           not null, primary key
+#  id           :uuid             not null, primary key
 #  discarded_at :datetime
 #  end_date     :date
 #  number       :string           not null
 #  start_date   :date             not null
-#  uuid         :uuid             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  provider_id  :bigint           not null
+#  provider_id  :uuid
 #
 # Indexes
 #
 #  index_accreditations_on_discarded_at  (discarded_at)
 #  index_accreditations_on_end_date      (end_date)
+#  index_accreditations_on_id            (id) UNIQUE
 #  index_accreditations_on_number        (number)
 #  index_accreditations_on_provider_id   (provider_id)
 #  index_accreditations_on_start_date    (start_date)
-#  index_accreditations_on_uuid          (uuid) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (provider_id => providers.id)
 #
 class Accreditation < ApplicationRecord
+  self.primary_key = 'id'
   include Discard::Model
-  include UuidIdentifiable
   include SaveAsTemporary
 
   belongs_to :provider

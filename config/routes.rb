@@ -56,10 +56,12 @@ Rails.application.routes.draw do
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
-    resources :accreditations, only: [:index, :new, :create, :edit, :update], module: :providers do
-      checkable(:accreditations)
-      resource :delete, only: [:show, :destroy], module: :accreditations
-    end
+    resources :accreditations, only: [:index], controller: 'accreditations'
+  end
+
+  resources :accreditations, except: [:index, :show] do
+    checkable(:accreditations)
+    resource :delete, only: [:show, :destroy], module: :accreditations
   end
 
   resources :users do

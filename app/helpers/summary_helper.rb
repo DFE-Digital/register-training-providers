@@ -141,8 +141,8 @@ module SummaryHelper
 
       if include_actions
         card[:actions] = [
-          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
-          { text: "Remove", href: provider_accreditation_delete_path(provider, accreditation) }
+          { text: "Change", href: edit_accreditation_path(accreditation, provider_id: provider.id) },
+          { text: "Remove", href: accreditation_delete_path(accreditation, provider_id: provider.id) }
         ]
       end
 
