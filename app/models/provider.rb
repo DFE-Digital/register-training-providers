@@ -30,7 +30,7 @@
 #  index_providers_on_urn                   (urn)
 #
 class Provider < ApplicationRecord
-  self.primary_key = 'id'
+  self.primary_key = "id"
   include PgSearch::Model
   include Discard::Model
 

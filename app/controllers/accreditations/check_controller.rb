@@ -6,12 +6,12 @@ module Accreditations
 
     def load_provider
       provider_id = params[:provider_id]
-      
+
       if provider_id.blank?
         Rails.logger.error "Accreditations::CheckController#load_provider: No provider_id provided"
         raise ActiveRecord::RecordNotFound, "Provider ID is required"
       end
-      
+
       @provider = policy_scope(Provider).find(provider_id)
     end
 

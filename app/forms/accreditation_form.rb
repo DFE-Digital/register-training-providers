@@ -15,6 +15,7 @@ class AccreditationForm
 
   attribute :number, :string
   attribute :provider_id, :string
+  attribute :provider_creation_mode, :boolean, default: false
   attribute :start_date_day, :integer
   attribute :start_date_month, :integer
   attribute :start_date_year, :integer
@@ -56,7 +57,7 @@ class AccreditationForm
   end
 
   validates :number, presence: true, accreditation_number: true
-  validates :provider_id, presence: true
+  validates :provider_id, presence: true, unless: :provider_creation_mode?
   validates_govuk_date :start_date, required: true, human_name: "date accreditation starts"
   validates_govuk_date :end_date, required: false, same_or_after: :start_date, human_name: "date accreditation ends"
 
@@ -81,6 +82,7 @@ class AccreditationForm
       "start_date" => start_date,
       "end_date" => end_date,
       "provider_id" => provider_id,
+      "provider_creation_mode" => provider_creation_mode,
       "start_date_day" => start_date_day,
       "start_date_month" => start_date_month,
       "start_date_year" => start_date_year,
@@ -88,6 +90,10 @@ class AccreditationForm
       "end_date_month" => end_date_month,
       "end_date_year" => end_date_year
     }
+  end
+
+  def provider_creation_mode?
+    provider_creation_mode
   end
 
 private

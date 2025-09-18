@@ -13,8 +13,9 @@
 #
 # Indexes
 #
-#  index_temporary_records_on_created_by  (created_by)
-#  index_temporary_records_on_expires_at  (expires_at)
+#  index_temporary_records_on_created_by                      (created_by)
+#  index_temporary_records_on_created_by_record_type_purpose  (created_by,record_type,purpose) UNIQUE
+#  index_temporary_records_on_expires_at                      (expires_at)
 #
 # Foreign Keys
 #

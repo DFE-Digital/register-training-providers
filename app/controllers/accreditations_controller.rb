@@ -61,16 +61,16 @@ private
 
   def load_provider
     provider_id = params[:provider_id]
-    
+
     # Check if provider_id is present
     if provider_id.blank?
       Rails.logger.error "AccreditationsController#load_provider: No provider_id provided in params: #{params.inspect}"
       raise ActiveRecord::RecordNotFound, "Provider ID is required"
     end
-    
+
     # Try to find the provider
     @provider = policy_scope(Provider).find_by(id: provider_id)
-    
+
     if @provider.nil?
       # Check if provider exists but is outside policy scope
       provider_exists = Provider.unscoped.find_by(id: provider_id)

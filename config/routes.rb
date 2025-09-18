@@ -51,12 +51,15 @@ Rails.application.routes.draw do
   get "/providers/new/details", to: "providers/details#new", as: :new_provider_details
   post "/providers/new/details", to: "providers/details#create"
 
+  get "/providers/new/accreditation", to: "providers/accreditation#new", as: :new_provider_accreditation
+  post "/providers/new/accreditation", to: "providers/accreditation#create"
+
   resources :providers, except: [:new, :create] do
     checkable(:providers)
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
-    resources :accreditations, only: [:index], controller: 'accreditations'
+    resources :accreditations, only: [:index], controller: "accreditations"
   end
 
   resources :accreditations, except: [:index, :show] do

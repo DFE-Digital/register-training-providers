@@ -20,7 +20,7 @@
 #
 
 class User < ApplicationRecord
-  self.primary_key = 'id'
+  self.primary_key = "id"
   include Discard::Model
   include SaveAsTemporary
 

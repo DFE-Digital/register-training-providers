@@ -25,7 +25,7 @@
 #  fk_rails_...  (provider_id => providers.id)
 #
 class Accreditation < ApplicationRecord
-  self.primary_key = 'id'
+  self.primary_key = "id"
   include Discard::Model
   include SaveAsTemporary
 

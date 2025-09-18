@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_154436) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -207,6 +207,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_154436) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "created_by"
+    t.index ["created_by", "record_type", "purpose"],
+            name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
     t.index ["created_by"], name: "index_temporary_records_on_created_by"
     t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
   end
