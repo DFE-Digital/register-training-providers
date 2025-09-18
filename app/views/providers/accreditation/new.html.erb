@@ -1,25 +1,9 @@
-<%= content_for(:breadcrumbs) do %>
-  <%= render GovukComponent::BackLinkComponent.new(
-        text: "Back",
-        href: params[:goto] == "confirm" ? new_provider_confirm_path : new_provider_details_path,
-      ) %>
-<% end %>
-
-<%= form_for @form, url: new_provider_accreditation_path, method: :post do |form| %>
-  <% page_data(title: "Accreditation details", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
-
-  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  <%= form.govuk_fieldset legend: { text: "Accreditation details" }, caption: { text: "Add provider" } do %>
-    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(current_user.load_temporary(Provider, purpose: :create_provider)&.provider_type) } %>
-
-    <%= form.govuk_date_field :start_date, legend: { text: I18n.t("forms.accreditation.start_date.label"), size: "s" }, hint: { text: "For example, 1 9 2024" } %>
-
-    <%= form.govuk_date_field :end_date, legend: { text: I18n.t("forms.accreditation.end_date.label"), size: "s" }, hint: { text: "For example, 31 8 2026" } %>
-  <% end %>
-  <%= form.govuk_submit %>
-
-<% end %>
-
-<p class="govuk-body">
-  <%= govuk_link_to("Cancel", providers_path) %>
-</p>
+<%= render "accreditations/form",
+      back_path: (params[:goto] == "confirm" ? new_provider_confirm_path : new_provider_details_path),
+      form_url: new_provider_accreditation_path,
+      form_method: :post,
+      page_title: "Accreditation details",
+      subtitle: "Add provider",
+      caption: "Add provider",
+      provider_type: current_user.load_temporary(Provider, purpose: :create_provider)&.provider_type,
+      cancel_path: providers_path %>

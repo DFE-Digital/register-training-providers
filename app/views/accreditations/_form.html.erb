@@ -1,3 +1,18 @@
+<%
+  # Set defaults for optional local variables using local_assigns
+  default_back_path = @provider&.persisted? ? provider_accreditations_path(@provider) : providers_path
+  default_cancel_path = @provider&.persisted? ? provider_accreditations_path(@provider) : providers_path
+  
+  back_path = local_assigns.fetch(:back_path, default_back_path)
+  form_url = local_assigns.fetch(:form_url, [@provider, @form])
+  form_method = local_assigns.fetch(:form_method, (@form.persisted? ? :patch : :post))
+  page_title = local_assigns.fetch(:page_title, (@form.persisted? ? "Edit accreditation" : "Add accreditation"))
+  subtitle = local_assigns.fetch(:subtitle, "Accreditation details")
+  caption = local_assigns.fetch(:caption, @provider&.operating_name || "Add provider")
+  provider_type = local_assigns.fetch(:provider_type, @provider&.provider_type)
+  cancel_path = local_assigns.fetch(:cancel_path, default_cancel_path)
+%>
+
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
@@ -6,11 +21,11 @@
 <% end %>
 
 <%= form_for @form, url: form_url, method: form_method do |form| %>
-  <% page_data(title: page_title, subtitle: "Accreditation details", header: false, error: @form.errors.present?) %>
+  <% page_data(title: page_title, subtitle: subtitle, header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  <%= form.govuk_fieldset legend: { text: "Accreditation details" }, caption: { text: "#{action_text} - #{@provider.operating_name}" } do %>
-    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(@provider.provider_type) } %>
+  <%= form.govuk_fieldset legend: { text: "Accreditation details" }, caption: { text: caption } do %>
+    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(provider_type) } %>
 
     <%= form.govuk_date_field :start_date, legend: { text: I18n.t("forms.accreditation.start_date.label"), size: "s" }, hint: { text: "For example, 1 9 2024" } %>
 
@@ -21,5 +36,5 @@
 <% end %>
 
 <p class="govuk-body">
-  <%= govuk_link_to("Cancel", provider_accreditations_path(@provider)) %>
+  <%= govuk_link_to("Cancel", cancel_path) %>
 </p>
