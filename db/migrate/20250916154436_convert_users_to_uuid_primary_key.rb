@@ -1,5 +1,5 @@
 class ConvertUsersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
-  def change
+  def up
     # Remove foreign key constraint from temporary_records to users
     remove_foreign_key :temporary_records, :users
 
@@ -28,7 +28,7 @@ class ConvertUsersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     remove_column :users, :id
 
     # Rename uuid column to id and make it the primary key
-    rename_column :users, :uuid, :id
+    rename_column :users, :uuid, :id # rubocop:disable Rails/DangerousColumnNames
     execute "ALTER TABLE users ADD PRIMARY KEY (id)"
 
     # Re-add the foreign key constraint
@@ -36,5 +36,9 @@ class ConvertUsersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
 
     # Add index for the new foreign key
     add_index :temporary_records, :created_by
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration, "Cannot revert user UUID primary key migration"
   end
 end

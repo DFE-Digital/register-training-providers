@@ -1,5 +1,5 @@
 class ConvertProvidersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
-  def change
+  def up
     # Remove foreign key constraint from accreditations to providers
     remove_foreign_key :accreditations, :providers
 
@@ -28,7 +28,7 @@ class ConvertProvidersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     remove_column :providers, :id
 
     # Rename uuid column to id and make it the primary key
-    rename_column :providers, :uuid, :id
+    rename_column :providers, :uuid, :id # rubocop:disable Rails/DangerousColumnNames
     execute "ALTER TABLE providers ADD PRIMARY KEY (id)"
 
     # Re-add the foreign key constraint
@@ -36,5 +36,9 @@ class ConvertProvidersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
 
     # Add index for the new foreign key
     add_index :accreditations, :provider_id
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration, "Cannot revert provider UUID primary key migration"
   end
 end

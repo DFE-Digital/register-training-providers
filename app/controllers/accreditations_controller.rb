@@ -64,7 +64,6 @@ private
 
     # Check if provider_id is present
     if provider_id.blank?
-      Rails.logger.error "AccreditationsController#load_provider: No provider_id provided in params: #{params.inspect}"
       raise ActiveRecord::RecordNotFound, "Provider ID is required"
     end
 
@@ -76,14 +75,11 @@ private
       provider_exists = Provider.unscoped.find_by(id: provider_id)
       if provider_exists
         if provider_exists.discarded?
-          Rails.logger.error "AccreditationsController#load_provider: Provider #{provider_id} is archived"
           raise ActiveRecord::RecordNotFound, "Provider is archived"
         else
-          Rails.logger.error "AccreditationsController#load_provider: Provider #{provider_id} exists but is not accessible"
           raise ActiveRecord::RecordNotFound, "Provider is not accessible"
         end
       else
-        Rails.logger.error "AccreditationsController#load_provider: Provider #{provider_id} does not exist"
         raise ActiveRecord::RecordNotFound, "Provider with ID #{provider_id} not found"
       end
     end
