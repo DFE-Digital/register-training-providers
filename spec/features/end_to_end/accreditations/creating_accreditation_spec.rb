@@ -15,7 +15,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_link "Add accreditation"
 
-      expect(page).to have_content("Add accreditation")
+      expect(page).to have_content(provider.operating_name)
       expect(page).to have_content("Accreditation details")
 
       expect(TemporaryRecord.count).to eq(0)
@@ -46,7 +46,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
     scenario "SCITT provider creates accreditation" do
       scitt_provider = create(:provider, :scitt, :accredited)
-      visit provider_path(scitt_provider)
+      visit provider_accreditations_path(scitt_provider)
 
       click_link "Add accreditation"
 

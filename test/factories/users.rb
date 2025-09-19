@@ -10,10 +10,9 @@ FactoryBot.define do
     end
 
     trait :math_magician do
-      id { 42 }
+      id { "00000000-0000-0000-0000-000000000001" }
       first_name { "Mathilda" }
       last_name { "Mathmagician" }
-      uuid { "00000000-0000-0000-0000-000000000001" }
     end
   end
 end

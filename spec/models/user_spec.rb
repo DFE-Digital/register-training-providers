@@ -109,7 +109,7 @@ RSpec.describe User, type: :model do
         include ActiveModel::Model
         include ActiveModel::Attributes
 
-        attribute :uuid, :string
+        attribute :id, :string
         attribute :foo, :string
         attribute :bar, :integer
 
@@ -117,7 +117,7 @@ RSpec.describe User, type: :model do
           other.is_a?(DummyModel) && foo == other.foo && bar == other.bar
         end
 
-        def self.find_by(uuid:)
+        def self.find_by(id:)
         end
       end)
     end
@@ -200,7 +200,7 @@ RSpec.describe User, type: :model do
       it "finds the existing record and merges temporary data into it" do
         result = user.load_temporary(DummyModel, purpose: :check_your_answers, id: "00000000-0000-0000-0000-000000000042")
 
-        expect(DummyModel).to have_received(:find_by).with(uuid: "00000000-0000-0000-0000-000000000042")
+        expect(DummyModel).to have_received(:find_by).with(id: "00000000-0000-0000-0000-000000000042")
         expect(result).to be_a(DummyModel)
         expect(result.foo).to eq("temp_value")
         expect(result.bar).to eq(456)
@@ -213,7 +213,7 @@ RSpec.describe User, type: :model do
         it "returns the found record without any merging" do
           result = user.load_temporary(DummyModel, purpose: :check_your_answers, id: "00000000-0000-0000-0000-000000000042")
 
-          expect(DummyModel).to have_received(:find_by).with(uuid: "00000000-0000-0000-0000-000000000042")
+          expect(DummyModel).to have_received(:find_by).with(id: "00000000-0000-0000-0000-000000000042")
           expect(result).to be_a(DummyModel)
           expect(result.foo).to eq("existing_value")
           expect(result.bar).to eq(999)

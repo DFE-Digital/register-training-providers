@@ -78,8 +78,8 @@ en:
   flash_message:
     success:
       accreditation:
-        remove: "Accreditation removed"
-        deleted: "Accreditation removed"
+        remove: "Accreditation deleted"
+        deleted: "Accreditation deleted"
       check:
         user:
           add: "Support user added"
