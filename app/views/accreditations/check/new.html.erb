@@ -1,4 +1,4 @@
 <%= render CheckYourAnswers::View.new(
-      rows: accreditation_rows(model, change_path), subtitle: "Add accreditation", caption: "Add accreditation", back_path: back_path,
+      rows: accreditation_rows(model, change_path), subtitle: @provider.operating_name, caption: "Add accreditation - #{@provider.operating_name}", back_path: back_path,
       save_button_text: "Save accreditation", save_path: save_path, cancel_path: cancel_path, method: method
     ) %>

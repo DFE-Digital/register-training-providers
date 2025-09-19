@@ -49,7 +49,7 @@ module ApplicationHelper
     case provider_type
     when "hei"
       "A unique 4 digit code starting with '1' assigned by DfE to accredited providers, for example 1234"
-    when "scitt"
+    when "scitt", "school"
       "A unique 4 digit code starting with '5' assigned by DfE to accredited providers, for example 5678"
     else
       "A unique 4 digit code starting with '1' or '5' assigned by DfE to accredited providers, for example 1234 or 5678"

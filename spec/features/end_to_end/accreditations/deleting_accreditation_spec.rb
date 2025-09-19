@@ -45,7 +45,7 @@ private
   end
 
   def and_i_confirm_removing_the_accreditation
-    expect(page).to have_content("Confirm you want to delete #{provider.operating_name}'s accreditation")
+    expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s accreditation")
     expect(page).to have_content("Accreditation number")
     expect(page).to have_content(accreditation.number)
 

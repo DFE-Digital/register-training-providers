@@ -271,7 +271,7 @@ RSpec.describe SummaryHelper, type: :helper do
           expect(card[:title]).to eq("Accreditation #{accreditation.number}")
           expect(card[:actions]).to include(
             { href: edit_accreditation_path(accreditation, provider_id: provider.id), text: "Change" },
-            { href: accreditation_delete_path(accreditation, provider_id: provider.id), text: "Remove" }
+            { href: accreditation_delete_path(accreditation, provider_id: provider.id), text: "Delete" }
           )
 
           rows = card[:rows]

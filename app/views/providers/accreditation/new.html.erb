@@ -1,9 +1,9 @@
 <%= render "accreditations/form",
-      back_path: (params[:goto] == "confirm" ? new_provider_confirm_path : new_provider_details_path),
-      form_url: new_provider_accreditation_path,
-      form_method: :post,
-      page_title: "Accreditation details",
-      subtitle: "Add provider",
-      caption: "Add provider",
-      provider_type: current_user.load_temporary(Provider, purpose: :create_provider)&.provider_type,
-      cancel_path: providers_path %>
+           back_path: (params[:goto] == "confirm" ? new_provider_confirm_path : new_provider_details_path),
+           form_url: new_provider_accreditation_path,
+           form_method: :post,
+           page_title: "Accreditation details",
+           subtitle: "Add provider",
+           caption: "Add provider",
+           provider_type: current_user.load_temporary(Provider, purpose: :create_provider)&.provider_type,
+           cancel_path: providers_path %>

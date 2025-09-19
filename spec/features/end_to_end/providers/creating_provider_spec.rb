@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Add Provider", js: true do
+RSpec.feature "Add Provider" do
   shared_examples "adding a provider with accreditation status" do |accreditation_status|
     scenario "User can add a new provider with accreditation status: #{accreditation_status}" do
       given_i_am_an_authenticated_user
@@ -50,19 +50,21 @@ RSpec.feature "Add Provider", js: true do
     def and_i_fill_in_the_accreditation_details
       expect(TemporaryRecord.count).to eq(3)
       and_i_am_taken_to("/providers/new/accreditation")
-      and_i_can_see_the_title("Accreditation details - Add provider - Register of training providers - GOV.UK")
+      and_i_can_see_the_title("Accreditation details - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
 
       and_i_click_on("Continue")
 
       and_i_can_see_the_error_summary("Enter an accredited provider number", "Enter date accreditation starts")
-      and_i_can_see_the_title("Error: Accreditation details - Add provider - Register of training providers - GOV.UK")
+      and_i_can_see_the_title("Error: Accreditation details - Register of training providers - GOV.UK")
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       and_i_click_on("Continue")
     end
