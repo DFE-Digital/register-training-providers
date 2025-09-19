@@ -9,8 +9,11 @@ module SummaryHelper
 
   def provider_summary_cards(providers)
     providers.map do |provider|
+      tag = [" ", govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")] if provider.archived?
+
       {
-        title: govuk_link_to(provider.operating_name, provider_path(provider)),
+        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider)),
+                          tag]),
         rows: [
 
           { key: { text: "Provider type" },
