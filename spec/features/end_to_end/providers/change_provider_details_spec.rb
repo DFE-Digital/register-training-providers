@@ -93,7 +93,7 @@ RSpec.feature "Change Provider Details" do
   end
 
   def provider
-    @provider ||= create(:provider, :scitt)
+    @provider ||= create(:provider, :scitt, :accredited)
   end
 
   def provider_details_to_use

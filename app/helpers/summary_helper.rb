@@ -105,4 +105,48 @@ module SummaryHelper
 
     rows
   end
+
+  def accreditation_rows(accreditation, change_path = nil)
+    rows = [
+      { key: { text: "Accreditation number" },
+        value: { text: accreditation.number } },
+      { key: { text: "Date accreditation starts" },
+        value: { text: accreditation.start_date&.to_fs(:govuk) } },
+      { key: { text: "Date accreditation ends" },
+        value: if accreditation.end_date.present?
+                 { text: accreditation.end_date.to_fs(:govuk) }
+               else
+                 not_entered
+               end }
+    ]
+
+    if change_path
+      rows.each_with_index do |row, index|
+        visually_hidden_texts = ["accreditation number", "date accreditation starts", "date accreditation ends"]
+        row[:actions] = [{ href: change_path, visually_hidden_text: visually_hidden_texts[index] }]
+      end
+    end
+
+    rows
+  end
+
+  def accreditation_summary_cards(accreditations, provider, include_actions: true)
+    return [] if accreditations.empty?
+
+    accreditations.map do |accreditation|
+      card = {
+        title: "Accreditation #{accreditation.number}",
+        rows: accreditation_rows(accreditation)
+      }
+
+      if include_actions
+        card[:actions] = [
+          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
+          { text: "Remove", href: provider_accreditation_delete_path(provider, accreditation) }
+        ]
+      end
+
+      card
+    end
+  end
 end
