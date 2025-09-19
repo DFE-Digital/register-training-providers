@@ -1,4 +1,18 @@
-<%= render CheckYourAnswers::View.new(
-      rows: provider_rows(model, change_path, change_provider_type_path:), subtitle: "Add provider", caption: "Add provider", back_path: back_path,
-      save_button_text: "Save provider", save_path: save_path, cancel_path: providers_path, method: method
-    ) %>
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: back_path) %>
+<% end %>
+
+<% page_data(title: "Check your answers", subtitle: "Add provider", caption: "Add provider") %>
+
+<%= govuk_summary_list(rows: provider_rows(model, change_path, change_provider_type_path:, change_provider_details_path:)) %>
+
+<% if accreditation_form&.valid? %>
+  <h2 class="govuk-heading-m">Accreditation</h2>
+  <%= govuk_summary_list(rows: accreditation_form_rows(accreditation_form)) %>
+<% end %>
+
+<%= govuk_button_to("Save provider", save_path, method:) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", providers_path) %>
+</p>

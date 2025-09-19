@@ -13,7 +13,7 @@ RSpec.feature "Restore Provider" do
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
   end
 
   def and_i_should_see_the_archive_status
@@ -29,14 +29,14 @@ RSpec.feature "Restore Provider" do
     click_on "Apply filters"
 
     click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
     and_i_should_see_the_archive_status
 
     and_i_click_on "Restore provider"
   end
 
   def and_i_confirm_archiving_the_provider
-    and_i_am_taken_to("/providers/#{provider.uuid}/restore")
+    and_i_am_taken_to("/providers/#{provider.id}/restore")
     and_i_click_on "Restore provider"
   end
 

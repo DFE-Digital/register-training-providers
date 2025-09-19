@@ -2,7 +2,7 @@
 #
 # Table name: providers
 #
-#  id                   :bigint           not null, primary key
+#  id                   :uuid             not null, primary key
 #  accreditation_status :string           not null
 #  archived_at          :datetime
 #  code                 :citext           not null
@@ -13,7 +13,6 @@
 #  searchable           :tsvector
 #  ukprn                :string(8)        not null
 #  urn                  :string(6)
-#  uuid                 :uuid             not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
@@ -23,21 +22,22 @@
 #  index_providers_on_archived_at           (archived_at)
 #  index_providers_on_code                  (code) UNIQUE
 #  index_providers_on_discarded_at          (discarded_at)
+#  index_providers_on_id                    (id) UNIQUE
 #  index_providers_on_legal_name            (legal_name)
 #  index_providers_on_provider_type         (provider_type)
 #  index_providers_on_searchable            (searchable) USING gin
 #  index_providers_on_ukprn                 (ukprn)
 #  index_providers_on_urn                   (urn)
-#  index_providers_on_uuid                  (uuid) UNIQUE
 #
 class Provider < ApplicationRecord
+  self.primary_key = "id"
   include PgSearch::Model
   include Discard::Model
 
   include SaveAsTemporary
-  include UuidIdentifiable
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
+  has_many :accreditations, dependent: :destroy
 
   audited
 
@@ -92,6 +92,19 @@ class Provider < ApplicationRecord
 
   def restore!
     update!(archived_at: nil)
+  end
+
+  def current_accreditations
+    accreditations.kept.current.order_by_start_date
+  end
+
+  def has_current_accreditations?
+    current_accreditations.exists?
+  end
+
+  def sync_accreditation_status!
+    new_status = has_current_accreditations? ? "accredited" : "unaccredited"
+    update_column(:accreditation_status, new_status) if accreditation_status != new_status
   end
 
 private

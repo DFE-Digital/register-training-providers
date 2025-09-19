@@ -3,7 +3,7 @@
 # Table name: temporary_records
 #
 #  id          :bigint           not null, primary key
-#  created_by  :bigint           not null
+#  created_by  :uuid
 #  data        :jsonb            not null
 #  expires_at  :datetime         not null
 #  purpose     :string           default(NULL), not null
@@ -13,8 +13,9 @@
 #
 # Indexes
 #
-#  index_temp_records_on_creator_type_purpose  (created_by,record_type,purpose) UNIQUE
-#  index_temporary_records_on_expires_at       (expires_at)
+#  index_temporary_records_on_created_by                      (created_by)
+#  index_temporary_records_on_created_by_record_type_purpose  (created_by,record_type,purpose) UNIQUE
+#  index_temporary_records_on_expires_at                      (expires_at)
 #
 # Foreign Keys
 #
@@ -44,6 +45,14 @@ class TemporaryRecord < ApplicationRecord
 private
 
   def safe_data
-    record_type.constantize.attribute_names.index_with { |attr| data[attr] }
+    # Start with database attributes
+    safe_attrs = record_type.constantize.attribute_names.index_with { |attr| data[attr] }
+
+    # Add any other keys from data that might be virtual attributes
+    data.each do |key, value|
+      safe_attrs[key] = value unless safe_attrs.key?(key)
+    end
+
+    safe_attrs
   end
 end

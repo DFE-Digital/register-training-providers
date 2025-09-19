@@ -12,6 +12,7 @@ RSpec.feature "Add Provider" do
     end
 
     def when_i_navigate_to_the_add_provider_page
+      visit providers_path
       click_on("Add provider")
     end
 
@@ -23,6 +24,10 @@ RSpec.feature "Add Provider" do
       and_i_select_the_provider_type(select_provider_type: info[:select_provider_type])
 
       and_i_fill_in_the_provider_details(provider_details: info[:provider_details], select_provider_type: info[:select_provider_type])
+
+      if accreditation_status == :accredited
+        and_i_fill_in_the_accreditation_details
+      end
     end
 
     def and_i_fill_in_the_provider_details(provider_details:, select_provider_type:)
@@ -38,6 +43,28 @@ RSpec.feature "Add Provider" do
       and_i_can_see_the_title("Error: Provider details - Add provider - Register of training providers - GOV.UK")
 
       and_i_fill_in_the_provider_details_form_correctly(provider_details:)
+
+      and_i_click_on("Continue")
+    end
+
+    def and_i_fill_in_the_accreditation_details
+      expect(TemporaryRecord.count).to eq(3)
+      and_i_am_taken_to("/providers/new/accreditation")
+      and_i_can_see_the_title("Accreditation details - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      and_i_can_see_the_error_summary("Enter an accredited provider number", "Enter date accreditation starts")
+      and_i_can_see_the_title("Error: Accreditation details - Register of training providers - GOV.UK")
+
+      start_year = Date.current.year
+      fill_in "Accredited provider number", with: "1234"
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       and_i_click_on("Continue")
     end
@@ -116,6 +143,13 @@ RSpec.feature "Add Provider" do
       and_i_can_see_the_error_summary("Select if the provider is accredited")
       and_i_can_see_the_title("Error: Is the provider accredited? - Add provider - Register of training providers - GOV.UK")
 
+      # Debug what's actually on the page
+      puts "Page title: #{page.title}"
+      puts "Page body includes 'accredited': #{page.body.include?('accredited')}"
+      puts "All form elements: #{all('input, select, textarea').map { |el| "#{el.tag_name}[#{el[:type]}]: #{el[:name]}=#{el[:value]}" }}"
+      puts "Available radio buttons: #{all('input[type="radio"]').map(&:value)}"
+      puts "Looking for: #{select_if_the_provider_is_accredited}"
+
       and_i_choose(select_if_the_provider_is_accredited)
 
       and_i_click_on("Continue")
@@ -146,6 +180,9 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_checked_my_answers
+      # Accredited providers will have 4 temp records, unaccredited will have 3
+      expected_count = @provider_details_to_use.accredited? ? 4 : 3
+      expect(TemporaryRecord.count).to eq(expected_count)
       and_i_am_taken_to("/providers/check/new")
       and_i_can_see_the_title("Check your answers - Add provider - Register of training providers - GOV.UK")
       when_i_click_on("Save provider")
