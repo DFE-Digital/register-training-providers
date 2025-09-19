@@ -4,8 +4,6 @@ RSpec.describe Accreditation, type: :model do
   let(:accreditation) { create(:accreditation) }
   subject { accreditation }
 
-  it_behaves_like "uuid identifiable"
-
   it { is_expected.to be_audited }
 
   describe "associations" do

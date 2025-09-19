@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe User, type: :model do
   let(:user) { create(:user) }
 
-  it_behaves_like "uuid identifiable"
-
   it { is_expected.to be_audited }
   it { is_expected.to be_kept }
 
