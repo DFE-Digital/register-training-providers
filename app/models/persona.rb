@@ -16,7 +16,6 @@
 #
 #  index_users_on_discarded_at  (discarded_at)
 #  index_users_on_email         (email) UNIQUE
-#  index_users_on_id            (id) UNIQUE
 #
 
 class Persona < User

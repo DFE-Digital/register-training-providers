@@ -16,11 +16,10 @@
 #
 #  index_users_on_discarded_at  (discarded_at)
 #  index_users_on_email         (email) UNIQUE
-#  index_users_on_id            (id) UNIQUE
 #
 
 class User < ApplicationRecord
-  self.primary_key = "id"
+  self.implicit_order_column = :created_at
   include Discard::Model
   include SaveAsTemporary
 

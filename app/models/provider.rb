@@ -22,7 +22,6 @@
 #  index_providers_on_archived_at           (archived_at)
 #  index_providers_on_code                  (code) UNIQUE
 #  index_providers_on_discarded_at          (discarded_at)
-#  index_providers_on_id                    (id) UNIQUE
 #  index_providers_on_legal_name            (legal_name)
 #  index_providers_on_provider_type         (provider_type)
 #  index_providers_on_searchable            (searchable) USING gin
@@ -30,7 +29,7 @@
 #  index_providers_on_urn                   (urn)
 #
 class Provider < ApplicationRecord
-  self.primary_key = "id"
+  self.implicit_order_column = :created_at
   include PgSearch::Model
   include Discard::Model
 

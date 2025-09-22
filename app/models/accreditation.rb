@@ -9,13 +9,12 @@
 #  start_date   :date             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  provider_id  :uuid
+#  provider_id  :uuid             not null
 #
 # Indexes
 #
 #  index_accreditations_on_discarded_at  (discarded_at)
 #  index_accreditations_on_end_date      (end_date)
-#  index_accreditations_on_id            (id) UNIQUE
 #  index_accreditations_on_number        (number)
 #  index_accreditations_on_provider_id   (provider_id)
 #  index_accreditations_on_start_date    (start_date)
@@ -25,7 +24,7 @@
 #  fk_rails_...  (provider_id => providers.id)
 #
 class Accreditation < ApplicationRecord
-  self.primary_key = "id"
+  self.implicit_order_column = :created_at
   include Discard::Model
   include SaveAsTemporary
 

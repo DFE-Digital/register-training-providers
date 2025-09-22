@@ -11,11 +11,14 @@ class ConvertAccreditationsToUuidPrimaryKey < ActiveRecord::Migration[8.0]
       # Add default UUID generation to the uuid column (it currently has none)
       t.change_default :uuid, -> { "gen_random_uuid()" }
 
+      # Remove the old unique index on uuid column (will be redundant with PRIMARY KEY)
+      t.remove_index :uuid
+
       # Rename uuid column to id
       t.rename :uuid, :id # rubocop:disable Rails/DangerousColumnNames
     end
 
-    # Add the new primary key constraint
+    # Add the new primary key constraint (this automatically creates a unique index)
     execute "ALTER TABLE accreditations ADD PRIMARY KEY (id)"
   end
 

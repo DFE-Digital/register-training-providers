@@ -27,15 +27,24 @@ class ConvertUsersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     # Drop the old bigint id column
     remove_column :users, :id
 
+    # Remove the old unique index on uuid column (will be redundant with PRIMARY KEY)
+    remove_index :users, :uuid
+
     # Rename uuid column to id and make it the primary key
     rename_column :users, :uuid, :id # rubocop:disable Rails/DangerousColumnNames
     execute "ALTER TABLE users ADD PRIMARY KEY (id)"
 
+    # Add NOT NULL constraint to the foreign key column
+    change_column_null :temporary_records, :created_by, false
+
     # Re-add the foreign key constraint
     add_foreign_key :temporary_records, :users, column: :created_by, primary_key: :id
 
-    # Add index for the new foreign key
-    add_index :temporary_records, :created_by
+    # Add the missing unique index that should have been there from the beginning
+    # This composite index also serves as an index for created_by column queries
+    add_index :temporary_records,
+              [:created_by, :record_type, :purpose], unique: true,
+                                                     name: "index_temporary_records_on_created_by_record_type_purpose"
   end
 
   def down

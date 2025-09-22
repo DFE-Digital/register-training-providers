@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_16_154436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -22,10 +22,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
-    t.uuid "provider_id"
+    t.uuid "provider_id", null: false
     t.index ["discarded_at"], name: "index_accreditations_on_discarded_at"
     t.index ["end_date"], name: "index_accreditations_on_end_date"
-    t.index ["id"], name: "index_accreditations_on_id", unique: true
     t.index ["number"], name: "index_accreditations_on_number"
     t.index ["provider_id"], name: "index_accreditations_on_provider_id"
     t.index ["start_date"], name: "index_accreditations_on_start_date"
@@ -70,7 +69,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
     t.index ["discarded_at"], name: "index_providers_on_discarded_at"
-    t.index ["id"], name: "index_providers_on_id", unique: true
     t.index ["legal_name"], name: "index_providers_on_legal_name"
     t.index ["provider_type"], name: "index_providers_on_provider_type"
     t.index ["searchable"], name: "index_providers_on_searchable", using: :gin
@@ -206,10 +204,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
     t.string "purpose", default: "0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "created_by"
-    t.index ["created_by", "record_type", "purpose"],
-            name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
-    t.index ["created_by"], name: "index_temporary_records_on_created_by"
+    t.uuid "created_by", null: false
+    t.index ["created_by", "record_type", "purpose"], name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
     t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
   end
 
@@ -224,7 +220,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_082800) do
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["id"], name: "index_users_on_id", unique: true
   end
 
   add_foreign_key "accreditations", "providers"

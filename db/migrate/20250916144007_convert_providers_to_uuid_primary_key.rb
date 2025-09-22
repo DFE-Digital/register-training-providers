@@ -27,9 +27,15 @@ class ConvertProvidersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     # Drop the old bigint id column
     remove_column :providers, :id
 
+    # Remove the old unique index on uuid column (will be redundant with PRIMARY KEY)
+    remove_index :providers, :uuid
+
     # Rename uuid column to id and make it the primary key
     rename_column :providers, :uuid, :id # rubocop:disable Rails/DangerousColumnNames
     execute "ALTER TABLE providers ADD PRIMARY KEY (id)"
+
+    # Add NOT NULL constraint to the foreign key column
+    change_column_null :accreditations, :provider_id, false
 
     # Re-add the foreign key constraint
     add_foreign_key :accreditations, :providers, column: :provider_id, primary_key: :id
