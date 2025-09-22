@@ -1,12 +1,7 @@
 module Accreditations
   class CheckController < ::CheckController
-    before_action :load_provider
 
   private
-
-    def load_provider
-      @provider = policy_scope(Provider).find(params[:provider_id])
-    end
 
     def model_class
       AccreditationForm
@@ -17,7 +12,7 @@ module Accreditations
     end
 
     def purpose
-      model_id.present? ? :"edit_accreditation_#{model_id}" : :"create_accreditation_#{@provider.id}"
+      model_id.present? ? :"edit_accreditation_#{model_id}" : :"create_accreditation_#{provider.id}"
     end
 
     def model
@@ -25,12 +20,12 @@ module Accreditations
     end
 
     def success_path
-      provider_accreditations_path(@provider)
+      provider_accreditations_path(provider)
     end
 
     def save
       if model_id.present?
-        accreditation = @provider.accreditations.kept.find(model_id)
+        accreditation = provider.accreditations.kept.find(model_id)
         authorize accreditation
 
         if accreditation.update(model.to_accreditation_attributes)
@@ -40,7 +35,7 @@ module Accreditations
           redirect_to back_path
         end
       else
-        accreditation = @provider.accreditations.build(model.to_accreditation_attributes)
+        accreditation = provider.accreditations.build(model.to_accreditation_attributes)
         authorize accreditation
 
         if accreditation.save
@@ -53,21 +48,21 @@ module Accreditations
     end
 
     def new_model_path(query_params = {})
-      new_accreditation_path(query_params.merge(provider_id: @provider.id))
+      new_accreditation_path(query_params.merge(provider_id: provider.id))
     end
 
     def edit_model_path(query_params = {})
-      accreditation = @provider.accreditations.kept.find(model_id)
-      edit_accreditation_path(accreditation, query_params.merge(provider_id: @provider.id))
+      accreditation = provider.accreditations.kept.find(model_id)
+      edit_accreditation_path(accreditation, query_params.merge(provider_id: provider.id))
     end
 
     def new_model_check_path
-      accreditation_confirm_path(provider_id: @provider.id)
+      accreditation_confirm_path(provider_id: provider.id)
     end
 
     def model_check_path
-      accreditation = @provider.accreditations.kept.find(model_id)
-      accreditation_check_path(accreditation, provider_id: @provider.id)
+      accreditation = provider.accreditations.kept.find(model_id)
+      accreditation_check_path(accreditation, provider_id: provider.id)
     end
   end
 end
