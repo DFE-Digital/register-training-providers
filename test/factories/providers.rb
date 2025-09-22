@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :provider do
-    uuid { SecureRandom.uuid }
     provider_type { :hei }
     accreditation_status { :unaccredited }
 

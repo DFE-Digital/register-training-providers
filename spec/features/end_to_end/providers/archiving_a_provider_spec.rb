@@ -13,7 +13,7 @@ RSpec.feature "Archive Provider" do
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
 
     and_i_should_see_the_archive_status
   end
@@ -27,12 +27,12 @@ RSpec.feature "Archive Provider" do
   def when_i_navigate_to_the_archive_provider_page_for_a_specific_provider
     visit "/providers"
     click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
     and_i_click_on "Archive provider"
   end
 
   def and_i_confirm_archiving_the_provider
-    and_i_am_taken_to("/providers/#{provider.uuid}/archive")
+    and_i_am_taken_to("/providers/#{provider.id}/archive")
     and_i_click_on "Archive provider"
   end
 

@@ -18,17 +18,17 @@ class ProvidersController < ApplicationController
   def show
     current_user.clear_temporary(scoped_provider, purpose: :edit_provider)
 
-    @provider = scoped_provider.find_by(uuid:)
+    @provider = scoped_provider.find(provider_id)
     authorize @provider
   end
 
   def edit
-    @provider = current_user.load_temporary(scoped_provider, uuid: uuid, purpose: :edit_provider)
+    @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
     authorize @provider
   end
 
   def update
-    @provider = current_user.load_temporary(scoped_provider, uuid: uuid, purpose: :edit_provider)
+    @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
 
     @provider.assign_attributes(params.expect(provider: [:provider_type,
                                                          :accreditation_status,
@@ -47,7 +47,7 @@ class ProvidersController < ApplicationController
 
 private
 
-  def uuid
+  def provider_id
     params[:id]
   end
 

@@ -49,7 +49,9 @@ module SummaryHelper
     ]
   end
 
-  def provider_rows(provider, change_path, change_provider_type_path: nil)
+  def provider_rows(provider, change_path, change_provider_type_path: nil, change_provider_details_path: nil)
+    provider_details_change_path = change_provider_details_path || change_path
+
     provider_type_row = if change_provider_type_path
                           [{
                             key: { text: "Provider type" },
@@ -64,19 +66,42 @@ module SummaryHelper
       *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },
-        actions: [{ href: change_path, visually_hidden_text: "operating name" }] },
+        actions: [{ href: provider_details_change_path, visually_hidden_text: "operating name" }] },
       { key: { text: "Legal name" },
         value: optional_value(provider.legal_name),
-        actions: [{ href: change_path, visually_hidden_text: "legal name" }] },
+        actions: [{ href: provider_details_change_path, visually_hidden_text: "legal name" }] },
       { key: { text: "UK provider reference number (UKPRN)" },
         value: { text: provider.ukprn },
-        actions: [{ href: change_path, visually_hidden_text: "UK provider reference number (UKPRN)" }] },
+        actions: [{ href: provider_details_change_path,
+                    visually_hidden_text: "UK provider reference number (UKPRN)" }] },
       { key: { text: "Unique reference number (URN)" },
         value: optional_value(provider.urn),
-        actions: [{ href: change_path, visually_hidden_text: "unique reference number (URN)" }] },
+        actions: [{ href: provider_details_change_path, visually_hidden_text: "unique reference number (URN)" }] },
       { key: { text: "Provider code" },
         value: { text: provider.code },
-        actions: [{ href: change_path, visually_hidden_text: "provider code" }] },
+        actions: [{ href: provider_details_change_path, visually_hidden_text: "provider code" }] },
+    ]
+  end
+
+  def accreditation_form_rows(accreditation_form, change_path = nil)
+    return [] unless accreditation_form&.valid?
+
+    change_path ||= new_provider_accreditation_path(goto: "confirm")
+
+    [
+      { key: { text: "Accredited provider number" },
+        value: { text: accreditation_form.number },
+        actions: [{ href: change_path, visually_hidden_text: "accredited provider number" }] },
+      { key: { text: "Date accreditation starts" },
+        value: { text: accreditation_form.start_date&.to_fs(:govuk) },
+        actions: [{ href: change_path, visually_hidden_text: "date accreditation starts" }] },
+      { key: { text: "Date accreditation ends" },
+        value: if accreditation_form.end_date.present?
+                 { text: accreditation_form.end_date.to_fs(:govuk) }
+               else
+                 not_entered
+               end,
+        actions: [{ href: change_path, visually_hidden_text: "date accreditation ends" }] }
     ]
   end
 
@@ -144,8 +169,8 @@ module SummaryHelper
 
       if include_actions
         card[:actions] = [
-          { text: "Change", href: edit_provider_accreditation_path(provider, accreditation) },
-          { text: "Remove", href: provider_accreditation_delete_path(provider, accreditation) }
+          { text: "Change", href: edit_accreditation_path(accreditation, provider_id: provider.id) },
+          { text: "Delete", href: accreditation_delete_path(accreditation, provider_id: provider.id) }
         ]
       end
 

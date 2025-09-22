@@ -78,7 +78,8 @@ en:
   flash_message:
     success:
       accreditation:
-        remove: "Accreditation removed"
+        remove: "Accreditation deleted"
+        deleted: "Accreditation deleted"
       check:
         user:
           add: "Support user added"
@@ -86,25 +87,25 @@ en:
         provider:
           add: "Provider added"
           update: "Provider updated"
-        "providers/accreditation":
-          add: "Accreditation added"
-          update: "Accreditation updated"
         accreditation:
           add: "Accreditation added"
           update: "Accreditation updated"
+        accreditation_form:
+          update: "Accreditation updated"
+          add: "Accreditation added"
   forms:
     providers:
       is_the_provider_accredited:
         accreditation_status:
           accredited: "Yes"
           unaccredited: "No"
-      accreditation:
-        number:
-          label: "Accredited provider number"
-        start_date:
-          label: "Date accreditation starts"
-        end_date:
-          label: "Date accreditation ends (optional)"
+    accreditation:
+      number:
+        label: "Accredited provider number"
+      start_date:
+        label: "Date accreditation starts"
+      end_date:
+        label: "Date accreditation ends (optional)"
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"
