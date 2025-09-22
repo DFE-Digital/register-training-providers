@@ -18,14 +18,7 @@ module Accreditations
   private
 
     def load_provider_and_accreditation
-      provider_id = params[:provider_id]
-
-      if provider_id.blank?
-        Rails.logger.error "Accreditations::DeletesController#load_provider_and_accreditation: No provider_id provided"
-        raise ActiveRecord::RecordNotFound, "Provider ID is required"
-      end
-
-      @provider = policy_scope(Provider).find(provider_id)
+      @provider = policy_scope(Provider).find(params[:provider_id])
       @accreditation = @provider.accreditations.kept.find(params[:accreditation_id])
     end
   end
