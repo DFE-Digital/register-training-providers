@@ -1,20 +1,19 @@
 class AccreditationsController < ApplicationController
-  before_action :load_provider
   helper_method :back_path
 
   def index
-    authorize @provider.accreditations.build
-    @accreditations = policy_scope(@provider.accreditations).order_by_start_date
+    authorize provider.accreditations.build
+    @accreditations = policy_scope(provider.accreditations).order_by_start_date
   end
 
   def new
     @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose)
-    @form.provider_id = @provider.id
+    @form.provider_id = provider.id
     authorize @form
   end
 
   def edit
-    @accreditation = @provider.accreditations.kept.find(params[:id])
+    @accreditation = provider.accreditations.kept.find(params[:id])
     authorize @accreditation
 
     stored_form = current_user.load_temporary(
@@ -31,37 +30,33 @@ class AccreditationsController < ApplicationController
 
   def create
     @form = AccreditationForm.new(accreditation_form_params)
-    @form.provider_id = @provider.id
+    @form.provider_id = provider.id
     authorize @form
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: create_purpose)
-      redirect_to new_accreditation_confirm_path(provider_id: @provider.id)
+      redirect_to new_accreditation_confirm_path(provider_id: provider.id)
     else
       render :new
     end
   end
 
   def update
-    @accreditation = @provider.accreditations.kept.find(params[:id])
+    @accreditation = provider.accreditations.kept.find(params[:id])
     authorize @accreditation
 
     @form = AccreditationForm.new(accreditation_form_params)
-    @form.provider_id = @provider.id
+    @form.provider_id = provider.id
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@accreditation))
-      redirect_to accreditation_check_path(@accreditation, provider_id: @provider.id)
+      redirect_to accreditation_check_path(@accreditation, provider_id: provider.id)
     else
       render :edit
     end
   end
 
 private
-
-  def load_provider
-    @provider = policy_scope(Provider).find(params[:provider_id])
-  end
 
   def accreditation_form_params
     params.expect(accreditation: [:number, *AccreditationForm::PARAM_CONVERSION.keys])
@@ -73,18 +68,18 @@ private
   end
 
   def create_purpose
-    :"create_accreditation_#{@provider.id}"
+    :"create_accreditation_#{provider.id}"
   end
 
   def back_path
     if params[:goto] == "confirm"
       if action_name == "edit"
-        accreditation_check_path(@accreditation, provider_id: @provider.id)
+        accreditation_check_path(@accreditation, provider_id: provider.id)
       else
-        new_accreditation_confirm_path(provider_id: @provider.id)
+        new_accreditation_confirm_path(provider_id: provider.id)
       end
     else
-      provider_accreditations_path(@provider)
+      provider_accreditations_path(provider)
     end
   end
 end

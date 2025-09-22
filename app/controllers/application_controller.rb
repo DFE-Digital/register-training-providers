@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate
 
-  helper_method :current_user, :authenticated?
+  helper_method :current_user, :authenticated?, :provider
 
   before_action :enforce_basic_auth, if: -> { BasicAuthenticable.required? }
 
@@ -31,6 +31,10 @@ private
 
   def current_user
     @current_user ||= sign_in_user&.user
+  end
+
+  def provider
+    @provider ||= policy_scope(Provider).find(params[:provider_id])
   end
 
   def authenticated?
