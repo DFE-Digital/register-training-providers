@@ -10,26 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_16_154436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
 
-  create_table "accreditations", force: :cascade do |t|
-    t.bigint "provider_id", null: false
+  create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "number", null: false
     t.date "start_date", null: false
     t.date "end_date"
-    t.uuid "uuid", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.uuid "provider_id", null: false
     t.index ["discarded_at"], name: "index_accreditations_on_discarded_at"
     t.index ["end_date"], name: "index_accreditations_on_end_date"
     t.index ["number"], name: "index_accreditations_on_number"
     t.index ["provider_id"], name: "index_accreditations_on_provider_id"
     t.index ["start_date"], name: "index_accreditations_on_start_date"
-    t.index ["uuid"], name: "index_accreditations_on_uuid", unique: true
   end
 
   create_table "audits", force: :cascade do |t|
@@ -54,7 +52,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "providers", force: :cascade do |t|
+  create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "operating_name", null: false
     t.string "legal_name"
     t.string "ukprn", limit: 8, null: false
@@ -66,7 +64,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
     t.datetime "archived_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.tsvector "searchable"
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
@@ -77,7 +74,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
     t.index ["searchable"], name: "index_providers_on_searchable", using: :gin
     t.index ["ukprn"], name: "index_providers_on_ukprn"
     t.index ["urn"], name: "index_providers_on_urn"
-    t.index ["uuid"], name: "index_providers_on_uuid", unique: true
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -204,16 +200,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
   create_table "temporary_records", force: :cascade do |t|
     t.string "record_type", null: false
     t.jsonb "data", default: {}, null: false
-    t.bigint "created_by", null: false
     t.datetime "expires_at", null: false
     t.string "purpose", default: "0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_by", "record_type", "purpose"], name: "index_temp_records_on_creator_type_purpose", unique: true
+    t.uuid "created_by", null: false
+    t.index ["created_by", "record_type", "purpose"], name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
     t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "dfe_sign_in_uid"
     t.string "email", null: false
     t.string "first_name", null: false
@@ -222,10 +218,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_085830) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "accreditations", "providers"

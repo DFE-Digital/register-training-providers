@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = scoped_user.find_by(uuid:)
+    @user = scoped_user.find(user_id)
     authorize @user
   end
 
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = current_user.load_temporary(scoped_user, uuid: uuid, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
   end
 
   def create
@@ -31,7 +31,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = current_user.load_temporary(scoped_user, uuid: uuid, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
 
     @user.assign_attributes(params.expect(user: [:first_name, :last_name, :email]))
 
@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
 private
 
-  def uuid
+  def user_id
     params[:id]
   end
 

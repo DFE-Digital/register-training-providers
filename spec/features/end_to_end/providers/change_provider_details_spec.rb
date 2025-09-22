@@ -12,7 +12,7 @@ RSpec.feature "Change Provider Details" do
   def when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
     visit "/providers"
     and_i_click_on(provider.operating_name)
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
     and_i_click_on("Change operating name")
   end
 
@@ -58,7 +58,7 @@ RSpec.feature "Change Provider Details" do
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
-    and_i_am_taken_to("/providers/#{provider.uuid}")
+    and_i_am_taken_to("/providers/#{provider.id}")
 
     and_the_temporary_record_should_be_cleared
     expect(Provider.count).to eq(1)
@@ -70,7 +70,7 @@ RSpec.feature "Change Provider Details" do
   end
 
   def and_i_checked_my_answers
-    and_i_am_taken_to("/providers/#{provider.uuid}/check")
+    and_i_am_taken_to("/providers/#{provider.id}/check")
     and_i_can_see_the_title("Check your answers - #{provider.operating_name} - Register of training providers - GOV.UK")
     when_i_click_on("Save provider")
   end

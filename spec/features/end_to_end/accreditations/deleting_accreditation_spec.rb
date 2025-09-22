@@ -7,8 +7,8 @@ RSpec.describe "Deleting accreditation", type: :feature do
 
   scenario "User can delete an accreditation" do
     given_there_is_a_provider_with_an_accreditation
-    and_i_navigate_to_the_provider_accreditations_page
-    when_i_click_remove_on_the_accreditation
+    and_i_navigate_to_the_provider_page
+    when_i_click_delete_on_the_accreditation
     and_i_confirm_removing_the_accreditation
     then_i_should_be_redirected_to_the_accreditations_page
     and_i_should_see_a_success_message
@@ -30,26 +30,26 @@ private
     accreditation
   end
 
-  def and_i_navigate_to_the_provider_accreditations_page
+  def and_i_navigate_to_the_provider_page
     visit provider_accreditations_path(provider)
   end
 
   def and_i_navigate_to_the_delete_accreditation_page
-    visit provider_accreditation_delete_path(provider, accreditation)
+    visit accreditation_delete_path(accreditation, provider_id: provider.id)
   end
 
-  def when_i_click_remove_on_the_accreditation
+  def when_i_click_delete_on_the_accreditation
     within(".govuk-summary-card", text: "Accreditation #{accreditation.number}") do
-      click_link "Remove"
+      click_link "Delete"
     end
   end
 
   def and_i_confirm_removing_the_accreditation
-    expect(page).to have_content("Confirm you want to remove #{provider.operating_name}'s accreditation")
+    expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s accreditation")
     expect(page).to have_content("Accreditation number")
     expect(page).to have_content(accreditation.number)
 
-    click_button "Remove accreditation"
+    click_button "Delete accreditation"
   end
 
   def when_i_click_cancel
@@ -61,7 +61,7 @@ private
   end
 
   def and_i_should_see_a_success_message
-    expect(page).to have_notification_banner("Success", "Accreditation removed")
+    expect(page).to have_notification_banner("Success", "Accreditation deleted")
   end
 
   def and_the_accreditation_should_be_deleted
