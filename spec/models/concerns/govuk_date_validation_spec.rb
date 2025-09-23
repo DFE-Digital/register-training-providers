@@ -5,6 +5,7 @@ RSpec.describe GovukDateValidation, type: :model do
     Class.new do
       include ActiveModel::Model
       include ActiveModel::Attributes
+      include ActiveModel::Validations::Callbacks
       include GovukDateValidation
 
       attribute :test_date, :date
@@ -21,6 +22,8 @@ RSpec.describe GovukDateValidation, type: :model do
       attribute :end_date_day, :integer
       attribute :end_date_month, :integer
       attribute :end_date_year, :integer
+
+      before_validation :convert_date_components
 
       validates_govuk_date :test_date, required: true, human_name: "test date"
 
@@ -54,43 +57,59 @@ RSpec.describe GovukDateValidation, type: :model do
 
   subject { test_class.new }
 
-  describe "basic validation" do
-    it "requires complete date when required" do
+  shared_examples "an invalid date form" do |scenario, expected_error|
+    it "validates #{scenario}" do
+      setup_invalid_date(scenario)
+      subject.send(:convert_date_components) if scenario == :invalid_date
       expect(subject).not_to be_valid
-      expect(subject.errors[:test_date]).to include("Enter test date")
+      expect(subject.errors[:test_date]).to include(expected_error)
     end
+  end
 
-    it "validates missing components" do
+  shared_examples "a valid date form" do |scenario|
+    it "accepts #{scenario}" do
+      setup_valid_date(scenario)
+      expect(subject).to be_valid
+    end
+  end
+
+  def setup_invalid_date(scenario)
+    case scenario
+    when :incomplete_date
+      # No setup needed - empty form
+    when :missing_day
       subject.test_date_month = 1
       subject.test_date_year = Date.current.year
-      expect(subject).not_to be_valid
-      expect(subject.errors[:test_date]).to include("Test date must include a day")
-    end
-
-    it "validates year format" do
+    when :invalid_year_format
       subject.test_date_day = 1
       subject.test_date_month = 1
       subject.test_date_year = 23
-      expect(subject).not_to be_valid
-      expect(subject.errors[:test_date]).to include("Year must include 4 numbers")
-    end
-
-    it "validates real dates" do
+    when :invalid_date
       subject.test_date_day = 30
       subject.test_date_month = 2
       subject.test_date_year = Date.current.year
-      subject.send(:convert_date_components)
-      expect(subject).not_to be_valid
-      expect(subject.errors[:test_date]).to include("Test date must be a real date")
     end
+  end
 
-    it "accepts valid dates" do
+  def setup_valid_date(scenario)
+    case scenario
+    when :valid_date
       subject.test_date_day = 1
       subject.test_date_month = 1
       subject.test_date_year = Date.current.year
-      subject.send(:convert_date_components)
-      expect(subject).to be_valid
     end
+  end
+
+  describe "basic validation" do
+    it_behaves_like "an invalid date form", :incomplete_date, "Enter test date"
+
+    it_behaves_like "an invalid date form", :missing_day, "Test date must include a day"
+
+    it_behaves_like "an invalid date form", :invalid_year_format, "Year must include 4 numbers"
+
+    it_behaves_like "an invalid date form", :invalid_date, "Test date must be a real date"
+
+    it_behaves_like "a valid date form", :valid_date
   end
 
   describe "temporal constraints" do

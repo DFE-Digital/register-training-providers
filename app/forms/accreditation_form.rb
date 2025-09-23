@@ -1,6 +1,7 @@
 class AccreditationForm
   include ActiveModel::Model
   include ActiveModel::Attributes
+  include ActiveModel::Validations::Callbacks
   include SaveAsTemporary
   include GovukDateValidation
   include GovukDateComponents
@@ -30,6 +31,8 @@ class AccreditationForm
           provider_type: accreditation.provider&.provider_type
         ))
   end
+
+  before_validation :convert_date_components
 
   validates :number, presence: true, accreditation_number: true
   validates :provider_id, presence: true, unless: :provider_creation_mode?

@@ -35,10 +35,12 @@ FactoryBot.define do
 
     trait :school do
       provider_type { :school }
+      unaccredited
     end
 
     trait :scitt do
       provider_type { :scitt }
+      accredited
     end
 
     trait :hei do

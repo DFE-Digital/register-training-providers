@@ -302,7 +302,7 @@ RSpec.describe SummaryHelper, type: :helper do
         end
       end
 
-      it "handles accreditations without end dates" do
+      it "handles accreditations without end date" do
         accreditation.update!(end_date: nil)
         result = helper.accreditation_summary_cards([accreditation], provider)
         card = result.first

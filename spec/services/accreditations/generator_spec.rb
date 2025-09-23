@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Accreditations::Generator, type: :service do
   describe "#call" do
     let!(:hei_provider) { create(:provider, :hei, accreditation_status: :accredited) }
-    let!(:scitt_provider) { create(:provider, :scitt, accreditation_status: :accredited) }
+    let!(:scitt_provider) { create(:provider, provider_type: :scitt, accreditation_status: :accredited) }
     let!(:other_provider) { create(:provider, :other, accreditation_status: :accredited) }
     let!(:school_provider) { create(:provider, :school) }
 
