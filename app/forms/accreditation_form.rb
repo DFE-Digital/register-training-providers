@@ -3,27 +3,13 @@ class AccreditationForm
   include ActiveModel::Attributes
   include SaveAsTemporary
   include GovukDateValidation
+  include GovukDateComponents
 
-  PARAM_CONVERSION = {
-    "start_date(3i)" => "start_date_day",
-    "start_date(2i)" => "start_date_month",
-    "start_date(1i)" => "start_date_year",
-    "end_date(3i)" => "end_date_day",
-    "end_date(2i)" => "end_date_month",
-    "end_date(1i)" => "end_date_year",
-  }.freeze
+  has_date_components :start_date, :end_date
 
   attribute :number, :string
   attribute :provider_id, :string
   attribute :provider_creation_mode, :boolean, default: false
-  attribute :start_date_day, :integer
-  attribute :start_date_month, :integer
-  attribute :start_date_year, :integer
-  attribute :end_date_day, :integer
-  attribute :end_date_month, :integer
-  attribute :end_date_year, :integer
-  attribute :start_date, :date
-  attribute :end_date, :date
 
   def self.model_name
     ActiveModel::Name.new(self, nil, "Accreditation")
@@ -34,26 +20,13 @@ class AccreditationForm
   end
 
   def self.from_accreditation(accreditation)
-    form = new(
-      number: accreditation.number,
-      start_date: accreditation.start_date,
-      end_date: accreditation.end_date,
-      provider_id: accreditation.provider_id
-    )
+    form = new
+    date_attributes = form.extract_date_components_from(accreditation)
 
-    if accreditation.start_date.present?
-      form.start_date_day = accreditation.start_date.day
-      form.start_date_month = accreditation.start_date.month
-      form.start_date_year = accreditation.start_date.year
-    end
-
-    if accreditation.end_date.present?
-      form.end_date_day = accreditation.end_date.day
-      form.end_date_month = accreditation.end_date.month
-      form.end_date_year = accreditation.end_date.year
-    end
-
-    form
+    new(date_attributes.merge(
+          number: accreditation.number,
+          provider_id: accreditation.provider_id
+        ))
   end
 
   validates :number, presence: true, accreditation_number: true
@@ -76,44 +49,7 @@ class AccreditationForm
     }.compact
   end
 
-  def serializable_hash(_options = nil)
-    {
-      "number" => number,
-      "start_date" => start_date,
-      "end_date" => end_date,
-      "provider_id" => provider_id,
-      "provider_creation_mode" => provider_creation_mode,
-      "start_date_day" => start_date_day,
-      "start_date_month" => start_date_month,
-      "start_date_year" => start_date_year,
-      "end_date_day" => end_date_day,
-      "end_date_month" => end_date_month,
-      "end_date_year" => end_date_year
-    }
-  end
-
   def provider_creation_mode?
     provider_creation_mode
-  end
-
-private
-
-  def convert_date_components
-    self.start_date = build_date_from_components(:start_date)
-    self.end_date = build_date_from_components(:end_date)
-  end
-
-  def build_date_from_components(date_field)
-    year = send("#{date_field}_year")
-    month = send("#{date_field}_month")
-    day = send("#{date_field}_day")
-
-    return nil unless year.present? && month.present? && day.present?
-
-    begin
-      Date.new(year, month, day)
-    rescue ArgumentError
-      nil
-    end
   end
 end

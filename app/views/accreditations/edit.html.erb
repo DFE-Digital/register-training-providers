@@ -1,6 +1,7 @@
 <%= render "form",
            page_title: @provider.operating_name,
            caption: @provider.operating_name,
+           provider_type: @provider.provider_type,
            form_url: accreditation_path(@accreditation, provider_id: @provider.id),
            form_method: :patch,
            back_path: provider_accreditations_path(@provider),

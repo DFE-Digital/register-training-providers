@@ -11,7 +11,7 @@
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
   <%= form.govuk_fieldset legend: { text: "Accreditation details" }, caption: { text: caption } do %>
-    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(@provider&.provider_type) } %>
+    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(provider_type) } %>
 
     <%= form.govuk_date_field :start_date, legend: { text: I18n.t("forms.accreditation.start_date.label"), size: "s" }, hint: { text: "For example, 1 9 2024" } %>
 

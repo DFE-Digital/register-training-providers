@@ -55,8 +55,6 @@ class Provider < ApplicationRecord
   validates :urn, presence: true, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
                   if: :requires_urn?
 
-  validate :school_accreditation_status
-
   before_save :upcase_code
   before_save :update_searchable
 
@@ -103,17 +101,23 @@ class Provider < ApplicationRecord
 
   def sync_accreditation_status!
     new_status = has_current_accreditations? ? "accredited" : "unaccredited"
-    update_column(:accreditation_status, new_status) if accreditation_status != new_status
+    new_provider_type = provider_type
+
+    # Handle school ↔ scitt type switching based on accreditation status
+    if new_status == "accredited" && school?
+      new_provider_type = "scitt"
+    elsif new_status == "unaccredited" && scitt?
+      new_provider_type = "school"
+    end
+
+    updates = {}
+    updates[:accreditation_status] = new_status if accreditation_status != new_status
+    updates[:provider_type] = new_provider_type if provider_type != new_provider_type
+
+    update_columns(updates) if updates.any?
   end
 
 private
-
-  def school_accreditation_status
-    if school? && accredited?
-      errors.add(:provider_type, :invalid_accreditation_status)
-      errors.add(:accreditation_status, :invalid_provider_type)
-    end
-  end
 
   def update_searchable
     ts_vector_value = [

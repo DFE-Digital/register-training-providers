@@ -4,4 +4,5 @@
            form_url: accreditations_path(provider_id: @provider.id),
            form_method: :post,
            back_path: provider_accreditations_path(@provider),
-           cancel_path: provider_accreditations_path(@provider) %>
+           cancel_path: provider_accreditations_path(@provider),
+           provider_type: @provider.provider_type %>
