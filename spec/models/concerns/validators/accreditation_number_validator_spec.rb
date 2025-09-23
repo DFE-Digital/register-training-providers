@@ -29,7 +29,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
 
     context "with invalid HEI number" do
       it "rejects numbers starting with 5" do
-        model.number = "5234"
+        model.number = "5678"
         expect(model).not_to be_valid
         expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234")
       end
@@ -51,7 +51,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
 
     context "with valid SCITT number" do
       it "accepts numbers starting with 5" do
-        model.number = "5234"
+        model.number = "5678"
         expect(model).to be_valid
       end
 
@@ -65,7 +65,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       it "rejects numbers starting with 1" do
         model.number = "1234"
         expect(model).not_to be_valid
-        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5234")
+        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
       end
     end
   end
@@ -75,7 +75,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
 
     context "with valid school number" do
       it "accepts numbers starting with 5" do
-        model.number = "5234"
+        model.number = "5678"
         expect(model).to be_valid
       end
     end
@@ -84,7 +84,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       it "rejects numbers starting with 1" do
         model.number = "1234"
         expect(model).not_to be_valid
-        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5234")
+        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
       end
     end
   end
@@ -99,7 +99,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       end
 
       it "accepts numbers starting with 5" do
-        model.number = "5234"
+        model.number = "5678"
         expect(model).to be_valid
       end
     end
