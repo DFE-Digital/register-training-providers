@@ -7,12 +7,15 @@ class AccreditationsController < ApplicationController
   end
 
   def new
+    @provider = provider
     @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose)
     @form.provider_id = provider.id
+    @form.provider_type = provider.provider_type
     authorize @form
   end
 
   def edit
+    @provider = provider
     @accreditation = provider.accreditations.kept.find(params[:id])
     authorize @accreditation
 
@@ -31,12 +34,14 @@ class AccreditationsController < ApplicationController
   def create
     @form = AccreditationForm.new(accreditation_form_params)
     @form.provider_id = provider.id
+    @form.provider_type = provider.provider_type
     authorize @form
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: create_purpose)
       redirect_to new_accreditation_confirm_path(provider_id: provider.id)
     else
+      @provider = provider
       render :new
     end
   end
@@ -47,11 +52,13 @@ class AccreditationsController < ApplicationController
 
     @form = AccreditationForm.new(accreditation_form_params)
     @form.provider_id = provider.id
+    @form.provider_type = provider.provider_type
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@accreditation))
       redirect_to accreditation_check_path(@accreditation, provider_id: provider.id)
     else
+      @provider = provider
       render :edit
     end
   end
