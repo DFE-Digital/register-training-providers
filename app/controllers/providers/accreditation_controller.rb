@@ -20,7 +20,7 @@ class Providers::AccreditationController < CheckController
       return
     end
 
-    @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider)
+    @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider, reset: params[:goto] != "confirm")
     @form.provider_creation_mode = true
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
