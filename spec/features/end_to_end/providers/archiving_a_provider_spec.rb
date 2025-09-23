@@ -8,6 +8,14 @@ RSpec.feature "Archive Provider" do
     and_i_should_see_a_success_message
   end
 
+  scenario "Accreditation buttons are not available after archiving a provider" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_an_accreditation
+    and_i_archive_the_provider
+    when_i_navigate_to_the_provider_accreditations_page
+    then_i_should_not_see_accreditation_action_buttons
+  end
+
   def and_i_should_see_a_success_message
     expect(page).to have_notification_banner("Success", "Provider archived")
   end
@@ -24,15 +32,15 @@ RSpec.feature "Archive Provider" do
     expect(page).to have_link("Delete", href: provider_delete_path(provider))
   end
 
-  def when_i_navigate_to_the_archive_provider_page_for_a_specific_provider
+  def when_i_navigate_to_the_archive_provider_page_for_a_specific_provider(provider_to_archive = provider)
     visit "/providers"
-    click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.id}")
+    click_on provider_to_archive.operating_name
+    and_i_am_taken_to("/providers/#{provider_to_archive.id}")
     and_i_click_on "Archive provider"
   end
 
-  def and_i_confirm_archiving_the_provider
-    and_i_am_taken_to("/providers/#{provider.id}/archive")
+  def and_i_confirm_archiving_the_provider(provider_to_confirm = provider)
+    and_i_am_taken_to("/providers/#{provider_to_confirm.id}/archive")
     and_i_click_on "Archive provider"
   end
 
@@ -42,5 +50,28 @@ RSpec.feature "Archive Provider" do
 
   def provider
     @provider ||= create(:provider)
+  end
+
+  def and_there_is_a_provider_with_an_accreditation
+    provider_with_accreditation
+  end
+
+  def provider_with_accreditation
+    @provider_with_accreditation ||= create(:provider, :accredited)
+  end
+
+  def and_i_archive_the_provider(provider_to_archive = provider_with_accreditation)
+    when_i_navigate_to_the_archive_provider_page_for_a_specific_provider(provider_to_archive)
+    and_i_confirm_archiving_the_provider(provider_to_archive)
+  end
+
+  def when_i_navigate_to_the_provider_accreditations_page
+    visit "/providers/#{provider_with_accreditation.id}/accreditations"
+  end
+
+  def then_i_should_not_see_accreditation_action_buttons
+    expect(page).not_to have_link("Add accreditation")
+    expect(page).not_to have_link("Change")
+    expect(page).not_to have_link("Delete")
   end
 end

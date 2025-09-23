@@ -112,7 +112,7 @@ RSpec.describe "Creating accreditation", type: :feature do
       visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
-      fill_in "Accredited provider number", with: "5234"
+      fill_in "Accredited provider number", with: "5678"
       within_fieldset("Date accreditation starts") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
@@ -139,7 +139,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5234")
+      expect(page).to have_error_summary("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
       expect(TemporaryRecord.count).to eq(0)
     end
   end
