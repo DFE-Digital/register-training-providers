@@ -8,7 +8,7 @@ class AccreditationsController < ApplicationController
 
   def new
     @provider = provider
-    @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose)
+    @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose, reset: params[:goto] != "confirm")
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
     authorize @form
@@ -21,7 +21,8 @@ class AccreditationsController < ApplicationController
 
     stored_form = current_user.load_temporary(
       AccreditationForm,
-      purpose: edit_purpose(@accreditation)
+      purpose: edit_purpose(@accreditation),
+      reset: params[:goto] != "confirm"
     )
 
     @form = if stored_form.number.present?
