@@ -44,8 +44,8 @@ en:
             number:
               blank: "Enter an accredited provider number"
               invalid_format_hei: "Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234"
-              invalid_format_scitt: "Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678"
-              invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with 1 (for HEI) or 5 (for SCITT)"
+              invalid_format_scitt: "Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5234"
+              invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
             start_date:
               blank: "Enter date accreditation starts"
         provider:
@@ -70,6 +70,10 @@ en:
               taken: "Enter a unique provider code"
   activemodel:
     errors:
+      messages:
+        invalid_format_hei: "Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234"
+        invalid_format_scitt: "Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5234"
+        invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
       validators:
         dfe_email:
           invalid: Enter a Department for Education email address in the correct format, like name@education.gov.uk

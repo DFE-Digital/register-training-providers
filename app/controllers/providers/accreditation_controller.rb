@@ -23,6 +23,7 @@ class Providers::AccreditationController < CheckController
     @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider)
     @form.provider_creation_mode = true
     @form.provider_id = provider.id
+    @form.provider_type = provider.provider_type
 
     render :new
   end
@@ -33,6 +34,7 @@ class Providers::AccreditationController < CheckController
 
     provider = current_user.load_temporary(Provider, purpose: :create_provider)
     @form.provider_id = provider&.id
+    @form.provider_type = provider&.provider_type
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)

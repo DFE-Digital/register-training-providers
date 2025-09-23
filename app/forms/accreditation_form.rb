@@ -10,6 +10,7 @@ class AccreditationForm
   attribute :number, :string
   attribute :provider_id, :string
   attribute :provider_creation_mode, :boolean, default: false
+  attribute :provider_type, :string
 
   def self.model_name
     ActiveModel::Name.new(self, nil, "Accreditation")
@@ -25,7 +26,8 @@ class AccreditationForm
 
     new(date_attributes.merge(
           number: accreditation.number,
-          provider_id: accreditation.provider_id
+          provider_id: accreditation.provider_id,
+          provider_type: accreditation.provider&.provider_type
         ))
   end
 

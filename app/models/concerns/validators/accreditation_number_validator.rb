@@ -12,11 +12,16 @@ class AccreditationNumberValidator < ActiveModel::EachValidator
 private
 
   def get_provider_type(record)
-    # Form object will have provider_id, need to look up provider
-    if record.respond_to?(:provider_id) && record.provider_id.present?
-      Provider.find(record.provider_id).provider_type
-    elsif record.respond_to?(:provider_type)
+    # First check if provider_type is directly available on the record
+    if record.respond_to?(:provider_type) && record.provider_type.present?
       record.provider_type
+    elsif record.respond_to?(:provider_id) && record.provider_id.present?
+      # Form object will have provider_id, need to look up provider
+      begin
+        Provider.find(record.provider_id).provider_type
+      rescue ActiveRecord::RecordNotFound
+        nil
+      end
     end
   end
 
@@ -26,7 +31,7 @@ private
     case provider_type
     when "hei"
       value.start_with?("1")
-    when "scitt"
+    when "scitt", "school"
       value.start_with?("5")
     else
       value.match?(/\A[15]\d{3}\z/) # Either 1 or 5 for unknown types
@@ -37,7 +42,7 @@ private
     case provider_type
     when "hei"
       :invalid_format_hei
-    when "scitt"
+    when "scitt", "school"
       :invalid_format_scitt
     else
       :invalid_format_generic
