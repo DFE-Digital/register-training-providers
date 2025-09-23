@@ -1,6 +1,5 @@
 module Accreditations
   class CheckController < ::CheckController
-
   private
 
     def model_class
