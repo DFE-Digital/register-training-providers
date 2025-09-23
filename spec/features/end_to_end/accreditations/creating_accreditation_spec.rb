@@ -22,9 +22,11 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       click_button "Continue"
 
@@ -53,12 +55,16 @@ RSpec.describe "Creating accreditation", type: :feature do
       start_year = Date.current.year
       end_year = Date.current.year + 1
       fill_in "Accredited provider number", with: "5678"
-      fill_in "accreditation_start_date_3i", with: "15"
-      fill_in "accreditation_start_date_2i", with: "6"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
-      fill_in "accreditation_end_date_3i", with: "31"
-      fill_in "accreditation_end_date_2i", with: "12"
-      fill_in "accreditation_end_date_1i", with: end_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "15"
+        fill_in "Month", with: "6"
+        fill_in "Year", with: start_year.to_s
+      end
+      within_fieldset("Date accreditation ends") do
+        fill_in "Day", with: "31"
+        fill_in "Month", with: "12"
+        fill_in "Year", with: end_year.to_s
+      end
 
       click_button "Continue"
 
@@ -79,9 +85,11 @@ RSpec.describe "Creating accreditation", type: :feature do
       visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       click_button "Continue"
 
@@ -105,9 +113,11 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "5234"
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       click_button "Continue"
 
@@ -121,9 +131,11 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1678"
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       click_button "Continue"
 
@@ -140,9 +152,11 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
-      fill_in "accreditation_start_date_3i", with: "1"
-      fill_in "accreditation_start_date_2i", with: "1"
-      fill_in "accreditation_start_date_1i", with: start_year.to_s
+      within_fieldset("Date accreditation starts") do
+        fill_in "Day", with: "1"
+        fill_in "Month", with: "1"
+        fill_in "Year", with: start_year.to_s
+      end
 
       click_button "Continue"
 

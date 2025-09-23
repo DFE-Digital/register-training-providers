@@ -12,8 +12,8 @@ FactoryBot.define do
                end
       "#{prefix}#{Faker::Number.number(digits: 3)}"
     end
-    start_date { 6.months.ago }
-    end_date { 2.years.from_now }
+
+    current
 
     trait :current do
       start_date { 6.months.ago }

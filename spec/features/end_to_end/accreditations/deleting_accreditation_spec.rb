@@ -9,7 +9,7 @@ RSpec.describe "Deleting accreditation", type: :feature do
     given_there_is_a_provider_with_an_accreditation
     and_i_navigate_to_the_provider_page
     when_i_click_delete_on_the_accreditation
-    and_i_confirm_removing_the_accreditation
+    and_i_confirm_deleting_the_accreditation
     then_i_should_be_redirected_to_the_accreditations_page
     and_i_should_see_a_success_message
     and_the_accreditation_should_be_deleted
@@ -44,7 +44,7 @@ private
     end
   end
 
-  def and_i_confirm_removing_the_accreditation
+  def and_i_confirm_deleting_the_accreditation
     expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s accreditation")
     expect(page).to have_content("Accreditation number")
     expect(page).to have_content(accreditation.number)
