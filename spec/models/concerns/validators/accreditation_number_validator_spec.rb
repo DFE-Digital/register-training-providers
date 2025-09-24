@@ -31,7 +31,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       it "rejects numbers starting with 5" do
         model.number = "5678"
         expect(model).not_to be_valid
-        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234")
+        expect(model.errors[:number]).to include("Enter accredited provider number in the correct format, like 1234")
       end
 
       it "rejects numbers with wrong length" do
@@ -65,7 +65,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       it "rejects numbers starting with 1" do
         model.number = "1234"
         expect(model).not_to be_valid
-        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
+        expect(model.errors[:number]).to include("Enter accredited provider number in the correct format, like 5678")
       end
     end
   end
@@ -84,7 +84,7 @@ RSpec.describe AccreditationNumberValidator, type: :model do
       it "rejects numbers starting with 1" do
         model.number = "1234"
         expect(model).not_to be_valid
-        expect(model.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
+        expect(model.errors[:number]).to include("Enter accredited provider number in the correct format, like 5678")
       end
     end
   end

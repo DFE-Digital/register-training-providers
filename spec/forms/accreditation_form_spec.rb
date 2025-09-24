@@ -65,7 +65,7 @@ RSpec.describe AccreditationForm, type: :model do
         it "rejects number starting with 5" do
           form = described_class.new(valid_attributes.merge(number: "5678", provider_type: "hei"))
           expect(form).not_to be_valid
-          expect(form.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234")
+          expect(form.errors[:number]).to include("Enter accredited provider number in the correct format, like 1234")
         end
       end
 
@@ -80,7 +80,7 @@ RSpec.describe AccreditationForm, type: :model do
         it "rejects number starting with 1" do
           form = described_class.new(valid_attributes.merge(provider_id: provider.id, provider_type: "scitt", number: "1234"))
           expect(form).not_to be_valid
-          expect(form.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
+          expect(form.errors[:number]).to include("Enter accredited provider number in the correct format, like 5678")
         end
       end
 
@@ -95,7 +95,7 @@ RSpec.describe AccreditationForm, type: :model do
         it "rejects number starting with 1" do
           form = described_class.new(valid_attributes.merge(provider_id: provider.id, provider_type: "school", number: "1234"))
           expect(form).not_to be_valid
-          expect(form.errors[:number]).to include("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
+          expect(form.errors[:number]).to include("Enter accredited provider number in the correct format, like 5678")
         end
       end
 
