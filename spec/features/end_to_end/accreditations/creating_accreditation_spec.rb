@@ -121,7 +121,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter a valid accredited provider number - it must be 4 digits starting with a 1, like 1234")
+      expect(page).to have_error_summary("Enter accredited provider number in the correct format, like 1234")
       expect(TemporaryRecord.count).to eq(0)
     end
 
@@ -139,7 +139,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter a valid accredited provider number - it must be 4 digits starting with a 5, like 5678")
+      expect(page).to have_error_summary("Enter accredited provider number in the correct format, like 5678")
       expect(TemporaryRecord.count).to eq(0)
     end
   end
