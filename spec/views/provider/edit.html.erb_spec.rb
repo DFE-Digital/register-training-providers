@@ -77,8 +77,8 @@ RSpec.describe "providers/edit.html.erb", type: :view do
         expect(view.content_for(:page_alerts)).to have_error_summary(
           "Enter operating name",
           "Enter UK provider reference number (UKPRN)",
+          "Enter unique reference number (URN)",
           "Enter provider code",
-          "Enter unique reference number (URN)"
         )
       end
     end
@@ -105,8 +105,8 @@ RSpec.describe "providers/edit.html.erb", type: :view do
         expect(view.content_for(:page_alerts)).to have_error_summary(
           "Enter operating name",
           "Enter UK provider reference number (UKPRN)",
+          "Enter unique reference number (URN)",
           "Enter provider code",
-          "Enter unique reference number (URN)"
         )
       end
     end
