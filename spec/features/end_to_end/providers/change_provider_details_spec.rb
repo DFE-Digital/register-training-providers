@@ -29,8 +29,8 @@ RSpec.feature "Change Provider Details" do
     and_i_can_see_the_error_summary(
       "Enter operating name",
       "Enter UK provider reference number (UKPRN)",
-      "Enter provider code",
       "Enter unique reference number (URN)",
+      "Enter provider code",
     )
 
     and_i_fill_in_the_provider_details_form
