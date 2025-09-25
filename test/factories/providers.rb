@@ -62,5 +62,15 @@ FactoryBot.define do
         create(:accreditation, :current, provider:)
       end
     end
+
+    trait :with_addresses do
+      transient do
+        address_count { 1 }
+      end
+
+      after(:create) do |provider, evaluator|
+        create_list(:address, evaluator.address_count, provider:)
+      end
+    end
   end
 end
