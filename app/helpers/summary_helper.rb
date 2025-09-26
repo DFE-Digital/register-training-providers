@@ -177,4 +177,62 @@ module SummaryHelper
       card
     end
   end
+
+  def address_summary_cards(addresses, provider, include_actions: true)
+    return [] if addresses.empty?
+
+    addresses.map do |address|
+      card = {
+        title: "#{address.town_or_city}, #{address.postcode}",
+        rows: address_rows(address)
+      }
+
+      if include_actions && !provider.archived?
+        card[:actions] = [
+          { text: "Delete", href: "#" },  # TODO: Add proper delete path
+          { text: "Change", href: "#" }   # TODO: Add proper change path
+        ]
+      end
+
+      card
+    end
+  end
+
+  def address_rows(address)
+    rows = []
+
+    # Build address parts array
+    address_parts = [
+      address.address_line_1,
+      address.address_line_2,
+      address.address_line_3,
+      address.county,
+      address.postcode
+    ].compact
+
+    # Generate address HTML
+    address_html = content_tag :p, class: "govuk-body" do
+      safe_join(address_parts, tag.br)
+    end
+
+    rows << {
+      key: { text: "Address" },
+      value: { text: address_html }
+    }
+
+    # Add location information if coordinates are available
+    if address.latitude.present? && address.longitude.present?
+      location_rows = [
+        { key: { text: "Latitude" }, value: { text: address.latitude } },
+        { key: { text: "Longitude" }, value: { text: address.longitude } }
+      ]
+
+      rows << {
+        key: { text: "Location" },
+        value: { text: govuk_summary_list(rows: location_rows) }
+      }
+    end
+
+    rows
+  end
 end
