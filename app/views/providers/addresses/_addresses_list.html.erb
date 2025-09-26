@@ -1,0 +1,24 @@
+<% if addresses.any? %>
+  <% unless provider.archived? %>
+    <div class="govuk-button-group">
+      <%= govuk_button_link_to("Add address", "#") %>
+    </div>
+  <% end %>
+
+  <% address_summary_cards(addresses, provider, include_actions: !provider.archived?).each do |summary_card| %>
+    <%= govuk_summary_card(title: summary_card[:title]) do |card|
+          if summary_card[:actions].present?
+            summary_card[:actions].each do |action|
+              card.with_action { govuk_link_to(action[:text], action[:href]) }
+            end
+          end
+          card.with_summary_list(rows: summary_card[:rows])
+        end %>
+  <% end %>
+<% else %>
+  <% unless provider.archived? %>
+    <%= govuk_button_link_to("Add address", "#") %>
+  <% end %>
+
+  <p class="govuk-body">There are no addresses for <%= provider.operating_name %></p>
+<% end %>

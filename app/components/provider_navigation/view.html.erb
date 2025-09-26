@@ -1,0 +1,12 @@
+<nav class="app-secondary-navigation" aria-label="Provider navigation">
+  <ul class="app-secondary-navigation__list">
+    <% navigation_items.each do |item| %>
+      <li class="<%= item[:classes] %>">
+        <%= link_to item[:name],
+                    item[:path],
+                    class: "app-secondary-navigation__link",
+                    "aria-current" => item[:current_page] %>
+      </li>
+    <% end %>
+  </ul>
+</nav>

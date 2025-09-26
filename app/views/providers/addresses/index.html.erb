@@ -7,13 +7,13 @@
 <%= content_for(:secondary_navigation) do %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Accreditations") %>
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Addresses") %>
     </div>
   </div>
 <% end %>
 
 <h2 class="govuk-heading-m">
-  Accreditations<%= " (#{@accreditations.count})" if @accreditations.any? %>
+  Addresses<%= " (#{@addresses.count})" if @addresses.any? %>
 </h2>
 
-<%= render "accreditations/accreditations_list", accreditations: @accreditations, provider: @provider %>
+<%= render "addresses_list", addresses: @addresses, provider: @provider %>
