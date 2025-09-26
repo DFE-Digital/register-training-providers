@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly BLUE='\033[0;34m'
+readonly YELLOW='\033[1;33m'
+readonly NC='\033[0m' # No Color
+
+print_status() {
+    local color=$1
+    local message=$2
+    echo -e "${color}${message}${NC}"
+}
+
+print_step() {
+    echo
+    print_status "$BLUE" "=========================================="
+    print_status "$BLUE" "🔍 Running: $1"
+    print_status "$BLUE" "=========================================="
+}
+
+print_success() {
+    print_status "$GREEN" "✅ $1 completed successfully"
+}
+
+print_failure() {
+    print_status "$RED" "❌ $1 failed"
+}
+
+print_warning() {
+    print_status "$YELLOW" "⚠️  $1"
+}
+
+run_check() {
+    local check_name=$1
+    shift
+    local exit_code=0
+    
+    if "$@"; then
+        print_success "$check_name"
+    else
+        print_failure "$check_name"
+        exit_code=1
+    fi
+    
+    return $exit_code
+}
+
+main() {
+    local exit_code=0
+    
+    echo "🚀 Running CI checks locally..."
+    echo "This replicates the checks from GitHub Actions workflow"
+    
+    # Security scan
+    print_step "Security Scan"
+    if run_check "Security Scan" bin/brakeman --no-pager; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    # Ruby linting
+    print_step "Ruby Linting"
+    print_status "$BLUE" "Running RuboCop..."
+    if run_check "RuboCop" bin/rubocop -f github; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    print_status "$BLUE" "Running ERB Lint..."
+    if run_check "ERB Lint" bin/erb_lint --lint-all; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    # JavaScript linting
+    print_step "JavaScript Linting"
+    if run_check "Prettier" yarn prettier --check --ignore-unknown '**/*'; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    # Tool versions check
+    print_step "Tool Versions Verification"
+    if run_check "Tool Versions" bin/tool_versions_checker; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    # Database consistency check
+    print_step "Database Consistency Check"
+    if run_check "Database Consistency" bin/db_consistency_check; then
+        :
+    else
+        exit_code=1
+    fi
+    
+    # Test suite (if in test environment)
+    if [[ "${RAILS_ENV:-}" == "test" ]]; then
+        print_step "Test Suite"
+        print_status "$BLUE" "Running tests..."
+        if run_check "RSpec" bundle exec rspec; then
+            :
+        else
+            exit_code=1
+        fi
+    else
+        print_warning "Test Suite skipped (RAILS_ENV not set to 'test')"
+        print_status "$BLUE" "To run tests: RAILS_ENV=test ./bin/ci-checks"
+    fi
+    
+    echo
+    if [[ $exit_code -eq 0 ]]; then
+        print_status "$GREEN" "🎉 All CI checks passed!"
+        print_status "$GREEN" "Your code is ready for deployment!"
+    else
+        print_status "$RED" "💥 Some CI checks failed"
+        print_status "$RED" "Please fix the issues above before committing"
+    fi
+    
+    exit $exit_code
+}
+
+main "$@"
