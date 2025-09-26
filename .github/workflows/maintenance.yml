@@ -16,6 +16,11 @@ on:
           - enable
           - disable
 
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+
 jobs:
   set-maintenance-mode:
     name: Set maintenance mode
