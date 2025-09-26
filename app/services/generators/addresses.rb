@@ -13,12 +13,13 @@ module Generators
       Provider.all
     end
 
-    def skip_provider?(provider)
-      provider.addresses.exists?
+    def existing_target_data_joins
+      :addresses
     end
 
     def process_provider(provider)
-      create_address_for_provider(provider)
+      num_addresses = [1, 2].sample
+      num_addresses.times { create_address_for_provider(provider) }
     end
 
     def clear_existing_data_for_providers(providers)
