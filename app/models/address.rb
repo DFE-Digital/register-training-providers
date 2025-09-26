@@ -32,5 +32,9 @@ class Address < ApplicationRecord
 
   belongs_to :provider
 
+  validates :address_line_1, presence: true
+  validates :town_or_city, presence: true
+  validates :postcode, presence: true
+
   audited
 end

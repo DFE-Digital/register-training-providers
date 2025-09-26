@@ -189,8 +189,8 @@ module SummaryHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Delete", href: "#" },  # TODO: Add proper delete path
-          { text: "Change", href: "#" }   # TODO: Add proper change path
+          { text: "Change", href: "#" }, # TODO: Add proper change path
+          { text: "Delete", href: "#" }, # TODO: Add proper delete path
         ]
       end
 
