@@ -10,8 +10,8 @@ module Generators
       Provider.where.not(provider_type: "school")
     end
 
-    def skip_provider?(provider)
-      provider.accreditations.exists?
+    def existing_target_data_joins
+      :accreditations
     end
 
     def process_provider(provider)
