@@ -8,6 +8,9 @@ class CreateAddresses < ActiveRecord::Migration[8.0]
       t.string :town_or_city, null: false
       t.string :county
       t.string :postcode, null: false
+      t.decimal :longitude, precision: 10, scale: 6
+      t.decimal :latitude, precision: 10, scale: 6
+      t.datetime :discarded_at
       t.timestamps
 
       t.index [:provider_id], name: "index_addresses_on_provider_id"

@@ -27,5 +27,11 @@ namespace :example_data do
 
     # Call the generate:accreditations task
     Rake::Task["generate:accreditations"].invoke
+
+    # Make sure addresses task can be run again (in case it was run before)
+    Rake::Task["generate:addresses"].reenable
+
+    # Call the generate:addresses task
+    Rake::Task["generate:addresses"].invoke
   end
 end

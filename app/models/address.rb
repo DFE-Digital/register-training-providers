@@ -7,6 +7,9 @@
 #  address_line_2 :string
 #  address_line_3 :string
 #  county         :string
+#  discarded_at   :datetime
+#  latitude       :decimal(10, 6)
+#  longitude      :decimal(10, 6)
 #  postcode       :string           not null
 #  town_or_city   :string           not null
 #  created_at     :datetime         not null
@@ -24,6 +27,8 @@
 #
 class Address < ApplicationRecord
   self.implicit_order_column = :created_at
+  include Discard::Model
+  include SaveAsTemporary
 
   belongs_to :provider
 

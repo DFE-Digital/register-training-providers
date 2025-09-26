@@ -38,6 +38,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_135714) do
     t.string "town_or_city", null: false
     t.string "county"
     t.string "postcode", null: false
+    t.decimal "longitude", precision: 10, scale: 6
+    t.decimal "latitude", precision: 10, scale: 6
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["postcode"], name: "index_addresses_on_postcode"

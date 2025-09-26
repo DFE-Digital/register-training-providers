@@ -1,33 +1,21 @@
-module Accreditations
-  class Generator
-    include ServicePattern
-
-    attr_reader :providers_accredited, :total_accreditable
-
-    def initialize(percentage: 0.5)
-      @percentage = percentage
-      @providers_accredited = 0
-      @total_accreditable = 0
-    end
-
-    def call
-      @total_accreditable = accreditable_providers.count
-      providers_to_accredit = accreditable_providers.order("RANDOM()").limit((@total_accreditable * @percentage).round)
-
-      providers_to_accredit.each do |provider|
-        next if provider.accreditations.exists?
-
-        create_accreditations_for_provider(provider)
-        @providers_accredited += 1
-      end
-
-      self
-    end
+module Generators
+  class Accreditations < Base
+    # Delegate to parent class attributes for backward compatibility
+    alias_method :providers_accredited, :processed_count
+    alias_method :total_accreditable, :total_count
 
   private
 
-    def accreditable_providers
+    def target_providers
       Provider.where.not(provider_type: "school")
+    end
+
+    def skip_provider?(provider)
+      provider.accreditations.exists?
+    end
+
+    def process_provider(provider)
+      create_accreditations_for_provider(provider)
     end
 
     def create_accreditations_for_provider(provider)
