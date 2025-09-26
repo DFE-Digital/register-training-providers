@@ -60,6 +60,7 @@ Rails.application.routes.draw do
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
     resources :accreditations, only: [:index], controller: "accreditations"
+    resources :addresses, only: [:index], controller: "providers/addresses"
   end
 
   resources :accreditations, except: [:index, :show] do
