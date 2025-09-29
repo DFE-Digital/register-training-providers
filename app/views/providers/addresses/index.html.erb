@@ -16,4 +16,10 @@
   Addresses<%= " (#{@addresses.count})" if @addresses.any? %>
 </h2>
 
+<% unless @provider.archived? %>
+  <div class="govuk-button-group">
+    <%= govuk_button_link_to("Add address", new_provider_address_path(@provider)) %>
+  </div>
+<% end %>
+
 <%= render "addresses_list", addresses: @addresses, provider: @provider %>
