@@ -54,6 +54,9 @@ Rails.application.routes.draw do
   get "/providers/new/accreditation", to: "providers/accreditation#new", as: :new_provider_accreditation
   post "/providers/new/accreditation", to: "providers/accreditation#create"
 
+  get "/providers/:provider_id/addresses/new", to: "providers/addresses#new", as: :new_provider_address
+  post "/providers/:provider_id/addresses", to: "providers/addresses#create"
+
   resources :providers, except: [:new, :create] do
     checkable(:providers)
     resource :archive, only: [:show, :update], module: :providers
