@@ -189,8 +189,8 @@ module SummaryHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Change", href: "#" }, # TODO: Add proper change path
           { text: "Delete", href: "#" }, # TODO: Add proper delete path
+          { text: "Change", href: "#" }, # TODO: Add proper change path
         ]
       end
 
@@ -201,14 +201,15 @@ module SummaryHelper
   def address_rows(address)
     rows = []
 
-    # Build address parts array
+    # Build address parts array - only include non-blank values
     address_parts = [
       address.address_line_1,
       address.address_line_2,
       address.address_line_3,
+      address.town_or_city,
       address.county,
       address.postcode
-    ].compact
+    ].compact.compact_blank
 
     # Generate address HTML
     address_html = content_tag :p, class: "govuk-body" do
@@ -234,5 +235,40 @@ module SummaryHelper
     end
 
     rows
+  end
+
+  def address_form_rows(form, change_path)
+    [
+      {
+        key: { text: "Address line 1" },
+        value: { text: form.address_line_1.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "address line 1" }]
+      },
+      {
+        key: { text: "Address line 2" },
+        value: { text: form.address_line_2.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "address line 2" }]
+      },
+      {
+        key: { text: "Address line 3" },
+        value: { text: form.address_line_3.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "address line 3" }]
+      },
+      {
+        key: { text: "Town" },
+        value: { text: form.town_or_city.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "town" }]
+      },
+      {
+        key: { text: "County" },
+        value: { text: form.county.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "county" }]
+      },
+      {
+        key: { text: "Postcode" },
+        value: { text: form.postcode.to_s },
+        actions: [{ href: change_path, visually_hidden_text: "postcode" }]
+      }
+    ]
   end
 end

@@ -32,9 +32,12 @@ class Address < ApplicationRecord
 
   belongs_to :provider
 
-  validates :address_line_1, presence: true
-  validates :town_or_city, presence: true
-  validates :postcode, presence: true
+  validates :address_line_1, presence: true, length: { maximum: 255 }
+  validates :address_line_2, length: { maximum: 255 }, allow_blank: true
+  validates :address_line_3, length: { maximum: 255 }, allow_blank: true
+  validates :town_or_city, presence: true, length: { maximum: 255 }
+  validates :county, length: { maximum: 255 }, allow_blank: true
+  validates :postcode, presence: true, postcode: true
 
   audited
 end
