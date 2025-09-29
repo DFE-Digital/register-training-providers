@@ -1,0 +1,17 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: new_provider_address_path(provider),
+      ) %>
+<% end %>
+
+<%= render CheckYourAnswers::View.new(
+      rows: address_form_rows(model, change_path),
+      subtitle: "Add address - #{provider.operating_name}",
+      caption: "Add address - #{provider.operating_name}",
+      back_path: back_path,
+      save_button_text: "Save address",
+      save_path: save_path,
+      cancel_path: cancel_path,
+      method: method
+    ) %>

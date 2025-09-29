@@ -68,6 +68,8 @@ en:
               blank: "Enter provider code"
               invalid: "Enter a valid provider code"
               taken: "Enter a unique provider code"
+            postcode:
+              invalid_postcode_format: "Enter a valid UK postcode"
   activemodel:
     errors:
       messages:
@@ -97,6 +99,10 @@ en:
         accreditation_form:
           update: "Accreditation updated"
           add: "Accreditation added"
+        address_form:
+          add: "Address added"
+        address:
+          add: "Address added"
   forms:
     providers:
       is_the_provider_accredited:
