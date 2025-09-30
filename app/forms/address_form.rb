@@ -44,13 +44,6 @@ class AddressForm
     }.compact
   end
 
-  def address_line_2_options_for_radios
-    [
-      SelectOption.new(key: "yes", value: "Yes"),
-      SelectOption.new(key: "no", value: "No")
-    ]
-  end
-
   alias_method :serializable_hash, :attributes
 
 private
