@@ -1,52 +1,6 @@
-<%= content_for(:breadcrumbs) do %>
-  <%= render GovukComponent::BackLinkComponent.new(
-        text: "Back",
-        href: provider_addresses_path(provider),
-      ) %>
-<% end %>
-
-<%= form_for @form, url: provider_addresses_path(provider), method: :post do |form| %>
-  <% page_data(title: "Add address - #{provider.operating_name}", subtitle: "Add address", header: false, error: @form.errors.present?) %>
-
-  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-
-  <%= form.hidden_field :provider_id %>
-
-  <%= form.govuk_fieldset legend: { text: "Address" }, caption: { text: "Add address - #{provider.operating_name}" } do %>
-    <%= form.govuk_text_field :address_line_1,
-                              label: { text: "Address line 1", size: "s" },
-                              width: "full",
-                              required: true %>
-
-    <%= form.govuk_text_field :address_line_2,
-                              label: { text: "Address line 2 (optional)", size: "s" },
-                              width: "full",
-                              required: false %>
-
-    <%= form.govuk_text_field :address_line_3,
-                              label: { text: "Address line 3 (optional)", size: "s" },
-                              width: "full",
-                              required: false %>
-
-    <%= form.govuk_text_field :town_or_city,
-                              label: { text: "Town or city", size: "s" },
-                              width: "two-thirds",
-                              required: true %>
-
-    <%= form.govuk_text_field :county,
-                              label: { text: "County (optional)", size: "s" },
-                              width: "two-thirds",
-                              required: false %>
-
-    <%= form.govuk_text_field :postcode,
-                              label: { text: "Postcode", size: "s" },
-                              width: "one-quarter",
-                              required: true %>
-  <% end %>
-
-  <%= form.govuk_submit %>
-<% end %>
-
-<p class="govuk-body">
-  <%= govuk_link_to("Cancel", provider_addresses_path(provider)) %>
-</p>
+<%= render "form",
+           form_url: provider_addresses_path(provider),
+           form_method: :post,
+           page_title: "Add address - #{provider.operating_name}",
+           page_subtitle: "Add address",
+           page_caption: "Add address - #{provider.operating_name}" %>

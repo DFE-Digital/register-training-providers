@@ -225,4 +225,26 @@ RSpec.describe AddressForm, type: :model do
       expect { form.valid? }.not_to raise_error
     end
   end
+
+  describe ".from_address" do
+    let(:address) { create(:address, provider:) }
+
+    it "creates form from existing address" do
+      form = described_class.from_address(address)
+
+      expect(form).to be_a(described_class)
+      expect(form.address_line_1).to eq(address.address_line_1)
+      expect(form.address_line_2).to eq(address.address_line_2)
+      expect(form.address_line_3).to eq(address.address_line_3)
+      expect(form.town_or_city).to eq(address.town_or_city)
+      expect(form.county).to eq(address.county)
+      expect(form.postcode).to eq(address.postcode)
+      expect(form.provider_id).to eq(address.provider_id)
+    end
+
+    it "creates valid form from existing address" do
+      form = described_class.from_address(address)
+      expect(form).to be_valid
+    end
+  end
 end
