@@ -13,8 +13,25 @@ class Providers::AddressesController < ApplicationController
     render :new
   end
 
+  def edit
+    @address = provider.addresses.kept.find(params[:id])
+    authorize @address
+
+    stored_form = current_user.load_temporary(
+      AddressForm,
+      purpose: edit_purpose(@address),
+      reset: params[:goto] != "confirm"
+    )
+
+    @form = if stored_form.address_line_1.present?
+              stored_form
+            else
+              AddressForm.from_address(@address)
+            end
+  end
+
   def create
-    @form = AddressForm.new(create_address_form_params)
+    @form = AddressForm.new(address_form_params)
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_address)
@@ -24,9 +41,24 @@ class Providers::AddressesController < ApplicationController
     end
   end
 
+  def update
+    @address = provider.addresses.kept.find(params[:id])
+    authorize @address
+
+    @form = AddressForm.new(address_form_params)
+    @form.provider_id = provider.id
+
+    if @form.valid?
+      @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@address))
+      redirect_to provider_address_check_path(@address, provider_id: provider.id)
+    else
+      render :edit
+    end
+  end
+
 private
 
-  def create_address_form_params
+  def address_form_params
     params.expect(address: [:address_line_1,
                             :address_line_2,
                             :address_line_3,
@@ -34,6 +66,10 @@ private
                             :county,
                             :postcode,
                             :provider_id])
+  end
+
+  def edit_purpose(address)
+    :"edit_address_#{address.id}"
   end
 
   def provider

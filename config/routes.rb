@@ -1,11 +1,33 @@
 Rails.application.routes.draw do
-  def checkable(model)
-    resource :check, only: %i[show update], path: "/check", controller: "#{model}/check"
+  def checkable(model, module_prefix: nil)
+    if module_prefix
+      # Handle nested modules like providers/addresses
+      member do
+        scope module: module_prefix do
+          scope module: model do
+            resource :check, only: %i[show update], path: "/check", controller: "check",
+                             as: "#{model.to_s.singularize}_check"
+          end
+        end
+      end
 
-    collection do
-      scope module: model do
-        resource :check, only: %i[new create], path: "/check", as: "#{model.to_s.singularize}_confirm",
-                         controller: "check"
+      collection do
+        scope module: module_prefix do
+          scope module: model do
+            resource :check, only: %i[new create], path: "/check", as: "#{model.to_s.singularize}_confirm",
+                             controller: "check"
+          end
+        end
+      end
+    else
+      # Original behavior for simple cases
+      resource :check, only: %i[show update], path: "/check", controller: "#{model}/check"
+
+      collection do
+        scope module: model do
+          resource :check, only: %i[new create], path: "/check", as: "#{model.to_s.singularize}_confirm",
+                           controller: "check"
+        end
       end
     end
   end
@@ -63,15 +85,8 @@ Rails.application.routes.draw do
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
     resources :accreditations, only: [:index], controller: "accreditations"
-    resources :addresses, only: [:index, :new, :create], controller: "providers/addresses" do
-      collection do
-        scope module: :providers do
-          scope module: :addresses do
-            resource :check, only: %i[new create], path: "/check", as: :address_confirm,
-                             controller: "check"
-          end
-        end
-      end
+    resources :addresses, only: [:index, :new, :create, :edit, :update], controller: "providers/addresses" do
+      checkable(:addresses, module_prefix: :providers)
     end
   end
 
