@@ -22,6 +22,18 @@ class AddressForm
     :activerecord
   end
 
+  def self.from_address(address)
+    new(
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2,
+      address_line_3: address.address_line_3,
+      town_or_city: address.town_or_city,
+      county: address.county,
+      postcode: address.postcode,
+      provider_id: address.provider_id
+    )
+  end
+
   before_validation :normalize_postcode
 
   validates :address_line_1, presence: true, length: { maximum: 255 }
