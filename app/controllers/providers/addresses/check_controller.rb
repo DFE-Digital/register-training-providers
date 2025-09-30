@@ -1,6 +1,8 @@
 module Providers
   module Addresses
     class CheckController < ::CheckController
+      include FormObjectSavePattern
+
       def new
         redirect_to back_path if model.invalid?
       end
@@ -27,28 +29,17 @@ module Providers
         provider_addresses_path(provider)
       end
 
-      def save
-        if model_id.present?
-          address = provider.addresses.kept.find(model_id)
-          authorize address
+      # FormObjectSavePattern implementation methods:
+      def find_existing_record
+        provider.addresses.kept.find(model_id)
+      end
 
-          if address.update(model.to_address_attributes)
-            current_user.clear_temporary(model_class, purpose:)
-            redirect_to success_path, flash: flash_message
-          else
-            redirect_to back_path
-          end
-        else
-          address = provider.addresses.build(model.to_address_attributes)
-          authorize address
+      def build_new_record
+        provider.addresses.build(model_attributes)
+      end
 
-          if address.save
-            current_user.clear_temporary(model_class, purpose:)
-            redirect_to success_path, flash: flash_message
-          else
-            redirect_to back_path
-          end
-        end
+      def model_attributes
+        model.to_address_attributes
       end
 
       def new_model_path(query_params = {})
