@@ -47,8 +47,8 @@ module Providers
       end
 
       def edit_model_path(query_params = {})
-        address = provider.addresses.kept.find(model_id)
-        edit_provider_address_path(address, query_params.merge(provider_id: provider.id))
+        # TODO: Implement when address editing is added
+        raise NotImplementedError, "Address editing not yet implemented"
       end
 
       def new_model_check_path
@@ -56,8 +56,8 @@ module Providers
       end
 
       def model_check_path
-        address = provider.addresses.kept.find(model_id)
-        provider_address_check_path(address, provider_id: provider.id)
+        # TODO: Implement when address editing is added
+        raise NotImplementedError, "Address editing not yet implemented"
       end
 
       def provider
