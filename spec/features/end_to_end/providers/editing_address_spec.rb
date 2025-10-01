@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Editing solo address", type: :feature do
+RSpec.describe "Editing address", type: :feature do
   before do
     given_i_am_an_authenticated_user
   end
@@ -26,7 +26,7 @@ RSpec.describe "Editing solo address", type: :feature do
 
       click_link "Change", match: :first
 
-      expect(page).to have_content("Edit address - #{provider.operating_name}")
+      expect(page).to have_content(provider.operating_name)
       expect(page).to have_field("Address line 1", with: "Original Street")
       expect(page).to have_field("Address line 2 (optional)", with: "Original Building")
       expect(page).to have_field("Address line 3 (optional)", with: "Original Floor")

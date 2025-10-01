@@ -10,9 +10,5 @@
         end %>
   <% end %>
 <% else %>
-  <% unless provider.archived? %>
-    <%= govuk_button_link_to("Add address", "#") %>
-  <% end %>
-
   <p class="govuk-body">There are no addresses for <%= provider.operating_name %>.</p>
 <% end %>

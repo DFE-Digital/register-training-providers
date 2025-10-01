@@ -7,6 +7,8 @@
 
 <%= govuk_summary_list(rows: accreditation_summary_cards([@accreditation], @provider, include_actions: false).first[:rows]) %>
 
+<%= govuk_warning_text(text: "Deleting an accreditation is permanent – you cannot undo it.") %>
+
 <%= govuk_button_to("Delete accreditation", accreditation_delete_path(@accreditation, provider_id: @provider.id), method: :delete, warning: true) %>
 
 <p class="govuk-body">

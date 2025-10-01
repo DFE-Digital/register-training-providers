@@ -87,6 +87,7 @@ Rails.application.routes.draw do
     resources :accreditations, only: [:index], controller: "accreditations"
     resources :addresses, only: [:index, :new, :create, :edit, :update], controller: "providers/addresses" do
       checkable(:addresses, module_prefix: :providers)
+      resource :delete, only: [:show, :destroy], module: "providers/addresses"
     end
   end
 

@@ -15,33 +15,27 @@
   <%= form.govuk_fieldset legend: { text: "Address" }, caption: { text: page_caption } do %>
     <%= form.govuk_text_field :address_line_1,
                               label: { text: "Address line 1", size: "s" },
-                              width: "full",
-                              required: true %>
+                              width: "full" %>
 
     <%= form.govuk_text_field :address_line_2,
                               label: { text: "Address line 2 (optional)", size: "s" },
-                              width: "full",
-                              required: false %>
+                              width: "full" %>
 
     <%= form.govuk_text_field :address_line_3,
                               label: { text: "Address line 3 (optional)", size: "s" },
-                              width: "full",
-                              required: false %>
+                              width: "full" %>
 
     <%= form.govuk_text_field :town_or_city,
                               label: { text: "Town or city", size: "s" },
-                              width: "two-thirds",
-                              required: true %>
+                              width: "two-thirds" %>
 
     <%= form.govuk_text_field :county,
                               label: { text: "County (optional)", size: "s" },
-                              width: "two-thirds",
-                              required: false %>
+                              width: "two-thirds" %>
 
     <%= form.govuk_text_field :postcode,
                               label: { text: "Postcode", size: "s" },
-                              width: "one-quarter",
-                              required: true %>
+                              width: "one-quarter" %>
   <% end %>
 
   <%= form.govuk_submit %>

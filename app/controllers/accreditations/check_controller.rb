@@ -24,7 +24,6 @@ module Accreditations
       provider_accreditations_path(provider)
     end
 
-    # FormObjectSavePattern implementation methods:
     def find_existing_record
       provider.accreditations.kept.find(model_id)
     end

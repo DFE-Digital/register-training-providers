@@ -50,6 +50,9 @@ gem "rails_semantic_logger"
 # Soft deletes for ActiveRecord done right.
 gem "discard", "~> 1.4"
 
+# UK postcode parsing and validation
+gem "uk_postcode"
+
 # DfE Sign-in
 gem "omniauth"
 gem "omniauth_openid_connect"
