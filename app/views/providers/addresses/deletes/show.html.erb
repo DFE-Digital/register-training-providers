@@ -1,0 +1,16 @@
+<%= content_for(:breadcrumbs) do %>
+    <%= govuk_back_link(text: "Back", href: provider_addresses_path(@provider)) %>
+<% end %>
+
+<% page_data(title: "Confirm you want to delete #{@provider.operating_name}’s address", subtitle: "Delete address",
+             caption: "Delete address") %>
+
+<%= govuk_summary_list(rows: address_form_rows(@address)) %>
+
+<%= govuk_warning_text(text: "Deleting an address is permanent – you cannot undo it.") %>
+
+<%= govuk_button_to("Delete address", provider_address_delete_path(@address, provider_id: @provider.id), method: :delete, warning: true) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_addresses_path(@provider)) %>
+</p>

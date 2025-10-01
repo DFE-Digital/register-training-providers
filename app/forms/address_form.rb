@@ -4,8 +4,6 @@ class AddressForm
   include ActiveModel::Validations::Callbacks
   include SaveAsTemporary
 
-  # include PostcodeValidator
-
   attribute :address_line_1, :string
   attribute :address_line_2, :string
   attribute :address_line_3, :string

@@ -29,7 +29,6 @@ module Providers
         provider_addresses_path(provider)
       end
 
-      # FormObjectSavePattern implementation methods:
       def find_existing_record
         provider.addresses.kept.find(model_id)
       end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Creating solo address", type: :feature do
+RSpec.describe "Creating address", type: :feature do
   before do
     given_i_am_an_authenticated_user
   end
