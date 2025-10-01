@@ -111,9 +111,10 @@ en:
         address_form:
           add: "Address added"
           update: "Address updated"
-        address:
-          add: "Address added"
-          update: "Address updated"
+      address:
+        add: "Address added"
+        update: "Address updated"
+        deleted: "Address deleted"
   forms:
     providers:
       is_the_provider_accredited:

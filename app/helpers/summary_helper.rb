@@ -189,7 +189,7 @@ module SummaryHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Delete", href: "#" }, # TODO: Add proper delete path
+          { text: "Delete", href: provider_address_delete_path(address, provider_id: provider.id) },
           { text: "Change", href: edit_provider_address_path(address, provider_id: provider.id) },
         ]
       end
@@ -237,7 +237,7 @@ module SummaryHelper
     rows
   end
 
-  def address_form_rows(form, change_path)
+  def address_form_rows(form, change_path = nil, include_actions: true)
     address_attributes = [
       :address_line_1,
       :address_line_2,
@@ -251,11 +251,16 @@ module SummaryHelper
       key_label = attribute.to_s.humanize
       hidden_label = key_label.downcase
 
-      {
+      row = {
         key: { text: key_label },
-        value: { text: form.public_send(attribute).to_s },
-        actions: [{ href: change_path, visually_hidden_text: hidden_label }]
+        value: optional_value(form.public_send(attribute))
       }
+
+      if include_actions && change_path
+        row[:actions] = [{ href: change_path, visually_hidden_text: hidden_label }]
+      end
+
+      row
     end
   end
 end
