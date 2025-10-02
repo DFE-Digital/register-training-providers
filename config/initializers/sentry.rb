@@ -1,3 +1,12 @@
+IGNORED_PATHS = [
+  %r{^/cookies},
+  %r{^/accessibility},
+  %r{^/privacy},
+  %r{^/ping},
+  %r{^/healthcheck},
+  %r{^/sha}
+].freeze
+
 Sentry.init do |config|
   config.dsn = ENV.fetch("SENTRY_DSN", nil)
   config.breadcrumbs_logger = [:active_support_logger, :http_logger]
@@ -6,15 +15,6 @@ Sentry.init do |config|
 
   config.enable_logs = true
   config.enabled_patches = [:logger]
-
-  IGNORED_PATHS = [
-    %r{^/cookies},
-    %r{^/accessibility},
-    %r{^/privacy},
-    %r{^/ping},
-    %r{^/healthcheck},
-    %r{^/sha}
-  ].freeze
 
   config.traces_sampler = lambda do |sampling_context|
     transaction_context = sampling_context[:transaction_context]
