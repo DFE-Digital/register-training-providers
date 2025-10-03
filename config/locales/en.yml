@@ -48,6 +48,15 @@ en:
               invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
             start_date:
               blank: "Enter date accreditation starts"
+        address:
+          attributes:
+            address_line_1:
+              blank: "Enter address line 1, typically the building and street"
+            town_or_city:
+              blank: "Enter town or city"
+            postcode:
+              blank: "Enter postcode"
+              invalid_postcode_format: "Enter a full UK postcode"
         provider:
           attributes:
             accreditation_status:
@@ -68,6 +77,8 @@ en:
               blank: "Enter provider code"
               invalid: "Enter a valid provider code"
               taken: "Enter a unique provider code"
+            postcode:
+              invalid_postcode_format: "Enter a valid UK postcode"
   activemodel:
     errors:
       messages:
@@ -97,6 +108,10 @@ en:
         accreditation_form:
           update: "Accreditation updated"
           add: "Accreditation added"
+        address_form:
+          add: "Address added"
+        address:
+          add: "Address added"
   forms:
     providers:
       is_the_provider_accredited:

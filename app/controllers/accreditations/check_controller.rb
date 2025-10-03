@@ -1,5 +1,7 @@
 module Accreditations
   class CheckController < ::CheckController
+    include FormObjectSavePattern
+
   private
 
     def model_class
@@ -22,28 +24,17 @@ module Accreditations
       provider_accreditations_path(provider)
     end
 
-    def save
-      if model_id.present?
-        accreditation = provider.accreditations.kept.find(model_id)
-        authorize accreditation
+    # FormObjectSavePattern implementation methods:
+    def find_existing_record
+      provider.accreditations.kept.find(model_id)
+    end
 
-        if accreditation.update(model.to_accreditation_attributes)
-          current_user.clear_temporary(model_class, purpose:)
-          redirect_to success_path, flash: flash_message
-        else
-          redirect_to back_path
-        end
-      else
-        accreditation = provider.accreditations.build(model.to_accreditation_attributes)
-        authorize accreditation
+    def build_new_record
+      provider.accreditations.build(model_attributes)
+    end
 
-        if accreditation.save
-          current_user.clear_temporary(model_class, purpose:)
-          redirect_to success_path, flash: flash_message
-        else
-          redirect_to back_path
-        end
-      end
+    def model_attributes
+      model.to_accreditation_attributes
     end
 
     def new_model_path(query_params = {})
@@ -62,6 +53,10 @@ module Accreditations
     def model_check_path
       accreditation = provider.accreditations.kept.find(model_id)
       accreditation_check_path(accreditation, provider_id: provider.id)
+    end
+
+    def provider
+      @provider ||= Provider.find(params[:provider_id])
     end
   end
 end
