@@ -37,6 +37,7 @@ class Provider < ApplicationRecord
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
   has_many :accreditations, dependent: :destroy
+  has_many :addresses, dependent: :destroy
 
   audited
 

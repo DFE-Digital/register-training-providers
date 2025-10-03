@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Accreditations::Generator, type: :service do
+RSpec.describe Generators::Accreditations, type: :service do
   describe "#call" do
     let!(:hei_provider) { create(:provider, :hei, accreditation_status: :accredited) }
     let!(:scitt_provider) { create(:provider, provider_type: :scitt, accreditation_status: :accredited) }
@@ -21,7 +21,7 @@ RSpec.describe Accreditations::Generator, type: :service do
     it "returns the service instance with results" do
       result = subject
 
-      expect(result).to be_a(described_class)
+      expect(result).to be_a(Generators::Accreditations)
       expect(result.total_accreditable).to eq(3)
       expect(result.providers_accredited).to eq(3)
     end
