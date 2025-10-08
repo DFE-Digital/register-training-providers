@@ -32,17 +32,6 @@ class AddressPolicy < ApplicationPolicy
 private
 
   def provider_policy
-    @provider_policy ||= ProviderPolicy.new(user, provider)
-  end
-
-  def provider
-    # Handle both real addresses and form objects
-    if record.respond_to?(:provider) && record.provider.present?
-      record.provider
-    elsif record.respond_to?(:provider_id) && record.provider_id.present?
-      Provider.find(record.provider_id)
-    else
-      raise "Unable to determine provider for address authorization"
-    end
+    @provider_policy ||= ProviderPolicy.new(user, record.provider)
   end
 end

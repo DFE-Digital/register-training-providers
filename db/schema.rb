@@ -43,7 +43,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_135714) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["postcode"], name: "index_addresses_on_postcode"
+    t.index ["created_at"], name: "index_addresses_on_created_at"
     t.index ["provider_id"], name: "index_addresses_on_provider_id"
   end
 

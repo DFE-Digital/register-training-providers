@@ -18,7 +18,7 @@
 #
 # Indexes
 #
-#  index_addresses_on_postcode     (postcode)
+#  index_addresses_on_created_at   (created_at)
 #  index_addresses_on_provider_id  (provider_id)
 #
 # Foreign Keys
