@@ -14,7 +14,7 @@ class CreateAddresses < ActiveRecord::Migration[8.0]
       t.timestamps
 
       t.index [:provider_id], name: "index_addresses_on_provider_id"
-      t.index [:postcode], name: "index_addresses_on_postcode"
+      t.index [:created_at], name: "index_addresses_on_created_at"
     end
 
     add_foreign_key :addresses, :providers, column: :provider_id
