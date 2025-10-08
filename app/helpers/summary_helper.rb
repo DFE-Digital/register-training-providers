@@ -256,39 +256,4 @@ module SummaryHelper
       }
     end
   end
-
-  def address_form_rows(form, change_path)
-    [
-      {
-        key: { text: "Address line 1" },
-        value: { text: form.address_line_1.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "address line 1" }]
-      },
-      {
-        key: { text: "Address line 2" },
-        value: { text: form.address_line_2.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "address line 2" }]
-      },
-      {
-        key: { text: "Address line 3" },
-        value: { text: form.address_line_3.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "address line 3" }]
-      },
-      {
-        key: { text: "Town" },
-        value: { text: form.town_or_city.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "town" }]
-      },
-      {
-        key: { text: "County" },
-        value: { text: form.county.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "county" }]
-      },
-      {
-        key: { text: "Postcode" },
-        value: { text: form.postcode.to_s },
-        actions: [{ href: change_path, visually_hidden_text: "postcode" }]
-      }
-    ]
-  end
 end
