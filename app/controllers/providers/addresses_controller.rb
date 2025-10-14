@@ -80,6 +80,14 @@ class Providers::AddressesController < ApplicationController
 
         redirect_to journey_service(:address, @provider).next_path
       else
+        # Set view variables for re-rendering
+        @form_url = create_provider_addresses_path
+        @form_method = :post
+        @page_title = "Add address"
+        @page_subtitle = "Add provider"
+        @page_caption = "Add provider"
+        @back_path = determine_creation_back_path
+        @cancel_path = providers_path
         render :new
       end
     elsif @form.valid?
@@ -87,6 +95,14 @@ class Providers::AddressesController < ApplicationController
       @form.save_as_temporary!(created_by: current_user, purpose: :create_address)
       redirect_to new_provider_address_confirm_path(provider_id: provider.id)
     else
+      # Set view variables for re-rendering
+      @form_url = provider_addresses_path(provider)
+      @form_method = :post
+      @page_title = "Add address - #{provider.operating_name}"
+      @page_subtitle = "Add address"
+      @page_caption = "Add address - #{provider.operating_name}"
+      @back_path = determine_existing_provider_back_path
+      @cancel_path = provider_addresses_path(provider)
       render :new
     end
   end
@@ -102,6 +118,9 @@ class Providers::AddressesController < ApplicationController
       @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@address))
       redirect_to provider_address_check_path(@address, provider_id: provider.id)
     else
+      # Set paths for re-rendering edit form
+      @back_path = provider_addresses_path(provider)
+      @cancel_path = provider_addresses_path(provider)
       render :edit
     end
   end

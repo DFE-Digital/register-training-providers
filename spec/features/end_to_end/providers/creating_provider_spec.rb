@@ -2,13 +2,22 @@ require "rails_helper"
 
 RSpec.feature "Add Provider" do
   shared_examples "adding a provider with accreditation status" do |accreditation_status|
+    let(:address_line_1) { Faker::Address.street_address }
+    let(:address_line_2) { Faker::Address.secondary_address }
+    let(:town_or_city) { Faker::Address.city }
+    let(:county) { Faker::Address.state }
+    let(:postcode) { Faker::Address.postcode }
+
     scenario "User can add a new provider with accreditation status: #{accreditation_status}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
       and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
-      and_i_checked_my_answers
+      and_i_am_on_the_check_answers_page
+      then_the_address_should_be_displayed_on_check_answers
+      when_i_save_the_provider
       then_i_should_be_redirected_to_the_provider_list_page
       and_i_should_see_a_success_message
+      and_the_address_should_be_saved_to_the_provider
     end
 
     def when_i_navigate_to_the_add_provider_page
@@ -28,6 +37,8 @@ RSpec.feature "Add Provider" do
       if accreditation_status == :accredited
         and_i_fill_in_the_accreditation_details
       end
+
+      and_i_fill_in_the_address_details
     end
 
     def and_i_fill_in_the_provider_details(provider_details:, select_provider_type:)
@@ -65,6 +76,32 @@ RSpec.feature "Add Provider" do
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
       end
+
+      and_i_click_on("Continue")
+    end
+
+    def and_i_fill_in_the_address_details
+      # Accredited providers will have 4 temp records, unaccredited will have 3
+      expected_count = @provider_details_to_use.accredited? ? 4 : 3
+      expect(TemporaryRecord.count).to eq(expected_count)
+      and_i_am_taken_to("/providers/new/addresses")
+      and_i_can_see_the_title("Add address - Add provider - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      and_i_can_see_the_error_summary(
+        "Enter address line 1, typically the building and street",
+        "Enter town or city",
+        "Enter postcode"
+      )
+      and_i_can_see_the_title("Error: Add address - Add provider - Register of training providers - GOV.UK")
+
+      fill_in "Address line 1", with: address_line_1
+      fill_in "Address line 2 (optional)", with: address_line_2
+      fill_in "Town or city", with: town_or_city
+      fill_in "County (optional)", with: county
+      fill_in "Postcode", with: postcode
 
       and_i_click_on("Continue")
     end
@@ -179,12 +216,16 @@ RSpec.feature "Add Provider" do
       expect(page).to have_notification_banner("Success", "Provider added")
     end
 
-    def and_i_checked_my_answers
-      # Accredited providers will have 4 temp records, unaccredited will have 3
-      expected_count = @provider_details_to_use.accredited? ? 4 : 3
+    def and_i_am_on_the_check_answers_page
+      # Accredited providers will have 5 temp records (onboarding, type, provider, accreditation, address)
+      # Unaccredited will have 4 (onboarding, type, provider, address)
+      expected_count = @provider_details_to_use.accredited? ? 5 : 4
       expect(TemporaryRecord.count).to eq(expected_count)
       and_i_am_taken_to("/providers/check/new")
       and_i_can_see_the_title("Check your answers - Add provider - Register of training providers - GOV.UK")
+    end
+
+    def when_i_save_the_provider
       when_i_click_on("Save provider")
     end
 
@@ -194,6 +235,27 @@ RSpec.feature "Add Provider" do
 
     def and_i_do_not_see_error_summary
       expect(page).not_to have_error_summary
+    end
+
+    def then_the_address_should_be_displayed_on_check_answers
+      expect(page).to have_content("Address")
+      expect(page).to have_content(address_line_1)
+      expect(page).to have_content(address_line_2)
+      expect(page).to have_content(town_or_city)
+      expect(page).to have_content(county)
+      expect(page).to have_content(postcode)
+    end
+
+    def and_the_address_should_be_saved_to_the_provider
+      provider = Provider.last
+      expect(provider.addresses.count).to eq(1)
+
+      address = provider.addresses.first
+      expect(address.address_line_1).to eq(address_line_1)
+      expect(address.address_line_2).to eq(address_line_2)
+      expect(address.town_or_city).to eq(town_or_city)
+      expect(address.county).to eq(county)
+      expect(address.postcode).to eq(postcode)
     end
   end
 
