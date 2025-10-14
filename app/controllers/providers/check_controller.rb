@@ -24,7 +24,7 @@ private
     if model_id.present?
       edit_provider_path(model, goto: "confirm")
     else
-      new_provider_addresses_path(goto: "confirm")
+      journey_service(:check_answers, model).back_path
     end
   end
 
@@ -94,5 +94,13 @@ private
     ].each do |form_class|
       current_user.clear_temporary(form_class, purpose: :create_provider)
     end
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end

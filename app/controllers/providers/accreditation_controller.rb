@@ -20,7 +20,7 @@ class Providers::AccreditationController < CheckController
       return
     end
 
-    @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider, reset: params[:goto] != "confirm")
+    @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider, reset: false)
     @form.provider_creation_mode = true
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
@@ -38,7 +38,8 @@ class Providers::AccreditationController < CheckController
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
-      redirect_to new_provider_addresses_path
+
+      redirect_to journey_service(:accreditation, provider).next_path
     else
       render :new
     end
@@ -49,5 +50,13 @@ private
   def create_accreditation_params
     params.expect(accreditation: [:number, *AccreditationForm::PARAM_CONVERSION.keys])
       .transform_keys { |k| AccreditationForm::PARAM_CONVERSION.fetch(k, k) }
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end

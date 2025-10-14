@@ -23,7 +23,9 @@ class Providers::TypeController < CheckController
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
-      redirect_to new_provider_details_path
+
+      provider = current_user.load_temporary(Provider, purpose: :create_provider)
+      redirect_to journey_service(:type, provider).next_path
     else
       render :new
     end
@@ -33,5 +35,13 @@ private
 
   def create_new_provider_type_params
     params.expect(provider: [:provider_type, :accreditation_status])
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end
