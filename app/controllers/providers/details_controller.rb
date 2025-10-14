@@ -35,11 +35,7 @@ class Providers::DetailsController < CheckController
     if @provider.valid?
       @provider.save_as_temporary!(created_by: current_user, purpose: :create_provider)
 
-      if @provider.accredited?
-        redirect_to new_provider_accreditation_path
-      else
-        redirect_to new_provider_addresses_path
-      end
+      redirect_to journey_service(:details, @provider).next_path
     else
       render :new
     end
@@ -49,5 +45,13 @@ private
 
   def create_new_provider_params
     params.expect(provider: [:provider_type, :accreditation_status, :operating_name, :ukprn, :code, :urn, :legal_name])
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end

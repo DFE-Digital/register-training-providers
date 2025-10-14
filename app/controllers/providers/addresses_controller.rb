@@ -14,8 +14,7 @@ class Providers::AddressesController < ApplicationController
         return
       end
 
-      current_user.clear_temporary(AddressForm, purpose: :create_provider) if params[:goto] != "confirm"
-      @form = current_user.load_temporary(AddressForm, purpose: :create_provider, reset: params[:goto] != "confirm")
+      @form = current_user.load_temporary(AddressForm, purpose: :create_provider, reset: false)
       @form.provider_creation_mode = true
       @form.provider_id = @provider.id if @form.provider_id.blank?
 
@@ -53,7 +52,7 @@ class Providers::AddressesController < ApplicationController
     stored_form = current_user.load_temporary(
       AddressForm,
       purpose: edit_purpose(@address),
-      reset: params[:goto] != "confirm"
+      reset: false
     )
 
     @form = if stored_form.address_line_1.present?
@@ -63,12 +62,7 @@ class Providers::AddressesController < ApplicationController
             end
 
     # Set paths for edit context
-    @back_path = if params[:goto] == "confirm"
-                   provider_address_check_path(@address,
-                                               provider_id: provider)
-                 else
-                   provider_addresses_path(provider)
-                 end
+    @back_path = provider_addresses_path(provider)
     @cancel_path = provider_addresses_path(provider)
   end
 
@@ -83,7 +77,8 @@ class Providers::AddressesController < ApplicationController
 
       if @form.valid?
         @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
-        redirect_to new_provider_confirm_path
+
+        redirect_to journey_service(:address, @provider).next_path
       else
         render :new
       end
@@ -140,12 +135,19 @@ private
   end
 
   def determine_creation_back_path
-    return new_provider_confirm_path if params[:goto] == "confirm"
-
-    @provider&.accredited? ? new_provider_accreditation_path : new_provider_details_path
+    provider = current_user.load_temporary(Provider, purpose: :create_provider)
+    journey_service(:address, provider).back_path
   end
 
   def determine_existing_provider_back_path
-    params[:goto] == "confirm" ? new_provider_address_confirm_path(provider) : provider_addresses_path(provider)
+    provider_addresses_path(provider)
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end
