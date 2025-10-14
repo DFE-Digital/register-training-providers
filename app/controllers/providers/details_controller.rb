@@ -38,7 +38,7 @@ class Providers::DetailsController < CheckController
       if @provider.accredited?
         redirect_to new_provider_accreditation_path
       else
-        redirect_to new_provider_confirm_path
+        redirect_to new_provider_addresses_path
       end
     else
       render :new

@@ -1,5 +1,6 @@
 class Providers::CheckController < CheckController
-  helper_method :change_provider_type_path, :accreditation_form, :change_provider_details_path
+  helper_method :change_provider_type_path, :accreditation_form, :change_provider_details_path, :address_form,
+                :change_address_path
 
 private
 
@@ -22,10 +23,8 @@ private
   def back_path
     if model_id.present?
       edit_provider_path(model, goto: "confirm")
-    elsif model.accredited?
-      new_provider_accreditation_path(goto: "confirm")
     else
-      new_provider_details_path(goto: "confirm")
+      new_provider_addresses_path(goto: "confirm")
     end
   end
 
@@ -47,11 +46,22 @@ private
     @accreditation_form ||= current_user.load_temporary(AccreditationForm, purpose: :create_provider)
   end
 
+  def address_form
+    return nil if model_id.present?
+
+    @address_form ||= current_user.load_temporary(AddressForm, purpose: :create_provider)
+  end
+
+  def change_address_path
+    model_id.present? ? nil : new_provider_addresses_path(goto: "confirm")
+  end
+
   def save
     authorize model
 
     if model.save
       save_accreditation_if_present
+      save_address_if_present
       clear_temporary_records
       redirect_to success_path, flash: flash_message
     else
@@ -66,12 +76,21 @@ private
     accreditation.save!
   end
 
+  def save_address_if_present
+    return if model_id.present?
+    return unless address_form&.valid?
+
+    address = model.addresses.build(address_form.to_address_attributes)
+    address.save!
+  end
+
   def clear_temporary_records
     [
       Providers::IsTheProviderAccredited,
       Providers::ProviderType,
       Provider,
-      AccreditationForm
+      AccreditationForm,
+      AddressForm
     ].each do |form_class|
       current_user.clear_temporary(form_class, purpose: :create_provider)
     end
