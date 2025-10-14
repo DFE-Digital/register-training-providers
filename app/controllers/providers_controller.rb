@@ -8,6 +8,7 @@ class ProvidersController < ApplicationController
       Providers::IsTheProviderAccredited,
       Providers::ProviderType,
       Provider,
+      AddressForm
     ].each do |form|
       current_user.clear_temporary(form, purpose: :create_provider)
     end

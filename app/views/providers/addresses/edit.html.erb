@@ -3,4 +3,6 @@
            form_method: :patch,
            page_title: provider.operating_name.to_s,
            page_subtitle: "Edit address",
-           page_caption: provider.operating_name.to_s %>
+           page_caption: provider.operating_name.to_s,
+           back_path: @back_path,
+           cancel_path: @cancel_path %>

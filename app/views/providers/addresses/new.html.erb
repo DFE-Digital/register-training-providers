@@ -1,6 +1,8 @@
 <%= render "form",
-           form_url: provider_addresses_path(provider),
-           form_method: :post,
-           page_title: "Add address - #{provider.operating_name}",
-           page_subtitle: "Add address",
-           page_caption: "Add address - #{provider.operating_name}" %>
+           form_url: @form_url,
+           form_method: @form_method,
+           page_title: @page_title,
+           page_subtitle: @page_subtitle,
+           page_caption: @page_caption,
+           back_path: @back_path,
+           cancel_path: @cancel_path %>

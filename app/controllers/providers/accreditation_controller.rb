@@ -38,7 +38,7 @@ class Providers::AccreditationController < CheckController
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
-      redirect_to new_provider_confirm_path
+      redirect_to new_provider_addresses_path
     else
       render :new
     end
