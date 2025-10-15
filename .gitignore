@@ -48,3 +48,4 @@ maintenance_page/manifests/maintenance/deployment_maintenance.yml
 
 # For local machine
 .local/
+.env.local
