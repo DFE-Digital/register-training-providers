@@ -86,13 +86,30 @@ To run the linters:
 bin/lint
 ```
 
+### Example Data
+
+To set up the example data for the app run the following
+
+```bash
+rails example_data:generate
+```
+
+### Authentication
+
+To set up local authentication using personas add the following to your anvironment file:
+
+```dotenv
+# .env.local
+SIGN_IN_METHOD=persona
+```
+
 ### Ordnance Survey API Key Setup
 
 1. **Sign up** at [OS Data Hub](https://osdatahub.os.uk/) using your `education.gov.uk` email.
 
 2. When prompted:
    - Select **Public Sector Plan**
-   - Set **Organisation** to `Department of Education`
+   - Set **Organisation** to `Department for Education`
 
 3. Wait for your account to be approved by the Department for Education account holder.
 
