@@ -96,7 +96,7 @@ rails example_data:generate
 
 ### Authentication
 
-To set up local authentication using personas add the following to your anvironment file:
+To set up local authentication using personas add the following to your environment file:
 
 ```dotenv
 # .env.local
