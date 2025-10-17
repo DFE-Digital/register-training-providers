@@ -1,7 +1,7 @@
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: provider_addresses_path(provider),
+        href: back_path
       ) %>
 <% end %>
 
@@ -42,5 +42,5 @@
 <% end %>
 
 <p class="govuk-body">
-  <%= govuk_link_to("Cancel", provider_addresses_path(provider)) %>
+  <%= govuk_link_to("Cancel", cancel_path) %>
 </p>

@@ -76,6 +76,9 @@ Rails.application.routes.draw do
   get "/providers/new/accreditation", to: "providers/accreditation#new", as: :new_provider_accreditation
   post "/providers/new/accreditation", to: "providers/accreditation#create"
 
+  get "/providers/new/addresses", to: "providers/addresses#new", as: :new_provider_addresses
+  post "/providers/new/addresses", to: "providers/addresses#create", as: :create_provider_addresses
+
   get "/providers/:provider_id/addresses/new", to: "providers/addresses#new", as: :new_provider_address
   post "/providers/:provider_id/addresses", to: "providers/addresses#create"
 

@@ -8,7 +8,8 @@ class AccreditationsController < ApplicationController
 
   def new
     @provider = provider
-    @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose, reset: params[:goto] != "confirm")
+    current_user.clear_temporary(AccreditationForm, purpose: create_purpose) if params[:goto] != "confirm"
+    @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose, reset: false)
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
     authorize @form
@@ -22,7 +23,7 @@ class AccreditationsController < ApplicationController
     stored_form = current_user.load_temporary(
       AccreditationForm,
       purpose: edit_purpose(@accreditation),
-      reset: params[:goto] != "confirm"
+      reset: false
     )
 
     @form = if stored_form.number.present?
@@ -80,14 +81,6 @@ private
   end
 
   def back_path
-    if params[:goto] == "confirm"
-      if action_name == "edit"
-        accreditation_check_path(@accreditation, provider_id: provider.id)
-      else
-        new_accreditation_confirm_path(provider_id: provider.id)
-      end
-    else
-      provider_accreditations_path(provider)
-    end
+    provider_accreditations_path(provider)
   end
 end

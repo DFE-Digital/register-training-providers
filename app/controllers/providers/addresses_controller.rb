@@ -5,11 +5,31 @@ class Providers::AddressesController < ApplicationController
   end
 
   def new
-    # Clear any existing temporary records if not coming from check page
-    current_user.clear_temporary(AddressForm, purpose: :create_address) if params[:goto] != "confirm"
+    if provider_creation_context?
+      # Provider creation flow
+      @provider = current_user.load_temporary(Provider, purpose: :create_provider)
 
-    @form = current_user.load_temporary(AddressForm, purpose: :create_address)
-    @form.assign_attributes(provider_id: provider.id) if @form.provider_id.blank?
+      if @provider.nil? || @provider.invalid?
+        redirect_to new_provider_details_path
+        return
+      end
+
+      @form = current_user.load_temporary(AddressForm, purpose: :create_provider, reset: false)
+      @form.provider_creation_mode = true
+      @form.provider_id = @provider.id if @form.provider_id.blank?
+    else
+      # Existing provider flow
+      current_user.clear_temporary(AddressForm, purpose: :create_address) if params[:goto] != "confirm"
+      @form = current_user.load_temporary(AddressForm, purpose: :create_address)
+      @form.assign_attributes(provider_id: provider.id) if @form.provider_id.blank?
+    end
+
+    @presenter = AddressFormPresenter.new(
+      form: @form,
+      provider: provider,
+      context: provider_creation_context? ? :create_provider : :existing_provider
+    )
+
     render :new
   end
 
@@ -20,7 +40,7 @@ class Providers::AddressesController < ApplicationController
     stored_form = current_user.load_temporary(
       AddressForm,
       purpose: edit_purpose(@address),
-      reset: params[:goto] != "confirm"
+      reset: false
     )
 
     @form = if stored_form.address_line_1.present?
@@ -28,15 +48,46 @@ class Providers::AddressesController < ApplicationController
             else
               AddressForm.from_address(@address)
             end
+
+    @presenter = AddressFormPresenter.new(
+      form: @form,
+      provider: provider,
+      address: @address,
+      context: :edit
+    )
   end
 
   def create
     @form = AddressForm.new(address_form_params)
 
-    if @form.valid?
+    if provider_creation_context?
+      # Provider creation flow
+      @provider = current_user.load_temporary(Provider, purpose: :create_provider)
+      @form.provider_creation_mode = true
+      @form.provider_id = @provider&.id
+
+      if @form.valid?
+        @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
+
+        redirect_to journey_service(:address, @provider).next_path
+      else
+        @presenter = AddressFormPresenter.new(
+          form: @form,
+          provider: provider,
+          context: :create_provider
+        )
+        render :new
+      end
+    elsif @form.valid?
+      # Existing provider flow
       @form.save_as_temporary!(created_by: current_user, purpose: :create_address)
       redirect_to new_provider_address_confirm_path(provider_id: provider.id)
     else
+      @presenter = AddressFormPresenter.new(
+        form: @form,
+        provider: provider,
+        context: :existing_provider
+      )
       render :new
     end
   end
@@ -52,6 +103,12 @@ class Providers::AddressesController < ApplicationController
       @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@address))
       redirect_to provider_address_check_path(@address, provider_id: provider.id)
     else
+      @presenter = AddressFormPresenter.new(
+        form: @form,
+        provider: provider,
+        address: @address,
+        context: :edit
+      )
       render :edit
     end
   end
@@ -72,7 +129,23 @@ private
     :"edit_address_#{address.id}"
   end
 
+  def provider_creation_context?
+    params[:provider_id].blank?
+  end
+
   def provider
-    @provider ||= Provider.find(params[:provider_id])
+    @provider ||= if provider_creation_context?
+                    current_user.load_temporary(Provider, purpose: :create_provider)
+                  else
+                    Provider.find(params[:provider_id])
+                  end
+  end
+
+  def journey_service(current_step, provider)
+    Providers::CreationJourneyService.new(
+      current_step: current_step,
+      provider: provider,
+      goto_param: params[:goto]
+    )
   end
 end

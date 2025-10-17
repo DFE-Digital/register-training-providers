@@ -11,6 +11,11 @@
   <%= govuk_summary_list(rows: accreditation_form_rows(accreditation_form)) %>
 <% end %>
 
+<% if address_form&.valid? %>
+  <h2 class="govuk-heading-m">Address</h2>
+  <%= govuk_summary_list(rows: address_form_rows(address_form, change_address_path)) %>
+<% end %>
+
 <%= govuk_button_to("Save provider", save_path, method:) %>
 
 <p class="govuk-body">
