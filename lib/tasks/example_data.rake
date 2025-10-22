@@ -22,22 +22,9 @@ namespace :example_data do
     # Call the import:providers task
     Rake::Task["import:providers"].invoke
 
-    # Make sure accreditation task can be run again (in case it was run before)
-    Rake::Task["generate:accreditations"].reenable
-
-    # Call the generate:accreditations task
-    Rake::Task["generate:accreditations"].invoke
-
-    # Make sure addresses task can be run again (in case it was run before)
-    Rake::Task["generate:addresses"].reenable
-
-    # Call the generate:addresses task
-    Rake::Task["generate:addresses"].invoke
-
-    # Make sure contacts task can be run again (in case it was run before)
-    Rake::Task["generate:contacts"].reenable
-
-    # Call the generate:contacts task
-    Rake::Task["generate:contacts"].invoke
+    ["generate:addresses", "generate:contacts", "generate:accreditations"].each do |task|
+      Rake::Task[task].reenable
+      Rake::Task[task].invoke
+    end
   end
 end

@@ -11,6 +11,7 @@ class CreateContacts < ActiveRecord::Migration[8.0]
 
       t.index [:provider_id], name: "index_contacts_on_provider_id"
       t.index [:created_at], name: "index_contacts_on_created_at"
+      t.index [:discarded_at], name: "index_contacts_on_discarded_at"
     end
 
     add_foreign_key :contacts, :providers, column: :provider_id
