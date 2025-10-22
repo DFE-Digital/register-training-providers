@@ -12,7 +12,8 @@ module ProviderNavigation
       [
         { name: "Provider details", path: provider_path(provider) },
         { name: "Accreditations", path: provider_accreditations_path(provider) },
-        { name: "Addresses", path: provider_addresses_path(provider) }
+        { name: "Addresses", path: provider_addresses_path(provider) },
+        { name: "Contacts", path: provider_contacts_path(provider) },
       ]
     end
 

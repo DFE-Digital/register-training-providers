@@ -33,5 +33,11 @@ namespace :example_data do
 
     # Call the generate:addresses task
     Rake::Task["generate:addresses"].invoke
+
+    # Make sure contacts task can be run again (in case it was run before)
+    Rake::Task["generate:contacts"].reenable
+
+    # Call the generate:contacts task
+    Rake::Task["generate:contacts"].invoke
   end
 end
