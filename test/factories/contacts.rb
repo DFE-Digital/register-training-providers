@@ -6,5 +6,9 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     email_address { Faker::Internet.email }
     telephone_number { Faker::PhoneNumber.phone_number }
+
+    trait :discarded do
+      discarded_at { Time.zone.now }
+    end
   end
 end

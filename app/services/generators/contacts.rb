@@ -1,11 +1,11 @@
 module Generators
   class Contacts < Base
+    # Ensure we're using the correct locale for UK addresses
+    Faker::Config.locale = "en-GB" if defined?(Faker)
+
     # Delegate to parent class attributes for backward compatibility
     alias_method :providers_contacted, :processed_count
     alias_method :total_contactable, :total_count
-
-    # Ensure we're using the correct locale for UK addresses
-    Faker::Config.locale = "en-GB" if defined?(Faker)
 
   private
 

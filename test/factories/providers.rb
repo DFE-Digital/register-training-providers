@@ -72,5 +72,15 @@ FactoryBot.define do
         create_list(:address, evaluator.address_count, provider:)
       end
     end
+
+    trait :with_contacts do
+      transient do
+        contact_count { 1 }
+      end
+
+      after(:create) do |provider, evaluator|
+        create_list(:contact, evaluator.contact_count, provider:)
+      end
+    end
   end
 end

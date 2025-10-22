@@ -14,8 +14,9 @@
 #
 # Indexes
 #
-#  index_contacts_on_created_at   (created_at)
-#  index_contacts_on_provider_id  (provider_id)
+#  index_contacts_on_created_at    (created_at)
+#  index_contacts_on_discarded_at  (discarded_at)
+#  index_contacts_on_provider_id   (provider_id)
 #
 # Foreign Keys
 #

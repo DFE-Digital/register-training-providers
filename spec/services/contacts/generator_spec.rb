@@ -3,15 +3,9 @@ require "rails_helper"
 RSpec.describe Generators::Contacts, type: :service do
   describe "#call" do
     let!(:provider_without_contact) { create(:provider) }
-    let!(:provider_with_contact) { create(:provider) }
-    let!(:contact) { create(:contact, provider: provider_with_contact) }
+    let!(:provider_with_contact) { create(:provider, :with_contacts) }
 
     subject { described_class.call(percentage: 1.0) }
-
-    before do
-      # Ensure we have providers without contacts to test with
-      provider_without_contact
-    end
 
     it "generates 1-2 contacts for providers without contacts" do
       expect { subject }.to(change { Contact.count })
