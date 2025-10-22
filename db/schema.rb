@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_24_135714) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_095553) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -67,6 +67,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_135714) do
     t.index ["created_at"], name: "index_audits_on_created_at"
     t.index ["request_uuid"], name: "index_audits_on_request_uuid"
     t.index ["user_id", "user_type"], name: "user_index"
+  end
+
+  create_table "contacts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "provider_id", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email_address", null: false
+    t.string "telephone_number", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_contacts_on_created_at"
+    t.index ["provider_id"], name: "index_contacts_on_provider_id"
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -241,6 +254,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_135714) do
 
   add_foreign_key "accreditations", "providers"
   add_foreign_key "addresses", "providers"
+  add_foreign_key "contacts", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
