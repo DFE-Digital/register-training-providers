@@ -2,7 +2,7 @@ module OrdnanceSurvey
   class AddressLookupService
     include ServicePattern
 
-    BASE_URL = "https://api.os.uk/search/places/v1"
+    BASE_URL = "https://api.os.uk/search/places/v1".freeze
 
     def initialize(postcode:, building_name_or_number: nil)
       @postcode = postcode
@@ -43,9 +43,9 @@ module OrdnanceSurvey
     end
 
     def parse_addresses(response)
-      results = response.dig("results") || []
-      
-      results.map do |result|
+      results = response["results"] || []
+
+      results.filter_map do |result|
         dpa = result["DPA"]
         next unless dpa
 
@@ -58,7 +58,7 @@ module OrdnanceSurvey
           latitude: dpa["LATITUDE"],
           longitude: dpa["LONGITUDE"]
         }
-      end.compact
+      end
     end
 
     def filter_by_building_name_or_number(addresses)
@@ -83,8 +83,7 @@ module OrdnanceSurvey
     end
 
     def api_key
-      ENV.fetch("ORDNANCE_SURVEY_API_KEY")
+      Env.ordnance_survey_api_key
     end
   end
 end
-

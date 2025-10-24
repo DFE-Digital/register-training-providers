@@ -57,9 +57,9 @@ RSpec.describe Providers::Addresses::FindController, type: :request do
       end
 
       it "saves the search form as temporary" do
-        expect do
+        expect {
           post provider_find_path(provider_id: provider.id), params: valid_params
-        end.to change(TemporaryRecord, :count).by(2)
+        }.to change(TemporaryRecord, :count).by(2)
       end
 
       it "calls the address lookup service" do
@@ -107,4 +107,3 @@ RSpec.describe Providers::Addresses::FindController, type: :request do
     end
   end
 end
-

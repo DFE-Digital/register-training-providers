@@ -32,7 +32,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: response_body)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result).to be_an(Array)
         expect(result.size).to eq(1)
@@ -63,7 +63,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: { "results" => [] }.to_json)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result).to eq([])
       end
@@ -74,7 +74,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 500)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result).to eq([])
       end
@@ -87,11 +87,10 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
 
         expect(Rails.logger).to receive(:error).with(/OS Places API error/)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result).to eq([])
       end
     end
   end
 end
-

@@ -65,4 +65,3 @@ RSpec.describe Addresses::SearchResultsForm do
     end
   end
 end
-

@@ -98,7 +98,7 @@ RSpec.describe Address, type: :model do
           postcode: nil
         )
 
-        address.save(validate: false)
+        address.save!(validate: false)
 
         expect(Addresses::GeocodeService).not_to have_received(:call)
       end

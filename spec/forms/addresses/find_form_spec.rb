@@ -64,4 +64,3 @@ RSpec.describe Addresses::FindForm do
     end
   end
 end
-

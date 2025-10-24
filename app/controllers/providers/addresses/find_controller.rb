@@ -5,7 +5,7 @@ module Providers
         current_user.clear_temporary(::Addresses::FindForm, purpose: find_purpose)
         current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: search_results_purpose)
         current_user.clear_temporary(AddressForm, purpose: :create_address)
-        
+
         @form = current_user.load_temporary(
           ::Addresses::FindForm,
           purpose: find_purpose
@@ -62,4 +62,3 @@ module Providers
     end
   end
 end
-

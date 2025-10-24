@@ -229,4 +229,3 @@ RSpec.describe "Creating address with finder", type: :feature do
     expect(page).to have_content("Please select an address")
   end
 end
-
