@@ -1,11 +1,11 @@
 module Generators
   class Addresses < Base
+    # Ensure we're using the correct locale for UK addresses
+    Faker::Config.locale = "en-GB" if defined?(Faker)
+
     # Delegate to parent class attributes for backward compatibility
     alias_method :providers_addressed, :processed_count
     alias_method :total_addressable, :total_count
-
-    # Ensure we're using the correct locale for UK addresses
-    Faker::Config.locale = "en-GB" if defined?(Faker)
 
   private
 
