@@ -41,7 +41,7 @@
 <% elsif @results.size == 1 %>
   <% page_data(title: "1 address found for '#{@find_form&.building_name_or_number.presence || @find_form&.postcode}'", subtitle: @provider.operating_name, caption: "Add address - #{@provider.operating_name}", error: @error.present?) %>
   
-  <%= form_with url: provider_select_path(@provider), method: :post do |form| %>
+  <%= form_with url: provider_select_path(@provider), method: :post, scope: :select do |form| %>
     <%= form.hidden_field :selected_address_index, value: 0 %>
     
     <div class="govuk-summary-list">
