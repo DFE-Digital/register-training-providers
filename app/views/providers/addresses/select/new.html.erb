@@ -1,0 +1,105 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: new_provider_find_path(@provider)
+      ) %>
+<% end %>
+
+<% if @error.present? %>
+  <%= content_for(:page_alerts) do %>
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+      <div role="alert">
+        <h2 class="govuk-error-summary__title">There is a problem</h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            <li><%= @error %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @results.empty? %>
+  <%
+    no_results_title = if @find_form&.building_name_or_number.present?
+      "No addresses found for '#{@find_form.postcode}' and '#{@find_form.building_name_or_number}'"
+    else
+      "No addresses found for '#{@find_form&.postcode}'"
+    end
+  %>
+  <% page_data(title: no_results_title, subtitle: @provider.operating_name, caption: "Add address - #{@provider.operating_name}", error: @error.present?) %>
+  
+  <p class="govuk-body">
+    <%= govuk_link_to("Change your search", new_provider_find_path(@provider)) %> or <%= govuk_link_to("enter the address manually", new_provider_address_path(@provider, skip_finder: true)) %>
+  </p>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Cancel", provider_addresses_path(@provider)) %>
+  </p>
+
+<% elsif @results.size == 1 %>
+  <% page_data(title: "1 address found for '#{@find_form&.building_name_or_number.presence || @find_form&.postcode}'", subtitle: @provider.operating_name, caption: "Add address - #{@provider.operating_name}", error: @error.present?) %>
+  
+  <%= form_with url: provider_select_path(@provider), method: :post do |form| %>
+    <%= form.hidden_field :selected_address_index, value: 0 %>
+    
+    <div class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Address</dt>
+        <dd class="govuk-summary-list__value">
+          <%= @results[0]["address_line_1"] %><br>
+          <% if @results[0]["address_line_2"].present? %>
+            <%= @results[0]["address_line_2"] %><br>
+          <% end %>
+          <%= @results[0]["town_or_city"] %><br>
+          <% if @results[0]["county"].present? %>
+            <%= @results[0]["county"] %><br>
+          <% end %>
+          <%= @results[0]["postcode"] %>
+        </dd>
+      </div>
+    </div>
+
+    <%= form.govuk_submit "Confirm address" %>
+  <% end %>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Enter address manually", new_provider_address_path(@provider, skip_finder: true)) %>
+  </p>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Cancel", provider_addresses_path(@provider)) %>
+  </p>
+
+<% else %>
+  <% search_term = @find_form&.building_name_or_number.present? ? "'#{@find_form.building_name_or_number}'" : "'#{@find_form&.postcode}'" %>
+  <% page_data(title: "#{pluralize(@results.size, 'address')} found for #{search_term}", subtitle: @provider.operating_name, caption: "Add address - #{@provider.operating_name}", error: @error.present?) %>
+  
+  <p class="govuk-body">
+    <%= govuk_link_to("Change your search", new_provider_find_path(@provider)) %> if the address you're looking for is not listed.
+  </p>
+
+  <%= form_with url: provider_select_path(@provider), method: :post, scope: :select do |form| %>
+    <%= form.govuk_radio_buttons_fieldset(:selected_address_index, legend: { text: "", hidden: true }) do %>
+      <% @results.each_with_index do |address, index| %>
+        <% address_parts = [address["address_line_1"], address["address_line_2"], address["town_or_city"], address["postcode"]].compact.reject(&:blank?) %>
+        <%= form.govuk_radio_button :selected_address_index, index,
+                                    label: { text: address_parts.join(", ").upcase },
+                                    link_errors: index.zero? %>
+      <% end %>
+    <% end %>
+
+    <%= form.govuk_submit "Continue" %>
+  <% end %>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Enter address manually", new_provider_address_path(@provider, skip_finder: true)) %>
+  </p>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Cancel", provider_addresses_path(@provider)) %>
+  </p>
+
+<% end %>
+
