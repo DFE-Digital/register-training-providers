@@ -33,6 +33,17 @@ class AddressForm
     )
   end
 
+  def self.from_os_address(os_address_hash)
+    new(
+      address_line_1: os_address_hash[:address_line_1],
+      address_line_2: os_address_hash[:address_line_2],
+      address_line_3: nil,
+      town_or_city: os_address_hash[:town_or_city],
+      county: os_address_hash[:county],
+      postcode: os_address_hash[:postcode]
+    )
+  end
+
   before_validation :normalize_postcode
 
   validates :address_line_1, presence: true, length: { maximum: 255 }

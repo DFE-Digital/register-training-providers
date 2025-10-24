@@ -137,6 +137,59 @@ bin/konduit.sh:
 	curl -s https://raw.githubusercontent.com/DFE-Digital/teacher-services-cloud/main/scripts/konduit.sh -o bin/konduit.sh \
 		&& chmod +x bin/konduit.sh
 
+read-keyvault-config: composed-variables
+	$(eval APP_KEY_VAULT_NAME=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-app-kv)
+	$(eval INFRA_KEY_VAULT_NAME=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-inf-kv)
+
+list-app-secrets: read-keyvault-config set-azure-account ## List all application secrets. Usage: make <env> list-app-secrets
+	@echo "Secrets in ${APP_KEY_VAULT_NAME}:"
+	@az keyvault secret list --vault-name ${APP_KEY_VAULT_NAME} --query "[].name" -o tsv
+
+list-infra-secrets: read-keyvault-config set-azure-account ## List all infrastructure secrets. Usage: make <env> list-infra-secrets
+	@echo "Secrets in ${INFRA_KEY_VAULT_NAME}:"
+	@az keyvault secret list --vault-name ${INFRA_KEY_VAULT_NAME} --query "[].name" -o tsv
+
+get-secret: read-keyvault-config set-azure-account ## Get a specific secret. Usage: make <env> get-secret SECRET_NAME=ORDNANCE_SURVEY_API_KEY [INFRA=true]
+	$(if $(SECRET_NAME), , $(error Please specify SECRET_NAME=<name>))
+	$(if $(INFRA), $(eval VAULT=${INFRA_KEY_VAULT_NAME}), $(eval VAULT=${APP_KEY_VAULT_NAME}))
+	@az keyvault secret show --vault-name ${VAULT} --name ${SECRET_NAME} --query value -o tsv
+
+set-secret: read-keyvault-config set-azure-account ## Set a specific secret. Usage: make <env> set-secret SECRET_NAME=ORDNANCE_SURVEY_API_KEY SECRET_VALUE=your-key [INFRA=true]
+	$(if $(SECRET_NAME), , $(error Please specify SECRET_NAME=<name>))
+	$(if $(SECRET_VALUE), , $(error Please specify SECRET_VALUE=<value>))
+	$(if $(INFRA), $(eval VAULT=${INFRA_KEY_VAULT_NAME}), $(eval VAULT=${APP_KEY_VAULT_NAME}))
+	az keyvault secret set --vault-name ${VAULT} --name ${SECRET_NAME} --value "${SECRET_VALUE}"
+	@echo "Secret ${SECRET_NAME} has been set in ${VAULT}"
+
+delete-secret: read-keyvault-config set-azure-account ## Delete a specific secret. Usage: make <env> delete-secret SECRET_NAME=OLD_SECRET [INFRA=true]
+	$(if $(SECRET_NAME), , $(error Please specify SECRET_NAME=<name>))
+	$(if $(INFRA), $(eval VAULT=${INFRA_KEY_VAULT_NAME}), $(eval VAULT=${APP_KEY_VAULT_NAME}))
+	az keyvault secret delete --vault-name ${VAULT} --name ${SECRET_NAME}
+	@echo "Secret ${SECRET_NAME} has been deleted from ${VAULT}"
+
+read-cluster-config:
+	$(eval NAMESPACE=$(shell jq -r '.namespace' terraform/application/config/$(CONFIG).tfvars.json))
+
+console: get-cluster-credentials read-cluster-config ## Open Rails console. Usage: make <env> console [PR_NUMBER=123]
+	$(if $(PR_NUMBER), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-pr-${PR_NUMBER}), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-${ENVIRONMENT}))
+	kubectl -n ${NAMESPACE} exec -ti deployment/${DEPLOYMENT_NAME} -- /bin/sh -c "cd /app && bundle exec rails console"
+
+ssh: get-cluster-credentials read-cluster-config ## SSH into the application pod. Usage: make <env> ssh [PR_NUMBER=123]
+	$(if $(PR_NUMBER), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-pr-${PR_NUMBER}), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-${ENVIRONMENT}))
+	kubectl -n ${NAMESPACE} exec -ti deployment/${DEPLOYMENT_NAME} -- /bin/sh
+
+worker-ssh: get-cluster-credentials read-cluster-config ## SSH into the worker pod. Usage: make <env> worker-ssh [PR_NUMBER=123]
+	$(if $(PR_NUMBER), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-pr-${PR_NUMBER}), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-${ENVIRONMENT}))
+	kubectl -n ${NAMESPACE} exec -ti deployment/${DEPLOYMENT_NAME}-worker -- /bin/sh
+
+logs: get-cluster-credentials read-cluster-config ## View application logs. Usage: make <env> logs [PR_NUMBER=123]
+	$(if $(PR_NUMBER), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-pr-${PR_NUMBER}), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-${ENVIRONMENT}))
+	kubectl -n ${NAMESPACE} logs -l app=${DEPLOYMENT_NAME} --tail=100 --timestamps=true -f
+
+worker-logs: get-cluster-credentials read-cluster-config ## View worker logs. Usage: make <env> worker-logs [PR_NUMBER=123]
+	$(if $(PR_NUMBER), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-pr-${PR_NUMBER}), $(eval DEPLOYMENT_NAME=${SERVICE_NAME}-${ENVIRONMENT}))
+	kubectl -n ${NAMESPACE} logs -l app=${DEPLOYMENT_NAME}-worker --tail=100 --timestamps=true -f
+
 maintenance-image-push:
 	$(if ${GITHUB_TOKEN},, $(error Provide a valid Github token with write:packages permissions as GITHUB_TOKEN variable))
 	$(if ${MAINTENANCE_IMAGE_TAG},, $(eval export MAINTENANCE_IMAGE_TAG=$(shell date +%s)))
