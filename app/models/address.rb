@@ -49,7 +49,7 @@ private
     return if postcode.blank?
     return if latitude.present? && longitude.present?
 
-    coordinates = Addresses::GeocodeService.call(postcode: postcode)
+    coordinates = Addresses::GeocodeService.call(postcode:)
     self.latitude = coordinates[:latitude]
     self.longitude = coordinates[:longitude]
   end
