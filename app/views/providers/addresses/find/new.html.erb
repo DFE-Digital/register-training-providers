@@ -1,0 +1,35 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: provider_addresses_path(@provider)
+      ) %>
+<% end %>
+
+<% page_data(title: "Find address", subtitle: @provider.operating_name, caption: "Add address - #{@provider.operating_name}", error: @form.errors.present?) %>
+
+<%= form_for @form, url: provider_find_path(@provider), method: :post do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+  
+  <%= form.hidden_field :provider_id %>
+
+  <%= form.govuk_text_field :postcode,
+                            label: { text: "Postcode", size: "s" },
+                            width: "one-quarter",
+                            hint: { text: "For example, SW1P 3BT" } %>
+
+  <%= form.govuk_text_field :building_name_or_number,
+                            label: { text: "Building number or name (optional)", size: "s" },
+                            width: "two-thirds",
+                            hint: { text: "For example, 15 or Sanctuary Buildings" } %>
+
+  <%= form.govuk_submit "Find address" %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Enter address manually", new_provider_address_path(@provider, skip_finder: true)) %>
+</p>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_addresses_path(@provider)) %>
+</p>
+
