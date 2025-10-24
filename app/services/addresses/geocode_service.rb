@@ -2,7 +2,7 @@ module Addresses
   class GeocodeService
     include ServicePattern
 
-    BASE_URL = "https://api.os.uk/search/places/v1"
+    BASE_URL = "https://api.os.uk/search/places/v1".freeze
 
     def initialize(postcode:)
       @postcode = postcode
@@ -58,8 +58,7 @@ module Addresses
     end
 
     def api_key
-      ENV.fetch("ORDNANCE_SURVEY_API_KEY")
+      Env.ordnance_survey_api_key
     end
   end
 end
-

@@ -82,13 +82,13 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "redirects to check answers page" do
-        post provider_select_path(provider_id: provider.id), params: params
+        post(provider_select_path(provider_id: provider.id), params:)
 
         expect(response).to redirect_to(new_provider_address_confirm_path(provider_id: provider.id))
       end
 
       it "saves the address form as temporary" do
-        post provider_select_path(provider_id: provider.id), params: params
+        post(provider_select_path(provider_id: provider.id), params:)
 
         address_form = user.load_temporary(AddressForm, purpose: :create_address)
         expect(address_form.address_line_1).to eq("10 Downing Street")
@@ -100,7 +100,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
         find_form = Addresses::FindForm.new(postcode: "SW1A 2AA")
         find_form.save_as_temporary!(created_by: user, purpose: :"find_address_#{provider.id}")
 
-        post provider_select_path(provider_id: provider.id), params: params
+        post(provider_select_path(provider_id: provider.id), params:)
 
         expect(user.load_temporary(Addresses::FindForm, purpose: :"find_address_#{provider.id}")).to be_nil
         expect(user.load_temporary(Addresses::SearchResultsForm, purpose: :"address_search_results_#{provider.id}")).to be_nil
@@ -117,7 +117,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "re-renders with error" do
-        post provider_select_path(provider_id: provider.id), params: params
+        post(provider_select_path(provider_id: provider.id), params:)
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Please select an address")
@@ -134,7 +134,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "re-renders with error" do
-        post provider_select_path(provider_id: provider.id), params: params
+        post(provider_select_path(provider_id: provider.id), params:)
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Please select an address")
@@ -142,4 +142,3 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
     end
   end
 end
-

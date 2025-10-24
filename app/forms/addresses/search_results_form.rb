@@ -30,4 +30,3 @@ module Addresses
     alias_method :serializable_hash, :attributes
   end
 end
-

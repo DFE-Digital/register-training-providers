@@ -34,4 +34,3 @@ module Addresses
     end
   end
 end
-

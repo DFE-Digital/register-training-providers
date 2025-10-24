@@ -27,7 +27,7 @@ RSpec.describe Addresses::GeocodeService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: response_body)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result[:latitude]).to eq(51.503396)
         expect(result[:longitude]).to eq(-0.127764)
@@ -39,7 +39,7 @@ RSpec.describe Addresses::GeocodeService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: { "results" => [] }.to_json)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result[:latitude]).to be_nil
         expect(result[:longitude]).to be_nil
@@ -51,7 +51,7 @@ RSpec.describe Addresses::GeocodeService do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 500)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result[:latitude]).to be_nil
         expect(result[:longitude]).to be_nil
@@ -65,7 +65,7 @@ RSpec.describe Addresses::GeocodeService do
 
         expect(Rails.logger).to receive(:error).with(/OS Places API geocoding error/)
 
-        result = described_class.call(postcode: postcode)
+        result = described_class.call(postcode:)
 
         expect(result[:latitude]).to be_nil
         expect(result[:longitude]).to be_nil
@@ -73,4 +73,3 @@ RSpec.describe Addresses::GeocodeService do
     end
   end
 end
-
