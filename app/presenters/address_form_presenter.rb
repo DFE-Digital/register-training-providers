@@ -57,6 +57,8 @@ class AddressFormPresenter
   def back_path
     if provider_creation_context?
       journey_service.back_path
+    elsif existing_provider_context?
+      new_provider_find_path(provider_id: provider.id)
     else
       provider_addresses_path(provider)
     end

@@ -247,4 +247,33 @@ RSpec.describe AddressForm, type: :model do
       expect(form).to be_valid
     end
   end
+
+  describe ".from_os_address" do
+    let(:os_address_hash) do
+      {
+        address_line_1: "10 Downing Street",
+        address_line_2: nil,
+        town_or_city: "London",
+        county: nil,
+        postcode: "SW1A 2AA"
+      }
+    end
+
+    it "creates form from OS API address hash" do
+      form = described_class.from_os_address(os_address_hash)
+
+      expect(form).to be_a(described_class)
+      expect(form.address_line_1).to eq("10 Downing Street")
+      expect(form.address_line_2).to be_nil
+      expect(form.address_line_3).to be_nil
+      expect(form.town_or_city).to eq("London")
+      expect(form.county).to be_nil
+      expect(form.postcode).to eq("SW1A 2AA")
+    end
+
+    it "sets address_line_3 to nil" do
+      form = described_class.from_os_address(os_address_hash)
+      expect(form.address_line_3).to be_nil
+    end
+  end
 end
