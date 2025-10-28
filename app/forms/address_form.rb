@@ -11,6 +11,7 @@ class AddressForm
   attribute :county, :string
   attribute :postcode, :string
   attribute :provider_id, :string
+  attribute :provider_creation_mode, :boolean, default: false
 
   def self.model_name
     ActiveModel::Name.new(self, nil, "Address")
@@ -40,7 +41,7 @@ class AddressForm
   validates :town_or_city, presence: true, length: { maximum: 255 }
   validates :county, length: { maximum: 255 }, allow_blank: true
   validates :postcode, presence: true, postcode: true
-  validates :provider_id, presence: true
+  validates :provider_id, presence: true, unless: :provider_creation_mode?
 
   def to_address_attributes
     {
@@ -55,6 +56,10 @@ class AddressForm
   end
 
   alias_method :serializable_hash, :attributes
+
+  def provider_creation_mode?
+    provider_creation_mode
+  end
 
 private
 
