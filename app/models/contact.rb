@@ -32,7 +32,7 @@ class Contact < ApplicationRecord
   validates :first_name, presence: true, length: { maximum: 255 }
   validates :last_name, presence: true, length: { maximum: 255 }
   validates :email, presence: true, length: { maximum: 255 }
-  validates :telephone_number, presence: true, length: { maximum: 255 }
+  validates :telephone_number, length: { maximum: 255 }, allow_blank: true
 
   validate do |record|
     EmailFormatValidator.new(record).validate if email.present?
