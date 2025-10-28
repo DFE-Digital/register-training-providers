@@ -85,16 +85,14 @@ RSpec.describe ContactForm, type: :model do
     end
 
     describe "telephone_number" do
-      it "requires telephone_number" do
+      it "does not require telephone_number" do
         subject.telephone_number = nil
-        expect(subject).not_to be_valid
-        expect(subject.errors[:telephone_number]).to include("Enter telephone number")
+        expect(subject).to be_valid
       end
 
-      it "requires telephone_number to not be blank" do
+      it "allows telephone_number to be blank" do
         subject.telephone_number = ""
-        expect(subject).not_to be_valid
-        expect(subject.errors[:telephone_number]).to include("Enter telephone number")
+        expect(subject).to be_valid
       end
 
       it "validates telephone_number length" do
@@ -151,7 +149,7 @@ RSpec.describe ContactForm, type: :model do
   describe ".from_contact" do
     let(:contact) { create(:contact, provider:) }
 
-    it "creates form from existing address" do
+    it "creates form from existing contact" do
       form = described_class.from_contact(contact)
 
       expect(form).to be_a(described_class)
@@ -161,7 +159,7 @@ RSpec.describe ContactForm, type: :model do
       expect(form.telephone_number).to eq(contact.telephone_number)
     end
 
-    it "creates valid form from existing address" do
+    it "creates valid form from existing contact" do
       form = described_class.from_contact(contact)
       expect(form).to be_valid
     end

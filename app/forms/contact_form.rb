@@ -41,7 +41,7 @@ class ContactForm
   validates :first_name, presence: true, length: { maximum: 255 }
   validates :last_name, presence: true, length: { maximum: 255 }
   validates :email, presence: true, length: { maximum: 255 }
-  validates :telephone_number, presence: true, length: { maximum: 255 }
+  validates :telephone_number, length: { maximum: 255 }, allow_blank: true
   validates :provider_id, presence: true
   validate do |record|
     EmailFormatValidator.new(record).validate if email.present?
