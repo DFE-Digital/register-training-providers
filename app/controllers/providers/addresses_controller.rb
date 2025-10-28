@@ -18,7 +18,12 @@ class Providers::AddressesController < ApplicationController
       @form.provider_creation_mode = true
       @form.provider_id = @provider.id if @form.provider_id.blank?
     else
-      # Existing provider flow
+      # Existing provider flow - redirect to finder unless explicitly skipping
+      unless params[:skip_finder] == "true"
+        redirect_to new_provider_find_path(provider_id: provider.id)
+        return
+      end
+
       current_user.clear_temporary(AddressForm, purpose: :create_address) if params[:goto] != "confirm"
       @form = current_user.load_temporary(AddressForm, purpose: :create_address)
       @form.assign_attributes(provider_id: provider.id) if @form.provider_id.blank?
