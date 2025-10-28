@@ -63,7 +63,7 @@ en:
               blank: "Enter first name"
             last_name:
               blank: "Enter last name"
-            email_address:
+            email:
               blank: "Enter email address"
             telephone_number:
               blank: "Enter telephone number"

@@ -6,7 +6,7 @@ RSpec.describe ContactForm, type: :model do
     {
       first_name: "Manisha",
       last_name: "Patel",
-      email_address: "manisha@test.org",
+      email: "manisha@test.org",
       telephone_number: "0121 211 2121",
       provider_id: provider.id
     }
@@ -58,23 +58,29 @@ RSpec.describe ContactForm, type: :model do
       end
     end
 
-    describe "email_address" do
-      it "requires email_address" do
-        subject.email_address = nil
+    describe "email" do
+      it "requires email" do
+        subject.email = nil
         expect(subject).not_to be_valid
-        expect(subject.errors[:email_address]).to include("Enter email address")
+        expect(subject.errors[:email]).to include("Enter email address")
       end
 
-      it "requires email_address to not be blank" do
-        subject.email_address = ""
+      it "requires email to not be blank" do
+        subject.email = ""
         expect(subject).not_to be_valid
-        expect(subject.errors[:email_address]).to include("Enter email address")
+        expect(subject.errors[:email]).to include("Enter email address")
       end
 
-      it "validates email_address length" do
-        subject.email_address = "a" * 256
+      it "validates email length" do
+        subject.email = "a" * 256
         expect(subject).not_to be_valid
-        expect(subject.errors[:email_address]).to include("is too long (maximum is 255 characters)")
+        expect(subject.errors[:email]).to include("is too long (maximum is 255 characters)")
+      end
+
+      it "validates that email has the correct format" do
+        subject.email = "invalid-format"
+        expect(subject).not_to be_valid
+        expect(subject.errors[:email]).to include("Enter an email address in the correct format, like name@example.com")
       end
     end
 
@@ -114,7 +120,7 @@ RSpec.describe ContactForm, type: :model do
       expect(attributes).to eq({
         first_name: "Manisha",
         last_name: "Patel",
-        email_address: "manisha@test.org",
+        email: "manisha@test.org",
         telephone_number: "0121 211 2121",
         provider_id: provider.id
       })
@@ -140,7 +146,7 @@ RSpec.describe ContactForm, type: :model do
       expect(form).to be_a(described_class)
       expect(form.first_name).to eq(contact.first_name)
       expect(form.last_name).to eq(contact.last_name)
-      expect(form.email_address).to eq(contact.email_address)
+      expect(form.email).to eq(contact.email)
       expect(form.telephone_number).to eq(contact.telephone_number)
     end
 

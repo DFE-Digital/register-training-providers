@@ -37,7 +37,7 @@ RSpec.describe Generators::Contacts, type: :service do
         provider.contacts.each do |contact|
           expect(contact.first_name).to be_present
           expect(contact.last_name).to be_present
-          expect(contact.email_address).to be_present
+          expect(contact.email).to be_present
           expect(contact.telephone_number).to be_present
           expect(contact.provider_id).to eq(provider.id)
         end

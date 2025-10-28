@@ -4,7 +4,7 @@
 #
 #  id               :uuid             not null, primary key
 #  discarded_at     :datetime
-#  email_address    :string           not null
+#  email            :string           not null
 #  first_name       :string           not null
 #  last_name        :string           not null
 #  telephone_number :string           not null
@@ -31,8 +31,12 @@ class Contact < ApplicationRecord
 
   validates :first_name, presence: true, length: { maximum: 255 }
   validates :last_name, presence: true, length: { maximum: 255 }
-  validates :email_address, presence: true, length: { maximum: 255 }
+  validates :email, presence: true, length: { maximum: 255 }
   validates :telephone_number, presence: true, length: { maximum: 255 }
+
+  validate do |record|
+    EmailFormatValidator.new(record).validate if email.present?
+  end
 
   audited
 end
