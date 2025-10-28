@@ -31,4 +31,29 @@ module ContactSummaryHelper
         value: { text: contact.telephone_number }, },
     ]
   end
+
+  def contact_form_rows(form, change_path = nil)
+    contact_attributes = [
+      :first_name,
+      :last_name,
+      :email_address,
+      :telephone_number,
+    ]
+
+    contact_attributes.map do |attribute|
+      key_label = attribute.to_s.humanize
+      hidden_label = key_label.downcase
+
+      row = {
+        key: { text: key_label },
+        value: optional_value(form.public_send(attribute))
+      }
+
+      if change_path
+        row[:actions] = [{ href: change_path, visually_hidden_text: hidden_label }]
+      end
+
+      row
+    end
+  end
 end

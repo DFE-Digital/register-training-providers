@@ -57,6 +57,16 @@ en:
             postcode:
               blank: "Enter postcode"
               invalid_postcode_format: "Enter a full UK postcode"
+        contact:
+          attributes:
+            first_name:
+              blank: "Enter first name"
+            last_name:
+              blank: "Enter last name"
+            email_address:
+              blank: "Enter email address"
+            telephone_number:
+              blank: "Enter telephone number"
         provider:
           attributes:
             accreditation_status:
@@ -111,6 +121,8 @@ en:
         address_form:
           add: "Address added"
           update: "Address updated"
+        contact_form:
+          add: "Contact added"
       address:
         add: "Address added"
         update: "Address updated"
