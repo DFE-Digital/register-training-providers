@@ -100,6 +100,8 @@ en:
           invalid: Enter a Department for Education email address in the correct format, like name@education.gov.uk
         email:
           invalid: Enter an email address in the correct format, like name@example.com
+        uk_telephone_number:
+          invalid: Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
   flash_message:
     success:
       accreditation:

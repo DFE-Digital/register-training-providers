@@ -36,6 +36,7 @@ class Contact < ApplicationRecord
 
   validate do |record|
     EmailFormatValidator.new(record).validate if email.present?
+    UkTelephoneNumberFormatValidator.new(record).validate if telephone_number.present?
   end
 
   audited
