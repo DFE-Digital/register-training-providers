@@ -16,4 +16,24 @@ RSpec.describe ContactPolicy do
       expect(subject).not_to permit(build(:user), contact_with_discarded_provider)
     end
   end
+
+  permissions :show? do
+    it "permits access if the provider is kept" do
+      expect(subject).to permit(build(:user), contact_with_kept_provider)
+    end
+
+    it "denies access if the provider is discarded" do
+      expect(subject).not_to permit(build(:user), contact_with_discarded_provider)
+    end
+  end
+
+  permissions :create? do
+    it "permits access if the provider is kept" do
+      expect(subject).to permit(build(:user), contact_with_kept_provider)
+    end
+
+    it "denies access if the provider is discarded" do
+      expect(subject).not_to permit(build(:user), contact_with_discarded_provider)
+    end
+  end
 end

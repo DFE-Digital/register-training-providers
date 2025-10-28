@@ -1,6 +1,4 @@
 module AccreditationSummaryHelper
-  include SummaryHelper
-
   def accreditation_form_rows(accreditation_form, change_path = nil)
     return [] unless accreditation_form&.valid?
 

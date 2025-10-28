@@ -11,6 +11,14 @@ class ContactPolicy < ApplicationPolicy
 
   delegate :show?, to: :provider_policy
 
+  def new?
+    provider_policy.edit?
+  end
+
+  def create?
+    provider_policy.edit?
+  end
+
 private
 
   def provider_policy
