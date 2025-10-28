@@ -45,6 +45,7 @@ class ContactForm
   validates :provider_id, presence: true
   validate do |record|
     EmailFormatValidator.new(record).validate if email.present?
+    UkTelephoneNumberFormatValidator.new(record).validate if telephone_number.present?
   end
 
   alias_method :serializable_hash, :attributes
