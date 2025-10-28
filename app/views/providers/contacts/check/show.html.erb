@@ -1,9 +1,9 @@
 <%= render CheckYourAnswers::View.new(
       rows: address_form_rows(model, change_path),
-      subtitle: method == :patch ? provider.operating_name : "Edit address",
-      caption: method == :patch ? provider.operating_name : "Edit address",
+      subtitle: method == :patch ? provider.operating_name : "Edit contact",
+      caption: method == :patch ? provider.operating_name : "Edit contact",
       back_path: back_path,
-      save_button_text: "Save address",
+      save_button_text: "Save contact",
       save_path: save_path,
       cancel_path: cancel_path,
       method: method
