@@ -6,7 +6,7 @@ class ContactForm
 
   attribute :first_name, :string
   attribute :last_name, :string
-  attribute :email_address, :string
+  attribute :email, :string
   attribute :telephone_number, :string
   attribute :provider_id, :string
 
@@ -22,7 +22,7 @@ class ContactForm
     new(
       first_name: contact.first_name,
       last_name: contact.last_name,
-      email_address: contact.email_address,
+      email: contact.email,
       telephone_number: contact.telephone_number,
       provider_id: contact.provider_id,
     )
@@ -32,7 +32,7 @@ class ContactForm
     {
       first_name:,
       last_name:,
-      email_address:,
+      email:,
       telephone_number:,
       provider_id:,
     }.compact
@@ -40,9 +40,12 @@ class ContactForm
 
   validates :first_name, presence: true, length: { maximum: 255 }
   validates :last_name, presence: true, length: { maximum: 255 }
-  validates :email_address, presence: true, length: { maximum: 255 }
+  validates :email, presence: true, length: { maximum: 255 }
   validates :telephone_number, presence: true, length: { maximum: 255 }
   validates :provider_id, presence: true
+  validate do |record|
+    EmailFormatValidator.new(record).validate if email.present?
+  end
 
   alias_method :serializable_hash, :attributes
 end

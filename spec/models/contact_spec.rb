@@ -12,8 +12,27 @@ RSpec.describe Contact, type: :model do
   describe "validations" do
     it { is_expected.to validate_presence_of(:first_name) }
     it { is_expected.to validate_presence_of(:last_name) }
-    it { is_expected.to validate_presence_of(:email_address) }
+    it { is_expected.to validate_presence_of(:email) }
     it { is_expected.to validate_presence_of(:telephone_number) }
+
+    context "when email format is valid" do
+      let(:contact) { build(:contact, email: "email@host.org") }
+
+      it "is valid with a valid email format" do
+        expect(contact).to be_valid
+      end
+    end
+
+    context "when email format is invalid" do
+      let(:contact) { build(:contact, email: "invalid") }
+
+      it "is not valid with an invalid email format" do
+        expect(contact).not_to be_valid
+        expect(contact.errors[:email]).to include(
+          "Enter an email address in the correct format, like name@example.com"
+        )
+      end
+    end
   end
 
   describe "factory" do

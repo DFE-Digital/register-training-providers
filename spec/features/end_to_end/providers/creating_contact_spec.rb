@@ -47,7 +47,7 @@ RSpec.describe "Creating contact", type: :feature do
       contact = provider.contacts.first
       expect(contact.first_name).to eq("Manisha")
       expect(contact.last_name).to eq("Patel")
-      expect(contact.email_address).to eq("manisha@provider.org")
+      expect(contact.email).to eq("manisha@provider.org")
       expect(contact.telephone_number).to eq("0121 211 2121")
     end
   end

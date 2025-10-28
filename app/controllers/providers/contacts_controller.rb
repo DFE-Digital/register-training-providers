@@ -33,7 +33,7 @@ private
   def contact_form_params
     params.expect(contact: [:first_name,
                             :last_name,
-                            :email_address,
+                            :email,
                             :telephone_number,
                             :provider_id])
   end

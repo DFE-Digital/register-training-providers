@@ -26,7 +26,7 @@ module ContactSummaryHelper
       { key: { text: "Last name" },
         value: { text: contact.last_name },  },
       { key: { text: "Email address" },
-        value: { text: contact.email_address }, },
+        value: { text: contact.email }, },
       { key: { text: "Telephone" },
         value: { text: contact.telephone_number }, },
     ]
@@ -36,7 +36,7 @@ module ContactSummaryHelper
     contact_attributes = [
       :first_name,
       :last_name,
-      :email_address,
+      :email,
       :telephone_number,
     ]
 
