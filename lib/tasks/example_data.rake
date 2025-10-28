@@ -22,7 +22,7 @@ namespace :example_data do
     # Call the import:providers task
     Rake::Task["import:providers"].invoke
 
-    ["generate:addresses", "generate:contacts", "generate:accreditations"].each do |task|
+    ["import:providers", "generate:addresses", "generate:contacts", "generate:accreditations"].each do |task|
       Rake::Task[task].reenable
       Rake::Task[task].invoke
     end
