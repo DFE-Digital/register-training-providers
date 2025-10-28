@@ -7,7 +7,7 @@
 #  email            :string           not null
 #  first_name       :string           not null
 #  last_name        :string           not null
-#  telephone_number :string           not null
+#  telephone_number :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  provider_id      :uuid             not null
