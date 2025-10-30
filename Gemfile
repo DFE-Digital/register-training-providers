@@ -106,7 +106,7 @@ group :development do
   gem "database_consistency", require: false
 end
 
-group :development, :review, :test do
+group :development, :review, :test, :qa do
   # Rails integration for https://github.com/thoughtbot/factory_bot
   gem "factory_bot_rails"
 
