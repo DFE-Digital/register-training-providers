@@ -64,23 +64,39 @@ Rails.application.routes.draw do
 
   resource :account, only: [:show]
 
-  get "/providers/new", to: "providers/onboarding#new", as: :new_provider_onboarding
-  post "/providers/new", to: "providers/onboarding#create"
+  # Provider creation wizard
+  scope path: "/providers/new", as: :new_provider, module: :providers do
+    get "", to: "onboarding#new", as: :onboarding
+    post "", to: "onboarding#create"
 
-  get "/providers/new/type", to: "providers/type#new", as: :new_provider_type
-  post "/providers/new/type", to: "providers/type#create"
+    get "type", to: "type#new", as: :type
+    post "type", to: "type#create"
 
-  get "/providers/new/details", to: "providers/details#new", as: :new_provider_details
-  post "/providers/new/details", to: "providers/details#create"
+    get "details", to: "details#new", as: :details
+    post "details", to: "details#create"
 
-  get "/providers/new/accreditation", to: "providers/accreditation#new", as: :new_provider_accreditation
-  post "/providers/new/accreditation", to: "providers/accreditation#create"
+    get "accreditation", to: "accreditation#new", as: :accreditation
+    post "accreditation", to: "accreditation#create"
+  end
 
-  get "/providers/new/addresses", to: "providers/addresses#new", as: :new_provider_addresses
-  post "/providers/new/addresses", to: "providers/addresses#create", as: :create_provider_addresses
+  # Provider setup - addresses flow
+  namespace :providers do
+    namespace :setup, path: "new" do
+      namespace :addresses do
+        get "", to: "manual_entry#new", as: :address
+        post "", to: "manual_entry#create"
 
-  get "/providers/:provider_id/addresses/new", to: "providers/addresses#new", as: :new_provider_address
-  post "/providers/:provider_id/addresses", to: "providers/addresses#create"
+        get "find", to: "find#new", as: :find
+        post "find", to: "find#create"
+
+        get "select", to: "select#new", as: :select
+        post "select", to: "select#create"
+
+        get "check", to: "check#new", as: :confirm
+        post "check", to: "check#create"
+      end
+    end
+  end
 
   resources :providers, except: [:new, :create] do
     checkable(:providers)
@@ -88,17 +104,33 @@ Rails.application.routes.draw do
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
     resources :accreditations, only: [:index], controller: "accreditations"
-    resources :addresses, only: [:index, :new, :create, :edit, :update], controller: "providers/addresses" do
-      collection do
-        resource :find, only: [:new, :create], controller: "providers/addresses/find"
-        resource :select, only: [:new, :create], controller: "providers/addresses/select"
-      end
-      checkable(:addresses, module_prefix: :providers)
-      resource :delete, only: [:show, :destroy], module: "providers/addresses"
-    end
-    resources :contacts, only: [:index, :new, :create], controller: "providers/contacts" do
-      checkable(:contacts, module_prefix: :providers)
-    end
+
+    # Addresses - listing
+    get "addresses", to: "providers/addresses/lists#index", as: :addresses
+
+    # Addresses - manual entry
+    get "addresses/new", to: "providers/addresses/manual_entry#new", as: :new_address
+    post "addresses", to: "providers/addresses/manual_entry#create"
+    get "addresses/:id/edit", to: "providers/addresses/manual_entry#edit", as: :edit_address
+    patch "addresses/:id", to: "providers/addresses/manual_entry#update", as: :address
+    put "addresses/:id", to: "providers/addresses/manual_entry#update"
+
+    # Addresses - finder flow
+    get "addresses/find/new", to: "providers/addresses/find#new", as: :new_find
+    post "addresses/find", to: "providers/addresses/find#create", as: :find
+    get "addresses/select/new", to: "providers/addresses/select#new", as: :new_select
+    post "addresses/select", to: "providers/addresses/select#create", as: :select
+
+    # Addresses - check/confirm
+    get "addresses/check/new", to: "providers/addresses/check#new", as: :new_address_confirm
+    post "addresses/check", to: "providers/addresses/check#create", as: :address_confirm
+    get "addresses/:id/check", to: "providers/addresses/check#show", as: :address_check
+    patch "addresses/:id/check", to: "providers/addresses/check#update"
+    put "addresses/:id/check", to: "providers/addresses/check#update"
+
+    # Addresses - delete
+    get "addresses/:address_id/delete", to: "providers/addresses/deletes#show", as: :address_delete
+    delete "addresses/:address_id/delete", to: "providers/addresses/deletes#destroy"
   end
 
   resources :accreditations, except: [:index, :show] do

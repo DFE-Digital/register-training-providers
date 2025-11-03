@@ -74,6 +74,10 @@ en:
               invalid_postcode_format: "Enter a full UK postcode"
             building_name_or_number:
               too_long: "Building name or number is too long (maximum is %{count} characters)"
+        select:
+          attributes:
+            selected_address_index:
+              blank: "Please select an address"
         provider:
           attributes:
             accreditation_status:

@@ -5,7 +5,6 @@ module Addresses
     include SaveAsTemporary
 
     attribute :results, :string
-    attribute :selected_address_index, :integer
 
     def self.model_name
       ActiveModel::Name.new(self, nil, "SearchResults")

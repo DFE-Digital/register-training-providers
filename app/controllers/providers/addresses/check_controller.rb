@@ -3,11 +3,25 @@ module Providers
     class CheckController < ::CheckController
       include FormObjectSavePattern
 
+      before_action :set_presenter, only: %i[new show]
+
+      def show
+      end
+
       def new
         redirect_to back_path if model.invalid?
       end
 
     private
+
+      def set_presenter
+        @presenter = AddressJourney::CheckPresenter.new(
+          model:,
+          provider:,
+          context:,
+          address:
+        )
+      end
 
       def model_class
         AddressForm
@@ -18,7 +32,11 @@ module Providers
       end
 
       def purpose
-        model_id.present? ? :"edit_address_#{model_id}" : :create_address
+        if model_id.present?
+          :"edit_address_#{model_id}"
+        else
+          :create_address
+        end
       end
 
       def model
@@ -42,16 +60,16 @@ module Providers
       end
 
       def new_model_path(query_params = {})
-        new_provider_address_path(query_params.merge(provider_id: provider.id))
+        provider_new_address_path(query_params.merge(provider_id: provider.id))
       end
 
       def edit_model_path(query_params = {})
         address = provider.addresses.kept.find(model_id)
-        edit_provider_address_path(address, query_params.merge(provider_id: provider.id))
+        provider_edit_address_path(address, query_params.merge(provider_id: provider.id))
       end
 
       def new_model_check_path
-        provider_address_confirm_path(provider_id: provider.id)
+        provider_new_address_confirm_path(provider)
       end
 
       def model_check_path
@@ -64,6 +82,20 @@ module Providers
         else
           new_model_path(goto: "confirm")
         end
+      end
+
+      def context
+        if model_id.present?
+          :edit
+        else
+          :new
+        end
+      end
+
+      def address
+        return nil if model_id.blank?
+
+        @address ||= provider.addresses.kept.find(model_id)
       end
 
       def provider

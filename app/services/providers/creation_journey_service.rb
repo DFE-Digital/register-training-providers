@@ -7,23 +7,23 @@ module Providers
     end
 
     def next_path
-      return Rails.application.routes.url_helpers.new_provider_confirm_path if from_check_page?
+      return url_helpers.new_provider_confirm_path if from_check_page?
 
       case @current_step
       when :onboarding
-        Rails.application.routes.url_helpers.new_provider_type_path
+        url_helpers.new_provider_type_path
       when :type
-        Rails.application.routes.url_helpers.new_provider_details_path
+        url_helpers.new_provider_details_path
       when :details
         if @provider.accredited?
-          Rails.application.routes.url_helpers.new_provider_accreditation_path
+          url_helpers.new_provider_accreditation_path
         else
-          Rails.application.routes.url_helpers.new_provider_addresses_path
+          url_helpers.providers_setup_addresses_address_path
         end
       when :accreditation
-        Rails.application.routes.url_helpers.new_provider_addresses_path
+        url_helpers.providers_setup_addresses_address_path
       when :address
-        Rails.application.routes.url_helpers.new_provider_confirm_path
+        url_helpers.new_provider_confirm_path
       else
         raise ArgumentError, "Unknown step: #{@current_step}"
       end
@@ -32,19 +32,19 @@ module Providers
     def back_path
       case @current_step
       when :type
-        Rails.application.routes.url_helpers.new_provider_onboarding_path
+        url_helpers.new_provider_onboarding_path
       when :details
-        Rails.application.routes.url_helpers.new_provider_type_path
+        url_helpers.new_provider_type_path
       when :accreditation
-        Rails.application.routes.url_helpers.new_provider_details_path
+        url_helpers.new_provider_details_path
       when :address
         if @provider&.accredited?
-          Rails.application.routes.url_helpers.new_provider_accreditation_path
+          url_helpers.new_provider_accreditation_path
         else
-          Rails.application.routes.url_helpers.new_provider_details_path
+          url_helpers.new_provider_details_path
         end
       when :check_answers
-        Rails.application.routes.url_helpers.new_provider_addresses_path
+        url_helpers.providers_setup_addresses_address_path
       else
         raise ArgumentError, "Unknown step: #{@current_step}"
       end
@@ -54,6 +54,10 @@ module Providers
 
     def from_check_page?
       @goto_param == "confirm"
+    end
+
+    def url_helpers
+      Rails.application.routes.url_helpers
     end
   end
 end

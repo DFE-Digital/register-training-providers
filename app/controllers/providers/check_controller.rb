@@ -53,7 +53,7 @@ private
   end
 
   def change_address_path
-    model_id.present? ? nil : new_provider_addresses_path(goto: "confirm")
+    model_id.present? ? nil : providers_setup_addresses_address_path(goto: "confirm")
   end
 
   def save

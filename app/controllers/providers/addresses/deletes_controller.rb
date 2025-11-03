@@ -3,6 +3,11 @@ module Providers
     class DeletesController < ApplicationController
       def show
         authorize address
+
+        @presenter = AddressJourney::DeletePresenter.new(
+          address:,
+          provider:
+        )
       end
 
       def destroy
