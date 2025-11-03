@@ -10,7 +10,7 @@ module ContactSummaryHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Change", href: "#" },
+          { text: "Change", href: edit_provider_contact_path(contact, provider_id: provider.id) },
           { text: "Delete", href: "#" },
         ]
       end

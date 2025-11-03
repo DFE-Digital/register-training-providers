@@ -125,10 +125,14 @@ en:
           update: "Address updated"
         contact_form:
           add: "Contact added"
+          update: "Contact updated"
       address:
         add: "Address added"
         update: "Address updated"
         deleted: "Address deleted"
+      contact:
+        add: "Contact added"
+        update: "Contact updated"
   forms:
     providers:
       is_the_provider_accredited:
