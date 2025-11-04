@@ -5,8 +5,6 @@ require Rails.root.join("config/environment")
 namespace :import do
   desc "Import providers data from CSV file"
   task providers: :environment do
-    raise "THIS TASK CANNOT BE RUN IN PRODUCTION" if Rails.env.production?
-
     csv_path = ENV.fetch("CSV", nil)
     unless File.exist?(csv_path)
       puts "CSV file not found at #{csv_path}"
