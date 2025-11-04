@@ -1,10 +1,1 @@
-<%= render CheckYourAnswers::View.new(
-      rows: address_form_rows(@presenter.model, @presenter.change_path),
-      subtitle: @presenter.page_subtitle,
-      caption: @presenter.page_caption,
-      back_path: @presenter.back_path,
-      save_button_text: @presenter.save_button_text,
-      save_path: @presenter.save_path,
-      cancel_path: @presenter.cancel_path,
-      method: @presenter.form_method
-    ) %>
+<%= render "address_journey/check_form" %>

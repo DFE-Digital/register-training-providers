@@ -1,46 +1,8 @@
-<%= content_for(:breadcrumbs) do %>
-  <%= render GovukComponent::BackLinkComponent.new(
-        text: "Back",
-        href: back_path
-      ) %>
-<% end %>
-
-<%= form_for @form, url: form_url, method: form_method do |form| %>
-  <% page_data(title: page_title, subtitle: page_subtitle, header: false, error: @form.errors.present?) %>
-
-  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-
-  <%= form.hidden_field :provider_id %>
-
-  <%= form.govuk_fieldset legend: { text: "Address" }, caption: { text: page_caption } do %>
-    <%= form.govuk_text_field :address_line_1,
-                              label: { text: "Address line 1", size: "s" },
-                              width: "full" %>
-
-    <%= form.govuk_text_field :address_line_2,
-                              label: { text: "Address line 2 (optional)", size: "s" },
-                              width: "full" %>
-
-    <%= form.govuk_text_field :address_line_3,
-                              label: { text: "Address line 3 (optional)", size: "s" },
-                              width: "full" %>
-
-    <%= form.govuk_text_field :town_or_city,
-                              label: { text: "Town or city", size: "s" },
-                              width: "two-thirds" %>
-
-    <%= form.govuk_text_field :county,
-                              label: { text: "County (optional)", size: "s" },
-                              width: "two-thirds" %>
-
-    <%= form.govuk_text_field :postcode,
-                              label: { text: "Postcode", size: "s" },
-                              width: "one-quarter" %>
-  <% end %>
-
-  <%= form.govuk_submit %>
-<% end %>
-
-<p class="govuk-body">
-  <%= govuk_link_to("Cancel", cancel_path) %>
-</p>
+<%= render "address_journey/manual_entry_form",
+           back_path: back_path,
+           form_url: form_url,
+           form_method: form_method,
+           page_title: page_title,
+           page_subtitle: page_subtitle,
+           page_caption: page_caption,
+           cancel_path: cancel_path %>
