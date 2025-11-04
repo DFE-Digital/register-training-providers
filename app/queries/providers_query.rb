@@ -22,6 +22,7 @@ class ProvidersQuery
     scope = filter_by_provider_type(relation)
     scope = filter_by_accreditation_status(scope)
     scope = filter_by_archived(scope)
+    scope = filter_by_seed_data(scope)
 
     scope = scope.search(search_term) if search_term.present?
     scope
@@ -74,5 +75,13 @@ private
 
   def filter_by_archived(scope)
     Array(filters[:show_archived]).include?("show_archived_provider") ? scope : scope.where(archived_at: nil)
+  end
+
+  def filter_by_seed_data(scope)
+    if Array(filters[:show_seed_data]).include?("show_seed_data_with_issues")
+      scope.where(seed_data_with_issues: true)
+    else
+      scope
+    end
   end
 end
