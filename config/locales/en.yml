@@ -133,6 +133,7 @@ en:
       contact:
         add: "Contact added"
         update: "Contact updated"
+        deleted: "Contact deleted"
   forms:
     providers:
       is_the_provider_accredited:

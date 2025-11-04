@@ -11,7 +11,7 @@ module ContactSummaryHelper
       if include_actions && !provider.archived?
         card[:actions] = [
           { text: "Change", href: edit_provider_contact_path(contact, provider_id: provider.id) },
-          { text: "Delete", href: "#" },
+          { text: "Delete", href: provider_contact_delete_path(contact, provider_id: provider.id) },
         ]
       end
 

@@ -25,6 +25,10 @@ class ContactPolicy < ApplicationPolicy
     provider_policy.edit?
   end
 
+  def destroy?
+    provider_policy.edit?
+  end
+
 private
 
   def provider_policy
