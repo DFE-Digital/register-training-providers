@@ -55,8 +55,9 @@ class Provider < ApplicationRecord
 
   validates :operating_name, presence: true
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }, length: { is: 8 }
-  validates :urn, presence: true, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
-                  if: :requires_urn?
+  validates :urn, presence: true, if: -> { requires_urn? }
+  validates :urn, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
+                  if: -> { urn.present? && requires_urn? }
   validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z0-9]{3}\z/i }, length: { is: 3 }
 
   before_save :upcase_code
