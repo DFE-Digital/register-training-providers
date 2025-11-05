@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_28_130743) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_04_135956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -96,6 +96,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_28_130743) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.tsvector "searchable"
+    t.boolean "seed_data_with_issues", default: false, null: false
+    t.jsonb "seed_data_notes", default: {}, null: false
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true

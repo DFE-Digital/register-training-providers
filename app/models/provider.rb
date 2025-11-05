@@ -2,19 +2,21 @@
 #
 # Table name: providers
 #
-#  id                   :uuid             not null, primary key
-#  accreditation_status :string           not null
-#  archived_at          :datetime
-#  code                 :citext           not null
-#  discarded_at         :datetime
-#  legal_name           :string
-#  operating_name       :string           not null
-#  provider_type        :string           not null
-#  searchable           :tsvector
-#  ukprn                :string(8)        not null
-#  urn                  :string(6)
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  accreditation_status  :string           not null
+#  archived_at           :datetime
+#  code                  :citext           not null
+#  discarded_at          :datetime
+#  legal_name            :string
+#  operating_name        :string           not null
+#  provider_type         :string           not null
+#  searchable            :tsvector
+#  seed_data_notes       :jsonb            not null
+#  seed_data_with_issues :boolean          default(FALSE), not null
+#  ukprn                 :string(8)        not null
+#  urn                   :string(6)
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
