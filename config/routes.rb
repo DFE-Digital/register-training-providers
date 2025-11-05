@@ -104,6 +104,9 @@ Rails.application.routes.draw do
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
     resources :accreditations, only: [:index], controller: "accreditations"
+    resources :contacts, only: [:index, :new, :create], controller: "providers/contacts" do
+      checkable(:contacts, module_prefix: :providers)
+    end
 
     # Addresses - listing
     get "addresses", to: "providers/addresses/lists#index", as: :addresses

@@ -43,4 +43,3 @@ module AddressJourney
     end
   end
 end
-
