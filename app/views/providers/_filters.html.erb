@@ -76,7 +76,7 @@
         <% end %>
 
         <%= f.govuk_check_boxes_fieldset :show_archived, small: true, legend: { text: "Seed data", size: "s" } do %>
-          <%= f.govuk_check_box :show_seed_data, "show_seed_data_with_issues", label: { text: "Show provider with data issues" }, checked: filter_checked?(:show_seed_data, "show_seed_data_with_issues") %>
+          <%= f.govuk_check_box :show_seed_data, "show_seed_data_with_issues", label: { text: t("show_seed_data_labels.show_seed_data_with_issues") }, checked: filter_checked?(:show_seed_data, "show_seed_data_with_issues") %>
         <% end if debug_mode? %>
       <% end %>
     </div>

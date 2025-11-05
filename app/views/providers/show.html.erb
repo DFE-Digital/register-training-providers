@@ -27,24 +27,22 @@
 <%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
 
 <% if debug_mode? && @provider.seed_data_notes.present? %>
-<h3 class="govuk-heading-s">Seed data errors</h2>
+  <h3 class="govuk-heading-m">Seed data</h3>
+  <h4 class="govuk-heading-s">Data errors</h4>
+  <%= govuk_table(
+        rows: [["Field", { text: "Error" }]] +
+              @provider.seed_data_notes["errors"].map do |field, field_errors|
+                [field, { text: safe_join(field_errors.map(&:to_s), tag.br) }]
+              end,
+        first_cell_is_header: true
+      ) if @provider.seed_data_notes["errors"].present? %>
 
-<%= govuk_table(
-      rows: [["Field", { text: "Error" }]] +
-            @provider.seed_data_notes["errors"].map do |field, field_errors|
-              [field, { text: safe_join(field_errors.map(&:to_s), tag.br) }]
-            end,
-      first_cell_is_header: true
-    ) if @provider.seed_data_notes["errors"].present? %>
-
-<h3 class="govuk-heading-s">Imported data</h2>
-
-<%= govuk_table(
-      rows: [["Field", { text: "Value" }]] +
-            @provider.seed_data_notes["row_imported"].compact.map do |field, field_row_imported|
-              [field, { text: field_row_imported }]
-            end,
-      first_cell_is_header: true
-    ) if @provider.seed_data_notes["row_imported"].present? %>
-
+  <h4 class="govuk-heading-s">Imported data</h4>
+  <%= govuk_table(
+        rows: [["Field", { text: "Value" }]] +
+              @provider.seed_data_notes["row_imported"].compact.map do |field, field_row_imported|
+                [field, { text: field_row_imported }]
+              end,
+        first_cell_is_header: true
+      ) if @provider.seed_data_notes["row_imported"].present? %>
 <% end %>
