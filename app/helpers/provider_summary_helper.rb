@@ -4,7 +4,7 @@ module ProviderSummaryHelper
       tag = [" ", govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")] if provider.archived?
 
       {
-        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider)),
+        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider, debug: params[:debug])),
                           tag]),
         rows: [
 
