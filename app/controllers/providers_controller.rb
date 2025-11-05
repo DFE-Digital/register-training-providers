@@ -1,5 +1,6 @@
 class ProvidersController < ApplicationController
   include Pagy::Backend
+  include DebuggerParamHelper
 
   helper_method :provider_filters, :keywords
 
@@ -61,10 +62,19 @@ private
   end
 
   def provider_filters
-    @provider_filters ||= params.fetch(:filters, {}).permit(
-      provider_types: [],
-      accreditation_statuses: [],
-      show_archived: []
-    ).to_h.with_indifferent_access.transform_values! { |v| Array(v).compact_blank }
+    @provider_filters ||= begin
+      filters = params.fetch(:filters, {}).permit(
+        provider_types: [],
+        accreditation_statuses: [],
+        show_archived: [],
+        show_seed_data: []
+      ).to_h.with_indifferent_access
+
+      filters.transform_values! { |v| Array(v).compact_blank }
+
+      filters.except!(:show_seed_data) unless debug_mode?
+
+      filters
+    end
   end
 end
