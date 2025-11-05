@@ -3,7 +3,7 @@
 <% end %>
 
 <% page_data(title: "Confirm you want to delete #{@contact.full_name}", subtitle: "Delete contact",
-             caption: "Delete contact - #{@provider.operating_name.to_s}") %>
+             caption: "Delete contact - #{@provider.operating_name}") %>
 
 <%= govuk_summary_list(rows: contact_form_rows(@contact)) %>
 
