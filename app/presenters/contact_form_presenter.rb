@@ -40,7 +40,7 @@ class ContactFormPresenter
 
   def page_caption
     if edit_context?
-      provider.operating_name.to_s
+      "#{contact.full_name} - #{provider.operating_name}"
     else
       "Add contact - #{provider.operating_name}"
     end
