@@ -28,14 +28,14 @@ RSpec.describe "Editing contact", type: :feature do
       expect(page).to have_field("First name", with: "First")
       expect(page).to have_field("Last name", with: "Lastname")
       expect(page).to have_field("Email address", with: "original@example.com")
-      expect(page).to have_field("Telephone number (optional)", with: "0800 000 0000")
+      expect(page).to have_field("Phone number (optional)", with: "0800 000 0000")
 
       expect(TemporaryRecord.count).to eq(0)
 
       fill_in "First name", with: "Newfirst"
       fill_in "Last name", with: "Newlastname"
       fill_in "Email address", with: "new@example.com"
-      fill_in "Telephone number (optional)", with: "0800 000 0001"
+      fill_in "Phone number (optional)", with: "0800 000 0001"
 
       click_button "Continue"
 
@@ -65,7 +65,7 @@ RSpec.describe "Editing contact", type: :feature do
       fill_in "First name", with: "Minname"
       fill_in "Last name", with: "Minlastname"
       fill_in "Email address", with: "min@example.com"
-      fill_in "Telephone number (optional)", with: ""
+      fill_in "Phone number (optional)", with: ""
 
       click_button "Continue"
 
@@ -115,14 +115,14 @@ RSpec.describe "Editing contact", type: :feature do
       expect(TemporaryRecord.count).to eq(0)
     end
 
-    scenario "telephone number is in invalid format" do
+    scenario "Phone number is in invalid format" do
       visit edit_provider_contact_path(contact, provider_id: provider.id)
 
-      fill_in "Telephone number (optional)", with: "wrongformat"
+      fill_in "Phone number (optional)", with: "wrongformat"
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
+      expect(page).to have_error_summary("Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
       expect(TemporaryRecord.count).to eq(0)
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe "Editing contact", type: :feature do
       visit edit_provider_contact_path(contact, provider_id: provider.id)
 
       fill_in "First name", with: "Newname"
-      fill_in "Telephone number (optional)", with: "0800 000 0001"
+      fill_in "Phone number (optional)", with: "0800 000 0001"
 
       click_button "Continue"
 
@@ -146,7 +146,7 @@ RSpec.describe "Editing contact", type: :feature do
       click_link "Change", match: :first
 
       expect(page).to have_field("First name", with: "Newname")
-      expect(page).to have_field("Telephone number (optional)", with: "0800 000 0001")
+      expect(page).to have_field("Phone number (optional)", with: "0800 000 0001")
 
       fill_in "First name", with: "Newestname"
 

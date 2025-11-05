@@ -2,12 +2,12 @@
     <%= govuk_back_link(text: "Back", href: provider_contacts_path(@provider)) %>
 <% end %>
 
-<% page_data(title: "Confirm you want to delete #{@provider.operating_name}’s contact", subtitle: "Delete contact",
-             caption: "Delete contact") %>
+<% page_data(title: "Confirm you want to delete #{@contact.full_name}", subtitle: "Delete contact",
+             caption: "Delete contact - #{@provider.operating_name.to_s}") %>
 
 <%= govuk_summary_list(rows: contact_form_rows(@contact)) %>
 
-<%= govuk_warning_text(text: "Deleting an contact is permanent – you cannot undo it.") %>
+<%= govuk_warning_text(text: "Deleting a contact is permanent – you cannot undo it.") %>
 
 <%= govuk_button_to("Delete contact", provider_contact_delete_path(@contact, provider_id: @provider.id), method: :delete, warning: true) %>
 

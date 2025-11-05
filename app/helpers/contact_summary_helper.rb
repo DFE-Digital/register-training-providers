@@ -4,7 +4,7 @@ module ContactSummaryHelper
 
     contacts.map do |contact|
       card = {
-        title: "#{contact.first_name} #{contact.last_name}",
+        title: contact.full_name.to_s,
         rows: contact_rows(contact)
       }
 
@@ -28,7 +28,7 @@ module ContactSummaryHelper
       { key: { text: "Email address" },
         value: { text: contact.email }, },
       { key: { text: "Telephone" },
-        value: { text: contact.telephone_number }, },
+        value: optional_value(contact.telephone_number) },
     ]
   end
 

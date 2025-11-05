@@ -66,7 +66,7 @@ en:
             email:
               blank: "Enter email address"
             telephone_number:
-              blank: "Enter telephone number"
+              blank: "Enter phone number"
         provider:
           attributes:
             accreditation_status:
@@ -101,7 +101,7 @@ en:
         email:
           invalid: Enter an email address in the correct format, like name@example.com
         uk_telephone_number:
-          invalid: Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+          invalid: Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
   flash_message:
     success:
       accreditation:

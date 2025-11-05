@@ -25,7 +25,7 @@ RSpec.describe "Creating contact", type: :feature do
       fill_in "First name", with: "Manisha"
       fill_in "Last name", with: "Patel"
       fill_in "Email address", with: "manisha@provider.org"
-      fill_in "Telephone number", with: "0121 211 2121"
+      fill_in "Phone number", with: "0121 211 2121"
 
       click_button "Continue"
 

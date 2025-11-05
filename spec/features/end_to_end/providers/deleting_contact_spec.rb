@@ -25,15 +25,15 @@ RSpec.describe "Deleting contact", type: :feature do
 
       click_link "Delete", match: :first
 
-      expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s contact")
-      expect(page).to have_content("Delete contact")
+      expect(page).to have_content("Confirm you want to delete #{contact.full_name}")
+      expect(page).to have_content("Delete contact - #{provider.operating_name}")
 
       expect(page).to have_content("First")
       expect(page).to have_content("Lastname")
       expect(page).to have_content("original@example.com")
       expect(page).to have_content("0800 000 0000")
 
-      expect(page).to have_content("Deleting an contact is permanent – you cannot undo it.")
+      expect(page).to have_content("Deleting a contact is permanent – you cannot undo it.")
 
       expect(page).to have_link("Cancel", href: provider_contacts_path(provider))
 
@@ -56,7 +56,7 @@ RSpec.describe "Deleting contact", type: :feature do
 
       click_link "Delete", match: :first
 
-      expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s contact")
+      expect(page).to have_content("Confirm you want to delete #{contact.full_name}")
 
       click_link "Cancel"
 
@@ -99,7 +99,7 @@ RSpec.describe "Deleting contact", type: :feature do
         click_link "Delete"
       end
 
-      expect(page).to have_content("Confirm you want to delete #{provider.operating_name}’s contact")
+      expect(page).to have_content("Confirm you want to delete #{contact1.full_name}")
       expect(page).to have_content("First")
 
       click_button "Delete contact"
