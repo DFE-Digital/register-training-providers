@@ -147,6 +147,15 @@ en:
         label: "Date accreditation starts"
       end_date:
         label: "Date accreditation ends (optional)"
+    contacts:
+      first_name:
+        label: First name
+      last_name:
+        label: Last name
+      email:
+        label: Email address
+      telephone_number:
+        label: Phone number
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"

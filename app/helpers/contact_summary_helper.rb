@@ -41,7 +41,7 @@ module ContactSummaryHelper
     ]
 
     contact_attributes.map do |attribute|
-      key_label = attribute.to_s.humanize
+      key_label = t("forms.contacts.#{attribute}.label")
       hidden_label = key_label.downcase
 
       row = {
