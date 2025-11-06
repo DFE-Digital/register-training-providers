@@ -19,7 +19,8 @@ module Providers
           model:,
           provider:,
           context:,
-          address:
+          address:,
+          current_user:
         )
       end
 
@@ -79,9 +80,16 @@ module Providers
       def change_path
         if model_id.present?
           edit_model_path(goto: "confirm")
+        elsif search_results_available?
+          provider_new_select_path(provider)
         else
-          new_model_path(goto: "confirm")
+          new_model_path(goto: "confirm", skip_finder: "true")
         end
+      end
+
+      def cleanup_and_redirect_success
+        clear_address_search_temporaries
+        super
       end
 
       def context
@@ -100,6 +108,26 @@ module Providers
 
       def provider
         @provider ||= Provider.find(params[:provider_id])
+      end
+
+      def search_results_available?
+        return false if model_id.present?
+
+        search_results_form = current_user.load_temporary(
+          ::Addresses::SearchResultsForm,
+          purpose: :"address_search_results_#{provider.id}"
+        )
+        return false unless search_results_form
+
+        results = search_results_form.results_array
+        results.present? && results.any?
+      end
+
+      def clear_address_search_temporaries
+        return if model_id.present?
+
+        current_user.clear_temporary(::Addresses::FindForm, purpose: :"find_address_#{provider.id}")
+        current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :"address_search_results_#{provider.id}")
       end
     end
   end

@@ -21,7 +21,7 @@ module AddressJourney
     end
 
     def manual_entry_path
-      provider_new_address_path(provider, skip_finder: true)
+      provider_new_address_path(provider, skip_finder: "true")
     end
   end
 end

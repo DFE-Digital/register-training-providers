@@ -15,6 +15,10 @@ module Providers
             return
           end
 
+          if params[:goto] != "confirm"
+            clear_address_search_temporaries
+          end
+
           load_address_form
           @presenter = build_address_presenter(@form, :new)
         end
@@ -55,6 +59,11 @@ module Providers
             provider: provider,
             goto_param: params[:goto]
           )
+        end
+
+        def clear_address_search_temporaries
+          current_user.clear_temporary(::Addresses::FindForm, purpose: :find_address_create_provider)
+          current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :address_search_results_create_provider)
         end
       end
     end

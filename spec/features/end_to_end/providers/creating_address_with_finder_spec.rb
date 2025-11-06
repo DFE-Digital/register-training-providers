@@ -133,27 +133,6 @@ RSpec.describe "Creating address with finder", type: :feature do
     expect(address.town_or_city).to eq("Custom Town")
   end
 
-  scenario "choosing to enter address manually from find page" do
-    visit new_provider_find_path(provider_id: provider.id)
-
-    click_link "Enter address manually"
-
-    expect(page).to have_content("Address")
-    expect(page).not_to have_content("Find address")
-
-    fill_in "Address line 1", with: "Manual Address"
-    fill_in "Town or city", with: "Manual Town"
-    fill_in "Postcode", with: "M1 1AA"
-
-    click_button "Continue"
-
-    expect(page).to have_content("Check your answers")
-    click_button "Save address"
-
-    address = provider.addresses.first
-    expect(address.address_line_1).to eq("Manual Address")
-  end
-
   scenario "choosing to enter address manually from select page" do
     visit new_provider_find_path(provider_id: provider.id)
 

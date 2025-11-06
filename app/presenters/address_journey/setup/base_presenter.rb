@@ -22,7 +22,7 @@ module AddressJourney
       end
 
       def manual_entry_path
-        providers_setup_addresses_address_path(skip_finder: true)
+        providers_setup_addresses_address_path(skip_finder: "true")
       end
 
       def journey_service

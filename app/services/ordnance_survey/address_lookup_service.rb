@@ -50,10 +50,10 @@ module OrdnanceSurvey
         next unless dpa
 
         {
-          address_line_1: build_address_line_1(dpa),
-          address_line_2: dpa["DEPENDENT_LOCALITY"],
-          town_or_city: dpa["POST_TOWN"],
-          county: dpa["COUNTY"],
+          address_line_1: format_address_line(build_address_line_1(dpa)),
+          address_line_2: format_address_line(dpa["DEPENDENT_LOCALITY"]),
+          town_or_city: format_address_line(dpa["POST_TOWN"]),
+          county: format_address_line(dpa["COUNTY"]),
           postcode: dpa["POSTCODE"],
           latitude: dpa["LATITUDE"],
           longitude: dpa["LONGITUDE"]
@@ -80,6 +80,12 @@ module OrdnanceSurvey
       ].compact
 
       parts.join(", ").presence || dpa["ADDRESS"]
+    end
+
+    def format_address_line(text)
+      return nil if text.blank?
+
+      text.titleize
     end
 
     def api_key

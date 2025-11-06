@@ -36,6 +36,10 @@ module Providers
           address_form.provider_creation_mode = true
         end
 
+        def address_form_purpose
+          :create_provider
+        end
+
         def save_selected_address(address_form)
           address_form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
         end

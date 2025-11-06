@@ -31,40 +31,6 @@
     <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
   </p>
 
-<% elsif @presenter.results.size == 1 %>
-  
-  <%= form_with model: @form, url: @presenter.form_url, method: :post, scope: :select do |form| %>
-    <%= form.govuk_error_summary %>
-    <%= form.hidden_field :selected_address_index, value: 0 %>
-    
-    <div class="govuk-summary-list">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Address</dt>
-        <dd class="govuk-summary-list__value">
-          <%= @presenter.results[0]["address_line_1"] %><br>
-          <% if @presenter.results[0]["address_line_2"].present? %>
-            <%= @presenter.results[0]["address_line_2"] %><br>
-          <% end %>
-          <%= @presenter.results[0]["town_or_city"] %><br>
-          <% if @presenter.results[0]["county"].present? %>
-            <%= @presenter.results[0]["county"] %><br>
-          <% end %>
-          <%= @presenter.results[0]["postcode"] %>
-        </dd>
-      </div>
-    </div>
-
-    <%= form.govuk_submit @presenter.submit_button_text %>
-  <% end %>
-
-  <p class="govuk-body">
-    <%= govuk_link_to("Enter address manually", @presenter.manual_entry_path) %>
-  </p>
-
-  <p class="govuk-body">
-    <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
-  </p>
-
 <% else %>
   <p class="govuk-body">
     <%= govuk_link_to("Change your search", @presenter.change_search_path) %> if the address you're looking for is not listed.
@@ -76,7 +42,7 @@
       <% @presenter.results.each_with_index do |address, index| %>
         <% address_parts = [address["address_line_1"], address["address_line_2"], address["town_or_city"], address["postcode"]].compact.reject(&:blank?) %>
         <%= form.govuk_radio_button :selected_address_index, index,
-                                    label: { text: address_parts.join(", ").upcase },
+                                    label: { text: address_parts.join(", ") },
                                     link_errors: index.zero? %>
       <% end %>
     <% end %>

@@ -31,6 +31,10 @@ module Providers
         provider_new_address_confirm_path(provider)
       end
 
+      def address_form_purpose
+        :create_address
+      end
+
       def save_selected_address(address_form)
         address_form.save_as_temporary!(created_by: current_user, purpose: :create_address)
       end

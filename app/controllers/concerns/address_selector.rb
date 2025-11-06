@@ -18,7 +18,8 @@ module AddressSelector
     )
 
     @results = @search_results_form.results_array
-    @form = ::Addresses::SelectForm.new
+    selected_index = find_previously_selected_index
+    @form = ::Addresses::SelectForm.new(selected_address_index: selected_index)
     true
   end
 
@@ -59,7 +60,6 @@ module AddressSelector
 
     if address_form.valid?
       save_selected_address(address_form)
-      clear_search_temporaries
       redirect_to confirm_path
     else
       error_messages = address_form.errors.full_messages.join(", ")
@@ -94,11 +94,44 @@ private
     params.fetch(:select, {}).permit(:selected_address_index)
   end
 
+  def find_previously_selected_index
+    address_form = current_user.load_temporary(AddressForm, purpose: address_form_purpose)
+    return nil unless address_form
+
+    @results.each_with_index do |result, index|
+      if addresses_match?(address_form, result)
+        return index
+      end
+    end
+    nil
+  end
+
+  def addresses_match?(address_form, os_address)
+    os_address = os_address.symbolize_keys
+    normalize_string(address_form.address_line_1) == normalize_string(os_address[:address_line_1]) &&
+      normalize_string(address_form.address_line_2) == normalize_string(os_address[:address_line_2]) &&
+      normalize_string(address_form.town_or_city) == normalize_string(os_address[:town_or_city]) &&
+      normalize_postcode(address_form.postcode) == normalize_postcode(os_address[:postcode])
+  end
+
+  def normalize_string(value)
+    return nil if value.blank?
+
+    value.strip
+  end
+
+  def normalize_postcode(postcode)
+    return nil if postcode.blank?
+
+    postcode.upcase.strip
+  end
+
   # Each controller must implement:
   # - find_purpose
   # - search_results_purpose
   # - find_path
   # - confirm_path
+  # - address_form_purpose (purpose used to save AddressForm)
   # - setup_address_form(address_form) (optional, defaults to setting provider_id)
   # - save_selected_address(address_form)
   # - build_select_presenter(results, find_form, error)

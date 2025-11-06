@@ -91,9 +91,6 @@ Rails.application.routes.draw do
 
         get "select", to: "select#new", as: :select
         post "select", to: "select#create"
-
-        get "check", to: "check#new", as: :confirm
-        post "check", to: "check#create"
       end
     end
   end
