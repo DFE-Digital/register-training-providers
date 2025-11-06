@@ -27,7 +27,7 @@ module ContactSummaryHelper
         value: { text: contact.last_name },  },
       { key: { text: "Email address" },
         value: { text: contact.email }, },
-      { key: { text: "Telephone" },
+      { key: { text: "Phone number" },
         value: optional_value(contact.telephone_number) },
     ]
   end
