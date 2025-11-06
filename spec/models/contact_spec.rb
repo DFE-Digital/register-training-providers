@@ -40,7 +40,7 @@ RSpec.describe Contact, type: :model do
       it "is not valid with an invalid email format" do
         expect(contact).not_to be_valid
         expect(contact.errors[:telephone_number]).to include(
-          "Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192"
+          "Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192"
         )
       end
     end

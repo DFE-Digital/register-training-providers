@@ -26,7 +26,7 @@ RSpec.describe UkTelephoneNumberFormatValidator do
         subject
         expect(errors).to have_received(:add)
         .with(:telephone_number,
-              "Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
+              "Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
       end
     end
   end

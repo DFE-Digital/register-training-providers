@@ -101,7 +101,7 @@ en:
         email:
           invalid: Enter an email address in the correct format, like name@example.com
         uk_telephone_number:
-          invalid: Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+          invalid: Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
   flash_message:
     success:
       accreditation:

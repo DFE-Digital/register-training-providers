@@ -122,7 +122,7 @@ RSpec.describe "Editing contact", type: :feature do
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter a Phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
+      expect(page).to have_error_summary("Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192")
       expect(TemporaryRecord.count).to eq(0)
     end
   end
