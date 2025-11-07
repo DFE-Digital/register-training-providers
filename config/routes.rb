@@ -34,6 +34,12 @@ Rails.application.routes.draw do
 
   root to: "landing_page#start"
 
+  # System admin routes
+  scope module: :system_admin, path: "system-admin" do
+    mount Blazer::Engine, at: "/blazer"
+    get "/blazer", to: redirect("/sign-in"), status: 302
+  end
+
   get "/cookies", to: "pages#cookies"
   get "/accessibility", to: "pages#accessibility"
   get "/privacy", to: "pages#privacy"
