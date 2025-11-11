@@ -41,10 +41,11 @@ module Providers
 
       def build_select_presenter(results, find_form, error)
         AddressJourney::SelectPresenter.new(
-          results:,
-          find_form:,
-          provider:,
-          error:
+          results: results,
+          find_form: find_form,
+          provider: provider,
+          error: error,
+          goto_param: params[:goto]
         )
       end
 

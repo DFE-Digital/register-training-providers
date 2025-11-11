@@ -16,11 +16,12 @@ module Providers
 
       def set_presenter
         @presenter = AddressJourney::CheckPresenter.new(
-          model:,
-          provider:,
-          context:,
-          address:,
-          current_user:
+          model: model,
+          provider: provider,
+          context: context,
+          address: address,
+          current_user: current_user,
+          goto_param: params[:goto]
         )
       end
 

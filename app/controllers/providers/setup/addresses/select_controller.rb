@@ -46,10 +46,11 @@ module Providers
 
         def build_select_presenter(results, find_form, error)
           AddressJourney::Setup::SelectPresenter.new(
-            results:,
-            find_form:,
-            provider:,
-            error:
+            results: results,
+            find_form: find_form,
+            provider: provider,
+            error: error,
+            goto_param: params[:goto]
           )
         end
 
@@ -61,7 +62,7 @@ module Providers
           @journey_service ||= Providers::CreationJourneyService.new(
             current_step: :address,
             provider: provider,
-            goto_param: nil
+            goto_param: params[:goto]
           )
         end
       end

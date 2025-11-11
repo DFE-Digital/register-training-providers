@@ -11,7 +11,7 @@ module Providers
 
         if params[:goto] != "confirm"
           current_user.clear_temporary(AddressForm, purpose: address_purpose)
-          clear_address_search_temporaries
+          clear_address_search_temporaries unless from_select?
         end
 
         load_address_form
@@ -77,10 +77,12 @@ module Providers
 
       def build_address_presenter(form, context, address = nil)
         AddressJourney::ManualEntryPresenter.new(
-          form:,
-          provider:,
-          context:,
-          address:
+          form: form,
+          provider: provider,
+          context: context,
+          address: address,
+          goto_param: params[:goto],
+          from_select: from_select?
         )
       end
 
@@ -91,6 +93,14 @@ module Providers
       def clear_address_search_temporaries
         current_user.clear_temporary(::Addresses::FindForm, purpose: :"find_address_#{provider.id}")
         current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :"address_search_results_#{provider.id}")
+      end
+
+      def from_select?
+        params[:from] == "select"
+      end
+
+      def setup_address_form_mode
+        @form.manual_entry = true if @form.respond_to?(:manual_entry=)
       end
     end
   end

@@ -1,6 +1,6 @@
 <%= render "accreditations/form",
            back_path: (params[:goto] == "confirm" ? new_provider_confirm_path : new_provider_details_path),
-           form_url: new_provider_accreditation_path,
+           form_url: new_provider_accreditation_path(goto: params[:goto]),
            form_method: :post,
            page_title: "Accreditation details",
            subtitle: "Add provider",

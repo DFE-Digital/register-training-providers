@@ -8,7 +8,7 @@ module AddressJourney
     end
 
     def page_title
-      "Confirm you want to delete #{provider.operating_name}'s address"
+      "Confirm you want to delete #{provider.operating_name}’s address"
     end
 
     def page_subtitle

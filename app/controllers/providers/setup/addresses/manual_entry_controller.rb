@@ -41,12 +41,13 @@ module Providers
           :new
         end
 
-        def setup_address_form_mode
-          @form.provider_creation_mode = true
-        end
-
         def build_address_presenter(form, _context, _address = nil)
-          AddressJourney::Setup::ManualEntryPresenter.new(form:, provider:)
+          AddressJourney::Setup::ManualEntryPresenter.new(
+            form: form,
+            provider: provider,
+            goto_param: params[:goto],
+            from_select: from_select?
+          )
         end
 
         def provider
@@ -61,9 +62,18 @@ module Providers
           )
         end
 
+        def setup_address_form_mode
+          @form.manual_entry = true if @form.respond_to?(:manual_entry=)
+          @form.provider_creation_mode = true if @form.respond_to?(:provider_creation_mode=)
+        end
+
         def clear_address_search_temporaries
           current_user.clear_temporary(::Addresses::FindForm, purpose: :find_address_create_provider)
           current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :address_search_results_create_provider)
+        end
+
+        def from_select?
+          params[:from] == "select"
         end
       end
     end

@@ -12,6 +12,7 @@ class AddressForm
   attribute :postcode, :string
   attribute :provider_id, :string
   attribute :provider_creation_mode, :boolean, default: false
+  attribute :manual_entry, :boolean, default: false
 
   def self.model_name
     ActiveModel::Name.new(self, nil, "Address")
@@ -40,7 +41,8 @@ class AddressForm
       address_line_3: nil,
       town_or_city: os_address_hash[:town_or_city],
       county: os_address_hash[:county],
-      postcode: os_address_hash[:postcode]
+      postcode: os_address_hash[:postcode],
+      manual_entry: false
     )
   end
 
@@ -70,6 +72,10 @@ class AddressForm
 
   def provider_creation_mode?
     provider_creation_mode
+  end
+
+  def manual_entry?
+    manual_entry
   end
 
 private

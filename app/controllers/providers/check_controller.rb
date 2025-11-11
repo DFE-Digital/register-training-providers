@@ -55,8 +55,10 @@ private
   def change_address_path
     return nil if model_id.present?
 
-    if address_search_results_available?
-      providers_setup_addresses_select_path
+    if address_manual_entry_only?
+      providers_setup_addresses_address_path(goto: "confirm", skip_finder: "true")
+    elsif address_search_results_available?
+      providers_setup_addresses_select_path(goto: "confirm")
     else
       providers_setup_addresses_address_path(goto: "confirm", skip_finder: "true")
     end
@@ -122,6 +124,11 @@ private
 
     results = search_results_form.results_array
     results.present? && results.any?
+  end
+
+  def address_manual_entry_only?
+    form = address_form
+    form && form.respond_to?(:manual_entry?) && form.manual_entry?
   end
 
   def clear_address_search_temporaries

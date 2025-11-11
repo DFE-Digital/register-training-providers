@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<%= form_for @form, url: new_provider_type_path, method: :post do |form| %>
+<%= form_for @form, url: new_provider_type_path(goto: params[:goto]), method: :post do |form| %>
   <% page_data(title: "Provider type", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
