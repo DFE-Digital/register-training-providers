@@ -4,6 +4,7 @@ class AccreditationForm
   include ActiveModel::Validations::Callbacks
   include GovukDateValidation
   include GovukDateComponents
+  include SaveAsTemporary
 
   has_date_components :start_date, :end_date
 

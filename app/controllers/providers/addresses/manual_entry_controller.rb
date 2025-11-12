@@ -2,27 +2,37 @@ module Providers
   module Addresses
     class ManualEntryController < ApplicationController
       def new
-        unless params[:skip_finder] == "true"
-          redirect_to provider_new_find_path(provider)
+        # Setup mode specific validation
+        if setup_context? && (provider.nil? || provider.invalid?)
+          redirect_to new_provider_details_path
           return
         end
 
-        # Clear session when starting fresh (no goto param and not coming from select)
-        address_session.clear! unless params[:goto].present? || params[:from] == "select"
+        unless params[:skip_finder] == "true"
+          redirect_to find_path
+          return
+        end
+
+        # Mark that we came from check page if appropriate
+        if params[:goto] == "confirm" && setup_context?
+          address_session.mark_from_check!
+        end
+
+        # Clear session only when starting completely fresh
+        should_clear = params[:skip_finder].blank? && params[:goto].blank? && params[:from].blank?
+        address_session.clear! if should_clear
 
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
-        @form.provider_id = provider.id
-        @presenter = AddressJourney::ManualEntryPresenter.new(
-          form: @form,
-          provider: provider,
-          context: :new,
-          goto_param: params[:goto],
-          from_select: params[:from] == "select"
-        )
+        @form.provider_id = provider.id unless setup_context?
+
+        @presenter = build_manual_entry_presenter(@form, context: :new)
       end
 
       def edit
+        # Edit only available in manage context
+        redirect_to provider_addresses_path(provider) if setup_context?
+
         @address = provider.addresses.kept.find(params[:id])
         authorize @address
 
@@ -41,26 +51,23 @@ module Providers
         result = AddressJourney::ManualEntry.call(
           address_params: address_params,
           session_manager: address_session,
-          provider_id: provider.id,
+          provider_id: setup_context? ? nil : provider.id,
           manual_entry: true
         )
 
         if result[:success]
-          redirect_to provider_new_address_confirm_path(provider)
+          redirect_to success_path
         else
           @form = result[:form]
-          @presenter = AddressJourney::ManualEntryPresenter.new(
-            form: @form,
-            provider: provider,
-            context: :new,
-            goto_param: params[:goto],
-            from_select: params[:from] == "select"
-          )
+          @presenter = build_manual_entry_presenter(@form, context: :new)
           render :new
         end
       end
 
       def update
+        # Update only available in manage context
+        redirect_to provider_addresses_path(provider) if setup_context?
+
         @address = provider.addresses.kept.find(params[:id])
         authorize @address
 
@@ -86,7 +93,35 @@ module Providers
     private
 
       def provider
-        @provider ||= Provider.find(params[:provider_id])
+        @provider ||= if params[:provider_id]
+                        Provider.find(params[:provider_id])
+                      else
+                        provider_session.load_provider
+                      end
+      end
+
+      def setup_context?
+        params[:provider_id].blank?
+      end
+
+      def address_session
+        context = setup_context? ? :setup : :manage
+        @address_session ||= AddressJourney::SessionManager.new(session, context:)
+      end
+
+      def provider_session
+        @provider_session ||= ProviderCreation::SessionManager.new(session)
+      end
+
+      def journey_coordinator
+        @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
+          current_step: :address_manual_entry,
+          session_manager: provider_session,
+          provider: provider,
+          from_check: params[:goto] == "confirm",
+          address_session: address_session,
+          from_select: params[:from] == "select"
+        )
       end
 
       def address_params
@@ -99,8 +134,53 @@ module Providers
                                 :provider_id])
       end
 
-      def address_session
-        @address_session ||= AddressJourney::SessionManager.new(session, context: :manage)
+      def find_path
+        if setup_context?
+          providers_setup_addresses_find_path(goto: params[:goto])
+        else
+          provider_new_find_path(provider)
+        end
+      end
+
+      def success_path
+        if setup_context?
+          # If coming from check page, return to check
+          if params[:goto] == "confirm"
+            new_provider_confirm_path
+          else
+            journey_coordinator.next_path
+          end
+        else
+          provider_new_address_confirm_path(provider)
+        end
+      end
+
+      def back_path
+        if setup_context?
+          journey_coordinator.back_path
+        else
+          provider_new_find_path(provider)
+        end
+      end
+
+      def build_manual_entry_presenter(form, context:)
+        if setup_context?
+          AddressJourney::Setup::ManualEntryPresenter.new(
+            form: form,
+            provider: provider,
+            goto_param: params[:goto],
+            from_select: params[:from] == "select",
+            back_path: back_path
+          )
+        else
+          AddressJourney::ManualEntryPresenter.new(
+            form: form,
+            provider: provider,
+            context: context,
+            goto_param: params[:goto],
+            from_select: params[:from] == "select"
+          )
+        end
       end
     end
   end

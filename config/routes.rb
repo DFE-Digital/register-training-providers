@@ -79,18 +79,18 @@ Rails.application.routes.draw do
     post "accreditation", to: "accreditation#create"
   end
 
-  # Provider setup - addresses flow
+  # Provider setup - addresses flow (reuses main address controllers)
   namespace :providers do
     namespace :setup, path: "new" do
       namespace :addresses do
-        get "", to: "manual_entry#new", as: :address
-        post "", to: "manual_entry#create"
+        get "", to: "/providers/addresses/manual_entry#new", as: :address
+        post "", to: "/providers/addresses/manual_entry#create"
 
-        get "find", to: "find#new", as: :find
-        post "find", to: "find#create"
+        get "find", to: "/providers/addresses/find#new", as: :find
+        post "find", to: "/providers/addresses/find#create"
 
-        get "select", to: "select#new", as: :select
-        post "select", to: "select#create"
+        get "select", to: "/providers/addresses/select#new", as: :select
+        post "select", to: "/providers/addresses/select#create"
       end
     end
   end
