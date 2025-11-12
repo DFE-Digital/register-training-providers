@@ -26,7 +26,14 @@ module Providers
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
 
-        @presenter = build_manual_entry_presenter(@form, context: :new)
+        @presenter = AddressJourney::ManualEntryPresenter.new(
+          form: @form,
+          provider:,
+          context: :new,
+          goto_param: params[:goto],
+          from_select: params[:from] == "select",
+          back_path:
+        )
       end
 
       def edit
@@ -39,11 +46,12 @@ module Providers
         @form = ::AddressForm.from_address(@address)
         @presenter = AddressJourney::ManualEntryPresenter.new(
           form: @form,
-          provider: provider,
+          provider:,
           context: :edit,
           address: @address,
           goto_param: params[:goto],
-          from_select: false
+          from_select: false,
+          back_path:
         )
       end
 
@@ -59,7 +67,14 @@ module Providers
           redirect_to success_path
         else
           @form = result[:form]
-          @presenter = build_manual_entry_presenter(@form, context: :new)
+          @presenter = AddressJourney::ManualEntryPresenter.new(
+            form: @form,
+            provider:,
+            context: :new,
+            goto_param: params[:goto],
+            from_select: params[:from] == "select",
+            back_path:
+          )
           render :new
         end
       end
@@ -80,11 +95,12 @@ module Providers
         else
           @presenter = AddressJourney::ManualEntryPresenter.new(
             form: @form,
-            provider: provider,
+            provider:,
             context: :edit,
             address: @address,
             goto_param: params[:goto],
-            from_select: false
+            from_select: false,
+            back_path:
           )
           render :edit
         end
@@ -156,30 +172,29 @@ module Providers
       end
 
       def back_path
-        if setup_context?
-          journey_coordinator.back_path
-        else
-          provider_new_find_path(provider)
-        end
+        setup_context? ? journey_coordinator.back_path : manage_back_path
       end
 
-      def build_manual_entry_presenter(form, context:)
-        if setup_context?
-          AddressJourney::Setup::ManualEntryPresenter.new(
-            form: form,
-            provider: provider,
-            goto_param: params[:goto],
-            from_select: params[:from] == "select",
-            back_path: back_path
-          )
+      def manage_back_path
+        # Edit mode
+        if params[:id]
+          if params[:goto] == "confirm"
+            address = provider.addresses.kept.find(params[:id])
+            provider_address_check_path(address, provider_id: provider.id)
+          else
+            provider_addresses_path(provider)
+          end
+        # Coming from select page
+        elsif params[:from] == "select"
+          query_params = {}
+          query_params[:goto] = params[:goto] if params[:goto].present?
+          provider_new_select_path(provider, query_params)
+        # Coming from check page (change flow)
+        elsif params[:goto] == "confirm"
+          provider_new_address_confirm_path(provider)
+        # Default - from find page
         else
-          AddressJourney::ManualEntryPresenter.new(
-            form: form,
-            provider: provider,
-            context: context,
-            goto_param: params[:goto],
-            from_select: params[:from] == "select"
-          )
+          provider_new_find_path(provider)
         end
       end
     end

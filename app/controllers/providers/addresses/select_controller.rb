@@ -19,7 +19,15 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = AddressJourney::Selector.prepare_select_form(session_manager: address_session)
 
-        @presenter = build_select_presenter(@form)
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: search_data[:postcode],
+          building_name_or_number: search_data[:building_name_or_number],
+          provider:,
+          error: nil,
+          goto_param: params[:goto],
+          back_path:
+        )
       end
 
       def create
@@ -53,7 +61,15 @@ module Providers
         search_data = address_session.load_search
         @results = search_data[:results] || []
         # @form already set in create action (with validation errors if invalid)
-        @presenter = build_select_presenter(@form, error: flash.now[:alert])
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: search_data[:postcode],
+          building_name_or_number: search_data[:building_name_or_number],
+          provider:,
+          error: flash.now[:alert],
+          goto_param: params[:goto],
+          back_path:
+        )
         render :new
       end
 
@@ -110,36 +126,11 @@ module Providers
       end
 
       def back_path
-        if setup_context?
-          journey_coordinator.back_path
-        else
-          provider_new_find_path(provider)
-        end
+        setup_context? ? journey_coordinator.back_path : manage_back_path
       end
 
-      def build_select_presenter(_form = nil, error: nil)
-        search_data = address_session.load_search
-
-        if setup_context?
-          AddressJourney::Setup::SelectPresenter.new(
-            results: search_data[:results] || [],
-            postcode: search_data[:postcode],
-            building_name_or_number: search_data[:building_name_or_number],
-            provider: provider,
-            error: error,
-            goto_param: params[:goto],
-            back_path: back_path
-          )
-        else
-          AddressJourney::SelectPresenter.new(
-            results: search_data[:results] || [],
-            postcode: search_data[:postcode],
-            building_name_or_number: search_data[:building_name_or_number],
-            provider: provider,
-            error: error,
-            goto_param: params[:goto]
-          )
-        end
+      def manage_back_path
+        provider_new_find_path(provider)
       end
     end
   end

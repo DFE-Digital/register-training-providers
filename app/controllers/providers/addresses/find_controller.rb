@@ -21,7 +21,7 @@ module Providers
                   ::Addresses::FindForm.new
                 end
 
-        @presenter = build_find_presenter(@form)
+        @presenter = AddressJourney::FindPresenter.new(form: @form, provider:, back_path:)
       end
 
       def create
@@ -35,7 +35,7 @@ module Providers
           redirect_to select_path
         else
           @form = result[:form]
-          @presenter = build_find_presenter(@form)
+          @presenter = AddressJourney::FindPresenter.new(form: @form, provider:, back_path:)
           render :new
         end
       end
@@ -82,26 +82,11 @@ module Providers
       end
 
       def back_path
-        if setup_context?
-          journey_coordinator.back_path
-        else
-          provider_addresses_path(provider)
-        end
+        setup_context? ? journey_coordinator.back_path : manage_back_path
       end
 
-      def build_find_presenter(form)
-        if setup_context?
-          AddressJourney::Setup::FindPresenter.new(
-            form:,
-            provider:,
-            back_path:
-          )
-        else
-          AddressJourney::FindPresenter.new(
-            form:,
-            provider:
-          )
-        end
+      def manage_back_path
+        provider_addresses_path(provider)
       end
     end
   end
