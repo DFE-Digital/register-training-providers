@@ -134,6 +134,9 @@ en:
         address_form:
           add: "Address added"
           update: "Address updated"
+        address:
+          add: "Address added"
+          update: "Address updated"
         contact_form:
           add: "Contact added"
       address:

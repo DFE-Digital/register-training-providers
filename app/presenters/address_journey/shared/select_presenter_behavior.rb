@@ -24,8 +24,8 @@ module AddressJourney
       end
 
       def formatted_search_terms
-        search_terms = ["‘#{find_form&.postcode}’"]
-        search_terms << "‘#{find_form.building_name_or_number}’" if find_form&.building_name_or_number.present?
+        search_terms = ["'#{postcode}'"]
+        search_terms << "'#{building_name_or_number}'" if building_name_or_number.present?
         search_terms.join(" and ")
       end
     end

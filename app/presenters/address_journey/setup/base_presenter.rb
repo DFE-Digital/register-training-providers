@@ -24,14 +24,6 @@ module AddressJourney
       def manual_entry_path
         providers_setup_addresses_address_path(skip_finder: "true")
       end
-
-      def journey_service
-        @journey_service ||= Providers::CreationJourneyService.new(
-          current_step: :address,
-          provider: provider,
-          goto_param: nil
-        )
-      end
     end
   end
 end

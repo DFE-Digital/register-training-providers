@@ -1,134 +1,110 @@
 module Providers
   module Addresses
-    class CheckController < ::CheckController
-      include FormObjectSavePattern
-
-      before_action :set_presenter, only: %i[new show]
-
+    class CheckController < ApplicationController
       def show
-      end
+        @address = provider.addresses.kept.find(params[:id])
+        authorize @address
 
-      def new
-        redirect_to back_path if model.invalid?
-      end
+        address_data = address_session.load_address
+        @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
 
-    private
+        if @form.invalid?
+          redirect_to provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+          return
+        end
 
-      def set_presenter
         @presenter = AddressJourney::CheckPresenter.new(
-          model: model,
+          model: @form,
           provider: provider,
-          context: context,
-          address: address,
-          current_user: current_user,
-          goto_param: params[:goto]
+          context: :edit,
+          address: @address,
+          goto_param: params[:goto],
+          search_available: search_available?,
+          manual_entry_only: manual_entry_only?
         )
       end
 
-      def model_class
-        AddressForm
+      def new
+        address_data = address_session.load_address
+
+        unless address_data
+          redirect_to provider_new_address_path(provider, skip_finder: "true")
+          return
+        end
+
+        @form = ::AddressForm.new(address_data)
+        @form.provider_id = provider.id
+
+        if @form.invalid?
+          redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+          return
+        end
+
+        @presenter = AddressJourney::CheckPresenter.new(
+          model: @form,
+          provider: provider,
+          context: :new,
+          goto_param: params[:goto],
+          search_available: search_available?,
+          manual_entry_only: manual_entry_only?
+        )
       end
 
-      def model_id
-        @model_id ||= params[:id] || params[:address_id]
-      end
+      def create
+        address_data = address_session.load_address
 
-      def purpose
-        if model_id.present?
-          :"edit_address_#{model_id}"
+        unless address_data
+          redirect_to provider_new_address_path(provider, skip_finder: "true")
+          return
+        end
+
+        @form = ::AddressForm.new(address_data)
+        @form.provider_id = provider.id
+
+        address = provider.addresses.build(@form.to_address_attributes)
+        authorize address
+
+        if address.save
+          address_session.clear!
+          redirect_to provider_addresses_path(provider),
+                      flash: { success: I18n.t("flash_message.success.check.address.add") }
         else
-          :create_address
+          redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
         end
       end
 
-      def model
-        @model ||= current_user.load_temporary(model_class, purpose:)
-      end
+      def update
+        @address = provider.addresses.kept.find(params[:id])
+        authorize @address
 
-      def success_path
-        provider_addresses_path(provider)
-      end
+        address_data = address_session.load_address
+        @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
 
-      def find_existing_record
-        provider.addresses.kept.find(model_id)
-      end
-
-      def build_new_record
-        provider.addresses.build(model_attributes)
-      end
-
-      def model_attributes
-        model.to_address_attributes
-      end
-
-      def new_model_path(query_params = {})
-        provider_new_address_path(query_params.merge(provider_id: provider.id))
-      end
-
-      def edit_model_path(query_params = {})
-        address = provider.addresses.kept.find(model_id)
-        provider_edit_address_path(address, query_params.merge(provider_id: provider.id))
-      end
-
-      def new_model_check_path
-        provider_new_address_confirm_path(provider)
-      end
-
-      def model_check_path
-        provider_address_check_path(model_id, provider_id: provider.id)
-      end
-
-      def change_path
-        if model_id.present?
-          edit_model_path(goto: "confirm")
-        elsif search_results_available?
-          provider_new_select_path(provider)
+        if @address.update(@form.to_address_attributes)
+          address_session.clear!
+          redirect_to provider_addresses_path(provider),
+                      flash: { success: I18n.t("flash_message.success.check.address.update") }
         else
-          new_model_path(goto: "confirm", skip_finder: "true")
+          redirect_to provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
         end
       end
 
-      def cleanup_and_redirect_success
-        clear_address_search_temporaries
-        super
-      end
-
-      def context
-        if model_id.present?
-          :edit
-        else
-          :new
-        end
-      end
-
-      def address
-        return nil if model_id.blank?
-
-        @address ||= provider.addresses.kept.find(model_id)
-      end
+    private
 
       def provider
         @provider ||= Provider.find(params[:provider_id])
       end
 
-      def search_results_available?
-        return false if model_id.present?
-
-        search_results_form = current_user.load_temporary(
-          ::Addresses::SearchResultsForm,
-          purpose: :"address_search_results_#{provider.id}"
-        )
-        return false unless search_results_form
-
-        results = search_results_form.results_array
-        results.present? && results.any?
+      def address_session
+        @address_session ||= AddressJourney::SessionManager.new(session, context: :manage)
       end
 
-      def clear_address_search_temporaries
-        return if model_id.present?
+      def search_available?
+        address_session.search_results_available?
+      end
 
-        current_user.clear_temporary(::Addresses::FindForm, purpose: :"find_address_#{provider.id}")
-        current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :"address_search_results_#{provider.id}")
+      def manual_entry_only?
+        address_session.manual_entry?
       end
     end
   end

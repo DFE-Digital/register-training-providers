@@ -3,41 +3,50 @@ module AddressJourney
     class SelectPresenter < BasePresenter
       include AddressJourney::Shared::SelectPresenterBehavior
 
-      attr_reader :results, :find_form, :error, :goto_param
+      attr_reader :results, :postcode, :building_name_or_number, :error, :goto_param, :back_path
 
-      def initialize(results:, find_form:, provider:, error: nil, goto_param: nil)
+      def initialize(results:, postcode:, building_name_or_number:, provider:, error: nil, goto_param: nil,
+                     back_path: nil)
         super(provider:)
         @results = results
-        @find_form = find_form
+        @postcode = postcode
+        @building_name_or_number = building_name_or_number
         @error = error
         @goto_param = goto_param
+        @back_path = back_path || compute_back_path
       end
 
       def form_url
-        if goto_param.present?
-          providers_setup_addresses_select_path(goto: goto_param)
+        if @goto_param.present?
+          providers_setup_addresses_select_path(goto: @goto_param)
         else
           providers_setup_addresses_select_path
         end
       end
 
-      def back_path
-        if goto_param.present?
-          new_provider_confirm_path
+      def change_search_path
+        if @goto_param.present?
+          providers_setup_addresses_find_path(goto: @goto_param)
         else
           providers_setup_addresses_find_path
         end
       end
 
-      def change_search_path
-        providers_setup_addresses_find_path
-      end
-
       def manual_entry_path
         query_params = { skip_finder: "true" }
         query_params[:from] = "select" if results.present?
-        query_params[:goto] = goto_param if goto_param.present?
+        query_params[:goto] = @goto_param if @goto_param.present?
         providers_setup_addresses_address_path(query_params)
+      end
+
+    private
+
+      def compute_back_path
+        if @goto_param == "confirm"
+          new_provider_confirm_path
+        else
+          providers_setup_addresses_find_path
+        end
       end
     end
   end

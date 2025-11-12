@@ -36,11 +36,9 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
 
         expect(result).to be_an(Array)
         expect(result.size).to eq(1)
-        expect(result.first[:address_line_1]).to eq("Prime Minister & First Lord Of The Treasury, 10, Downing Street")
-        expect(result.first[:town_or_city]).to eq("London")
-        expect(result.first[:postcode]).to eq("SW1A 2AA")
-        expect(result.first[:latitude]).to eq(51.503396)
-        expect(result.first[:longitude]).to eq(-0.127764)
+        expect(result.first["address_line_1"]).to eq("Prime Minister & First Lord Of The Treasury, 10, Downing Street")
+        expect(result.first["town_or_city"]).to eq("London")
+        expect(result.first["postcode"]).to eq("SW1A 2AA")
       end
     end
 

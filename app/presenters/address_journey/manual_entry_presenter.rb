@@ -14,11 +14,11 @@ module AddressJourney
     def form_url
       if edit_context?
         params = { provider_id: provider.id }
-        params[:goto] = goto_param if goto_param.present?
+        params[:goto] = @goto_param if @goto_param.present?
         provider_address_path(address, params)
       else
         params = {}
-        params[:goto] = goto_param if goto_param.present?
+        params[:goto] = @goto_param if @goto_param.present?
         params[:from] = "select" if from_select?
         provider_addresses_path(provider, params)
       end
@@ -57,7 +57,7 @@ module AddressJourney
         edit_back_path
       elsif from_select?
         select_back_path
-      elsif goto_confirm?
+      elsif @goto_param == "confirm"
         provider_new_address_confirm_path(provider)
       else
         provider_new_find_path(provider)
@@ -74,16 +74,12 @@ module AddressJourney
       context == :edit
     end
 
-    def goto_confirm?
-      goto_param == "confirm"
-    end
-
     def from_select?
       !!from_select
     end
 
     def edit_back_path
-      if goto_confirm? && address.present?
+      if @goto_param == "confirm" && address.present?
         provider_address_check_path(address, provider_id: provider.id)
       else
         provider_addresses_path(provider)
@@ -92,7 +88,7 @@ module AddressJourney
 
     def select_back_path
       params = {}
-      params[:goto] = goto_param if goto_param.present?
+      params[:goto] = @goto_param if @goto_param.present?
       provider_new_select_path(provider, params)
     end
   end

@@ -61,6 +61,9 @@ gem "omniauth-rails_csrf_protection"
 # Pagination
 gem "pagy", "~> 9.4" # omit patch digit
 
+# Database-backed sessions (avoids cookie size limits)
+gem "activerecord-session_store"
+
 # Sentry
 gem "sentry-rails"
 gem "sentry-ruby"

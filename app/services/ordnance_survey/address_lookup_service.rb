@@ -49,14 +49,13 @@ module OrdnanceSurvey
         dpa = result["DPA"]
         next unless dpa
 
+        # Return only the fields needed for address forms (reduce session size)
         {
-          address_line_1: format_address_line(build_address_line_1(dpa)),
-          address_line_2: format_address_line(dpa["DEPENDENT_LOCALITY"]),
-          town_or_city: format_address_line(dpa["POST_TOWN"]),
-          county: format_address_line(dpa["COUNTY"]),
-          postcode: dpa["POSTCODE"],
-          latitude: dpa["LATITUDE"],
-          longitude: dpa["LONGITUDE"]
+          "address_line_1" => format_address_line(build_address_line_1(dpa)),
+          "address_line_2" => format_address_line(dpa["DEPENDENT_LOCALITY"]),
+          "town_or_city" => format_address_line(dpa["POST_TOWN"]),
+          "county" => format_address_line(dpa["COUNTY"]),
+          "postcode" => dpa["POSTCODE"]
         }
       end
     end
@@ -67,7 +66,7 @@ module OrdnanceSurvey
       search_term = building_name_or_number.downcase.strip
 
       addresses.select do |address|
-        address[:address_line_1].downcase.include?(search_term)
+        address["address_line_1"].downcase.include?(search_term)
       end
     end
 

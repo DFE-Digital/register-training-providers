@@ -4,6 +4,10 @@ class Providers::CheckController < CheckController
 
 private
 
+  def model
+    @model ||= provider_session.load_provider || Provider.new
+  end
+
   def change_provider_type_path
     if model_id.present?
       edit_provider_path(model, goto: "confirm")
@@ -24,7 +28,7 @@ private
     if model_id.present?
       edit_provider_path(model, goto: "confirm")
     else
-      journey_service(:check_answers, model).back_path
+      journey_coordinator.back_path
     end
   end
 
@@ -43,24 +47,30 @@ private
   def accreditation_form
     return nil unless model.accredited?
 
-    @accreditation_form ||= current_user.load_temporary(AccreditationForm, purpose: :create_provider)
+    accreditation_data = provider_session.load_accreditation
+    return nil unless accreditation_data
+
+    @accreditation_form ||= AccreditationForm.new(accreditation_data)
   end
 
   def address_form
     return nil if model_id.present?
 
-    @address_form ||= current_user.load_temporary(AddressForm, purpose: :create_provider)
+    address_data = address_session.load_address
+    return nil unless address_data
+
+    @address_form ||= ::AddressForm.new(address_data)
   end
 
   def change_address_path
     return nil if model_id.present?
 
     if address_manual_entry_only?
-      providers_setup_addresses_address_path(goto: "confirm", skip_finder: "true")
+      providers_setup_addresses_address_path(skip_finder: "true", goto: "confirm")
     elsif address_search_results_available?
       providers_setup_addresses_select_path(goto: "confirm")
     else
-      providers_setup_addresses_address_path(goto: "confirm", skip_finder: "true")
+      providers_setup_addresses_address_path(skip_finder: "true", goto: "confirm")
     end
   end
 
@@ -71,7 +81,7 @@ private
       save_accreditation_if_present
       save_address_if_present
       clear_temporary_records
-      clear_address_search_temporaries
+      clear_session_data
       redirect_to success_path, flash: flash_message
     else
       redirect_to back_path
@@ -94,47 +104,44 @@ private
   end
 
   def clear_temporary_records
-    [
-      Providers::IsTheProviderAccredited,
-      Providers::ProviderType,
-      Provider,
-      AccreditationForm,
-      AddressForm
-    ].each do |form_class|
-      current_user.clear_temporary(form_class, purpose: :create_provider)
-    end
+    # Provider creation now uses sessions, no temporary records to clear
+    # This method kept for backwards compatibility in case other journeys still use it
   end
 
-  def journey_service(current_step, provider)
-    Providers::CreationJourneyService.new(
-      current_step: current_step,
-      provider: provider,
-      goto_param: params[:goto]
-    )
+  def clear_session_data
+    # Clear navigation state first in case we need to access other session data
+    address_session.clear_navigation_state!
+
+    # Then clear all session data
+    provider_session.clear!
+    address_session.clear!
   end
 
   def address_search_results_available?
     return false if model_id.present?
 
-    search_results_form = current_user.load_temporary(
-      ::Addresses::SearchResultsForm,
-      purpose: :address_search_results_create_provider
-    )
-    return false unless search_results_form
-
-    results = search_results_form.results_array
-    results.present? && results.any?
+    address_session.search_results_available?
   end
 
   def address_manual_entry_only?
-    form = address_form
-    form && form.respond_to?(:manual_entry?) && form.manual_entry?
+    return false if model_id.present?
+
+    address_session.manual_entry?
   end
 
-  def clear_address_search_temporaries
-    return if model_id.present?
+  def journey_coordinator
+    @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
+      current_step: :check_answers,
+      session_manager: provider_session,
+      provider: model
+    )
+  end
 
-    current_user.clear_temporary(::Addresses::FindForm, purpose: :find_address_create_provider)
-    current_user.clear_temporary(::Addresses::SearchResultsForm, purpose: :address_search_results_create_provider)
+  def provider_session
+    @provider_session ||= ProviderCreation::SessionManager.new(session)
+  end
+
+  def address_session
+    @address_session ||= AddressJourney::SessionManager.new(session, context: :setup)
   end
 end

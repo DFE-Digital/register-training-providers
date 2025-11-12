@@ -1,37 +1,44 @@
 module Providers
   module Addresses
     class FindController < ApplicationController
-      include AddressFinder
-
       def new
-        load_find_form
-        @presenter = build_find_presenter(@form)
+        # Clear session when starting a fresh journey (no goto param means not navigating within existing journey)
+        address_session.clear! if params[:goto].blank?
+
+        @form = ::Addresses::FindForm.new
+        @presenter = AddressJourney::FindPresenter.new(
+          form: @form,
+          provider: provider
+        )
       end
 
       def create
-        perform_address_search
+        result = AddressJourney::Finder.call(
+          postcode: params.dig(:find, :postcode),
+          building_name_or_number: params.dig(:find, :building_name_or_number),
+          session_manager: address_session
+        )
+
+        if result[:success]
+          redirect_to provider_new_select_path(provider)
+        else
+          @form = result[:form]
+          @presenter = AddressJourney::FindPresenter.new(
+            form: @form,
+            provider: provider
+          )
+          render :new
+        end
       end
 
     private
 
-      def find_purpose
-        :"find_address_#{provider.id}"
-      end
-
-      def search_results_purpose
-        :"address_search_results_#{provider.id}"
-      end
-
-      def select_path
-        provider_new_select_path(provider)
-      end
-
-      def build_find_presenter(form)
-        AddressJourney::FindPresenter.new(form:, provider:)
-      end
-
       def provider
         @provider ||= Provider.find(params[:provider_id])
+      end
+
+      def address_session
+        @address_session ||= AddressJourney::SessionManager.new(session, context: :manage)
       end
     end
   end

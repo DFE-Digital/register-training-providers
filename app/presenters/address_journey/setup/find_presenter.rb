@@ -1,11 +1,12 @@
 module AddressJourney
   module Setup
     class FindPresenter < BasePresenter
-      attr_reader :form
+      attr_reader :form, :back_path
 
-      def initialize(form:, provider:)
+      def initialize(form:, provider:, back_path:)
         super(provider:)
         @form = form
+        @back_path = back_path
       end
 
       def form_url
@@ -15,8 +16,6 @@ module AddressJourney
       def page_title
         "Find address"
       end
-
-      delegate :back_path, to: :journey_service
     end
   end
 end

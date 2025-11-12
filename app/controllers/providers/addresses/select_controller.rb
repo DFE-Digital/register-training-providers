@@ -1,56 +1,75 @@
 module Providers
   module Addresses
     class SelectController < ApplicationController
-      include AddressSelector
-
       def new
-        return unless load_selection_form
+        search_data = address_session.load_search
 
-        @presenter = build_select_presenter(@results, @find_form, nil)
-      end
+        unless search_data
+          redirect_to provider_new_find_path(provider)
+          return
+        end
 
-      def create
-        perform_address_selection
-      end
+        @results = search_data[:results] || []
 
-    private
+        # Pre-select the radio button if returning to this page with a stored address
+        @form = AddressJourney::Selector.prepare_select_form(session_manager: address_session)
 
-      def find_purpose
-        :"find_address_#{provider.id}"
-      end
-
-      def search_results_purpose
-        :"address_search_results_#{provider.id}"
-      end
-
-      def find_path
-        provider_new_find_path(provider)
-      end
-
-      def confirm_path
-        provider_new_address_confirm_path(provider)
-      end
-
-      def address_form_purpose
-        :create_address
-      end
-
-      def save_selected_address(address_form)
-        address_form.save_as_temporary!(created_by: current_user, purpose: :create_address)
-      end
-
-      def build_select_presenter(results, find_form, error)
-        AddressJourney::SelectPresenter.new(
-          results: results,
-          find_form: find_form,
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: search_data[:postcode],
+          building_name_or_number: search_data[:building_name_or_number],
           provider: provider,
-          error: error,
+          error: nil,
           goto_param: params[:goto]
         )
       end
 
+      def create
+        @form = ::Addresses::SelectForm.new(selected_address_index: params.dig(:select, :selected_address_index))
+
+        unless @form.valid?
+          render_select_form
+          return
+        end
+
+        result = AddressJourney::Selector.call(
+          selected_index: @form.selected_address_index,
+          session_manager: address_session,
+          provider_id: provider.id
+        )
+
+        if result[:success]
+          redirect_to provider_new_address_confirm_path(provider)
+        elsif result[:error] == :missing_search
+          redirect_to provider_new_find_path(provider), alert: "Please search for an address first"
+        else
+          flash.now[:alert] = "Please select a valid address"
+          render_select_form
+        end
+      end
+
+    private
+
+      def render_select_form
+        search_data = address_session.load_search
+        @results = search_data[:results] || []
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: search_data[:postcode],
+          building_name_or_number: search_data[:building_name_or_number],
+          provider: provider,
+          error: flash.now[:alert],
+          goto_param: params[:goto]
+        )
+        render :new
+      end
+
       def provider
         @provider ||= Provider.find(params[:provider_id])
+      end
+
+      def address_session
+        @address_session ||= AddressJourney::SessionManager.new(session, context: :manage)
       end
     end
   end
