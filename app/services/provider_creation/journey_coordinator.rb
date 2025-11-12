@@ -84,32 +84,12 @@ module ProviderCreation
       @provider || @session_manager.load_provider
     end
 
-    # Handle unwinding from check page (change flow with goto=confirm)
     def unwind_from_check_page
-      case @current_step
-      when :type, :details, :accreditation
-        # Simple provider fields - back directly to check
-        new_provider_confirm_path
-      when :address_find
-        # If there are search results available, we came from select via "Change your search"
-        # So we should go back to select, not directly to check
-        if @address_session && @address_session.search_results_available?
-          providers_setup_addresses_select_path(goto: "confirm")
-        else
-          # First time on find from check: back to check
-          new_provider_confirm_path
-        end
-      when :address_select
-        # From Check → Change address → Select: back to check
-        new_provider_confirm_path
-      when :address_manual_entry
-        # Manual entry from change flow - back always returns to check
-        # (User is canceling the address change, not navigating within sub-journey)
-        new_provider_confirm_path
-      else
-        # Default: back to check
-        new_provider_confirm_path
+      if @current_step == :address_find && @address_session&.search_results_available?
+        return providers_setup_addresses_select_path(goto: "confirm")
       end
+
+      new_provider_confirm_path
     end
 
     # Determine which provider step comes before the address journey
