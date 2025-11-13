@@ -1,7 +1,7 @@
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: request.referrer,
+        href: request.referer,
       ) %>
 <% end %>
 
