@@ -46,10 +46,6 @@ class ContactFormPresenter
     end
   end
 
-  def back_path
-    provider_contacts_path(provider)
-  end
-
   def cancel_path
     provider_contacts_path(provider)
   end

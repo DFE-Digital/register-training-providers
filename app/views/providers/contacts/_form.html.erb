@@ -1,7 +1,7 @@
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: provider_contacts_path(provider),
+        href: request.referrer,
       ) %>
 <% end %>
 
