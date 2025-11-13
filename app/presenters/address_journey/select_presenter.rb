@@ -1,23 +1,11 @@
 module AddressJourney
   class SelectPresenter
-    include Rails.application.routes.url_helpers
+    attr_reader :results, :postcode, :building_name_or_number
 
-    attr_reader :results, :postcode, :building_name_or_number, :provider, :back_path, :form_url, :change_search_path,
-                :manual_entry_path, :cancel_path, :page_subtitle, :page_caption
-
-    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, form_url:,
-                   change_search_path:, manual_entry_path:, cancel_path:, page_subtitle:, page_caption:)
+    def initialize(results:, postcode:, building_name_or_number:)
       @results = results
       @postcode = postcode
       @building_name_or_number = building_name_or_number
-      @provider = provider
-      @back_path = back_path
-      @form_url = form_url
-      @change_search_path = change_search_path
-      @manual_entry_path = manual_entry_path
-      @cancel_path = cancel_path
-      @page_subtitle = page_subtitle
-      @page_caption = page_caption
     end
 
     def page_title

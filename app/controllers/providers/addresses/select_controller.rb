@@ -16,19 +16,7 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = prepare_select_form
 
-        @presenter = AddressJourney::SelectPresenter.new(
-          results: @results,
-          postcode: search_data[:postcode],
-          building_name_or_number: search_data[:building_name_or_number],
-          provider: provider,
-          back_path: back_path,
-          form_url: select_form_url,
-          change_search_path: select_change_search_path,
-          manual_entry_path: select_manual_entry_path,
-          cancel_path: select_cancel_path,
-          page_subtitle: select_page_subtitle,
-          page_caption: select_page_caption
-        )
+        setup_select_view_data(search_data)
       end
 
       def create
@@ -73,19 +61,7 @@ module Providers
         search_data = address_session.load_search
         @results = search_data[:results] || []
         # @form already set in create action (with validation errors if invalid)
-        @presenter = AddressJourney::SelectPresenter.new(
-          results: @results,
-          postcode: search_data[:postcode],
-          building_name_or_number: search_data[:building_name_or_number],
-          provider: provider,
-          back_path: back_path,
-          form_url: select_form_url,
-          change_search_path: select_change_search_path,
-          manual_entry_path: select_manual_entry_path,
-          cancel_path: select_cancel_path,
-          page_subtitle: select_page_subtitle,
-          page_caption: select_page_caption
-        )
+        setup_select_view_data(search_data)
         render :new
       end
 
@@ -189,6 +165,21 @@ module Providers
 
       def select_page_caption
         setup_context? ? "Add provider" : "Add address - #{provider.operating_name}"
+      end
+
+      def setup_select_view_data(search_data)
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: search_data[:postcode],
+          building_name_or_number: search_data[:building_name_or_number]
+        )
+        @back_path = back_path
+        @form_url = select_form_url
+        @change_search_path = select_change_search_path
+        @manual_entry_path = select_manual_entry_path
+        @cancel_path = select_cancel_path
+        @page_subtitle = select_page_subtitle
+        @page_caption = select_page_caption
       end
     end
   end
