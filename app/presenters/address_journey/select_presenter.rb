@@ -1,19 +1,28 @@
 module AddressJourney
   class SelectPresenter < BasePresenter
-    include AddressJourney::Shared::SelectPresenterBehavior
+    attr_reader :results, :postcode, :building_name_or_number, :goto_param, :back_path
 
-    attr_reader :results, :postcode, :building_name_or_number, :error, :goto_param, :back_path
-
-    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, error: nil, goto_param: nil,
+    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, goto_param: nil,
                    context: nil)
       super(provider:)
       @results = results
       @postcode = postcode
       @building_name_or_number = building_name_or_number
-      @error = error
       @goto_param = goto_param
       @back_path = back_path
       @context = context
+    end
+
+    def page_title
+      if results.empty?
+        no_results_title
+      else
+        results_title
+      end
+    end
+
+    def submit_button_text
+      "Continue"
     end
 
     def form_url
@@ -75,6 +84,20 @@ module AddressJourney
 
     def setup_context?
       @context == :setup || (@context.nil? && !provider.persisted?)
+    end
+
+    def no_results_title
+      "No addresses found for #{formatted_search_terms}"
+    end
+
+    def results_title
+      "#{results.size} #{'address'.pluralize(results.size)} found for #{formatted_search_terms}"
+    end
+
+    def formatted_search_terms
+      search_terms = ["'#{postcode}'"]
+      search_terms << "'#{building_name_or_number}'" if building_name_or_number.present?
+      search_terms.join(" and ")
     end
   end
 end

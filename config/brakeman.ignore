@@ -3,10 +3,10 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
-      "fingerprint": "55adaa39c7bdb502a36c3c1fce43e3be5cdcb8a4a39485c9001a39a216cc6b0c",
+      "fingerprint": "01a4398ef12482380c8bfef9619abe42badae360778c184171da471cffd01f70",
       "check_name": "Render",
       "message": "Render path contains parameter value",
-      "file": "app/views/address_journey/_find_form.html.erb",
+      "file": "app/views/providers/addresses/find/new.html.erb",
       "line": 4,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
       "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::FindPresenter.new(:form => ::Addresses::FindForm.new(:postcode => params.dig(:find, :postcode), :building_name_or_number => params.dig(:find, :building_name_or_number)), :provider => provider, :back_path => back_path, :context => ((:setup or :manage))).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::FindPresenter.new(:form => ::Addresses::FindForm.new(:postcode => params.dig(:find, :postcode), :building_name_or_number => params.dig(:find, :building_name_or_number)), :provider => provider, :back_path => back_path, :context => ((:setup or :manage))).back_path) }) })",
@@ -21,21 +21,11 @@
             "name": "providers/addresses/find/new",
             "file": "app/views/providers/addresses/find/new.html.erb"
           }
-        },
-        {
-          "type": "template",
-          "name": "providers/addresses/find/new",
-          "line": 1,
-          "file": "app/views/providers/addresses/find/new.html.erb",
-          "rendered": {
-            "name": "address_journey/_find_form",
-            "file": "app/views/address_journey/_find_form.html.erb"
-          }
         }
       ],
       "location": {
         "type": "template",
-        "template": "address_journey/_find_form"
+        "template": "providers/addresses/find/new"
       },
       "user_input": "params.dig(:find, :building_name_or_number)",
       "confidence": "Weak",
@@ -47,13 +37,57 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
-      "fingerprint": "e923c111e9bd011305fa1c9647144554290a3047c0a56552c67da5c267c9393c",
+      "fingerprint": "2f51d0fa804f47e4436d9903048bb509b83eac72a664f937ef4495e79313634d",
       "check_name": "Render",
       "message": "Render path contains parameter value",
-      "file": "app/views/address_journey/_select_form.html.erb",
+      "file": "app/views/providers/addresses/manual_entry/_form.html.erb",
       "line": 4,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :error => nil, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :error => nil, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path) }) })",
+      "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::ManualEntryPresenter.new(:form => AddressForm.new(address_params), :provider => provider, :context => ((:setup or :new)), :goto_param => params[:goto], :from_select => (params[:from] == \"select\"), :back_path => back_path).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::ManualEntryPresenter.new(:form => AddressForm.new(address_params), :provider => provider, :context => ((:setup or :new)), :goto_param => params[:goto], :from_select => (params[:from] == \"select\"), :back_path => back_path).back_path) }) })",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Providers::Addresses::ManualEntryController",
+          "method": "create",
+          "line": 79,
+          "file": "app/controllers/providers/addresses/manual_entry_controller.rb",
+          "rendered": {
+            "name": "providers/addresses/manual_entry/new",
+            "file": "app/views/providers/addresses/manual_entry/new.html.erb"
+          }
+        },
+        {
+          "type": "template",
+          "name": "providers/addresses/manual_entry/new",
+          "line": 1,
+          "file": "app/views/providers/addresses/manual_entry/new.html.erb",
+          "rendered": {
+            "name": "providers/addresses/manual_entry/_form",
+            "file": "app/views/providers/addresses/manual_entry/_form.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "providers/addresses/manual_entry/_form"
+      },
+      "user_input": "params[:goto]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "False positive: back_path is constructed using Rails route helpers which sanitize parameters"
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "d018f9689f3b90b99056c4396cd921b81f31a25ef9c8a99173813d951478b10b",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/providers/addresses/select/new.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path) }) })",
       "render_path": [
         {
           "type": "controller",
@@ -65,21 +99,11 @@
             "name": "providers/addresses/select/new",
             "file": "app/views/providers/addresses/select/new.html.erb"
           }
-        },
-        {
-          "type": "template",
-          "name": "providers/addresses/select/new",
-          "line": 1,
-          "file": "app/views/providers/addresses/select/new.html.erb",
-          "rendered": {
-            "name": "address_journey/_select_form",
-            "file": "app/views/address_journey/_select_form.html.erb"
-          }
         }
       ],
       "location": {
         "type": "template",
-        "template": "address_journey/_select_form"
+        "template": "providers/addresses/select/new"
       },
       "user_input": "params[:goto]",
       "confidence": "Weak",
@@ -89,6 +113,5 @@
       "note": "False positive: back_path is constructed using Rails route helpers which sanitize parameters"
     }
   ],
-  "updated": "2025-11-13 00:00:00 +0000",
   "brakeman_version": "7.1.1"
 }

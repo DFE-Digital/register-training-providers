@@ -1,1 +1,45 @@
-<%= render "address_journey/select_form" %>
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @presenter.back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @presenter.page_title, subtitle: @presenter.page_subtitle, caption: @presenter.page_caption, error: @form&.errors.present?) %>
+
+<% if @presenter.results.empty? %>
+  <p class="govuk-body">
+    <%= govuk_link_to("Change your search", @presenter.change_search_path) %> or <%= govuk_link_to("enter the address manually", @presenter.manual_entry_path) %>
+  </p>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
+  </p>
+
+<% else %>
+  <p class="govuk-body">
+    <%= govuk_link_to("Change your search", @presenter.change_search_path) %> if the address you're looking for is not listed.
+  </p>
+
+  <%= form_with model: @form, url: @presenter.form_url, method: :post, scope: :select do |form| %>
+    <%= form.govuk_error_summary %>
+    <%= form.govuk_radio_buttons_fieldset(:selected_address_index, legend: { text: "", hidden: true }) do %>
+      <% @presenter.results.each_with_index do |address, index| %>
+        <%= form.govuk_radio_button :selected_address_index, index,
+                                    label: { text: @presenter.formatted_address(address) },
+                                    link_errors: index.zero? %>
+      <% end %>
+    <% end %>
+
+    <%= form.govuk_submit @presenter.submit_button_text %>
+  <% end %>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Enter address manually", @presenter.manual_entry_path) %>
+  </p>
+
+  <p class="govuk-body">
+    <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
+  </p>
+
+<% end %>

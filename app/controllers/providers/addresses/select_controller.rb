@@ -20,7 +20,6 @@ module Providers
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
           provider: provider,
-          error: nil,
           goto_param: params[:goto],
           back_path: back_path,
           context: context
@@ -46,7 +45,7 @@ module Providers
         index = @form.selected_address_index.to_i
 
         unless index >= 0 && index < results.size
-          flash.now[:alert] = t("controllers.providers.addresses.select.invalid_index")
+          @form.errors.add(:selected_address_index, "is invalid")
           render_select_form
           return
         end
@@ -75,7 +74,6 @@ module Providers
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
           provider: provider,
-          error: flash.now[:alert],
           goto_param: params[:goto],
           back_path: back_path,
           context: context
