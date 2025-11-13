@@ -86,7 +86,6 @@ private
     if model.save
       save_accreditation_if_present
       save_address_if_present
-      clear_temporary_records
       clear_session_data
       redirect_to success_path, flash: flash_message
     else
@@ -107,11 +106,6 @@ private
 
     address = model.addresses.build(address_form.to_address_attributes)
     address.save!
-  end
-
-  def clear_temporary_records
-    # Provider creation now uses sessions, no temporary records to clear
-    # This method kept for backwards compatibility in case other journeys still use it
   end
 
   def clear_session_data

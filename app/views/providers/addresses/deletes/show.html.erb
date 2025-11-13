@@ -1,15 +1,15 @@
 <%= content_for(:breadcrumbs) do %>
-    <%= govuk_back_link(text: "Back", href: @presenter.back_path) %>
+    <%= govuk_back_link(text: "Back", href: @back_path) %>
 <% end %>
 
-<% page_data(title: @presenter.page_title, subtitle: @presenter.page_subtitle, caption: @presenter.page_caption) %>
+<% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
 
-<%= govuk_summary_list(rows: address_form_rows(@presenter.address)) %>
+<%= govuk_summary_list(rows: address_form_rows(@address)) %>
 
-<%= govuk_warning_text(text: @presenter.warning_text) %>
+<%= govuk_warning_text(text: "Deleting an address is permanent – you cannot undo it.") %>
 
-<%= govuk_button_to("Delete address", @presenter.delete_path, method: :delete, warning: true) %>
+<%= govuk_button_to("Delete address", @delete_path, method: :delete, warning: true) %>
 
 <p class="govuk-body">
-  <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
+  <%= govuk_link_to("Cancel", @cancel_path) %>
 </p>

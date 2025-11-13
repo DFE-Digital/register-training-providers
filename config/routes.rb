@@ -111,30 +111,30 @@ Rails.application.routes.draw do
       checkable(:contacts, module_prefix: :providers)
     end
 
-    # Addresses - listing
+    # === Addresses ===
+
+    # Listing
     get "addresses", to: "providers/addresses/lists#index", as: :addresses
 
-    # Addresses - manual entry
+    # Manual entry (CRUD)
     get "addresses/new", to: "providers/addresses/manual_entry#new", as: :new_address
     post "addresses", to: "providers/addresses/manual_entry#create"
     get "addresses/:id/edit", to: "providers/addresses/manual_entry#edit", as: :edit_address
     patch "addresses/:id", to: "providers/addresses/manual_entry#update", as: :address
-    put "addresses/:id", to: "providers/addresses/manual_entry#update"
 
-    # Addresses - finder flow
+    # Finder flow
     get "addresses/find/new", to: "providers/addresses/find#new", as: :new_find
     post "addresses/find", to: "providers/addresses/find#create", as: :find
     get "addresses/select/new", to: "providers/addresses/select#new", as: :new_select
     post "addresses/select", to: "providers/addresses/select#create", as: :select
 
-    # Addresses - check/confirm
+    # Check/confirm
     get "addresses/check/new", to: "providers/addresses/check#new", as: :new_address_confirm
     post "addresses/check", to: "providers/addresses/check#create", as: :address_confirm
     get "addresses/:id/check", to: "providers/addresses/check#show", as: :address_check
     patch "addresses/:id/check", to: "providers/addresses/check#update"
-    put "addresses/:id/check", to: "providers/addresses/check#update"
 
-    # Addresses - delete
+    # Delete
     get "addresses/:address_id/delete", to: "providers/addresses/deletes#show", as: :address_delete
     delete "addresses/:address_id/delete", to: "providers/addresses/deletes#destroy"
   end

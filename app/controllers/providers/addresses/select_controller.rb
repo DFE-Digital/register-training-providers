@@ -47,10 +47,6 @@ module Providers
         address_form = AddressForm.from_os_address(selected.symbolize_keys)
         address_form.provider_id = provider.id unless setup_context?
         address_form.provider_creation_mode = setup_context?
-
-        # NOTE: No validation check needed here - OS API returns valid data
-        # If validation fails, it's a system error that should bubble up
-
         address_session.store_address(address_form.attributes)
         redirect_to success_path
       end
@@ -60,7 +56,6 @@ module Providers
       def render_select_form
         search_data = address_session.load_search
         @results = search_data[:results] || []
-        # @form already set in create action (with validation errors if invalid)
         setup_view_data(search_data)
         render :new
       end
