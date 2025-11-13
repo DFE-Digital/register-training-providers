@@ -65,4 +65,3 @@ module AccreditationHelper
     end
   end
 end
-

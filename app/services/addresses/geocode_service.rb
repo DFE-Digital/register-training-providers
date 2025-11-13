@@ -35,7 +35,8 @@ module Addresses
       params = {
         postcode: postcode,
         key: api_key,
-        maxresults: 1
+        maxresults: 1,
+        output_srs: "EPSG:4326"
       }
       URI("#{BASE_URL}/postcode?#{URI.encode_www_form(params)}")
     end
@@ -48,8 +49,8 @@ module Addresses
       return default_result unless dpa
 
       {
-        latitude: dpa["LATITUDE"],
-        longitude: dpa["LONGITUDE"]
+        latitude: dpa["LAT"],
+        longitude: dpa["LNG"]
       }
     end
 

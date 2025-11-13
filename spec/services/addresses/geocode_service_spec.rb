@@ -15,8 +15,8 @@ RSpec.describe Addresses::GeocodeService do
           "results" => [
             {
               "DPA" => {
-                "LATITUDE" => 51.503396,
-                "LONGITUDE" => -0.127764
+                "LAT" => 51.503396,
+                "LNG" => -0.127764
               }
             }
           ]

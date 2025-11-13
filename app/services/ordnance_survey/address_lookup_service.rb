@@ -37,7 +37,8 @@ module OrdnanceSurvey
       params = {
         postcode: postcode,
         key: api_key,
-        maxresults: 100
+        maxresults: 100,
+        output_srs: "EPSG:4326"
       }
       URI("#{BASE_URL}/postcode?#{URI.encode_www_form(params)}")
     end
@@ -49,13 +50,14 @@ module OrdnanceSurvey
         dpa = result["DPA"]
         next unless dpa
 
-        # Return only the fields needed for address forms (reduce session size)
         {
           "address_line_1" => format_address_line(build_address_line_1(dpa)),
           "address_line_2" => format_address_line(dpa["DEPENDENT_LOCALITY"]),
           "town_or_city" => format_address_line(dpa["POST_TOWN"]),
           "county" => format_address_line(dpa["COUNTY"]),
-          "postcode" => dpa["POSTCODE"]
+          "postcode" => dpa["POSTCODE"],
+          "latitude" => dpa["LAT"],
+          "longitude" => dpa["LNG"]
         }
       end
     end

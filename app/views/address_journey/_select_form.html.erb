@@ -20,7 +20,7 @@
   <% end %>
 <% end %>
 
-<% page_data(title: @presenter.page_title, subtitle: @presenter.page_subtitle, caption: @presenter.page_caption, error: @form&.errors&.present? || @presenter.error.present?) %>
+<% page_data(title: @presenter.page_title, subtitle: @presenter.page_subtitle, caption: @presenter.page_caption, error: @form&.errors.present? || @presenter.error.present?) %>
 
 <% if @presenter.results.empty? %>
   <p class="govuk-body">
@@ -40,9 +40,8 @@
     <%= form.govuk_error_summary %>
     <%= form.govuk_radio_buttons_fieldset(:selected_address_index, legend: { text: "", hidden: true }) do %>
       <% @presenter.results.each_with_index do |address, index| %>
-        <% address_parts = [address["address_line_1"], address["address_line_2"], address["town_or_city"], address["postcode"]].compact.reject(&:blank?) %>
         <%= form.govuk_radio_button :selected_address_index, index,
-                                    label: { text: address_parts.join(", ") },
+                                    label: { text: @presenter.formatted_address(address) },
                                     link_errors: index.zero? %>
       <% end %>
     <% end %>
@@ -59,4 +58,3 @@
   </p>
 
 <% end %>
-

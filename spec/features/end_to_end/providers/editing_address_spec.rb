@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "Editing address", type: :feature do
   before do
     given_i_am_an_authenticated_user
+    allow(Addresses::GeocodeService).to receive(:call).and_return({ latitude: 51.503396, longitude: -0.127764 })
   end
 
   context "with valid data" do
@@ -66,7 +67,7 @@ RSpec.describe "Editing address", type: :feature do
     end
 
     scenario "edits address with minimal required fields only" do
-      visit edit_provider_address_path(address, provider_id: provider.id)
+      visit provider_edit_address_path(id: address.id, provider_id: provider.id)
 
       fill_in "Address line 1", with: "Minimal Updated Road"
       fill_in "Address line 2 (optional)", with: ""
@@ -102,7 +103,7 @@ RSpec.describe "Editing address", type: :feature do
     let!(:address) { create(:address, provider:) }
 
     scenario "missing required fields shows errors" do
-      visit edit_provider_address_path(address, provider_id: provider.id)
+      visit provider_edit_address_path(id: address.id, provider_id: provider.id)
 
       fill_in "Address line 1", with: ""
       fill_in "Town or city", with: ""
@@ -114,7 +115,7 @@ RSpec.describe "Editing address", type: :feature do
     end
 
     scenario "invalid postcode shows error" do
-      visit edit_provider_address_path(address, provider_id: provider.id)
+      visit provider_edit_address_path(id: address.id, provider_id: provider.id)
 
       fill_in "Postcode", with: "INVALID"
 
@@ -129,7 +130,7 @@ RSpec.describe "Editing address", type: :feature do
     let!(:address) { create(:address, provider: provider, address_line_1: "Original Street") }
 
     scenario "can change values from check page and resubmit" do
-      visit edit_provider_address_path(address, provider_id: provider.id)
+      visit provider_edit_address_path(id: address.id, provider_id: provider.id)
 
       fill_in "Address line 1", with: "First Update Street"
       fill_in "Town or city", with: "First Update City"
@@ -159,7 +160,7 @@ RSpec.describe "Editing address", type: :feature do
     end
 
     scenario "can cancel and return to addresses" do
-      visit edit_provider_address_path(address, provider_id: provider.id)
+      visit provider_edit_address_path(id: address.id, provider_id: provider.id)
 
       fill_in "Address line 1", with: "Cancelled Street"
 

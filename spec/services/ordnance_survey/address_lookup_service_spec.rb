@@ -19,7 +19,9 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
                 "BUILDING_NUMBER" => "10",
                 "THOROUGHFARE_NAME" => "DOWNING STREET",
                 "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA"
+                "POSTCODE" => "SW1A 2AA",
+                "LAT" => 51.503396,
+                "LNG" => -0.127764
               }
             }
           ]
@@ -31,7 +33,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
           .to_return(status: 200, body: response_body)
       end
 
-      it "returns parsed addresses with titleized fields" do
+      it "returns parsed addresses with titleized fields and coordinates" do
         result = described_class.call(postcode:)
 
         expect(result).to be_an(Array)
@@ -39,6 +41,8 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
         expect(result.first["address_line_1"]).to eq("Prime Minister & First Lord Of The Treasury, 10, Downing Street")
         expect(result.first["town_or_city"]).to eq("London")
         expect(result.first["postcode"]).to eq("SW1A 2AA")
+        expect(result.first["latitude"]).to eq(51.503396)
+        expect(result.first["longitude"]).to eq(-0.127764)
       end
     end
 
@@ -52,7 +56,9 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
                 "BUILDING_NUMBER" => "10",
                 "THOROUGHFARE_NAME" => "DOWNING STREET",
                 "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA"
+                "POSTCODE" => "SW1A 2AA",
+                "LAT" => 51.503396,
+                "LNG" => -0.127764
               }
             },
             {
@@ -60,7 +66,9 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
                 "BUILDING_NUMBER" => "11",
                 "THOROUGHFARE_NAME" => "DOWNING STREET",
                 "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA"
+                "POSTCODE" => "SW1A 2AA",
+                "LAT" => 51.503400,
+                "LNG" => -0.127770
               }
             }
           ]
@@ -77,6 +85,8 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
 
         expect(result.size).to eq(1)
         expect(result.first["address_line_1"]).to eq("10, Downing Street")
+        expect(result.first["latitude"]).to eq(51.503396)
+        expect(result.first["longitude"]).to eq(-0.127764)
       end
     end
 

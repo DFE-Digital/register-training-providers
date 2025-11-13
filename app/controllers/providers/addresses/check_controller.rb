@@ -123,12 +123,11 @@ module Providers
           end
         elsif edit_context?
           provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
-        elsif manual_entry_only?
-          # User did manual entry, go back to manual entry page even if search results exist
-          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
-        elsif search_available?
+        elsif search_available? && !manual_entry_only?
+          # User used finder, go back to select page
           provider_new_select_path(provider)
         else
+          # User did manual entry or no search available
           provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
         end
       end
@@ -136,9 +135,7 @@ module Providers
       def change_path
         if edit_context?
           provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
-        elsif manual_entry_only?
-          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
-        elsif search_available?
+        elsif search_available? && !manual_entry_only?
           provider_new_select_path(provider, goto: "confirm")
         else
           provider_new_address_path(provider, goto: "confirm", skip_finder: "true")

@@ -11,7 +11,7 @@ RSpec.describe Addresses::FindForm, type: :model do
     it "requires postcode" do
       subject.postcode = nil
       expect(subject).not_to be_valid
-      expect(subject.errors[:postcode]).to include("can't be blank")
+      expect(subject.errors[:postcode]).to include("Enter postcode")
     end
 
     it "validates postcode format" do

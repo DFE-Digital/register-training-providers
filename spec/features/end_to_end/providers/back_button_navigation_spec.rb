@@ -271,13 +271,14 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   def and_i_fill_in_provider_details
     # Build provider with correct accreditation status and provider type based on earlier choices
     trait = @accreditation_status == "accredited" ? :accredited : :unaccredited
+
     # Map display name to factory symbol
-    provider_type_symbol = case @provider_type
-                           when "Higher education institution (HEI)" then :hei
-                           when "School-centred initial teacher training (SCITT)" then :scitt
-                           when "School" then :school
-                           else :hei
-                           end
+    provider_type_map = {
+      "Higher education institution (HEI)" => :hei,
+      "School-centred initial teacher training (SCITT)" => :scitt,
+      "School" => :school
+    }
+    provider_type_symbol = provider_type_map[@provider_type] || :hei
 
     @provider = build(:provider, trait, provider_type: provider_type_symbol)
     fill_in "Operating name", with: @provider.operating_name

@@ -33,9 +33,12 @@ class Providers::DetailsController < CheckController
 
     if @provider.valid?
       # Store relevant attributes as a plain hash, not all AR attributes which may include DB-specific fields
-      provider_session.store_provider(@provider.attributes.slice(
-                                        "provider_type", "accreditation_status", "operating_name", "legal_name", "ukprn", "urn", "code"
-                                      ))
+      provider_session.store_provider(
+        @provider.attributes.slice(
+          "provider_type", "accreditation_status", "operating_name",
+          "legal_name", "ukprn", "urn", "code"
+        )
+      )
 
       redirect_to journey_coordinator(:details, @provider).next_path
     else

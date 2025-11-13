@@ -24,7 +24,8 @@ module AddressJourney
     end
 
     def load_address
-      journey_data[:address]
+      address_data = journey_data[:address]
+      address_data&.with_indifferent_access
     end
 
     def clear!

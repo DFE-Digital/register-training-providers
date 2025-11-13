@@ -235,4 +235,3 @@ RSpec.describe ProviderHelper, type: :helper do
     end
   end
 end
-

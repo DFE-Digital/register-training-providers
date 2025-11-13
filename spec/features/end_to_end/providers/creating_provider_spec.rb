@@ -8,6 +8,10 @@ RSpec.feature "Add Provider" do
     let(:county) { Faker::Address.state }
     let(:postcode) { Faker::Address.postcode }
 
+    before do
+      allow(Addresses::GeocodeService).to receive(:call).and_return({ latitude: 51.503396, longitude: -0.127764 })
+    end
+
     scenario "User can add a new provider with accreditation status: #{accreditation_status}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
@@ -79,9 +83,14 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_fill_in_the_address_details
-      and_i_am_taken_to("/providers/new/addresses")
-      and_i_can_see_the_title("Add address - Add provider - Register of training providers - GOV.UK")
+      and_i_am_taken_to("/providers/new/addresses/find")
+      and_i_can_see_the_title("Find address - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
+
+      # Skip finder and go directly to manual entry (this test focuses on provider creation, not address finding)
+      visit "/providers/new/addresses?skip_finder=true"
+
+      and_i_can_see_the_title("Add address - Add provider - Register of training providers - GOV.UK")
 
       and_i_click_on("Continue")
 

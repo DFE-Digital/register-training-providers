@@ -14,6 +14,7 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = prepare_select_form
 
+        context = setup_context? ? :setup : :manage
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
@@ -21,7 +22,8 @@ module Providers
           provider: provider,
           error: nil,
           goto_param: params[:goto],
-          back_path: back_path
+          back_path: back_path,
+          context: context
         )
       end
 
@@ -36,7 +38,7 @@ module Providers
 
         search_data = address_session.load_search
         unless search_data
-          redirect_to find_path, alert: "Please search for an address first"
+          redirect_to find_path, alert: t("controllers.providers.addresses.select.no_search_data")
           return
         end
 
@@ -44,7 +46,7 @@ module Providers
         index = @form.selected_address_index.to_i
 
         unless index >= 0 && index < results.size
-          flash.now[:alert] = "Please select a valid address"
+          flash.now[:alert] = t("controllers.providers.addresses.select.invalid_index")
           render_select_form
           return
         end
@@ -54,11 +56,8 @@ module Providers
         address_form.provider_id = provider.id unless setup_context?
         address_form.provider_creation_mode = setup_context?
 
-        unless address_form.valid?
-          flash.now[:alert] = "Invalid address selected"
-          render_select_form
-          return
-        end
+        # NOTE: No validation check needed here - OS API returns valid data
+        # If validation fails, it's a system error that should bubble up
 
         address_session.store_address(address_form.attributes)
         redirect_to success_path
@@ -70,6 +69,7 @@ module Providers
         search_data = address_session.load_search
         @results = search_data[:results] || []
         # @form already set in create action (with validation errors if invalid)
+        context = setup_context? ? :setup : :manage
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
@@ -77,7 +77,8 @@ module Providers
           provider: provider,
           error: flash.now[:alert],
           goto_param: params[:goto],
-          back_path: back_path
+          back_path: back_path,
+          context: context
         )
         render :new
       end

@@ -71,7 +71,7 @@ module AddressJourney
   private
 
     def setup_context?
-      !provider.persisted?
+      context == :setup || (context.nil? && !provider.persisted?)
     end
 
     def edit_context?

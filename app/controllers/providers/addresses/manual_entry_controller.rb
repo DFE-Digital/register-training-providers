@@ -21,10 +21,11 @@ module Providers
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
 
+        context = setup_context? ? :setup : :new
         @presenter = AddressJourney::ManualEntryPresenter.new(
           form: @form,
           provider: provider,
-          context: :new,
+          context: context,
           goto_param: params[:goto],
           from_select: params[:from] == "select",
           back_path: back_path
@@ -38,7 +39,9 @@ module Providers
         @address = provider.addresses.kept.find(params[:id])
         authorize @address
 
-        @form = ::AddressForm.from_address(@address)
+        # Load from session if user is returning from check page with temporary changes
+        address_data = address_session.load_address
+        @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
         @presenter = AddressJourney::ManualEntryPresenter.new(
           form: @form,
           provider: provider,
@@ -57,13 +60,18 @@ module Providers
         @form.provider_creation_mode = setup_context?
 
         if @form.valid?
+          coordinates = ::Addresses::GeocodeService.call(postcode: @form.postcode)
+          @form.latitude = coordinates[:latitude]
+          @form.longitude = coordinates[:longitude]
+
           address_session.store_address(@form.attributes)
           redirect_to success_path
         else
+          context = setup_context? ? :setup : :new
           @presenter = AddressJourney::ManualEntryPresenter.new(
             form: @form,
             provider: provider,
-            context: :new,
+            context: context,
             goto_param: params[:goto],
             from_select: params[:from] == "select",
             back_path: back_path
@@ -83,6 +91,10 @@ module Providers
         @form.provider_id = provider.id
 
         if @form.valid?
+          coordinates = ::Addresses::GeocodeService.call(postcode: @form.postcode)
+          @form.latitude = coordinates[:latitude]
+          @form.longitude = coordinates[:longitude]
+
           address_session.store_address(@form.attributes)
           redirect_to provider_address_check_path(@address, provider_id: provider.id)
         else

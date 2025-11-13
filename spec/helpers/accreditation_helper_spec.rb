@@ -66,4 +66,3 @@ RSpec.describe AccreditationHelper, type: :helper do
     end
   end
 end
-

@@ -1,0 +1,94 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "55adaa39c7bdb502a36c3c1fce43e3be5cdcb8a4a39485c9001a39a216cc6b0c",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/address_journey/_find_form.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::FindPresenter.new(:form => ::Addresses::FindForm.new(:postcode => params.dig(:find, :postcode), :building_name_or_number => params.dig(:find, :building_name_or_number)), :provider => provider, :back_path => back_path, :context => ((:setup or :manage))).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::FindPresenter.new(:form => ::Addresses::FindForm.new(:postcode => params.dig(:find, :postcode), :building_name_or_number => params.dig(:find, :building_name_or_number)), :provider => provider, :back_path => back_path, :context => ((:setup or :manage))).back_path) }) })",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Providers::Addresses::FindController",
+          "method": "create",
+          "line": 47,
+          "file": "app/controllers/providers/addresses/find_controller.rb",
+          "rendered": {
+            "name": "providers/addresses/find/new",
+            "file": "app/views/providers/addresses/find/new.html.erb"
+          }
+        },
+        {
+          "type": "template",
+          "name": "providers/addresses/find/new",
+          "line": 1,
+          "file": "app/views/providers/addresses/find/new.html.erb",
+          "rendered": {
+            "name": "address_journey/_find_form",
+            "file": "app/views/address_journey/_find_form.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "address_journey/_find_form"
+      },
+      "user_input": "params.dig(:find, :building_name_or_number)",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "False positive: back_path is constructed using Rails route helpers which sanitize parameters"
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "e923c111e9bd011305fa1c9647144554290a3047c0a56552c67da5c267c9393c",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/address_journey/_select_form.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :error => nil, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path), { :locals => ({ :\"govukcomponent::backlinkcomponent\" => GovukComponent::BackLinkComponent.new(:text => \"Back\", :href => AddressJourney::SelectPresenter.new(:results => ((address_session.load_search[:results] or [])), :postcode => address_session.load_search[:postcode], :building_name_or_number => address_session.load_search[:building_name_or_number], :provider => provider, :error => nil, :goto_param => params[:goto], :back_path => back_path, :context => ((:setup or :manage))).back_path) }) })",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Providers::Addresses::SelectController",
+          "method": "new",
+          "line": 19,
+          "file": "app/controllers/providers/addresses/select_controller.rb",
+          "rendered": {
+            "name": "providers/addresses/select/new",
+            "file": "app/views/providers/addresses/select/new.html.erb"
+          }
+        },
+        {
+          "type": "template",
+          "name": "providers/addresses/select/new",
+          "line": 1,
+          "file": "app/views/providers/addresses/select/new.html.erb",
+          "rendered": {
+            "name": "address_journey/_select_form",
+            "file": "app/views/address_journey/_select_form.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "address_journey/_select_form"
+      },
+      "user_input": "params[:goto]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "False positive: back_path is constructed using Rails route helpers which sanitize parameters"
+    }
+  ],
+  "updated": "2025-11-13 00:00:00 +0000",
+  "brakeman_version": "7.1.1"
+}

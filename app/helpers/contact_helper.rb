@@ -57,4 +57,3 @@ module ContactHelper
     end
   end
 end
-

@@ -4,7 +4,8 @@ module AddressJourney
 
     attr_reader :results, :postcode, :building_name_or_number, :error, :goto_param, :back_path
 
-    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, error: nil, goto_param: nil)
+    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, error: nil, goto_param: nil,
+                   context: nil)
       super(provider:)
       @results = results
       @postcode = postcode
@@ -12,6 +13,7 @@ module AddressJourney
       @error = error
       @goto_param = goto_param
       @back_path = back_path
+      @context = context
     end
 
     def form_url
@@ -52,14 +54,27 @@ module AddressJourney
       end
     end
 
+    def page_subtitle
+      setup_context? ? "Add provider" : super
+    end
+
     def cancel_path
       setup_context? ? providers_path : provider_addresses_path(provider)
+    end
+
+    def formatted_address(address)
+      [
+        address["address_line_1"],
+        address["address_line_2"],
+        address["town_or_city"],
+        address["postcode"]
+      ].compact_blank.join(", ")
     end
 
   private
 
     def setup_context?
-      !provider.persisted?
+      @context == :setup || (@context.nil? && !provider.persisted?)
     end
   end
 end

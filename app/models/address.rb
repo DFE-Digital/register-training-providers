@@ -39,18 +39,5 @@ class Address < ApplicationRecord
   validates :county, length: { maximum: 255 }, allow_blank: true
   validates :postcode, presence: true, postcode: true
 
-  before_save :geocode_address
-
   audited
-
-private
-
-  def geocode_address
-    return if postcode.blank?
-    return if latitude.present? && longitude.present?
-
-    coordinates = Addresses::GeocodeService.call(postcode:)
-    self.latitude = coordinates[:latitude]
-    self.longitude = coordinates[:longitude]
-  end
 end

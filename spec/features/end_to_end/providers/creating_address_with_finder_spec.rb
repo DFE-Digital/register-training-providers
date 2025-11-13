@@ -5,13 +5,13 @@ RSpec.describe "Creating address with finder", type: :feature do
   let(:api_response) do
     [
       {
-        address_line_1: "10 Downing Street",
-        address_line_2: nil,
-        town_or_city: "London",
-        county: nil,
-        postcode: "SW1A 2AA",
-        latitude: 51.503396,
-        longitude: -0.127764
+        "address_line_1" => "10 Downing Street",
+        "address_line_2" => nil,
+        "town_or_city" => "London",
+        "county" => nil,
+        "postcode" => "SW1A 2AA",
+        "latitude" => 51.503396,
+        "longitude" => -0.127764
       }
     ]
   end
@@ -32,17 +32,18 @@ RSpec.describe "Creating address with finder", type: :feature do
     end
 
     expect(page).to have_content("Find address")
-    expect(page).to have_content(provider.operating_name)
 
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("Confirm address")
+    expect(page).to have_content("1 address found for 'SW1A 2AA'")
     expect(page).to have_content("10 Downing Street")
     expect(page).to have_content("London")
     expect(page).to have_content("SW1A 2AA")
 
-    click_button "Confirm address"
+    # Select the address (even though there's only one, user must explicitly choose it)
+    choose "10 Downing Street, London, SW1A 2AA"
+    click_button "Continue"
 
     expect(page).to have_content("Check your answers")
     expect(page).to have_content("10 Downing Street")
@@ -65,29 +66,28 @@ RSpec.describe "Creating address with finder", type: :feature do
   scenario "finding and selecting from multiple addresses" do
     multiple_addresses = [
       {
-        address_line_1: "10 Downing Street",
-        town_or_city: "London",
-        postcode: "SW1A 2AA",
-        latitude: 51.503396,
-        longitude: -0.127764
+        "address_line_1" => "10 Downing Street",
+        "town_or_city" => "London",
+        "postcode" => "SW1A 2AA",
+        "latitude" => 51.503396,
+        "longitude" => -0.127764
       },
       {
-        address_line_1: "11 Downing Street",
-        town_or_city: "London",
-        postcode: "SW1A 2AA",
-        latitude: 51.503400,
-        longitude: -0.127800
+        "address_line_1" => "11 Downing Street",
+        "town_or_city" => "London",
+        "postcode" => "SW1A 2AA",
+        "latitude" => 51.503400,
+        "longitude" => -0.127800
       }
     ]
     allow(OrdnanceSurvey::AddressLookupService).to receive(:call).and_return(multiple_addresses)
 
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("Select an address")
-    expect(page).to have_content("2 addresses found")
+    expect(page).to have_content("2 addresses found for 'SW1A 2AA'")
     expect(page).to have_content("10 Downing Street, London, SW1A 2AA")
     expect(page).to have_content("11 Downing Street, London, SW1A 2AA")
 
@@ -106,20 +106,19 @@ RSpec.describe "Creating address with finder", type: :feature do
   scenario "no addresses found, enter manually" do
     allow(OrdnanceSurvey::AddressLookupService).to receive(:call).and_return([])
 
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
-    fill_in "Postcode", with: "XX1 1XX"
+    fill_in "Postcode", with: "ZZ99 9ZZ"
     click_button "Find address"
 
-    expect(page).to have_content("No addresses found")
-    expect(page).to have_content("We could not find any addresses for the postcode you entered")
+    expect(page).to have_content("No addresses found for 'ZZ99 9ZZ'")
 
-    click_link "Enter address manually"
+    click_link "enter the address manually"
 
     expect(page).to have_content("Address")
     fill_in "Address line 1", with: "Custom Address"
     fill_in "Town or city", with: "Custom Town"
-    fill_in "Postcode", with: "XX1 1XX"
+    fill_in "Postcode", with: "ZZ99 9ZZ"
 
     click_button "Continue"
 
@@ -134,12 +133,12 @@ RSpec.describe "Creating address with finder", type: :feature do
   end
 
   scenario "choosing to enter address manually from select page" do
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("Confirm address")
+    expect(page).to have_content("1 address found for 'SW1A 2AA'")
 
     click_link "Enter address manually"
 
@@ -159,7 +158,7 @@ RSpec.describe "Creating address with finder", type: :feature do
   end
 
   scenario "using back button from manual entry returns to find page" do
-    visit new_provider_address_path(provider_id: provider.id, skip_finder: true)
+    visit provider_new_address_path(provider_id: provider.id, skip_finder: "true")
 
     click_link "Back"
 
@@ -167,10 +166,10 @@ RSpec.describe "Creating address with finder", type: :feature do
   end
 
   scenario "searching with building name or number" do
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
     fill_in "Postcode", with: "SW1A 2AA"
-    fill_in "Building name or number (optional)", with: "10"
+    fill_in "Building number or name (optional)", with: "10"
     click_button "Find address"
 
     expect(OrdnanceSurvey::AddressLookupService).to have_received(:call).with(
@@ -178,11 +177,11 @@ RSpec.describe "Creating address with finder", type: :feature do
       building_name_or_number: "10"
     )
 
-    expect(page).to have_content("Confirm address")
+    expect(page).to have_content("1 address found for 'SW1A 2AA' and '10'")
   end
 
   scenario "validation error on find form" do
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
     fill_in "Postcode", with: "INVALID"
     click_button "Find address"
@@ -192,19 +191,15 @@ RSpec.describe "Creating address with finder", type: :feature do
   end
 
   scenario "validation error on select form" do
-    visit new_provider_find_path(provider_id: provider.id)
+    visit provider_new_find_path(provider_id: provider.id)
 
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    # Simulate posting without selecting an address by directly posting
-    page.driver.post(
-      provider_select_path(provider_id: provider.id),
-      { select: { selected_address_index: "-1" } }
-    )
+    # Try to continue without selecting an address
+    click_button "Continue"
 
-    visit current_path
-
+    expect(page).to have_content("There is a problem")
     expect(page).to have_content("Please select an address")
   end
 end

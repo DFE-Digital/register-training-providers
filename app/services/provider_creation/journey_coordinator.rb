@@ -42,9 +42,7 @@ module ProviderCreation
 
     def address_entry_path
       # Determines which address page to navigate to based on journey state
-      if address_manual_entry_only?
-        providers_setup_addresses_address_path(skip_finder: "true")
-      elsif search_results_available?
+      if search_results_available? && !address_manual_entry_only?
         providers_setup_addresses_select_path
       else
         providers_setup_addresses_address_path(skip_finder: "true")

@@ -3,7 +3,9 @@
     <%= govuk_summary_card(title: summary_card[:title]) do |card|
           if summary_card[:actions].present?
             summary_card[:actions].each do |action|
-              card.with_action { govuk_link_to(action[:text], action[:href]) }
+              card.with_action do
+                govuk_link_to(action[:text], action[:href], visually_hidden_text: action[:visually_hidden_text], no_visited_state: true)
+              end
             end
           end
           card.with_summary_list(rows: summary_card[:rows])

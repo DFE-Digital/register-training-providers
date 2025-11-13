@@ -9,7 +9,7 @@
 
 <%= form_for @presenter.form, url: @presenter.form_url, method: :post do |form| %>
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  
+
   <%= form.hidden_field :provider_id %>
 
   <%= form.govuk_text_field :postcode,
@@ -28,4 +28,3 @@
 <p class="govuk-body">
   <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
 </p>
-

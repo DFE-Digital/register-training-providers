@@ -2,9 +2,10 @@ module ProviderHelper
   def provider_summary_cards(providers)
     providers.map do |provider|
       tag = [" ", govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")] if provider.archived?
+      path_options = params[:debug] == "true" ? { debug: "true" } : {}
 
       {
-        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider)),
+        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider, path_options)),
                           tag]),
         rows: [
 
@@ -90,4 +91,3 @@ module ProviderHelper
     rows
   end
 end
-
