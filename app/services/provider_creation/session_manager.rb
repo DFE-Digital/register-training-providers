@@ -15,14 +15,6 @@ module ProviderCreation
       Provider.new(provider_data)
     end
 
-    def store_address(address_attributes)
-      data[:address] = address_attributes
-    end
-
-    def load_address
-      data[:address]
-    end
-
     def store_accreditation(accreditation_attributes)
       data[:accreditation] = accreditation_attributes
     end

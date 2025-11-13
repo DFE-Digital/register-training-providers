@@ -13,11 +13,6 @@ module Providers
           return
         end
 
-        # Mark that we came from check page if appropriate
-        if params[:goto] == "confirm" && setup_context?
-          address_session.mark_from_check!
-        end
-
         # Clear session only when starting completely fresh
         should_clear = params[:skip_finder].blank? && params[:goto].blank? && params[:from].blank?
         address_session.clear! if should_clear

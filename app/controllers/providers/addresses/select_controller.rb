@@ -9,11 +9,6 @@ module Providers
           return
         end
 
-        # Mark that we came from check page if appropriate
-        if params[:goto] == "confirm" && setup_context?
-          address_session.mark_from_check!
-        end
-
         @results = search_data[:results] || []
 
         # Pre-select the radio button if returning to this page with a stored address

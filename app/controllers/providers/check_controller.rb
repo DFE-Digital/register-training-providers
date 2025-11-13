@@ -5,7 +5,11 @@ class Providers::CheckController < CheckController
 private
 
   def model
-    @model ||= provider_session.load_provider || Provider.new
+    @model ||= if model_id.present?
+                 current_user.load_temporary(Provider, id: model_id, purpose: purpose)
+               else
+                 provider_session.load_provider || Provider.new
+               end
   end
 
   def change_provider_type_path
@@ -109,10 +113,6 @@ private
   end
 
   def clear_session_data
-    # Clear navigation state first in case we need to access other session data
-    address_session.clear_navigation_state!
-
-    # Then clear all session data
     provider_session.clear!
     address_session.clear!
   end
@@ -120,13 +120,15 @@ private
   def address_search_results_available?
     return false if model_id.present?
 
-    address_session.search_results_available?
+    search_data = address_session.load_search
+    search_data.present? && search_data[:results]&.any?
   end
 
   def address_manual_entry_only?
     return false if model_id.present?
 
-    address_session.manual_entry?
+    address_data = address_session.load_address
+    address_data&.dig(:manual_entry) == true || address_data&.dig("manual_entry") == true
   end
 
   def journey_coordinator

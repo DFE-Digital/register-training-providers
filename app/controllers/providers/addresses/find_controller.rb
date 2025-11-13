@@ -3,12 +3,7 @@ module Providers
     class FindController < ApplicationController
       def new
         # Clear session when starting a fresh journey (no goto param means not navigating within existing journey)
-        if params[:goto].blank?
-          address_session.clear!
-        elsif params[:goto] == "confirm" && setup_context?
-          # Mark that we came from check page for proper back navigation
-          address_session.mark_from_check!
-        end
+        address_session.clear! if params[:goto].blank?
 
         # Pre-fill form with previous search if available
         search_data = address_session.load_search
