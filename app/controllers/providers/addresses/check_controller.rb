@@ -15,7 +15,7 @@ module Providers
           return
         end
 
-        setup_check_view_data(:edit)
+        setup_view_data(:edit)
       end
 
       def new
@@ -34,7 +34,7 @@ module Providers
           return
         end
 
-        setup_check_view_data(:new)
+        setup_view_data(:new)
       end
 
       def create
@@ -129,15 +129,15 @@ module Providers
         end
       end
 
-      def check_cancel_path
+      def cancel_path
         provider_addresses_path(provider)
       end
 
-      def setup_check_view_data(context)
+      def setup_view_data(context)
         @back_path = back_path
         @change_path = change_path
         @save_path = save_path
-        @cancel_path = check_cancel_path
+        @cancel_path = cancel_path
         @save_button_text = "Save address"
 
         if context == :edit

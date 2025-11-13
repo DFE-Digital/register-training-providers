@@ -18,7 +18,7 @@ module Providers
                   ::Addresses::FindForm.new
                 end
 
-        setup_find_view_data
+        setup_view_data
       end
 
       def create
@@ -41,7 +41,7 @@ module Providers
 
           redirect_to select_path
         else
-          setup_find_view_data
+          setup_view_data
           render :new
         end
       end
@@ -64,15 +64,15 @@ module Providers
         provider_addresses_path(provider)
       end
 
-      def find_form_url
+      def form_url
         setup_context? ? providers_setup_addresses_find_path : provider_find_path(provider)
       end
 
-      def find_cancel_path
+      def cancel_path
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 
-      def find_manual_entry_path
+      def manual_entry_path
         if setup_context?
           providers_setup_addresses_address_path(skip_finder: "true")
         else
@@ -80,22 +80,22 @@ module Providers
         end
       end
 
-      def find_page_subtitle
+      def page_subtitle
         setup_context? ? "Add provider" : provider.operating_name.to_s
       end
 
-      def find_page_caption
+      def page_caption
         setup_context? ? "Add provider" : nil
       end
 
-      def setup_find_view_data
+      def setup_view_data
         @back_path = back_path
-        @form_url = find_form_url
-        @cancel_path = find_cancel_path
-        @manual_entry_path = find_manual_entry_path
+        @form_url = form_url
+        @cancel_path = cancel_path
+        @manual_entry_path = manual_entry_path
         @page_title = "Find address"
-        @page_subtitle = find_page_subtitle
-        @page_caption = find_page_caption
+        @page_subtitle = page_subtitle
+        @page_caption = page_caption
       end
     end
   end

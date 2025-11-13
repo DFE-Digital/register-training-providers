@@ -16,7 +16,7 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = prepare_select_form
 
-        setup_select_view_data(search_data)
+        setup_view_data(search_data)
       end
 
       def create
@@ -61,7 +61,7 @@ module Providers
         search_data = address_session.load_search
         @results = search_data[:results] || []
         # @form already set in create action (with validation errors if invalid)
-        setup_select_view_data(search_data)
+        setup_view_data(search_data)
         render :new
       end
 
@@ -91,7 +91,11 @@ module Providers
       end
 
       def manage_back_path
-        provider_new_find_path(provider)
+        if params[:goto] == "confirm"
+          provider_new_address_confirm_path(provider)
+        else
+          provider_new_find_path(provider)
+        end
       end
 
       def prepare_select_form
@@ -120,7 +124,7 @@ module Providers
         nil
       end
 
-      def select_form_url
+      def form_url
         options = {}
         options[:goto] = params[:goto] if params[:goto].present?
 
@@ -131,7 +135,7 @@ module Providers
         end
       end
 
-      def select_change_search_path
+      def change_search_path
         if setup_context?
           options = {}
           options[:goto] = params[:goto] if params[:goto].present?
@@ -141,7 +145,7 @@ module Providers
         end
       end
 
-      def select_manual_entry_path
+      def manual_entry_path
         query_params = { skip_finder: "true" }
         search_data = address_session.load_search
         results = search_data&.dig(:results) || []
@@ -155,31 +159,31 @@ module Providers
         end
       end
 
-      def select_cancel_path
+      def cancel_path
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 
-      def select_page_subtitle
+      def page_subtitle
         setup_context? ? "Add provider" : provider.operating_name.to_s
       end
 
-      def select_page_caption
+      def page_caption
         setup_context? ? "Add provider" : "Add address - #{provider.operating_name}"
       end
 
-      def setup_select_view_data(search_data)
+      def setup_view_data(search_data)
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number]
         )
         @back_path = back_path
-        @form_url = select_form_url
-        @change_search_path = select_change_search_path
-        @manual_entry_path = select_manual_entry_path
-        @cancel_path = select_cancel_path
-        @page_subtitle = select_page_subtitle
-        @page_caption = select_page_caption
+        @form_url = form_url
+        @change_search_path = change_search_path
+        @manual_entry_path = manual_entry_path
+        @cancel_path = cancel_path
+        @page_subtitle = page_subtitle
+        @page_caption = page_caption
       end
     end
   end

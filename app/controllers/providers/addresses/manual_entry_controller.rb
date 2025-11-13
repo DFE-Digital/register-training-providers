@@ -23,7 +23,7 @@ module Providers
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
 
-        setup_manual_entry_view_data(:new)
+        setup_view_data(:new)
       end
 
       def edit
@@ -36,7 +36,7 @@ module Providers
         # Load from session if user is returning from check page with temporary changes
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
-        setup_manual_entry_view_data(:edit)
+        setup_view_data(:edit)
       end
 
       def create
@@ -53,7 +53,7 @@ module Providers
           address_session.store_address(@form.attributes)
           redirect_to success_path
         else
-          setup_manual_entry_view_data(:new)
+          setup_view_data(:new)
           render :new
         end
       end
@@ -76,7 +76,7 @@ module Providers
           address_session.store_address(@form.attributes)
           redirect_to provider_address_check_path(@address, provider_id: provider.id)
         else
-          setup_manual_entry_view_data(:edit)
+          setup_view_data(:edit)
           render :edit
         end
       end
@@ -141,7 +141,7 @@ module Providers
         end
       end
 
-      def manual_entry_form_url
+      def form_url
         form_params = {}
         form_params[:goto] = params[:goto] if params[:goto].present?
         form_params[:from] = "select" if params[:from] == "select"
@@ -152,17 +152,17 @@ module Providers
         end
       end
 
-      def manual_entry_form_url_edit
+      def form_url_edit
         form_params = { provider_id: provider.id }
         form_params[:goto] = params[:goto] if params[:goto].present?
         provider_address_path(@address, form_params)
       end
 
-      def manual_entry_cancel_path
+      def cancel_path
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 
-      def manual_entry_page_title(context)
+      def page_title(context)
         if setup_context?
           "Add address"
         elsif context == :edit
@@ -172,7 +172,7 @@ module Providers
         end
       end
 
-      def manual_entry_page_subtitle(context)
+      def page_subtitle(context)
         if setup_context?
           "Add provider"
         elsif context == :edit
@@ -182,7 +182,7 @@ module Providers
         end
       end
 
-      def manual_entry_page_caption(context)
+      def page_caption(context)
         if setup_context?
           "Add provider"
         elsif context == :edit
@@ -192,18 +192,18 @@ module Providers
         end
       end
 
-      def setup_manual_entry_view_data(context)
+      def setup_view_data(context)
         @back_path = back_path
-        @cancel_path = manual_entry_cancel_path
-        @page_title = manual_entry_page_title(context)
-        @page_subtitle = manual_entry_page_subtitle(context)
-        @page_caption = manual_entry_page_caption(context)
+        @cancel_path = cancel_path
+        @page_title = page_title(context)
+        @page_subtitle = page_subtitle(context)
+        @page_caption = page_caption(context)
 
         if context == :edit
-          @form_url = manual_entry_form_url_edit
+          @form_url = form_url_edit
           @form_method = :patch
         else
-          @form_url = manual_entry_form_url
+          @form_url = form_url
           @form_method = :post
         end
       end
