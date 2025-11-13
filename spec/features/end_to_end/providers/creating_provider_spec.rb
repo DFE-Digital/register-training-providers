@@ -228,6 +228,10 @@ RSpec.feature "Add Provider" do
       expect(page).to have_content(town_or_city)
       expect(page).to have_content(county)
       expect(page).to have_content(postcode)
+
+      expect(page).to have_content("Location")
+      expect(page).to have_content("51.503396")
+      expect(page).to have_content("-0.127764")
     end
 
     def and_the_address_should_be_saved_to_the_provider

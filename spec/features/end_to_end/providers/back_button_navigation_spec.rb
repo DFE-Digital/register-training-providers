@@ -45,7 +45,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       then_i_should_be_on_the_details_page
       when_i_click_the_back_link
       then_i_should_be_on_the_type_page
-      and_my_provider_type_should_be_selected("Higher education institution (HEI)")
+      and_my_provider_type_should_be_selected(:hei)
 
       # Test back to onboarding
       when_i_click_the_back_link
@@ -55,7 +55,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       # Go forward through journey again
       when_i_click_on("Continue")
       then_i_should_be_on_the_type_page
-      and_my_provider_type_should_be_selected("Higher education institution (HEI)")
+      and_my_provider_type_should_be_selected(:hei)
 
       # Continue to details
       when_i_click_on("Continue")
@@ -86,7 +86,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       given_i_am_an_authenticated_user
       when_i_start_creating_a_provider
       and_i_answer_the_accreditation_question_as("Yes")
-      and_i_select_provider_type("School-centred initial teacher training (SCITT)")
+      and_i_select_provider_type(:scitt)
       and_i_fill_in_provider_details
       then_i_should_be_on_the_accreditation_page
       and_i_fill_in_accreditation_details
@@ -127,7 +127,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       # Back should go to Select with results still there
       when_i_click_the_back_link
       then_i_should_be_on_the_select_page
-      and_i_should_see_address_results
+      then_i_should_see_address_results
 
       # Can select an address and continue
       when_i_select_the_first_address
@@ -212,7 +212,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       # Back should go to Select (not Check)
       when_i_click_the_back_link
       then_i_should_be_on_the_select_page
-      and_i_should_see_address_results
+      then_i_should_see_address_results
 
       # Back again should go to Check
       when_i_click_the_back_link
@@ -264,23 +264,17 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
   def and_i_select_provider_type(type)
     @provider_type = type
-    choose(type)
+    # Map factory symbol to display name for choosing radio button
+    display_name = I18n.t("providers.provider_types.#{type}")
+    choose(display_name)
     click_on("Continue")
   end
 
   def and_i_fill_in_provider_details
-    # Build provider with correct accreditation status and provider type based on earlier choices
+    # Build provider with correct accreditation status
     trait = @accreditation_status == "accredited" ? :accredited : :unaccredited
+    @provider = build(:provider, trait, provider_type: @provider_type)
 
-    # Map display name to factory symbol
-    provider_type_map = {
-      "Higher education institution (HEI)" => :hei,
-      "School-centred initial teacher training (SCITT)" => :scitt,
-      "School" => :school
-    }
-    provider_type_symbol = provider_type_map[@provider_type] || :hei
-
-    @provider = build(:provider, trait, provider_type: provider_type_symbol)
     fill_in "Operating name", with: @provider.operating_name
     fill_in "Legal name (optional)", with: @provider.legal_name
     fill_in "UK provider reference number (UKPRN)", with: @provider.ukprn
@@ -291,10 +285,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def and_i_fill_in_accreditation_details
-    # Accreditation number format depends on provider type:
-    # - HEI: starts with 1 (e.g. "1234")
-    # - SCITT/School: starts with 5 (e.g. "5678")
-    @accreditation_number = @provider_type.include?("HEI") ? "1234" : "5678"
+    @accreditation_number = @provider.hei? ? "1234" : "5678"
     fill_in "Accredited provider number", with: @accreditation_number
     fill_in "accreditation_start_date_3i", with: "1"
     fill_in "accreditation_start_date_2i", with: "1"
@@ -303,7 +294,6 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def and_i_fill_in_manual_address
-    # Need to visit with skip_finder param to go directly to manual entry
     visit providers_setup_addresses_address_path(skip_finder: "true")
 
     @address = build(:address)
@@ -349,7 +339,8 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def and_my_provider_type_should_be_selected(type)
-    expect(find_field(type, checked: true)).to be_present
+    display_name = I18n.t("providers.provider_types.#{type}")
+    expect(find_field(display_name, checked: true)).to be_present
   end
 
   def and_my_provider_details_should_be_filled
@@ -375,7 +366,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   # Helpers for address search/select flow
   def and_i_complete_provider_details_as_unaccredited
     and_i_answer_the_accreditation_question_as("No")
-    and_i_select_provider_type("Higher education institution (HEI)")
+    and_i_select_provider_type(:hei)
     and_i_fill_in_provider_details
   end
 
@@ -391,8 +382,6 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     expect(page).to have_content("addresses found")
     expect(page).to have_css('input[type="radio"]')
   end
-
-  alias_method :and_i_should_see_address_results, :then_i_should_see_address_results
 
   def when_i_select_the_first_address
     first('input[type="radio"]').choose
@@ -440,23 +429,10 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def when_i_click_on_change_address_link
-    # Find the "Change" link in the address section
-    # Look for the Address heading and click the Change link after it
-    address_heading = find("h2", text: "Address")
-    address_section = address_heading.find(:xpath, "./following-sibling::*[1]")
-    within(address_section) do
-      click_on("Change", match: :first)
-    end
+    click_on("Change address")
   end
 
   def when_i_click_on_change_provider_details_link
-    # Find the "Change" link specifically for operating name (first provider detail field)
-    within find("dl.govuk-summary-list", match: :first) do
-      # Find the row with "Operating name" and click its change link
-      operating_name_row = find("dt", text: "Operating name").ancestor("div.govuk-summary-list__row")
-      within(operating_name_row) do
-        click_on("Change")
-      end
-    end
+    click_on("Change operating name")
   end
 end
