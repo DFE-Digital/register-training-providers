@@ -30,6 +30,50 @@ RSpec.describe ProvidersQuery do
       end
     end
 
+    context "with show_seed_data filter" do
+      let!(:provider_with_issues) { create(:provider, seed_data_with_issues: true) }
+
+      context "when show_seed_data includes 'show_seed_data_with_issues'" do
+        let(:filters) { { show_seed_data: ["show_seed_data_with_issues"] } }
+
+        it "returns only providers with seed_data_with_issues = true" do
+          expect(results).to contain_exactly(provider_with_issues)
+        end
+      end
+
+      context "when show_seed_data is empty" do
+        let(:filters) { { show_seed_data: [] } }
+
+        it "returns only providers with seed_data_with_issues = false" do
+          expect(results).to match_array([
+            provider_with_issues,
+            scitt,
+            school,
+            accredited_hei,
+            unaccredited_hei,
+            accredited_other,
+            unaccredited_other
+          ])
+        end
+      end
+
+      context "when show_seed_data key is missing" do
+        let(:filters) { {} }
+
+        it "returns providers with seed_data_with_issues = false" do
+          expect(results).to match_array([
+            provider_with_issues,
+            scitt,
+            school,
+            accredited_hei,
+            unaccredited_hei,
+            accredited_other,
+            unaccredited_other
+          ])
+        end
+      end
+    end
+
     context "with show_archived_provider" do
       let(:filters) { { show_archived: "show_archived_provider" } }
 

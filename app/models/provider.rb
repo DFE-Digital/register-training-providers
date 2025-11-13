@@ -2,19 +2,21 @@
 #
 # Table name: providers
 #
-#  id                   :uuid             not null, primary key
-#  accreditation_status :string           not null
-#  archived_at          :datetime
-#  code                 :citext           not null
-#  discarded_at         :datetime
-#  legal_name           :string
-#  operating_name       :string           not null
-#  provider_type        :string           not null
-#  searchable           :tsvector
-#  ukprn                :string(8)        not null
-#  urn                  :string(6)
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  accreditation_status  :string           not null
+#  archived_at           :datetime
+#  code                  :citext           not null
+#  discarded_at          :datetime
+#  legal_name            :string
+#  operating_name        :string           not null
+#  provider_type         :string           not null
+#  searchable            :tsvector
+#  seed_data_notes       :jsonb            not null
+#  seed_data_with_issues :boolean          default(FALSE), not null
+#  ukprn                 :string(8)        not null
+#  urn                   :string(6)
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -53,15 +55,16 @@ class Provider < ApplicationRecord
 
   validates :operating_name, presence: true
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }, length: { is: 8 }
-  validates :urn, presence: true, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
-                  if: :requires_urn?
+  validates :urn, presence: true, if: -> { requires_urn? }
+  validates :urn, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
+                  if: -> { urn.present? && requires_urn? }
   validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z0-9]{3}\z/i }, length: { is: 3 }
 
   before_save :upcase_code
   before_save :update_searchable
 
   pg_search_scope :search,
-                  against: %i[operating_name urn ukprn legal_name],
+                  against: %i[operating_name urn ukprn legal_name code],
                   using: {
                     tsearch: {
                       prefix: true,
@@ -129,6 +132,7 @@ private
       ukprn,
       legal_name,
       legal_name_normalised,
+      code,
     ].join(" ")
 
     to_tsvector = Arel::Nodes::NamedFunction.new(
