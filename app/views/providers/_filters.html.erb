@@ -41,12 +41,21 @@
                    remove_path: ->(_flag) {
                      providers_path_filters_without(:show_archived)
                    } %>
+
+        <%= render "selected_filter_list",
+                   title: "Seed data",
+                   values: provider_filters[:show_seed_data],
+                   labels: t("show_seed_data_labels"),
+                   remove_path: ->(_flag) {
+                     providers_path_filters_without(:show_seed_data)
+                   } if debug_mode? %>
       </div>
     <% end %>
 
     <div class="app-filter__options">
       <%= form_with url: providers_path, method: :get, scope: :filters, local: true, html: { novalidate: true } do |f| %>
         <%= hidden_field_tag("keywords", keywords) if keywords %>
+        <%= hidden_field_tag("debug", true) if debug_mode? %>
 
         <%= f.govuk_submit "Apply filters" %>
 
@@ -65,6 +74,10 @@
         <%= f.govuk_check_boxes_fieldset :show_archived, small: true, legend: { text: "Archived providers", size: "s" } do %>
           <%= f.govuk_check_box :show_archived, "show_archived_provider", label: { text: "Include archived providers" }, checked: filter_checked?(:show_archived, "show_archived_provider") %>
         <% end %>
+
+        <%= f.govuk_check_boxes_fieldset :show_archived, small: true, legend: { text: "Seed data", size: "s" } do %>
+          <%= f.govuk_check_box :show_seed_data, "show_seed_data_with_issues", label: { text: t("show_seed_data_labels.show_seed_data_with_issues") }, checked: filter_checked?(:show_seed_data, "show_seed_data_with_issues") %>
+        <% end if debug_mode? %>
       <% end %>
     </div>
   </div>

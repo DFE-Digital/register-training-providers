@@ -64,7 +64,7 @@ class Provider < ApplicationRecord
   before_save :update_searchable
 
   pg_search_scope :search,
-                  against: %i[operating_name urn ukprn legal_name],
+                  against: %i[operating_name urn ukprn legal_name code],
                   using: {
                     tsearch: {
                       prefix: true,
@@ -132,6 +132,7 @@ private
       ukprn,
       legal_name,
       legal_name_normalised,
+      code,
     ].join(" ")
 
     to_tsvector = Arel::Nodes::NamedFunction.new(
