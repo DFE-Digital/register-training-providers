@@ -3,134 +3,81 @@ require "rails_helper"
 RSpec.describe OrdnanceSurvey::AddressLookupService do
   describe ".call" do
     let(:postcode) { "SW1A 2AA" }
-    let(:api_key) { "test-api-key" }
 
     before do
-      allow(Env).to receive(:ordnance_survey_api_key).and_return(api_key)
+      allow(Env).to receive(:ordnance_survey_api_key).and_return("test-key")
     end
 
-    context "when searching by postcode only" do
-      let(:response_body) do
-        {
-          "results" => [
-            {
-              "DPA" => {
-                "ORGANISATION_NAME" => "PRIME MINISTER & FIRST LORD OF THE TREASURY",
-                "BUILDING_NUMBER" => "10",
-                "THOROUGHFARE_NAME" => "DOWNING STREET",
-                "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA",
-                "LAT" => 51.503396,
-                "LNG" => -0.127764
-              }
-            }
-          ]
-        }.to_json
-      end
-
-      before do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 200, body: response_body)
-      end
-
-      it "returns parsed addresses with titleized fields and coordinates" do
-        result = described_class.call(postcode:)
-
-        expect(result).to be_an(Array)
-        expect(result.size).to eq(1)
-        expect(result.first["address_line_1"]).to eq("Prime Minister & First Lord Of The Treasury, 10, Downing Street")
-        expect(result.first["town_or_city"]).to eq("London")
-        expect(result.first["postcode"]).to eq("SW1A 2AA")
-        expect(result.first["latitude"]).to eq(51.503396)
-        expect(result.first["longitude"]).to eq(-0.127764)
-      end
+    def stub_api_response(results)
+      stub_request(:get, /api\.os\.uk/).to_return(
+        status: 200,
+        body: { "results" => results }.to_json
+      )
     end
 
-    context "when searching with building name or number" do
-      let(:building) { "10" }
-      let(:response_body) do
-        {
-          "results" => [
-            {
-              "DPA" => {
-                "BUILDING_NUMBER" => "10",
-                "THOROUGHFARE_NAME" => "DOWNING STREET",
-                "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA",
-                "LAT" => 51.503396,
-                "LNG" => -0.127764
-              }
-            },
-            {
-              "DPA" => {
-                "BUILDING_NUMBER" => "11",
-                "THOROUGHFARE_NAME" => "DOWNING STREET",
-                "POST_TOWN" => "LONDON",
-                "POSTCODE" => "SW1A 2AA",
-                "LAT" => 51.503400,
-                "LNG" => -0.127770
-              }
-            }
-          ]
-        }.to_json
-      end
-
-      before do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 200, body: response_body)
-      end
-
-      it "filters results by building name or number" do
-        result = described_class.call(postcode: postcode, building_name_or_number: building)
-
-        expect(result.size).to eq(1)
-        expect(result.first["address_line_1"]).to eq("10, Downing Street")
-        expect(result.first["latitude"]).to eq(51.503396)
-        expect(result.first["longitude"]).to eq(-0.127764)
-      end
+    def build_address(building_number:, **overrides)
+      {
+        "DPA" => {
+          "BUILDING_NUMBER" => building_number,
+          "THOROUGHFARE_NAME" => "DOWNING STREET",
+          "POST_TOWN" => "LONDON",
+          "POSTCODE" => "SW1A 2AA",
+          "LAT" => 51.5034,
+          "LNG" => -0.1278
+        }.merge(overrides)
+      }
     end
 
-    context "when no results are found" do
-      let(:response_body) { { "results" => [] }.to_json }
+    it "parses addresses, titleizes fields, and includes coordinates" do
+      stub_api_response([
+        build_address(
+          building_number: "10",
+          "ORGANISATION_NAME" => "PRIME MINISTER & FIRST LORD OF THE TREASURY"
+        )
+      ])
 
-      before do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 200, body: response_body)
-      end
+      result = described_class.call(postcode:)
 
-      it "returns an empty array" do
-        result = described_class.call(postcode:)
-
-        expect(result).to eq([])
-      end
+      expect(result).to contain_exactly(
+        hash_including(
+          "address_line_1" => "Prime Minister & First Lord Of The Treasury, 10, Downing Street",
+          "town_or_city" => "London",
+          "postcode" => "SW1A 2AA",
+          "latitude" => 51.5034,
+          "longitude" => -0.1278
+        )
+      )
     end
 
-    context "when the API returns an error" do
-      before do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 500)
-      end
+    it "filters results by building name or number" do
+      stub_api_response([
+        build_address(building_number: "10"),
+        build_address(building_number: "11")
+      ])
 
-      it "returns an empty array" do
-        result = described_class.call(postcode:)
+      result = described_class.call(postcode: postcode, building_name_or_number: "10")
 
-        expect(result).to eq([])
-      end
+      expect(result.size).to eq(1)
+      expect(result.first["address_line_1"]).to include("10")
     end
 
-    context "when the API request fails" do
-      before do
-        stub_request(:get, /api\.os\.uk/)
-          .to_raise(StandardError.new("Network error"))
-      end
+    it "returns empty array when no results found" do
+      stub_api_response([])
 
-      it "returns an empty array and logs the error" do
-        expect(Rails.logger).to receive(:error).with(/OS Places API error/)
+      expect(described_class.call(postcode:)).to eq([])
+    end
 
-        result = described_class.call(postcode:)
+    it "returns empty array and logs error on API failure" do
+      stub_request(:get, /api\.os\.uk/).to_raise(StandardError.new("Network error"))
+      expect(Rails.logger).to receive(:error).with(/OS Places API error/)
 
-        expect(result).to eq([])
-      end
+      expect(described_class.call(postcode:)).to eq([])
+    end
+
+    it "returns empty array on non-success HTTP response" do
+      stub_request(:get, /api\.os\.uk/).to_return(status: 500)
+
+      expect(described_class.call(postcode:)).to eq([])
     end
   end
 end
