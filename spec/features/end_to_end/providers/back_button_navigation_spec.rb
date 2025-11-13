@@ -59,6 +59,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
       # Continue to details
       when_i_click_on("Continue")
+      @provider_type = :hei
       and_i_fill_in_provider_details
 
       # Now on address page - test back button

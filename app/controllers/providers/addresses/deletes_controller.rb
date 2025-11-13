@@ -27,12 +27,14 @@ module Providers
       end
 
       def setup_view_data
-        @page_title = "Confirm you want to delete #{provider.operating_name}'s address"
+        @provider = provider
+        @address = address
+        @page_title = "Confirm you want to delete #{@provider.operating_name}’s address"
         @page_subtitle = "Delete address"
         @page_caption = "Delete address"
-        @back_path = provider_addresses_path(provider)
-        @cancel_path = provider_addresses_path(provider)
-        @delete_path = provider_address_delete_path(address, provider_id: provider.id)
+        @back_path = provider_addresses_path(@provider)
+        @cancel_path = provider_addresses_path(@provider)
+        @delete_path = provider_address_delete_path(@address, provider_id: @provider.id)
       end
     end
   end
