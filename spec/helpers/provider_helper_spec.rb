@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProviderSummaryHelper, type: :helper do
+RSpec.describe ProviderHelper, type: :helper do
   describe "#provider_summary_cards" do
     let(:provider) { build_stubbed(:provider, legal_name: nil, urn: "50000") }
     let(:providers) { [provider] }
@@ -235,3 +235,4 @@ RSpec.describe ProviderSummaryHelper, type: :helper do
     end
   end
 end
+

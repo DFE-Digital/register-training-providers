@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProviderSummaryHelper, type: :helper do
+RSpec.describe AccreditationHelper, type: :helper do
   describe "#accreditation_summary_cards" do
     let(:provider) { create(:provider, :accredited) }
     context "with no accreditations" do
@@ -66,3 +66,4 @@ RSpec.describe ProviderSummaryHelper, type: :helper do
     end
   end
 end
+
