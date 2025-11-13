@@ -1,10 +1,12 @@
 module AddressJourney
-  class DeletePresenter < BasePresenter
-    attr_reader :address
+  class DeletePresenter
+    include Rails.application.routes.url_helpers
+
+    attr_reader :address, :provider
 
     def initialize(address:, provider:)
-      super(provider:)
       @address = address
+      @provider = provider
     end
 
     def page_title
@@ -18,6 +20,10 @@ module AddressJourney
     alias_method :page_caption, :page_subtitle
 
     def back_path
+      provider_addresses_path(provider)
+    end
+
+    def cancel_path
       provider_addresses_path(provider)
     end
 

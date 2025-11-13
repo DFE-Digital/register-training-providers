@@ -1,6 +1,8 @@
 module Providers
   module Addresses
     class SelectController < ApplicationController
+      include AddressJourneyController
+
       def new
         search_data = address_session.load_search
 
@@ -14,15 +16,18 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = prepare_select_form
 
-        context = setup_context? ? :setup : :manage
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
           provider: provider,
-          goto_param: params[:goto],
           back_path: back_path,
-          context: context
+          form_url: select_form_url,
+          change_search_path: select_change_search_path,
+          manual_entry_path: select_manual_entry_path,
+          cancel_path: select_cancel_path,
+          page_subtitle: select_page_subtitle,
+          page_caption: select_page_caption
         )
       end
 
@@ -68,48 +73,20 @@ module Providers
         search_data = address_session.load_search
         @results = search_data[:results] || []
         # @form already set in create action (with validation errors if invalid)
-        context = setup_context? ? :setup : :manage
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
           provider: provider,
-          goto_param: params[:goto],
           back_path: back_path,
-          context: context
+          form_url: select_form_url,
+          change_search_path: select_change_search_path,
+          manual_entry_path: select_manual_entry_path,
+          cancel_path: select_cancel_path,
+          page_subtitle: select_page_subtitle,
+          page_caption: select_page_caption
         )
         render :new
-      end
-
-      def provider
-        @provider ||= if params[:provider_id]
-                        Provider.find(params[:provider_id])
-                      else
-                        provider_session.load_provider || Provider.new
-                      end
-      end
-
-      def setup_context?
-        params[:provider_id].blank?
-      end
-
-      def address_session
-        context = setup_context? ? :setup : :manage
-        @address_session ||= AddressJourney::SessionManager.new(session, context:)
-      end
-
-      def provider_session
-        @provider_session ||= ProviderCreation::SessionManager.new(session)
-      end
-
-      def journey_coordinator
-        @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
-          current_step: :address_select,
-          session_manager: provider_session,
-          provider: provider,
-          from_check: params[:goto] == "confirm",
-          address_session: address_session
-        )
       end
 
       def find_path
@@ -126,7 +103,7 @@ module Providers
           if params[:goto] == "confirm"
             new_provider_confirm_path
           else
-            journey_coordinator.next_path
+            journey_coordinator(:address_select).next_path
           end
         else
           provider_new_address_confirm_path(provider)
@@ -134,7 +111,7 @@ module Providers
       end
 
       def back_path
-        setup_context? ? journey_coordinator.back_path : manage_back_path
+        setup_context? ? journey_coordinator(:address_select).back_path : manage_back_path
       end
 
       def manage_back_path
@@ -165,6 +142,53 @@ module Providers
         end
 
         nil
+      end
+
+      def select_form_url
+        options = {}
+        options[:goto] = params[:goto] if params[:goto].present?
+
+        if setup_context?
+          providers_setup_addresses_select_path(options)
+        else
+          provider_select_path(provider, options)
+        end
+      end
+
+      def select_change_search_path
+        if setup_context?
+          options = {}
+          options[:goto] = params[:goto] if params[:goto].present?
+          providers_setup_addresses_find_path(options)
+        else
+          provider_new_find_path(provider)
+        end
+      end
+
+      def select_manual_entry_path
+        query_params = { skip_finder: "true" }
+        search_data = address_session.load_search
+        results = search_data&.dig(:results) || []
+        query_params[:from] = "select" if results.present?
+        query_params[:goto] = params[:goto] if params[:goto].present?
+
+        if setup_context?
+          providers_setup_addresses_address_path(query_params)
+        else
+          provider_new_address_path(provider, query_params)
+        end
+      end
+
+      def select_cancel_path
+        setup_context? ? providers_path : provider_addresses_path(provider)
+      end
+
+      def select_page_subtitle
+        setup_context? ? "Add provider" : provider.operating_name.to_s
+      end
+
+      def select_page_caption
+        setup_context? ? "Add provider" : "Add address - #{provider.operating_name}"
       end
     end
   end

@@ -3,11 +3,9 @@ module Addresses
     include ActiveModel::Model
     include ActiveModel::Attributes
     include ActiveModel::Validations::Callbacks
-    include SaveAsTemporary
 
     attribute :postcode, :string
     attribute :building_name_or_number, :string
-    attribute :provider_id, :string
 
     before_validation :normalize_postcode
 
@@ -21,8 +19,6 @@ module Addresses
     def self.i18n_scope
       :activerecord
     end
-
-    alias_method :serializable_hash, :attributes
 
   private
 

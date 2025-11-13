@@ -1,6 +1,8 @@
 module Providers
   module Addresses
     class FindController < ApplicationController
+      include AddressJourneyController
+
       def new
         # Clear session when starting a fresh journey (no goto param means not navigating within existing journey)
         address_session.clear! if params[:goto].blank?
@@ -16,9 +18,7 @@ module Providers
                   ::Addresses::FindForm.new
                 end
 
-        context = setup_context? ? :setup : :manage
-        @presenter = AddressJourney::FindPresenter.new(form: @form, provider: provider, back_path: back_path,
-                                                       context: context)
+        setup_find_view_data
       end
 
       def create
@@ -41,45 +41,12 @@ module Providers
 
           redirect_to select_path
         else
-          context = setup_context? ? :setup : :manage
-          @presenter = AddressJourney::FindPresenter.new(form: @form, provider: provider, back_path: back_path,
-                                                         context: context)
+          setup_find_view_data
           render :new
         end
       end
 
     private
-
-      def provider
-        @provider ||= if params[:provider_id]
-                        Provider.find(params[:provider_id])
-                      else
-                        provider_session.load_provider || Provider.new
-                      end
-      end
-
-      def setup_context?
-        params[:provider_id].blank?
-      end
-
-      def address_session
-        context = setup_context? ? :setup : :manage
-        @address_session ||= AddressJourney::SessionManager.new(session, context:)
-      end
-
-      def provider_session
-        @provider_session ||= ProviderCreation::SessionManager.new(session)
-      end
-
-      def journey_coordinator
-        @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
-          current_step: :address_find,
-          session_manager: provider_session,
-          provider: provider,
-          from_check: params[:goto] == "confirm",
-          address_session: address_session
-        )
-      end
 
       def select_path
         if setup_context?
@@ -90,11 +57,45 @@ module Providers
       end
 
       def back_path
-        setup_context? ? journey_coordinator.back_path : manage_back_path
+        setup_context? ? journey_coordinator(:address_find).back_path : manage_back_path
       end
 
       def manage_back_path
         provider_addresses_path(provider)
+      end
+
+      def find_form_url
+        setup_context? ? providers_setup_addresses_find_path : provider_find_path(provider)
+      end
+
+      def find_cancel_path
+        setup_context? ? providers_path : provider_addresses_path(provider)
+      end
+
+      def find_manual_entry_path
+        if setup_context?
+          providers_setup_addresses_address_path(skip_finder: "true")
+        else
+          provider_new_address_path(provider, skip_finder: "true")
+        end
+      end
+
+      def find_page_subtitle
+        setup_context? ? "Add provider" : provider.operating_name.to_s
+      end
+
+      def find_page_caption
+        setup_context? ? "Add provider" : nil
+      end
+
+      def setup_find_view_data
+        @back_path = back_path
+        @form_url = find_form_url
+        @cancel_path = find_cancel_path
+        @manual_entry_path = find_manual_entry_path
+        @page_title = "Find address"
+        @page_subtitle = find_page_subtitle
+        @page_caption = find_page_caption
       end
     end
   end

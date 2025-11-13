@@ -1,16 +1,23 @@
 module AddressJourney
-  class SelectPresenter < BasePresenter
-    attr_reader :results, :postcode, :building_name_or_number, :goto_param, :back_path
+  class SelectPresenter
+    include Rails.application.routes.url_helpers
 
-    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, goto_param: nil,
-                   context: nil)
-      super(provider:)
+    attr_reader :results, :postcode, :building_name_or_number, :provider, :back_path, :form_url, :change_search_path,
+                :manual_entry_path, :cancel_path, :page_subtitle, :page_caption
+
+    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, form_url:,
+                   change_search_path:, manual_entry_path:, cancel_path:, page_subtitle:, page_caption:)
       @results = results
       @postcode = postcode
       @building_name_or_number = building_name_or_number
-      @goto_param = goto_param
+      @provider = provider
       @back_path = back_path
-      @context = context
+      @form_url = form_url
+      @change_search_path = change_search_path
+      @manual_entry_path = manual_entry_path
+      @cancel_path = cancel_path
+      @page_subtitle = page_subtitle
+      @page_caption = page_caption
     end
 
     def page_title
@@ -25,52 +32,6 @@ module AddressJourney
       "Continue"
     end
 
-    def form_url
-      if setup_context?
-        if @goto_param.present?
-          providers_setup_addresses_select_path(goto: @goto_param)
-        else
-          providers_setup_addresses_select_path
-        end
-      elsif @goto_param.present?
-        provider_select_path(provider, goto: @goto_param)
-      else
-        provider_select_path(provider)
-      end
-    end
-
-    def change_search_path
-      if setup_context?
-        if @goto_param.present?
-          providers_setup_addresses_find_path(goto: @goto_param)
-        else
-          providers_setup_addresses_find_path
-        end
-      else
-        provider_new_find_path(provider)
-      end
-    end
-
-    def manual_entry_path
-      query_params = { skip_finder: "true" }
-      query_params[:from] = "select" if results.present?
-      query_params[:goto] = @goto_param if @goto_param.present?
-
-      if setup_context?
-        providers_setup_addresses_address_path(query_params)
-      else
-        provider_new_address_path(provider, query_params)
-      end
-    end
-
-    def page_subtitle
-      setup_context? ? "Add provider" : super
-    end
-
-    def cancel_path
-      setup_context? ? providers_path : provider_addresses_path(provider)
-    end
-
     def formatted_address(address)
       [
         address["address_line_1"],
@@ -81,10 +42,6 @@ module AddressJourney
     end
 
   private
-
-    def setup_context?
-      @context == :setup || (@context.nil? && !provider.persisted?)
-    end
 
     def no_results_title
       "No addresses found for #{formatted_search_terms}"

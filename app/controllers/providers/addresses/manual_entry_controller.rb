@@ -1,6 +1,8 @@
 module Providers
   module Addresses
     class ManualEntryController < ApplicationController
+      include AddressJourneyController
+
       def new
         # Setup mode specific validation
         if setup_context? && (provider.nil? || provider.invalid?)
@@ -21,15 +23,7 @@ module Providers
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
 
-        context = setup_context? ? :setup : :new
-        @presenter = AddressJourney::ManualEntryPresenter.new(
-          form: @form,
-          provider: provider,
-          context: context,
-          goto_param: params[:goto],
-          from_select: params[:from] == "select",
-          back_path: back_path
-        )
+        setup_manual_entry_view_data(:new)
       end
 
       def edit
@@ -42,15 +36,7 @@ module Providers
         # Load from session if user is returning from check page with temporary changes
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
-        @presenter = AddressJourney::ManualEntryPresenter.new(
-          form: @form,
-          provider: provider,
-          context: :edit,
-          address: @address,
-          goto_param: params[:goto],
-          from_select: false,
-          back_path: back_path
-        )
+        setup_manual_entry_view_data(:edit)
       end
 
       def create
@@ -67,15 +53,7 @@ module Providers
           address_session.store_address(@form.attributes)
           redirect_to success_path
         else
-          context = setup_context? ? :setup : :new
-          @presenter = AddressJourney::ManualEntryPresenter.new(
-            form: @form,
-            provider: provider,
-            context: context,
-            goto_param: params[:goto],
-            from_select: params[:from] == "select",
-            back_path: back_path
-          )
+          setup_manual_entry_view_data(:new)
           render :new
         end
       end
@@ -98,52 +76,12 @@ module Providers
           address_session.store_address(@form.attributes)
           redirect_to provider_address_check_path(@address, provider_id: provider.id)
         else
-          @presenter = AddressJourney::ManualEntryPresenter.new(
-            form: @form,
-            provider: provider,
-            context: :edit,
-            address: @address,
-            goto_param: params[:goto],
-            from_select: false,
-            back_path: back_path
-          )
+          setup_manual_entry_view_data(:edit)
           render :edit
         end
       end
 
     private
-
-      def provider
-        @provider ||= if params[:provider_id]
-                        Provider.find(params[:provider_id])
-                      else
-                        provider_session.load_provider
-                      end
-      end
-
-      def setup_context?
-        params[:provider_id].blank?
-      end
-
-      def address_session
-        context = setup_context? ? :setup : :manage
-        @address_session ||= AddressJourney::SessionManager.new(session, context:)
-      end
-
-      def provider_session
-        @provider_session ||= ProviderCreation::SessionManager.new(session)
-      end
-
-      def journey_coordinator
-        @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
-          current_step: :address_manual_entry,
-          session_manager: provider_session,
-          provider: provider,
-          from_check: params[:goto] == "confirm",
-          address_session: address_session,
-          from_select: params[:from] == "select"
-        )
-      end
 
       def address_params
         params.expect(address: [:address_line_1,
@@ -169,7 +107,7 @@ module Providers
           if params[:goto] == "confirm"
             new_provider_confirm_path
           else
-            journey_coordinator.next_path
+            journey_coordinator(:address_manual_entry).next_path
           end
         else
           provider_new_address_confirm_path(provider)
@@ -177,7 +115,7 @@ module Providers
       end
 
       def back_path
-        setup_context? ? journey_coordinator.back_path : manage_back_path
+        setup_context? ? journey_coordinator(:address_manual_entry).back_path : manage_back_path
       end
 
       def manage_back_path
@@ -200,6 +138,73 @@ module Providers
         # Default - from find page
         else
           provider_new_find_path(provider)
+        end
+      end
+
+      def manual_entry_form_url
+        form_params = {}
+        form_params[:goto] = params[:goto] if params[:goto].present?
+        form_params[:from] = "select" if params[:from] == "select"
+        if setup_context?
+          providers_setup_addresses_address_path(form_params)
+        else
+          provider_addresses_path(provider, form_params)
+        end
+      end
+
+      def manual_entry_form_url_edit
+        form_params = { provider_id: provider.id }
+        form_params[:goto] = params[:goto] if params[:goto].present?
+        provider_address_path(@address, form_params)
+      end
+
+      def manual_entry_cancel_path
+        setup_context? ? providers_path : provider_addresses_path(provider)
+      end
+
+      def manual_entry_page_title(context)
+        if setup_context?
+          "Add address"
+        elsif context == :edit
+          provider.operating_name.to_s
+        else
+          "Add address - #{provider.operating_name}"
+        end
+      end
+
+      def manual_entry_page_subtitle(context)
+        if setup_context?
+          "Add provider"
+        elsif context == :edit
+          "Edit address"
+        else
+          "Add address"
+        end
+      end
+
+      def manual_entry_page_caption(context)
+        if setup_context?
+          "Add provider"
+        elsif context == :edit
+          provider.operating_name.to_s
+        else
+          "Add address - #{provider.operating_name}"
+        end
+      end
+
+      def setup_manual_entry_view_data(context)
+        @back_path = back_path
+        @cancel_path = manual_entry_cancel_path
+        @page_title = manual_entry_page_title(context)
+        @page_subtitle = manual_entry_page_subtitle(context)
+        @page_caption = manual_entry_page_caption(context)
+
+        if context == :edit
+          @form_url = manual_entry_form_url_edit
+          @form_method = :patch
+        else
+          @form_url = manual_entry_form_url
+          @form_method = :post
         end
       end
     end

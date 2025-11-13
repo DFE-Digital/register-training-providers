@@ -1,6 +1,8 @@
 module Providers
   module Addresses
     class CheckController < ApplicationController
+      include AddressJourneyController
+
       def show
         @address = provider.addresses.kept.find(params[:id])
         authorize @address
@@ -13,15 +15,7 @@ module Providers
           return
         end
 
-        @presenter = AddressJourney::CheckPresenter.new(
-          form: @form,
-          provider: provider,
-          context: :edit,
-          address: @address,
-          back_path: back_path,
-          change_path: change_path,
-          save_path: save_path
-        )
+        setup_check_view_data(:edit)
       end
 
       def new
@@ -40,14 +34,7 @@ module Providers
           return
         end
 
-        @presenter = AddressJourney::CheckPresenter.new(
-          form: @form,
-          provider: provider,
-          context: :new,
-          back_path: back_path,
-          change_path: change_path,
-          save_path: save_path
-        )
+        setup_check_view_data(:new)
       end
 
       def create
@@ -90,14 +77,6 @@ module Providers
       end
 
     private
-
-      def provider
-        @provider ||= Provider.find(params[:provider_id])
-      end
-
-      def address_session
-        @address_session ||= AddressJourney::SessionManager.new(session, context: :manage)
-      end
 
       def search_available?
         search_data = address_session.load_search
@@ -147,6 +126,28 @@ module Providers
           provider_address_check_path(@address, provider_id: provider.id)
         else
           provider_address_confirm_path(provider)
+        end
+      end
+
+      def check_cancel_path
+        provider_addresses_path(provider)
+      end
+
+      def setup_check_view_data(context)
+        @back_path = back_path
+        @change_path = change_path
+        @save_path = save_path
+        @cancel_path = check_cancel_path
+        @save_button_text = "Save address"
+
+        if context == :edit
+          @form_method = :patch
+          @page_subtitle = provider.operating_name.to_s
+          @page_caption = provider.operating_name.to_s
+        else
+          @form_method = :post
+          @page_subtitle = "Add address - #{provider.operating_name}"
+          @page_caption = "Add address - #{provider.operating_name}"
         end
       end
     end

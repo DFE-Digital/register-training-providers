@@ -1,20 +1,19 @@
 <%= content_for(:breadcrumbs) do %>
-  <%= govuk_back_link(text: "Back", href: @presenter.back_path) %>
+  <%= govuk_back_link(text: "Back", href: @back_path) %>
 <% end %>
 
-<% page_data(title: "Check your answers", subtitle: @presenter.page_subtitle, caption: @presenter.page_caption) %>
+<% page_data(title: "Check your answers", subtitle: @page_subtitle, caption: @page_caption) %>
 
-<%= govuk_summary_list(rows: address_rows(@presenter.form, @presenter.change_path)) %>
+<%= govuk_summary_list(rows: address_rows(@form, @change_path)) %>
 
-<% if show_location_section?(@presenter.form) %>
+<% if show_location_section?(@form) %>
   <h2 class="govuk-heading-m">Location</h2>
   <p class="govuk-body">We collect location data to support location-based searches. It's generated automatically from the address you entered.</p>
-  <%= govuk_summary_list(rows: location_rows(@presenter.form)) %>
+  <%= govuk_summary_list(rows: location_rows(@form)) %>
 <% end %>
 
-<%= govuk_button_to(@presenter.save_button_text, @presenter.save_path, method: @presenter.form_method) %>
+<%= govuk_button_to(@save_button_text, @save_path, method: @form_method) %>
 
 <p class="govuk-body">
-  <%= govuk_link_to("Cancel", @presenter.cancel_path) %>
+  <%= govuk_link_to("Cancel", @cancel_path) %>
 </p>
-
