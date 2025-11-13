@@ -151,3 +151,5 @@ en:
     unaccredited: "Not accredited"
   show_archived_labels:
     show_archived_provider: "Include archived providers"
+  show_seed_data_labels:
+    show_seed_data_with_issues: "Only show provider with data issues"
