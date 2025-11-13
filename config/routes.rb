@@ -36,7 +36,7 @@ Rails.application.routes.draw do
 
   # System admin routes
   scope module: :system_admin, path: "system-admin" do
-    mount Blazer::Engine, at: "/blazer"
+    mount Blazer::Engine, at: "/blazer", constraints: RouteConstraints::SystemAdminConstraint.new
     get "/blazer", to: redirect("/sign-in"), status: 302
   end
 

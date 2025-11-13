@@ -9,6 +9,7 @@ namespace :example_data do
       persona = Persona.find_or_initialize_by(email: persona_attributes[:email])
       persona.first_name = persona_attributes[:first_name]
       persona.last_name = persona_attributes[:last_name]
+      persona.system_admin = persona_attributes[:system_admin?]
       persona.save!
 
       persona.discard! if persona_attributes[:discarded?] && persona.kept?

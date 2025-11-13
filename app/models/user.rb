@@ -9,6 +9,7 @@
 #  first_name        :string           not null
 #  last_name         :string           not null
 #  last_signed_in_at :datetime
+#  system_admin      :boolean          default(FALSE)
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #
