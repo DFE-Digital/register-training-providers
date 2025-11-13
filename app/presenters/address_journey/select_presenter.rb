@@ -4,8 +4,7 @@ module AddressJourney
 
     attr_reader :results, :postcode, :building_name_or_number, :error, :goto_param, :back_path
 
-    def initialize(results:, postcode:, building_name_or_number:, provider:, error: nil, goto_param: nil,
-                   back_path:)
+    def initialize(results:, postcode:, building_name_or_number:, provider:, back_path:, error: nil, goto_param: nil)
       super(provider:)
       @results = results
       @postcode = postcode
@@ -22,12 +21,10 @@ module AddressJourney
         else
           providers_setup_addresses_select_path
         end
+      elsif @goto_param.present?
+        provider_select_path(provider, goto: @goto_param)
       else
-        if @goto_param.present?
-          provider_select_path(provider, goto: @goto_param)
-        else
-          provider_select_path(provider)
-        end
+        provider_select_path(provider)
       end
     end
 
@@ -47,7 +44,7 @@ module AddressJourney
       query_params = { skip_finder: "true" }
       query_params[:from] = "select" if results.present?
       query_params[:goto] = @goto_param if @goto_param.present?
-      
+
       if setup_context?
         providers_setup_addresses_address_path(query_params)
       else

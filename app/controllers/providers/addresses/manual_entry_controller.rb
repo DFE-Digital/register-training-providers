@@ -28,11 +28,11 @@ module Providers
 
         @presenter = AddressJourney::ManualEntryPresenter.new(
           form: @form,
-          provider:,
+          provider: provider,
           context: :new,
           goto_param: params[:goto],
           from_select: params[:from] == "select",
-          back_path:
+          back_path: back_path
         )
       end
 
@@ -46,34 +46,32 @@ module Providers
         @form = ::AddressForm.from_address(@address)
         @presenter = AddressJourney::ManualEntryPresenter.new(
           form: @form,
-          provider:,
+          provider: provider,
           context: :edit,
           address: @address,
           goto_param: params[:goto],
           from_select: false,
-          back_path:
+          back_path: back_path
         )
       end
 
       def create
-        result = AddressJourney::ManualEntry.call(
-          address_params: address_params,
-          session_manager: address_session,
-          provider_id: setup_context? ? nil : provider.id,
-          manual_entry: true
-        )
+        @form = AddressForm.new(address_params)
+        @form.provider_id = provider.id unless setup_context?
+        @form.manual_entry = true if @form.respond_to?(:manual_entry=)
+        @form.provider_creation_mode = setup_context?
 
-        if result[:success]
+        if @form.valid?
+          address_session.store_address(@form.attributes)
           redirect_to success_path
         else
-          @form = result[:form]
           @presenter = AddressJourney::ManualEntryPresenter.new(
             form: @form,
-            provider:,
+            provider: provider,
             context: :new,
             goto_param: params[:goto],
             from_select: params[:from] == "select",
-            back_path:
+            back_path: back_path
           )
           render :new
         end
@@ -95,12 +93,12 @@ module Providers
         else
           @presenter = AddressJourney::ManualEntryPresenter.new(
             form: @form,
-            provider:,
+            provider: provider,
             context: :edit,
             address: @address,
             goto_param: params[:goto],
             from_select: false,
-            back_path:
+            back_path: back_path
           )
           render :edit
         end

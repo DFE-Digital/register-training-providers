@@ -1,5 +1,5 @@
 <%= render CheckYourAnswers::View.new(
-      rows: address_rows(@presenter.model, @presenter.change_path),
+      rows: address_rows(@presenter.form, @presenter.change_path),
       subtitle: @presenter.page_subtitle,
       caption: @presenter.page_caption,
       back_path: @presenter.back_path,

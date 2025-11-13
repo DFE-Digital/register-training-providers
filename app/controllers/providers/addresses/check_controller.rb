@@ -14,13 +14,13 @@ module Providers
         end
 
         @presenter = AddressJourney::CheckPresenter.new(
-          model: @form,
+          form: @form,
           provider: provider,
           context: :edit,
           address: @address,
-          goto_param: params[:goto],
-          search_available: search_available?,
-          manual_entry_only: manual_entry_only?
+          back_path: back_path,
+          change_path: change_path,
+          save_path: save_path
         )
       end
 
@@ -41,12 +41,12 @@ module Providers
         end
 
         @presenter = AddressJourney::CheckPresenter.new(
-          model: @form,
+          form: @form,
           provider: provider,
           context: :new,
-          goto_param: params[:goto],
-          search_available: search_available?,
-          manual_entry_only: manual_entry_only?
+          back_path: back_path,
+          change_path: change_path,
+          save_path: save_path
         )
       end
 
@@ -105,6 +105,50 @@ module Providers
 
       def manual_entry_only?
         address_session.manual_entry?
+      end
+
+      def edit_context?
+        params[:id].present?
+      end
+
+      def back_path
+        if params[:goto] == "confirm"
+          # Coming from check page after editing - return to check
+          if edit_context?
+            provider_address_check_path(@address, provider_id: provider.id)
+          else
+            provider_new_address_confirm_path(provider)
+          end
+        elsif edit_context?
+          provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+        elsif manual_entry_only?
+          # User did manual entry, go back to manual entry page even if search results exist
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        elsif search_available?
+          provider_new_select_path(provider)
+        else
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        end
+      end
+
+      def change_path
+        if edit_context?
+          provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+        elsif manual_entry_only?
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        elsif search_available?
+          provider_new_select_path(provider, goto: "confirm")
+        else
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        end
+      end
+
+      def save_path
+        if edit_context?
+          provider_address_check_path(@address, provider_id: provider.id)
+        else
+          provider_address_confirm_path(provider)
+        end
       end
     end
   end

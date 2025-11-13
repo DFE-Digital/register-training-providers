@@ -17,16 +17,16 @@ module Providers
         @results = search_data[:results] || []
 
         # Pre-select the radio button if returning to this page with a stored address
-        @form = AddressJourney::Selector.prepare_select_form(session_manager: address_session)
+        @form = prepare_select_form
 
         @presenter = AddressJourney::SelectPresenter.new(
           results: @results,
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
-          provider:,
+          provider: provider,
           error: nil,
           goto_param: params[:goto],
-          back_path:
+          back_path: back_path
         )
       end
 
@@ -39,20 +39,34 @@ module Providers
           return
         end
 
-        result = AddressJourney::Selector.call(
-          selected_index: @form.selected_address_index,
-          session_manager: address_session,
-          provider_id: setup_context? ? nil : provider.id
-        )
-
-        if result[:success]
-          redirect_to success_path
-        elsif result[:error] == :missing_search
+        search_data = address_session.load_search
+        unless search_data
           redirect_to find_path, alert: "Please search for an address first"
-        else
+          return
+        end
+
+        results = search_data[:results]
+        index = @form.selected_address_index.to_i
+
+        unless index >= 0 && index < results.size
           flash.now[:alert] = "Please select a valid address"
           render_select_form
+          return
         end
+
+        selected = results[index]
+        address_form = AddressForm.from_os_address(selected.symbolize_keys)
+        address_form.provider_id = provider.id unless setup_context?
+        address_form.provider_creation_mode = setup_context?
+
+        unless address_form.valid?
+          flash.now[:alert] = "Invalid address selected"
+          render_select_form
+          return
+        end
+
+        address_session.store_address(address_form.attributes)
+        redirect_to success_path
       end
 
     private
@@ -65,10 +79,10 @@ module Providers
           results: @results,
           postcode: search_data[:postcode],
           building_name_or_number: search_data[:building_name_or_number],
-          provider:,
+          provider: provider,
           error: flash.now[:alert],
           goto_param: params[:goto],
-          back_path:
+          back_path: back_path
         )
         render :new
       end
@@ -131,6 +145,32 @@ module Providers
 
       def manage_back_path
         provider_new_find_path(provider)
+      end
+
+      def prepare_select_form
+        selected_index = find_previously_selected_index
+        ::Addresses::SelectForm.new(selected_address_index: selected_index)
+      end
+
+      def find_previously_selected_index
+        stored_address = address_session.load_address
+        return nil unless stored_address
+
+        search_data = address_session.load_search
+        return nil unless search_data
+
+        results = search_data[:results]
+        return nil unless results
+
+        # Match by address_line_1 and postcode
+        results.each_with_index do |result, index|
+          if result["address_line_1"] == stored_address["address_line_1"] &&
+              result["postcode"] == stored_address["postcode"]
+            return index
+          end
+        end
+
+        nil
       end
     end
   end

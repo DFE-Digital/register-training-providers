@@ -21,21 +21,30 @@ module Providers
                   ::Addresses::FindForm.new
                 end
 
-        @presenter = AddressJourney::FindPresenter.new(form: @form, provider:, back_path:)
+        @presenter = AddressJourney::FindPresenter.new(form: @form, provider: provider, back_path: back_path)
       end
 
       def create
-        result = AddressJourney::Finder.call(
+        @form = ::Addresses::FindForm.new(
           postcode: params.dig(:find, :postcode),
-          building_name_or_number: params.dig(:find, :building_name_or_number),
-          session_manager: address_session
+          building_name_or_number: params.dig(:find, :building_name_or_number)
         )
 
-        if result[:success]
+        if @form.valid?
+          results = OrdnanceSurvey::AddressLookupService.call(
+            postcode: @form.postcode,
+            building_name_or_number: @form.building_name_or_number
+          )
+
+          address_session.store_search(
+            postcode: @form.postcode,
+            building_name_or_number: @form.building_name_or_number,
+            results: results
+          )
+
           redirect_to select_path
         else
-          @form = result[:form]
-          @presenter = AddressJourney::FindPresenter.new(form: @form, provider:, back_path:)
+          @presenter = AddressJourney::FindPresenter.new(form: @form, provider: provider, back_path: back_path)
           render :new
         end
       end

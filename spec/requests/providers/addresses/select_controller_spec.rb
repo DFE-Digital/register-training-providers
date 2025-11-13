@@ -9,7 +9,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
   end
 
   describe "GET /providers/:provider_id/addresses/select/new" do
-    context "when search results exist" do
+    context "when search results exist in session" do
       let(:addresses) do
         [
           {
@@ -21,24 +21,24 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       before do
-        search_results_form = Addresses::SearchResultsForm.new
-        search_results_form.results_array = addresses
-        search_results_form.save_as_temporary!(
-          created_by: user,
-          purpose: :"address_search_results_#{provider.id}"
-        )
+        # Store search results in session (new approach)
+        get new_provider_select_path(provider_id: provider.id), session: {
+          address_creation: {
+            search: {
+              postcode: "SW1A 2AA",
+              building_name_or_number: nil,
+              results: addresses
+            }
+          }
+        }
       end
 
       it "renders the select form" do
-        get new_provider_select_path(provider_id: provider.id)
-
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Select address")
       end
 
       it "displays the search results" do
-        get new_provider_select_path(provider_id: provider.id)
-
         expect(response.body).to include("10 Downing Street")
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       it "redirects to find page" do
         get new_provider_select_path(provider_id: provider.id)
 
-        expect(response).to redirect_to(find_provider_addresses_path(provider_id: provider.id))
+        expect(response).to redirect_to(provider_new_find_path(provider))
       end
     end
   end
@@ -63,13 +63,16 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       ]
     end
 
-    before do
-      search_results_form = Addresses::SearchResultsForm.new
-      search_results_form.results_array = addresses
-      search_results_form.save_as_temporary!(
-        created_by: user,
-        purpose: :"address_search_results_#{provider.id}"
-      )
+    let(:session_data) do
+      {
+        address_creation: {
+          search: {
+            postcode: "SW1A 2AA",
+            building_name_or_number: nil,
+            results: addresses
+          }
+        }
+      }
     end
 
     context "with valid selection" do
@@ -82,28 +85,19 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "redirects to check answers page" do
-        post(provider_select_path(provider_id: provider.id), params:)
+        post provider_select_path(provider_id: provider.id), params: params, session: session_data
 
-        expect(response).to redirect_to(new_provider_address_confirm_path(provider_id: provider.id))
+        expect(response).to redirect_to(provider_new_address_confirm_path(provider_id: provider.id))
       end
 
-      it "saves the address form as temporary" do
-        post(provider_select_path(provider_id: provider.id), params:)
+      it "stores the selected address in session" do
+        post provider_select_path(provider_id: provider.id), params: params, session: session_data
 
-        address_form = user.load_temporary(AddressForm, purpose: :create_address)
-        expect(address_form.address_line_1).to eq("10 Downing Street")
-        expect(address_form.town_or_city).to eq("London")
-        expect(address_form.postcode).to eq("SW1A 2AA")
-      end
-
-      it "clears temporary find and search results forms" do
-        find_form = Addresses::FindForm.new(postcode: "SW1A 2AA")
-        find_form.save_as_temporary!(created_by: user, purpose: :"find_address_#{provider.id}")
-
-        post(provider_select_path(provider_id: provider.id), params:)
-
-        expect(user.load_temporary(Addresses::FindForm, purpose: :"find_address_#{provider.id}")).to be_nil
-        expect(user.load_temporary(Addresses::SearchResultsForm, purpose: :"address_search_results_#{provider.id}")).to be_nil
+        # Address should be stored in session
+        expect(session[:address_creation][:address]).to be_present
+        expect(session[:address_creation][:address]["address_line_1"]).to eq("10 Downing Street")
+        expect(session[:address_creation][:address]["town_or_city"]).to eq("London")
+        expect(session[:address_creation][:address]["postcode"]).to eq("SW1A 2AA")
       end
     end
 
@@ -117,7 +111,7 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "re-renders with error" do
-        post(provider_select_path(provider_id: provider.id), params:)
+        post provider_select_path(provider_id: provider.id), params: params, session: session_data
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Please select an address")
@@ -134,10 +128,21 @@ RSpec.describe Providers::Addresses::SelectController, type: :request do
       end
 
       it "re-renders with error" do
-        post(provider_select_path(provider_id: provider.id), params:)
+        post provider_select_path(provider_id: provider.id), params: params, session: session_data
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Please select an address")
+      end
+    end
+
+    context "when no search results exist in session" do
+      it "redirects to find page" do
+        post provider_select_path(provider_id: provider.id), params: {
+          select: { selected_address_index: "0" }
+        }
+
+        expect(response).to redirect_to(provider_new_find_path(provider))
+        expect(flash[:alert]).to eq("Please search for an address first")
       end
     end
   end
