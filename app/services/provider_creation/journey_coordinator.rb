@@ -40,6 +40,17 @@ module ProviderCreation
       end
     end
 
+    def address_entry_path
+      # Determines which address page to navigate to based on journey state
+      if address_manual_entry_only?
+        providers_setup_addresses_address_path(skip_finder: "true")
+      elsif search_results_available?
+        providers_setup_addresses_select_path
+      else
+        providers_setup_addresses_address_path(skip_finder: "true")
+      end
+    end
+
     def back_path
       # If coming from check page (change flow), handle unwinding
       if @from_check
@@ -64,15 +75,15 @@ module ProviderCreation
         providers_setup_addresses_find_path
       when :address_manual_entry
         # Back from manual entry - check if we came from select
-        if @from_select || (@address_session && @address_session.search_results_available?)
+        if @from_select || search_results_available?
           providers_setup_addresses_select_path
         else
           # Direct entry, back to find page
           providers_setup_addresses_find_path
         end
       when :check_answers
-        # Back from check page to address (manual entry with skip_finder)
-        providers_setup_addresses_address_path(skip_finder: "true")
+        # Back from check page - use shared address entry path logic
+        address_entry_path
       else
         raise ArgumentError, "Unknown step: #{@current_step}"
       end
@@ -85,7 +96,7 @@ module ProviderCreation
     end
 
     def unwind_from_check_page
-      if @current_step == :address_find && @address_session&.search_results_available?
+      if @current_step == :address_find && search_results_available?
         return providers_setup_addresses_select_path(goto: "confirm")
       end
 
@@ -100,6 +111,20 @@ module ProviderCreation
       else
         new_provider_details_path
       end
+    end
+
+    def search_results_available?
+      return false unless @address_session
+
+      search_data = @address_session.load_search
+      search_data.present? && search_data[:results]&.any?
+    end
+
+    def address_manual_entry_only?
+      return false unless @address_session
+
+      address_data = @address_session.load_address
+      address_data&.dig(:manual_entry) == true || address_data&.dig("manual_entry") == true
     end
   end
 end

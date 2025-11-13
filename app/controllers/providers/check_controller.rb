@@ -69,13 +69,15 @@ private
   def change_address_path
     return nil if model_id.present?
 
-    if address_manual_entry_only?
-      providers_setup_addresses_address_path(skip_finder: "true", goto: "confirm")
-    elsif address_search_results_available?
-      providers_setup_addresses_select_path(goto: "confirm")
-    else
-      providers_setup_addresses_address_path(skip_finder: "true", goto: "confirm")
-    end
+    base_path = journey_coordinator.address_entry_path
+    return nil unless base_path
+
+    # Add goto parameter to return to check answers page
+    uri = URI.parse(base_path)
+    params = Rack::Utils.parse_query(uri.query)
+    params["goto"] = "confirm"
+    uri.query = params.to_query
+    uri.to_s
   end
 
   def save
@@ -117,25 +119,12 @@ private
     address_session.clear!
   end
 
-  def address_search_results_available?
-    return false if model_id.present?
-
-    search_data = address_session.load_search
-    search_data.present? && search_data[:results]&.any?
-  end
-
-  def address_manual_entry_only?
-    return false if model_id.present?
-
-    address_data = address_session.load_address
-    address_data&.dig(:manual_entry) == true || address_data&.dig("manual_entry") == true
-  end
-
   def journey_coordinator
     @journey_coordinator ||= ProviderCreation::JourneyCoordinator.new(
       current_step: :check_answers,
       session_manager: provider_session,
-      provider: model
+      provider: model,
+      address_session: address_session
     )
   end
 

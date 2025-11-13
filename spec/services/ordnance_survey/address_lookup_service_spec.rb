@@ -6,7 +6,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
     let(:api_key) { "test-api-key" }
 
     before do
-      allow(ENV).to receive(:fetch).with("ORDNANCE_SURVEY_API_KEY").and_return(api_key)
+      allow(Env).to receive(:ordnance_survey_api_key).and_return(api_key)
     end
 
     context "when searching by postcode only" do
@@ -15,23 +15,23 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
           "results" => [
             {
               "DPA" => {
-                "ORGANISATION_NAME" => "Prime Minister & First Lord Of The Treasury",
+                "ORGANISATION_NAME" => "PRIME MINISTER & FIRST LORD OF THE TREASURY",
                 "BUILDING_NUMBER" => "10",
-                "THOROUGHFARE_NAME" => "Downing Street",
-                "POST_TOWN" => "London",
-                "POSTCODE" => "SW1A 2AA",
-                "LATITUDE" => 51.503396,
-                "LONGITUDE" => -0.127764
+                "THOROUGHFARE_NAME" => "DOWNING STREET",
+                "POST_TOWN" => "LONDON",
+                "POSTCODE" => "SW1A 2AA"
               }
             }
           ]
         }.to_json
       end
 
-      it "returns parsed addresses" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: response_body)
+      end
 
+      it "returns parsed addresses with titleized fields" do
         result = described_class.call(postcode:)
 
         expect(result).to be_an(Array)
@@ -44,23 +44,51 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
 
     context "when searching with building name or number" do
       let(:building) { "10" }
+      let(:response_body) do
+        {
+          "results" => [
+            {
+              "DPA" => {
+                "BUILDING_NUMBER" => "10",
+                "THOROUGHFARE_NAME" => "DOWNING STREET",
+                "POST_TOWN" => "LONDON",
+                "POSTCODE" => "SW1A 2AA"
+              }
+            },
+            {
+              "DPA" => {
+                "BUILDING_NUMBER" => "11",
+                "THOROUGHFARE_NAME" => "DOWNING STREET",
+                "POST_TOWN" => "LONDON",
+                "POSTCODE" => "SW1A 2AA"
+              }
+            }
+          ]
+        }.to_json
+      end
 
-      it "uses the find endpoint" do
-        stub = stub_request(:get, %r{api\.os\.uk/search/places/v1/find})
-          .with(query: hash_including("query" => "#{building} #{postcode}"))
-          .to_return(status: 200, body: { "results" => [] }.to_json)
+      before do
+        stub_request(:get, /api\.os\.uk/)
+          .to_return(status: 200, body: response_body)
+      end
 
-        described_class.call(postcode: postcode, building_name_or_number: building)
+      it "filters results by building name or number" do
+        result = described_class.call(postcode: postcode, building_name_or_number: building)
 
-        expect(stub).to have_been_requested
+        expect(result.size).to eq(1)
+        expect(result.first["address_line_1"]).to eq("10, Downing Street")
       end
     end
 
     context "when no results are found" do
-      it "returns an empty array" do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 200, body: { "results" => [] }.to_json)
+      let(:response_body) { { "results" => [] }.to_json }
 
+      before do
+        stub_request(:get, /api\.os\.uk/)
+          .to_return(status: 200, body: response_body)
+      end
+
+      it "returns an empty array" do
         result = described_class.call(postcode:)
 
         expect(result).to eq([])
@@ -68,10 +96,12 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
     end
 
     context "when the API returns an error" do
-      it "returns an empty array" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 500)
+      end
 
+      it "returns an empty array" do
         result = described_class.call(postcode:)
 
         expect(result).to eq([])
@@ -79,10 +109,12 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
     end
 
     context "when the API request fails" do
-      it "returns an empty array and logs the error" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_raise(StandardError.new("Network error"))
+      end
 
+      it "returns an empty array and logs the error" do
         expect(Rails.logger).to receive(:error).with(/OS Places API error/)
 
         result = described_class.call(postcode:)

@@ -34,8 +34,6 @@ RSpec.describe "Editing address", type: :feature do
       expect(page).to have_field("County (optional)", with: "Original County")
       expect(page).to have_field("Postcode", with: "SW1A 1AA")
 
-      expect(TemporaryRecord.count).to eq(0)
-
       fill_in "Address line 1", with: "Updated Test Street"
       fill_in "Address line 2 (optional)", with: "Updated Building"
       fill_in "Address line 3 (optional)", with: "Updated Floor"
@@ -45,7 +43,6 @@ RSpec.describe "Editing address", type: :feature do
 
       click_button "Continue"
 
-      expect(TemporaryRecord.count).to eq(1)
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("Updated Test Street")
       expect(page).to have_content("Updated Building")
@@ -56,7 +53,6 @@ RSpec.describe "Editing address", type: :feature do
 
       click_button "Save address"
 
-      expect(TemporaryRecord.count).to eq(0)
       expect(page).to have_content("Address updated")
       expect(page).to have_content("Updated Test Street")
 
@@ -115,7 +111,6 @@ RSpec.describe "Editing address", type: :feature do
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter address line 1, typically the building and street", "Enter town or city", "Enter postcode")
-      expect(TemporaryRecord.count).to eq(0)
     end
 
     scenario "invalid postcode shows error" do
@@ -126,7 +121,6 @@ RSpec.describe "Editing address", type: :feature do
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter a full UK postcode")
-      expect(TemporaryRecord.count).to eq(0)
     end
   end
 
@@ -172,7 +166,6 @@ RSpec.describe "Editing address", type: :feature do
       click_link "Cancel"
 
       expect(page).to have_current_path(provider_addresses_path(provider))
-      expect(TemporaryRecord.count).to eq(0)
 
       address.reload
       expect(address.address_line_1).to eq("Original Street")

@@ -11,6 +11,7 @@ require "rspec/rails"
 require "audited-rspec"
 require "capybara-screenshot/rspec"
 require "pundit/rspec"
+require "webmock/rspec"
 
 Rails.root.glob("spec/support/**/*.rb").each { |f| require f }
 

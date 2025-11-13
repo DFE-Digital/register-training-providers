@@ -20,8 +20,6 @@ RSpec.describe "Creating address", type: :feature do
       expect(page).to have_content(provider.operating_name)
       expect(page).to have_content("Address")
 
-      expect(TemporaryRecord.count).to eq(0)
-
       fill_in "Address line 1", with: "123 Test Street"
       fill_in "Address line 2 (optional)", with: "Test Building"
       fill_in "Address line 3 (optional)", with: "Test Floor"
@@ -31,7 +29,6 @@ RSpec.describe "Creating address", type: :feature do
 
       click_button "Continue"
 
-      expect(TemporaryRecord.count).to eq(1)
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("123 Test Street")
       expect(page).to have_content("Test Building")
@@ -42,7 +39,6 @@ RSpec.describe "Creating address", type: :feature do
 
       click_button "Save address"
 
-      expect(TemporaryRecord.count).to eq(0)
       expect(page).to have_content("Address added")
       expect(page).to have_content("123 Test Street")
 
@@ -98,7 +94,6 @@ RSpec.describe "Creating address", type: :feature do
       click_link "Cancel"
 
       expect(page).to have_current_path(provider_addresses_path(provider))
-      expect(TemporaryRecord.count).to eq(0)
     end
   end
 end

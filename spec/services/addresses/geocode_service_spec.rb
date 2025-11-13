@@ -6,7 +6,7 @@ RSpec.describe Addresses::GeocodeService do
     let(:api_key) { "test-api-key" }
 
     before do
-      allow(ENV).to receive(:fetch).with("ORDNANCE_SURVEY_API_KEY").and_return(api_key)
+      allow(Env).to receive(:ordnance_survey_api_key).and_return(api_key)
     end
 
     context "when the API returns coordinates" do
@@ -23,10 +23,12 @@ RSpec.describe Addresses::GeocodeService do
         }.to_json
       end
 
-      it "returns latitude and longitude" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 200, body: response_body)
+      end
 
+      it "returns latitude and longitude" do
         result = described_class.call(postcode:)
 
         expect(result[:latitude]).to eq(51.503396)
@@ -35,10 +37,14 @@ RSpec.describe Addresses::GeocodeService do
     end
 
     context "when no results are found" do
-      it "returns nil coordinates" do
-        stub_request(:get, /api\.os\.uk/)
-          .to_return(status: 200, body: { "results" => [] }.to_json)
+      let(:response_body) { { "results" => [] }.to_json }
 
+      before do
+        stub_request(:get, /api\.os\.uk/)
+          .to_return(status: 200, body: response_body)
+      end
+
+      it "returns nil coordinates" do
         result = described_class.call(postcode:)
 
         expect(result[:latitude]).to be_nil
@@ -47,10 +53,12 @@ RSpec.describe Addresses::GeocodeService do
     end
 
     context "when the API returns an error" do
-      it "returns nil coordinates" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_return(status: 500)
+      end
 
+      it "returns nil coordinates" do
         result = described_class.call(postcode:)
 
         expect(result[:latitude]).to be_nil
@@ -59,10 +67,12 @@ RSpec.describe Addresses::GeocodeService do
     end
 
     context "when the API request fails" do
-      it "returns nil coordinates and logs the error" do
+      before do
         stub_request(:get, /api\.os\.uk/)
           .to_raise(StandardError.new("Network error"))
+      end
 
+      it "returns nil coordinates and logs the error" do
         expect(Rails.logger).to receive(:error).with(/OS Places API geocoding error/)
 
         result = described_class.call(postcode:)

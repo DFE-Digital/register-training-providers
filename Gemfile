@@ -126,6 +126,9 @@ group :test do
 
   #  Simple one-liner tests for common Rails functionality
   gem "shoulda-matchers"
+
+  # Library for stubbing HTTP requests
+  gem "webmock"
 end
 
 group :development, :production do
