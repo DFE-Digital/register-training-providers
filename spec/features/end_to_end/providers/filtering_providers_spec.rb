@@ -17,10 +17,19 @@ RSpec.feature "Filter Training Providers" do
     then_the_list_of_providers_should_include_archived_providers
   end
 
-  def given_i_am_on_the_provider_list_page
+  scenario "User filters providers by seed data provider issues" do
+    given_i_am_on_the_provider_list_page(debug: true)
+    when_i_check_the_box_for_show_seed_data_with_issues_issues
+    then_the_list_of_providers_should_include_archived_providers
+  end
+
+  def given_i_am_on_the_provider_list_page(debug: false)
     given_i_am_an_authenticated_user
     and_there_are_a_number_of_providers
-    visit "/providers"
+
+    url = "/providers"
+    url += "?debug=true" if debug
+    visit url
   end
 
   def when_i_check_the_box_for_higher_education_institution
@@ -53,6 +62,11 @@ RSpec.feature "Filter Training Providers" do
     end
 
     expect(page).to have_selector(".govuk-summary-list__value", text: "Accredited", count: accredited_providers.count)
+  end
+
+  def when_i_check_the_box_for_show_seed_data_with_issues_issues
+    check "Include archived providers"
+    click_on "Apply filters"
   end
 
   def when_i_check_the_box_for_include_archived_providers

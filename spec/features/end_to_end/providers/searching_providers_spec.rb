@@ -4,6 +4,11 @@ RSpec.feature "Search Training Providers" do
     when_i_enter_a_name_with_at_least_one_character_in_the_search_field
     then_the_list_of_providers_should_be_filtered_to_show_providers_matching_the_name
   end
+  scenario "User searches for a provider by code" do
+    given_i_am_on_the_provider_list_page
+    when_i_enter_a_valid_code_in_the_search_field
+    then_the_list_of_providers_should_be_filtered_to_show_the_provider_with_that_code
+  end
   scenario "User searches for a provider by UKPRN" do
     given_i_am_on_the_provider_list_page
     when_i_enter_a_valid_ukprn_in_the_search_field
@@ -31,18 +36,23 @@ RSpec.feature "Search Training Providers" do
     provider_1
     provider_2
     provider_3
+    provider_4
   end
 
   def provider_1
-    @provider_1 ||= create(:provider, operating_name: "Magic Academy", urn: "12345", ukprn: "11111111")
+    @provider_1 ||= create(:provider, operating_name: "Magic Academy", urn: "12345", code: "DC1", ukprn: "11111111")
   end
 
   def provider_2
-    @provider_2 ||= create(:provider, operating_name: "Science College", urn: "67890", ukprn: "22222222")
+    @provider_2 ||= create(:provider, operating_name: "Science College", urn: "67890", code: "DC2", ukprn: "22222222")
   end
 
   def provider_3
-    @provider_3 ||= create(:provider, operating_name: "History Institute", urn: "54321", ukprn: "33333333")
+    @provider_3 ||= create(:provider, operating_name: "History Institute", urn: "54321", code: "DC3", ukprn: "33333333")
+  end
+
+  def provider_4
+    @provider_4 ||= create(:provider, operating_name: "Fredrick University", urn: "44444", code: "DC4", ukprn: "44444444")
   end
 
   def given_i_am_on_the_provider_list_page
@@ -52,7 +62,7 @@ RSpec.feature "Search Training Providers" do
   end
 
   def when_i_enter_a_name_with_at_least_one_character_in_the_search_field
-    fill_in "Search by provider name, UKPRN or URN", with: "Magic"
+    fill_in "Search by provider name, code, UKPRN or URN", with: "Magic"
     click_button "Search"
   end
 
@@ -60,21 +70,35 @@ RSpec.feature "Search Training Providers" do
     expect(page).to have_content("Magic Academy")
     expect(page).not_to have_content("Science College")
     expect(page).not_to have_content("History Institute")
+    expect(page).not_to have_content("Fredrick University")
+  end
+
+  def when_i_enter_a_valid_code_in_the_search_field
+    fill_in "Search by provider name, code, UKPRN or URN", with: @provider_4.code
+    click_button "Search"
   end
 
   def when_i_enter_a_valid_ukprn_in_the_search_field
-    fill_in "Search by provider name, UKPRN or URN", with: @provider_2.ukprn
+    fill_in "Search by provider name, code, UKPRN or URN", with: @provider_2.ukprn
     click_button "Search"
+  end
+
+  def then_the_list_of_providers_should_be_filtered_to_show_the_provider_with_that_code
+    expect(page).to have_content(provider_4.operating_name)
+    expect(page).not_to have_content(provider_1.operating_name)
+    expect(page).not_to have_content(provider_3.operating_name)
+    expect(page).not_to have_content(provider_2.operating_name)
   end
 
   def then_the_list_of_providers_should_be_filtered_to_show_the_provider_with_that_ukprn
     expect(page).to have_content(provider_2.operating_name)
     expect(page).not_to have_content(provider_1.operating_name)
     expect(page).not_to have_content(provider_3.operating_name)
+    expect(page).not_to have_content(provider_4.operating_name)
   end
 
   def when_i_enter_a_valid_urn_in_the_search_field
-    fill_in "Search by provider name, UKPRN or URN", with: provider_3.urn
+    fill_in "Search by provider name, code, UKPRN or URN", with: provider_3.urn
     click_button "Search"
   end
 
@@ -82,10 +106,11 @@ RSpec.feature "Search Training Providers" do
     expect(page).to have_content(provider_3.operating_name)
     expect(page).not_to have_content(provider_1.operating_name)
     expect(page).not_to have_content(provider_2.operating_name)
+    expect(page).not_to have_content(provider_4.operating_name)
   end
 
   def when_i_search_for(term)
-    fill_in "Search by provider name, UKPRN or URN", with: term
+    fill_in "Search by provider name, code, UKPRN or URN", with: term
     click_button "Search"
   end
 
@@ -94,13 +119,14 @@ RSpec.feature "Search Training Providers" do
   end
 
   def then_the_search_field_should_be_cleared
-    expect(find_field("Search by provider name, UKPRN or URN").value).to be_blank
+    expect(find_field("Search by provider name, code, UKPRN or URN").value).to be_blank
   end
 
   def and_the_full_list_of_providers_should_be_displayed
     expect(page).to have_content(provider_1.operating_name)
     expect(page).to have_content(provider_2.operating_name)
     expect(page).to have_content(provider_3.operating_name)
+    expect(page).to have_content(provider_4.operating_name)
   end
 
   def given_there_are_no_providers_matching_the_search_criteria
@@ -110,7 +136,7 @@ RSpec.feature "Search Training Providers" do
   end
 
   def when_i_perform_a_search
-    fill_in "Search by provider name, UKPRN or URN", with: "NothingToSeeHere"
+    fill_in "Search by provider name, code, UKPRN or URN", with: "NothingToSeeHere"
     click_button "Search"
   end
 
