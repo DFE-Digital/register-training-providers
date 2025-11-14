@@ -2,9 +2,9 @@ class AccreditationForm
   include ActiveModel::Model
   include ActiveModel::Attributes
   include ActiveModel::Validations::Callbacks
-  include SaveAsTemporary
   include GovukDateValidation
   include GovukDateComponents
+  include SaveAsTemporary
 
   has_date_components :start_date, :end_date
 

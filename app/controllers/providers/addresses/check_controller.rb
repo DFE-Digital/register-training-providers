@@ -1,73 +1,154 @@
 module Providers
   module Addresses
-    class CheckController < ::CheckController
-      include FormObjectSavePattern
+    class CheckController < ApplicationController
+      include AddressJourneyController
+
+      def show
+        @address = provider.addresses.kept.find(params[:id])
+        authorize @address
+
+        address_data = address_session.load_address
+        @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
+
+        if @form.invalid?
+          redirect_to provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+          return
+        end
+
+        setup_view_data(:edit)
+      end
 
       def new
-        redirect_to back_path if model.invalid?
+        address_data = address_session.load_address
+
+        unless address_data
+          redirect_to provider_new_address_path(provider, skip_finder: "true")
+          return
+        end
+
+        @form = ::AddressForm.new(address_data)
+        @form.provider_id = provider.id
+
+        if @form.invalid?
+          redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+          return
+        end
+
+        setup_view_data(:new)
+      end
+
+      def create
+        address_data = address_session.load_address
+
+        unless address_data
+          redirect_to provider_new_address_path(provider, skip_finder: "true")
+          return
+        end
+
+        @form = ::AddressForm.new(address_data)
+        @form.provider_id = provider.id
+
+        address = provider.addresses.build(@form.to_address_attributes)
+        authorize address
+
+        if address.save
+          address_session.clear!
+          redirect_to provider_addresses_path(provider),
+                      flash: { success: I18n.t("flash_message.success.check.address.add") }
+        else
+          redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        end
+      end
+
+      def update
+        @address = provider.addresses.kept.find(params[:id])
+        authorize @address
+
+        address_data = address_session.load_address
+        @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
+
+        if @address.update(@form.to_address_attributes)
+          address_session.clear!
+          redirect_to provider_addresses_path(provider),
+                      flash: { success: I18n.t("flash_message.success.check.address.update") }
+        else
+          redirect_to provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+        end
       end
 
     private
 
-      def model_class
-        AddressForm
+      def search_available?
+        search_data = address_session.load_search
+        search_data.present? && search_data[:results]&.any?
       end
 
-      def model_id
-        @model_id ||= params[:id] || params[:address_id]
+      def manual_entry_only?
+        address_data = address_session.load_address
+        address_data&.dig(:manual_entry) == true || address_data&.dig("manual_entry") == true
       end
 
-      def purpose
-        model_id.present? ? :"edit_address_#{model_id}" : :create_address
+      def edit_context?
+        params[:id].present?
       end
 
-      def model
-        @model ||= current_user.load_temporary(model_class, purpose:)
-      end
-
-      def success_path
-        provider_addresses_path(provider)
-      end
-
-      def find_existing_record
-        provider.addresses.kept.find(model_id)
-      end
-
-      def build_new_record
-        provider.addresses.build(model_attributes)
-      end
-
-      def model_attributes
-        model.to_address_attributes
-      end
-
-      def new_model_path(query_params = {})
-        new_provider_address_path(query_params.merge(provider_id: provider.id))
-      end
-
-      def edit_model_path(query_params = {})
-        address = provider.addresses.kept.find(model_id)
-        edit_provider_address_path(address, query_params.merge(provider_id: provider.id))
-      end
-
-      def new_model_check_path
-        provider_address_confirm_path(provider_id: provider.id)
-      end
-
-      def model_check_path
-        provider_address_check_path(model_id, provider_id: provider.id)
-      end
-
-      def change_path
-        if model_id.present?
-          edit_model_path(goto: "confirm")
+      def back_path
+        if params[:goto] == "confirm"
+          # Coming from check page after editing - return to check
+          if edit_context?
+            provider_address_check_path(@address, provider_id: provider.id)
+          else
+            provider_new_address_confirm_path(provider)
+          end
+        elsif edit_context?
+          provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+        elsif search_available? && !manual_entry_only?
+          # User used finder, go back to select page
+          provider_new_select_path(provider)
         else
-          new_model_path(goto: "confirm")
+          # User did manual entry or no search available
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
         end
       end
 
-      def provider
-        @provider ||= Provider.find(params[:provider_id])
+      def change_path
+        if edit_context?
+          provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
+        elsif search_available? && !manual_entry_only?
+          provider_new_select_path(provider, goto: "confirm")
+        else
+          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+        end
+      end
+
+      def save_path
+        if edit_context?
+          provider_address_check_path(@address, provider_id: provider.id)
+        else
+          provider_address_confirm_path(provider)
+        end
+      end
+
+      def cancel_path
+        provider_addresses_path(provider)
+      end
+
+      def setup_view_data(context)
+        @back_path = back_path
+        @change_path = change_path
+        @save_path = save_path
+        @cancel_path = cancel_path
+        @save_button_text = "Save address"
+
+        if context == :edit
+          @form_method = :patch
+          @page_subtitle = provider.operating_name.to_s
+          @page_caption = provider.operating_name.to_s
+        else
+          @form_method = :post
+          @page_subtitle = "Add address - #{provider.operating_name}"
+          @page_caption = "Add address - #{provider.operating_name}"
+        end
       end
     end
   end

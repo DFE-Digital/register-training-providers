@@ -166,6 +166,8 @@ RSpec.describe AddressForm, type: :model do
 
   describe "#to_address_attributes" do
     it "returns address attributes hash" do
+      subject.latitude = 51.503396
+      subject.longitude = -0.127764
       attributes = subject.to_address_attributes
 
       expect(attributes).to eq({
@@ -175,6 +177,8 @@ RSpec.describe AddressForm, type: :model do
         town_or_city: "Test City",
         county: "Test County",
         postcode: "SW1A 1AA",
+        latitude: 51.503396,
+        longitude: -0.127764,
         provider_id: provider.id
       })
     end
@@ -227,9 +231,9 @@ RSpec.describe AddressForm, type: :model do
   end
 
   describe ".from_address" do
-    let(:address) { create(:address, provider:) }
+    let(:address) { create(:address, provider: provider, latitude: 51.5, longitude: -0.1) }
 
-    it "creates form from existing address" do
+    it "creates form from existing address with coordinates" do
       form = described_class.from_address(address)
 
       expect(form).to be_a(described_class)
@@ -239,12 +243,52 @@ RSpec.describe AddressForm, type: :model do
       expect(form.town_or_city).to eq(address.town_or_city)
       expect(form.county).to eq(address.county)
       expect(form.postcode).to eq(address.postcode)
+      expect(form.latitude).to eq(address.latitude)
+      expect(form.longitude).to eq(address.longitude)
       expect(form.provider_id).to eq(address.provider_id)
     end
 
     it "creates valid form from existing address" do
       form = described_class.from_address(address)
       expect(form).to be_valid
+    end
+  end
+
+  describe ".from_os_address" do
+    let(:os_address_hash) do
+      {
+        address_line_1: "10 Downing Street",
+        address_line_2: nil,
+        town_or_city: "London",
+        county: nil,
+        postcode: "SW1A 2AA",
+        latitude: 51.503396,
+        longitude: -0.127764
+      }
+    end
+
+    it "creates form from OS API address hash with coordinates" do
+      form = described_class.from_os_address(os_address_hash)
+
+      expect(form).to be_a(described_class)
+      expect(form.address_line_1).to eq("10 Downing Street")
+      expect(form.address_line_2).to be_nil
+      expect(form.address_line_3).to be_nil
+      expect(form.town_or_city).to eq("London")
+      expect(form.county).to be_nil
+      expect(form.postcode).to eq("SW1A 2AA")
+      expect(form.latitude).to eq(51.503396)
+      expect(form.longitude).to eq(-0.127764)
+    end
+
+    it "sets address_line_3 to nil" do
+      form = described_class.from_os_address(os_address_hash)
+      expect(form.address_line_3).to be_nil
+    end
+
+    it "sets manual_entry to false" do
+      form = described_class.from_os_address(os_address_hash)
+      expect(form.manual_entry).to be false
     end
   end
 end
