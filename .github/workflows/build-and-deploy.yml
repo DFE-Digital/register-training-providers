@@ -101,7 +101,7 @@ jobs:
 
       - name: Set up Node.js
         if: matrix.check.needs_node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
           cache: "yarn"
@@ -164,7 +164,7 @@ jobs:
           bundler-cache: true
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
           cache: "yarn"
@@ -185,7 +185,7 @@ jobs:
 
       - name: Upload test failure screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-failure-screenshots
           path: tmp/screenshots/
