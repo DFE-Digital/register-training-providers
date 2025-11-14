@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_13_103115) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_14_154800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -45,6 +45,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_103115) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_addresses_on_created_at"
     t.index ["provider_id"], name: "index_addresses_on_provider_id"
+  end
+
+  create_table "api_clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((name)::text)", name: "index_api_clients_on_lower_name", unique: true
+    t.index ["discarded_at"], name: "index_api_clients_on_discarded_at"
   end
 
   create_table "audits", force: :cascade do |t|
