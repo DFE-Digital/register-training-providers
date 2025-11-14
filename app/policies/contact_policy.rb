@@ -19,6 +19,16 @@ class ContactPolicy < ApplicationPolicy
     provider_policy.edit?
   end
 
+  delegate :edit?, to: :provider_policy
+
+  def update?
+    provider_policy.edit?
+  end
+
+  def destroy?
+    provider_policy.edit?
+  end
+
 private
 
   def provider_policy

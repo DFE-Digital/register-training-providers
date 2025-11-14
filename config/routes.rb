@@ -98,8 +98,9 @@ Rails.application.routes.draw do
       checkable(:addresses, module_prefix: :providers)
       resource :delete, only: [:show, :destroy], module: "providers/addresses"
     end
-    resources :contacts, only: [:index, :new, :create], controller: "providers/contacts" do
+    resources :contacts, only: [:index, :new, :create, :edit, :update], controller: "providers/contacts" do
       checkable(:contacts, module_prefix: :providers)
+      resource :delete, only: [:show, :destroy], module: "providers/contacts"
     end
   end
 
