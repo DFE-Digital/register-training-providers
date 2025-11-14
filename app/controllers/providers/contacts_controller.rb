@@ -54,6 +54,7 @@ class Providers::ContactsController < ApplicationController
 
     @form = ContactForm.new(contact_form_params)
     @form.provider_id = provider.id
+    @form.id = @contact.id
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@contact))

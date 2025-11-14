@@ -65,6 +65,7 @@ en:
               blank: "Enter last name"
             email:
               blank: "Enter email address"
+              taken: "Email address is already associated with a user, use a different one"
             telephone_number:
               blank: "Enter phone number"
         provider:

@@ -14,9 +14,10 @@
 #
 # Indexes
 #
-#  index_contacts_on_created_at    (created_at)
-#  index_contacts_on_discarded_at  (discarded_at)
-#  index_contacts_on_provider_id   (provider_id)
+#  index_contacts_on_created_at             (created_at)
+#  index_contacts_on_discarded_at           (discarded_at)
+#  index_contacts_on_email_and_provider_id  (email,provider_id) UNIQUE
+#  index_contacts_on_provider_id            (provider_id)
 #
 # Foreign Keys
 #
@@ -32,6 +33,7 @@ class Contact < ApplicationRecord
   validates :first_name, presence: true, length: { maximum: 255 }
   validates :last_name, presence: true, length: { maximum: 255 }
   validates :email, presence: true, length: { maximum: 255 }
+  validates :email, uniqueness: { scope: :provider }
   validates :telephone_number, length: { maximum: 255 }, allow_blank: true
 
   validate do |record|

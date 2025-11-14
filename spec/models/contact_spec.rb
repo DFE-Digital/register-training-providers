@@ -34,10 +34,21 @@ RSpec.describe Contact, type: :model do
       end
     end
 
+    context "when email has already been used by another contact" do
+      let(:invalid_contact) { build(:contact, email: contact.email, provider: contact.provider) }
+
+      it "is not valid with a non unique email" do
+        expect(invalid_contact).not_to be_valid
+        expect(invalid_contact.errors[:email]).to include(
+          "Email address is already associated with a user, use a different one"
+        )
+      end
+    end
+
     context "when Phone number format is invalid" do
       let(:contact) { build(:contact, telephone_number: "invalid") }
 
-      it "is not valid with an invalid email format" do
+      it "is not valid with an invalid phone number format" do
         expect(contact).not_to be_valid
         expect(contact.errors[:telephone_number]).to include(
           "Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192"

@@ -52,6 +52,39 @@ RSpec.describe "Creating contact", type: :feature do
     end
   end
 
+  context "with invalid data" do
+    let(:provider) { create(:provider, :hei) }
+    let(:contact) { create(:contact, provider:) }
+
+    scenario "creating contact with an email address that has already been used for another provider contact" do
+      provider.reload
+      contact.reload
+      visit provider_contacts_path(provider)
+
+      expect(page).to have_content("Contacts (1)")
+
+      within(".govuk-button-group") do
+        click_link "Add contact"
+      end
+
+      expect(page).to have_content(provider.operating_name)
+      expect(page).to have_content("contact")
+
+      expect(TemporaryRecord.count).to eq(0)
+
+      fill_in "First name", with: "Manisha"
+      fill_in "Last name", with: "Patel"
+      fill_in "Email address", with: contact.email
+      fill_in "Phone number", with: "0121 211 2121"
+
+      click_button "Continue"
+
+      expect(page).to have_current_path(provider_contacts_path(provider))
+      expect(TemporaryRecord.count).to eq(0)
+      expect(page).to have_content("Email address is already associated with a user, use a different one")
+    end
+  end
+
   context "cancellation flow" do
     let(:provider) { create(:provider, :hei) }
 
