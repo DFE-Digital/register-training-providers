@@ -13,6 +13,30 @@ class Providers::ContactsController < ApplicationController
     render :new
   end
 
+  def edit
+    @contact = provider.contacts.kept.find(params[:id])
+    authorize @contact
+
+    stored_form = current_user.load_temporary(
+      ContactForm,
+      purpose: edit_purpose(@contact),
+      reset: false
+    )
+
+    @form = if stored_form.first_name.present?
+              stored_form
+            else
+              ContactForm.from_contact(@contact)
+            end
+
+    @presenter = ContactFormPresenter.new(
+      form: @form,
+      provider: provider,
+      contact: @contact,
+      context: :edit
+    )
+  end
+
   def create
     @form = ContactForm.new(contact_form_params)
 
@@ -21,6 +45,28 @@ class Providers::ContactsController < ApplicationController
       redirect_to new_provider_contact_confirm_path(provider_id: provider.id)
     else
       render :new
+    end
+  end
+
+  def update
+    @contact = provider.contacts.kept.find(params[:id])
+    authorize @contact
+
+    @form = ContactForm.new(contact_form_params)
+    @form.provider_id = provider.id
+    @form.id = @contact.id
+
+    if @form.valid?
+      @form.save_as_temporary!(created_by: current_user, purpose: edit_purpose(@contact))
+      redirect_to provider_contact_check_path(@contact, provider_id: provider.id)
+    else
+      @presenter = ContactFormPresenter.new(
+        form: @form,
+        provider: provider,
+        contact: @contact,
+        context: :edit
+      )
+      render :edit
     end
   end
 
@@ -36,5 +82,9 @@ private
                             :email,
                             :telephone_number,
                             :provider_id])
+  end
+
+  def edit_purpose(contact)
+    :"edit_contact_#{contact.id}"
   end
 end
