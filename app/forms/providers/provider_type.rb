@@ -3,7 +3,6 @@ module Providers
     include ActiveModel::Model
     include ActiveModel::Attributes
     include AccreditationStatusValidator
-    include SaveAsTemporary
 
     attribute :provider_type, :string
 

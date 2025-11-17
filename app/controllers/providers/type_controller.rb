@@ -1,19 +1,25 @@
 class Providers::TypeController < CheckController
+  helper_method :back_path
+
   def new
-    is_the_provider_accredited_form = current_user.load_temporary(Providers::IsTheProviderAccredited,
-                                                                  purpose: :create_provider)
+    onboarding_data = provider_session.load_onboarding
 
-    if is_the_provider_accredited_form.nil? || is_the_provider_accredited_form.invalid?
-
-      # NOTE: Something is really wrong if we reach here, redirect to the new provider form
+    if onboarding_data.nil?
       redirect_to new_provider_onboarding_path
       return
     end
 
-    @form = current_user.load_temporary(Providers::ProviderType,
-                                        purpose: :create_provider)
+    # Validate the onboarding data
+    onboarding_form = Providers::IsTheProviderAccredited.new(onboarding_data)
+    if onboarding_form.invalid?
+      redirect_to new_provider_onboarding_path
+      return
+    end
 
-    @form.assign_attributes(is_the_provider_accredited_form.attributes)
+    provider_type_data = provider_session.load_provider_type
+    @form = Providers::ProviderType.new(provider_type_data || {})
+
+    @form.assign_attributes(onboarding_data)
 
     render :new
   end
@@ -22,10 +28,9 @@ class Providers::TypeController < CheckController
     @form = Providers::ProviderType.new(create_new_provider_type_params)
 
     if @form.valid?
-      @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
+      provider_session.store_provider_type(@form.attributes)
 
-      provider = current_user.load_temporary(Provider, purpose: :create_provider)
-      redirect_to journey_service(:type, provider).next_path
+      redirect_to journey_coordinator(:type, nil).next_path
     else
       render :new
     end
@@ -33,15 +38,24 @@ class Providers::TypeController < CheckController
 
 private
 
+  def back_path
+    journey_coordinator(:type, nil).back_path
+  end
+
   def create_new_provider_type_params
     params.expect(provider: [:provider_type, :accreditation_status])
   end
 
-  def journey_service(current_step, provider)
-    Providers::CreationJourneyService.new(
+  def journey_coordinator(current_step, provider)
+    ProviderCreation::JourneyCoordinator.new(
       current_step: current_step,
+      session_manager: provider_session,
       provider: provider,
-      goto_param: params[:goto]
+      from_check: params[:goto] == "confirm"
     )
+  end
+
+  def provider_session
+    @provider_session ||= ProviderCreation::SessionManager.new(session)
   end
 end

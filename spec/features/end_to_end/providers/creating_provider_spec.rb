@@ -8,6 +8,10 @@ RSpec.feature "Add Provider" do
     let(:county) { Faker::Address.state }
     let(:postcode) { Faker::Address.postcode }
 
+    before do
+      allow(Addresses::GeocodeService).to receive(:call).and_return({ latitude: 51.503396, longitude: -0.127764 })
+    end
+
     scenario "User can add a new provider with accreditation status: #{accreditation_status}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
@@ -42,7 +46,6 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_fill_in_the_provider_details(provider_details:, select_provider_type:)
-      expect(TemporaryRecord.count).to eq(2)
       and_i_am_taken_to("/providers/new/details")
       and_i_can_see_the_title("Provider details - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
@@ -59,7 +62,6 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_fill_in_the_accreditation_details
-      expect(TemporaryRecord.count).to eq(3)
       and_i_am_taken_to("/providers/new/accreditation")
       and_i_can_see_the_title("Accreditation details - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
@@ -81,12 +83,14 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_fill_in_the_address_details
-      # Accredited providers will have 4 temp records, unaccredited will have 3
-      expected_count = @provider_details_to_use.accredited? ? 4 : 3
-      expect(TemporaryRecord.count).to eq(expected_count)
-      and_i_am_taken_to("/providers/new/addresses")
-      and_i_can_see_the_title("Add address - Add provider - Register of training providers - GOV.UK")
+      and_i_am_taken_to("/providers/new/addresses/find")
+      and_i_can_see_the_title("Find address - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
+
+      # Skip finder and go directly to manual entry (this test focuses on provider creation, not address finding)
+      visit "/providers/new/addresses?skip_finder=true"
+
+      and_i_can_see_the_title("Add address - Add provider - Register of training providers - GOV.UK")
 
       and_i_click_on("Continue")
 
@@ -151,8 +155,6 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_select_the_provider_type(select_provider_type:)
-      expect(TemporaryRecord.count).to eq(1)
-
       and_i_am_taken_to("/providers/new/type")
       and_i_can_see_the_title("Provider type - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
@@ -168,8 +170,6 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_answer_the_accreditation_question(select_if_the_provider_is_accredited:)
-      expect(TemporaryRecord.count).to eq(0)
-
       and_i_am_taken_to("/providers/new")
 
       and_i_can_see_the_title("Is the provider accredited? - Add provider - Register of training providers - GOV.UK")
@@ -179,13 +179,6 @@ RSpec.feature "Add Provider" do
 
       and_i_can_see_the_error_summary("Select if the provider is accredited")
       and_i_can_see_the_title("Error: Is the provider accredited? - Add provider - Register of training providers - GOV.UK")
-
-      # Debug what's actually on the page
-      puts "Page title: #{page.title}"
-      puts "Page body includes 'accredited': #{page.body.include?('accredited')}"
-      puts "All form elements: #{all('input, select, textarea').map { |el| "#{el.tag_name}[#{el[:type]}]: #{el[:name]}=#{el[:value]}" }}"
-      puts "Available radio buttons: #{all('input[type="radio"]').map(&:value)}"
-      puts "Looking for: #{select_if_the_provider_is_accredited}"
 
       and_i_choose(select_if_the_provider_is_accredited)
 
@@ -204,12 +197,7 @@ RSpec.feature "Add Provider" do
 
     def then_i_should_be_redirected_to_the_provider_list_page
       and_i_am_taken_to("/providers")
-      and_the_temporary_record_should_be_cleared
       expect(Provider.count).to eq(1)
-    end
-
-    def and_the_temporary_record_should_be_cleared
-      expect(TemporaryRecord.count).to eq(0)
     end
 
     def and_i_should_see_a_success_message
@@ -217,10 +205,6 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_am_on_the_check_answers_page
-      # Accredited providers will have 5 temp records (onboarding, type, provider, accreditation, address)
-      # Unaccredited will have 4 (onboarding, type, provider, address)
-      expected_count = @provider_details_to_use.accredited? ? 5 : 4
-      expect(TemporaryRecord.count).to eq(expected_count)
       and_i_am_taken_to("/providers/check/new")
       and_i_can_see_the_title("Check your answers - Add provider - Register of training providers - GOV.UK")
     end
@@ -244,6 +228,10 @@ RSpec.feature "Add Provider" do
       expect(page).to have_content(town_or_city)
       expect(page).to have_content(county)
       expect(page).to have_content(postcode)
+
+      expect(page).to have_content("Location")
+      expect(page).to have_content("51.503396")
+      expect(page).to have_content("-0.127764")
     end
 
     def and_the_address_should_be_saved_to_the_provider

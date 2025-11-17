@@ -1,9 +1,16 @@
 class Providers::AccreditationController < CheckController
-  def new
-    provider_type = current_user.load_temporary(Providers::ProviderType,
-                                                purpose: :create_provider)
+  helper_method :back_path
 
-    if provider_type.nil? || provider_type.invalid?
+  def new
+    provider_type_data = provider_session.load_provider_type
+
+    if provider_type_data.nil?
+      redirect_to new_provider_type_path
+      return
+    end
+
+    provider_type = Providers::ProviderType.new(provider_type_data)
+    if provider_type.invalid?
       redirect_to new_provider_type_path
       return
     end
@@ -13,14 +20,15 @@ class Providers::AccreditationController < CheckController
       return
     end
 
-    provider = current_user.load_temporary(Provider, purpose: :create_provider)
+    provider = provider_session.load_provider
 
     if provider.nil? || provider.invalid?
       redirect_to new_provider_details_path
       return
     end
 
-    @form = current_user.load_temporary(AccreditationForm, purpose: :create_provider, reset: false)
+    accreditation_data = provider_session.load_accreditation
+    @form = AccreditationForm.new(accreditation_data || {})
     @form.provider_creation_mode = true
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
@@ -32,14 +40,14 @@ class Providers::AccreditationController < CheckController
     @form = AccreditationForm.new(create_accreditation_params)
     @form.provider_creation_mode = true
 
-    provider = current_user.load_temporary(Provider, purpose: :create_provider)
+    provider = provider_session.load_provider
     @form.provider_id = provider&.id
     @form.provider_type = provider&.provider_type
 
     if @form.valid?
-      @form.save_as_temporary!(created_by: current_user, purpose: :create_provider)
+      provider_session.store_accreditation(@form.attributes)
 
-      redirect_to journey_service(:accreditation, provider).next_path
+      redirect_to journey_coordinator(:accreditation, provider).next_path
     else
       render :new
     end
@@ -47,16 +55,26 @@ class Providers::AccreditationController < CheckController
 
 private
 
+  def back_path
+    provider = provider_session.load_provider
+    journey_coordinator(:accreditation, provider).back_path
+  end
+
   def create_accreditation_params
     params.expect(accreditation: [:number, *AccreditationForm::PARAM_CONVERSION.keys])
       .transform_keys { |k| AccreditationForm::PARAM_CONVERSION.fetch(k, k) }
   end
 
-  def journey_service(current_step, provider)
-    Providers::CreationJourneyService.new(
+  def journey_coordinator(current_step, provider)
+    ProviderCreation::JourneyCoordinator.new(
       current_step: current_step,
+      session_manager: provider_session,
       provider: provider,
-      goto_param: params[:goto]
+      from_check: params[:goto] == "confirm"
     )
+  end
+
+  def provider_session
+    @provider_session ||= ProviderCreation::SessionManager.new(session)
   end
 end

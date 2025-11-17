@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "Creating address", type: :feature do
   before do
     given_i_am_an_authenticated_user
+    allow(Addresses::GeocodeService).to receive(:call).and_return({ latitude: 51.503396, longitude: -0.127764 })
   end
 
   context "with valid data" do
@@ -13,14 +14,10 @@ RSpec.describe "Creating address", type: :feature do
 
       expect(page).to have_content("There are no addresses for #{provider.operating_name}")
 
-      within(".govuk-button-group") do
-        click_link "Add address"
-      end
+      # Visit manual entry directly (bypassing finder for this test)
+      visit provider_new_address_path(provider_id: provider.id, skip_finder: "true")
 
-      expect(page).to have_content(provider.operating_name)
       expect(page).to have_content("Address")
-
-      expect(TemporaryRecord.count).to eq(0)
 
       fill_in "Address line 1", with: "123 Test Street"
       fill_in "Address line 2 (optional)", with: "Test Building"
@@ -31,7 +28,6 @@ RSpec.describe "Creating address", type: :feature do
 
       click_button "Continue"
 
-      expect(TemporaryRecord.count).to eq(1)
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("123 Test Street")
       expect(page).to have_content("Test Building")
@@ -42,7 +38,6 @@ RSpec.describe "Creating address", type: :feature do
 
       click_button "Save address"
 
-      expect(TemporaryRecord.count).to eq(0)
       expect(page).to have_content("Address added")
       expect(page).to have_content("123 Test Street")
 
@@ -59,7 +54,7 @@ RSpec.describe "Creating address", type: :feature do
     end
 
     scenario "creates minimal address with only required fields" do
-      visit new_provider_address_path(provider_id: provider.id)
+      visit provider_new_address_path(provider_id: provider.id, skip_finder: "true")
 
       fill_in "Address line 1", with: "456 Minimal Road"
       fill_in "Town or city", with: "Minimal Town"
@@ -91,14 +86,13 @@ RSpec.describe "Creating address", type: :feature do
     let(:provider) { create(:provider, :hei) }
 
     scenario "can cancel and return to addresses" do
-      visit new_provider_address_path(provider_id: provider.id)
+      visit provider_new_address_path(provider_id: provider.id, skip_finder: "true")
 
       fill_in "Address line 1", with: "Test Street"
 
       click_link "Cancel"
 
       expect(page).to have_current_path(provider_addresses_path(provider))
-      expect(TemporaryRecord.count).to eq(0)
     end
   end
 end

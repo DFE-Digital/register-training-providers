@@ -68,6 +68,17 @@ en:
               taken: "Email address is already associated with a user, use a different one"
             telephone_number:
               blank: "Enter phone number"
+        find:
+          attributes:
+            postcode:
+              blank: "Enter postcode"
+              invalid_postcode_format: "Enter a full UK postcode"
+            building_name_or_number:
+              too_long: "Building name or number is too long (maximum is %{count} characters)"
+        select:
+          attributes:
+            selected_address_index:
+              blank: "Please select an address"
         provider:
           attributes:
             accreditation_status:
@@ -124,6 +135,9 @@ en:
         address_form:
           add: "Address added"
           update: "Address updated"
+        address:
+          add: "Address added"
+          update: "Address updated"
         contact_form:
           add: "Contact added"
           update: "Contact updated"
@@ -168,3 +182,10 @@ en:
     show_archived_provider: "Include archived providers"
   show_seed_data_labels:
     show_seed_data_with_issues: "Only show provider with data issues"
+
+  controllers:
+    providers:
+      addresses:
+        select:
+          no_search_data: "Please search for an address first"
+          invalid_index: "Please select a valid address"
