@@ -575,6 +575,7 @@ GEM
     thruster (0.1.16-x86_64-darwin)
     thruster (0.1.16-x86_64-linux)
     tilt (2.6.1)
+    timecop (0.9.10)
     timeout (0.4.4)
     tsort (0.2.0)
     tzinfo (2.0.6)
@@ -687,6 +688,7 @@ DEPENDENCIES
   syntax_tree
   syntax_tree-rbs
   thruster
+  timecop
   tzinfo-data
   uk_postcode
   web-console

@@ -135,6 +135,9 @@ group :test do
 
   # Library for stubbing HTTP requests
   gem "webmock"
+
+  # Time travel and time freezing library for Ruby
+  gem "timecop"
 end
 
 group :development, :production do
