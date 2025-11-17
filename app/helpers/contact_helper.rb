@@ -4,14 +4,14 @@ module ContactHelper
 
     contacts.map do |contact|
       card = {
-        title: "#{contact.first_name} #{contact.last_name}",
+        title: contact.full_name.to_s,
         rows: contact_rows(contact)
       }
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Change", href: "#" },
-          { text: "Delete", href: "#" },
+          { text: "Change", href: edit_provider_contact_path(contact, provider_id: provider.id) },
+          { text: "Delete", href: provider_contact_delete_path(contact, provider_id: provider.id) },
         ]
       end
 
@@ -27,8 +27,8 @@ module ContactHelper
         value: { text: contact.last_name },  },
       { key: { text: "Email address" },
         value: { text: contact.email }, },
-      { key: { text: "Telephone" },
-        value: { text: contact.telephone_number }, },
+      { key: { text: "Phone number" },
+        value: optional_value(contact.telephone_number) },
     ]
   end
 
@@ -41,7 +41,7 @@ module ContactHelper
     ]
 
     contact_attributes.map do |attribute|
-      key_label = attribute.to_s.humanize
+      key_label = t("forms.contacts.#{attribute}.label")
       hidden_label = key_label.downcase
 
       row = {

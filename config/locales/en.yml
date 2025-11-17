@@ -65,8 +65,9 @@ en:
               blank: "Enter last name"
             email:
               blank: "Enter email address"
+              taken: "Email address is already associated with a user, use a different one"
             telephone_number:
-              blank: "Enter telephone number"
+              blank: "Enter phone number"
         find:
           attributes:
             postcode:
@@ -112,7 +113,7 @@ en:
         email:
           invalid: Enter an email address in the correct format, like name@example.com
         uk_telephone_number:
-          invalid: Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+          invalid: Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
   flash_message:
     success:
       accreditation:
@@ -139,10 +140,15 @@ en:
           update: "Address updated"
         contact_form:
           add: "Contact added"
+          update: "Contact updated"
       address:
         add: "Address added"
         update: "Address updated"
         deleted: "Address deleted"
+      contact:
+        add: "Contact added"
+        update: "Contact updated"
+        deleted: "Contact deleted"
   forms:
     providers:
       is_the_provider_accredited:
@@ -156,6 +162,15 @@ en:
         label: "Date accreditation starts"
       end_date:
         label: "Date accreditation ends (optional)"
+    contacts:
+      first_name:
+        label: First name
+      last_name:
+        label: Last name
+      email:
+        label: Email address
+      telephone_number:
+        label: Phone number
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"

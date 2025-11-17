@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_11_232637) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_103115) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
-  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -137,6 +136,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_232637) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_contacts_on_created_at"
     t.index ["discarded_at"], name: "index_contacts_on_discarded_at"
+    t.index ["email", "provider_id"], name: "index_contacts_on_email_and_provider_id", unique: true
     t.index ["provider_id"], name: "index_contacts_on_provider_id"
   end
 

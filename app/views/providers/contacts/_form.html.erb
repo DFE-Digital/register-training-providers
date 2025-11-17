@@ -1,7 +1,7 @@
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: provider_contacts_path(provider),
+        href: request.referer,
       ) %>
 <% end %>
 
@@ -12,7 +12,7 @@
 
   <%= form.hidden_field :provider_id %>
 
-  <%= form.govuk_fieldset legend: { text: "Contact" }, caption: { text: page_caption } do %>
+  <%= form.govuk_fieldset legend: { text: "Contact details" }, caption: { text: page_caption } do %>
     <%= form.govuk_text_field :first_name,
                               label: { text: "First name", size: "s" },
                               width: "two-thirds" %>
@@ -26,7 +26,7 @@
                               width: "full" %>
 
     <%= form.govuk_text_field :telephone_number,
-                              label: { text: "Telephone number (optional)", size: "s" },
+                              label: { text: "Phone number (optional)", size: "s" },
                               width: "two-thirds" %>
 
   <% end %>
