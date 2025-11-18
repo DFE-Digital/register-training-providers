@@ -69,10 +69,14 @@ class AuthenticationToken < ApplicationRecord
   scope :by_status_and_last_used_at, -> { order(:status, last_used_at: :desc) }
 
   def self.create_with_random_token(api_client:, created_by:, expires_at: 6.months.from_now.to_date)
-    begin
+    token = nil
+    token_hash = nil
+
+    loop do
       token = "#{Rails.env}_" + SecureRandom.hex(32)
       token_hash = hash_token(token)
-    end while exists?(token_hash:)
+      break unless exists?(token_hash:)
+    end
 
     create!(api_client:, created_by:, expires_at:, token_hash:, token:)
   end
