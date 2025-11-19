@@ -4,7 +4,12 @@
 
 <% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
 
-<%= govuk_summary_list(rows: address_form_rows(@address)) %>
+<%= govuk_summary_list(rows: address_rows(@address)) %>
+
+<% if show_location_section?(@address) %>
+  <h2 class="govuk-heading-m">Location</h2>
+  <%= govuk_summary_list(rows: location_rows(@address)) %>
+<% end %>
 
 <%= govuk_warning_text(text: "Deleting an address is permanent – you cannot undo it.") %>
 
