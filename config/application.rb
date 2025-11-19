@@ -45,6 +45,7 @@ module RegisterTrainingProviders
     config.autoload_paths += %W[
       #{config.root}/app/models/concerns/enums
       #{config.root}/app/models/concerns/validators
+      #{config.root}/config/routes
     ]
   end
 end
