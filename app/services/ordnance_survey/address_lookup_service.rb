@@ -86,7 +86,7 @@ module OrdnanceSurvey
     end
 
     def build_address_line_2(dpa)
-      return dpa["DEPENDENT_LOCALITY"] if dpa["BUILDING_NAME"].present?
+      return dpa["DEPENDENT_LOCALITY"] if dpa["BUILDING_NAME"].blank?
 
       parts = [
         dpa["BUILDING_NUMBER"],
@@ -97,9 +97,7 @@ module OrdnanceSurvey
     end
 
     def build_address_line_3(dpa)
-      return nil if dpa["BUILDING_NAME"].present?
-
-      dpa["DEPENDENT_LOCALITY"]
+      dpa["DEPENDENT_LOCALITY"] if dpa["BUILDING_NAME"].present?
     end
 
     def format_address_line(text)
