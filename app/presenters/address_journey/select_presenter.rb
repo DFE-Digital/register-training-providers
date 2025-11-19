@@ -22,6 +22,7 @@ module AddressJourney
 
     def formatted_address(address)
       [
+        address["organisation_name"],
         address["address_line_1"],
         address["address_line_2"],
         address["town_or_city"],
