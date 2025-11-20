@@ -16,6 +16,12 @@
 class ApiClient < ApplicationRecord
   include Discard::Model
 
+  has_many :authentication_tokens, dependent: :destroy
+
+  before_discard do
+    authentication_tokens.active.each(&:revoke!)
+  end
+
   self.implicit_order_column = "created_at"
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
