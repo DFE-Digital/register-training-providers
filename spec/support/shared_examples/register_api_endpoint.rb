@@ -60,4 +60,16 @@ RSpec.shared_examples "a register API endpoint" do |url|
       expect(response).to have_http_status(:unauthorized)
     end
   end
+
+  context "with discarded api client's authentication token" do
+    let(:token) do
+      authentication_token = create(:authentication_token)
+      authentication_token.api_client.discard!
+      authentication_token.token
+    end
+
+    it "returns status code 401" do
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
 end
