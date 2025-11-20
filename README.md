@@ -123,6 +123,6 @@ SIGN_IN_METHOD=persona
 5. Copy the API key from the relevant project and add it to your environment file:
 
    ```dotenv
-   #  .env.local
+   # .env.local
    ORDNANCE_SURVEY_API_KEY=dev-api-key-here
    ```
