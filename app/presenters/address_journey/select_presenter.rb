@@ -22,6 +22,7 @@ module AddressJourney
 
     def formatted_address(address)
       [
+        address["organisation_name"],
         address["address_line_1"],
         address["address_line_2"],
         address["town_or_city"],
@@ -40,8 +41,8 @@ module AddressJourney
     end
 
     def formatted_search_terms
-      search_terms = ["'#{postcode}'"]
-      search_terms << "'#{building_name_or_number}'" if building_name_or_number.present?
+      search_terms = ["‘#{postcode}’"]
+      search_terms << "‘#{building_name_or_number}’" if building_name_or_number.present?
       search_terms.join(" and ")
     end
   end

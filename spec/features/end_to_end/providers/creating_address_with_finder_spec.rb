@@ -36,7 +36,7 @@ RSpec.describe "Creating address with finder", type: :feature do
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("1 address found for 'SW1A 2AA'")
+    expect(page).to have_content("1 address found for ‘SW1A 2AA’")
     expect(page).to have_content("10 Downing Street")
     expect(page).to have_content("London")
     expect(page).to have_content("SW1A 2AA")
@@ -87,7 +87,7 @@ RSpec.describe "Creating address with finder", type: :feature do
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("2 addresses found for 'SW1A 2AA'")
+    expect(page).to have_content("2 addresses found for ‘SW1A 2AA’")
     expect(page).to have_content("10 Downing Street, London, SW1A 2AA")
     expect(page).to have_content("11 Downing Street, London, SW1A 2AA")
 
@@ -111,7 +111,7 @@ RSpec.describe "Creating address with finder", type: :feature do
     fill_in "Postcode", with: "ZZ99 9ZZ"
     click_button "Find address"
 
-    expect(page).to have_content("No addresses found for 'ZZ99 9ZZ'")
+    expect(page).to have_content("No addresses found for ‘ZZ99 9ZZ’")
 
     click_link "enter the address manually"
 
@@ -138,7 +138,7 @@ RSpec.describe "Creating address with finder", type: :feature do
     fill_in "Postcode", with: "SW1A 2AA"
     click_button "Find address"
 
-    expect(page).to have_content("1 address found for 'SW1A 2AA'")
+    expect(page).to have_content("1 address found for ‘SW1A 2AA’")
 
     click_link "Enter address manually"
 
@@ -177,7 +177,7 @@ RSpec.describe "Creating address with finder", type: :feature do
       building_name_or_number: "10"
     )
 
-    expect(page).to have_content("1 address found for 'SW1A 2AA' and '10'")
+    expect(page).to have_content("1 address found for ‘SW1A 2AA’ and ‘10’")
   end
 
   scenario "validation error on find form" do

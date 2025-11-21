@@ -40,7 +40,8 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
 
       expect(result).to contain_exactly(
         hash_including(
-          "address_line_1" => "Prime Minister & First Lord Of The Treasury, 10, Downing Street",
+          "organisation_name" => "Prime Minister & First Lord Of The Treasury",
+          "address_line_1" => "10, Downing Street",
           "town_or_city" => "London",
           "postcode" => "SW1A 2AA",
           "latitude" => 51.5034,

@@ -8,7 +8,7 @@
 
 <% if show_location_section?(@form) %>
   <h2 class="govuk-heading-m">Location</h2>
-  <p class="govuk-body">We collect location data to support location-based searches. It's generated automatically from the address you entered.</p>
+  <p class="govuk-body">We collect location data to support location-based searches. It’s generated automatically from the address you entered.</p>
   <%= govuk_summary_list(rows: location_rows(@form)) %>
 <% end %>
 
