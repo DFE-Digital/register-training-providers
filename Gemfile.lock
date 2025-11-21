@@ -555,6 +555,7 @@ GEM
       net-ssh (>= 2.8.0)
       ostruct
     stackprof (0.2.27)
+    stateful_enum (0.7.0)
     stringio (3.1.7)
     swd (2.0.3)
       activesupport (>= 3)
@@ -574,6 +575,7 @@ GEM
     thruster (0.1.16-x86_64-darwin)
     thruster (0.1.16-x86_64-linux)
     tilt (2.6.1)
+    timecop (0.9.10)
     timeout (0.4.4)
     tsort (0.2.0)
     tzinfo (2.0.6)
@@ -682,9 +684,11 @@ DEPENDENCIES
   solid_cache
   solid_queue
   stackprof
+  stateful_enum
   syntax_tree
   syntax_tree-rbs
   thruster
+  timecop
   tzinfo-data
   uk_postcode
   web-console

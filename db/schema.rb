@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_154800) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -76,6 +76,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_154800) do
     t.index ["created_at"], name: "index_audits_on_created_at"
     t.index ["request_uuid"], name: "index_audits_on_request_uuid"
     t.index ["user_id", "user_type"], name: "user_index"
+  end
+
+  create_table "authentication_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "api_client_id", null: false
+    t.datetime "created_at", null: false
+    t.uuid "created_by_id", null: false
+    t.date "expires_at", null: false
+    t.datetime "last_used_at"
+    t.date "revoked_at"
+    t.uuid "revoked_by_id"
+    t.string "status", default: "active"
+    t.string "token_hash", null: false
+    t.datetime "updated_at", null: false
+    t.index ["api_client_id"], name: "index_authentication_tokens_on_api_client_id"
+    t.index ["created_by_id"], name: "index_authentication_tokens_on_created_by_id"
+    t.index ["revoked_by_id"], name: "index_authentication_tokens_on_revoked_by_id"
+    t.index ["status", "last_used_at"], name: "index_authentication_tokens_on_status_and_last_used_at"
+    t.index ["token_hash"], name: "index_authentication_tokens_on_token_hash", unique: true
   end
 
   create_table "blazer_audits", force: :cascade do |t|
@@ -333,6 +351,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_154800) do
 
   add_foreign_key "accreditations", "providers"
   add_foreign_key "addresses", "providers"
+  add_foreign_key "authentication_tokens", "api_clients"
+  add_foreign_key "authentication_tokens", "users", column: "created_by_id"
+  add_foreign_key "authentication_tokens", "users", column: "revoked_by_id"
   add_foreign_key "contacts", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
