@@ -47,7 +47,7 @@ module Api
     alias_method :version, :current_version
 
     def valid_authentication_token?
-      auth_token&.active? && current_api_client&.kept?
+      Api::ValidateAuthenticationToken.call(auth_token:)
     end
 
     def auth_token
