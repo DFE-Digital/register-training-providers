@@ -1,20 +1,21 @@
 RSpec.shared_examples "a register API endpoint" do |url|
+  let(:auth_token) { super() || create(:authentication_token) }
+  let(:token) { auth_token.token }
+
+  # Define the request as the subject
+  subject(:make_request) do
+    get url, headers: { Authorization: token }
+    response
+  end
+
   context "with a valid authentication token" do
-    let(:token) do
-      super() || create(:authentication_token).token
-    end
-
-    before do
-      get url, headers: { Authorization: token }
-    end
-
     it "returns status code 200" do
-      expect(response).to have_http_status(:ok)
+      expect(make_request).to have_http_status(:ok)
     end
 
     context "when the register_api feature flag is off", env: { feature_flag_api?: false } do
       it "returns status code 404" do
-        expect(response).to have_http_status(:not_found)
+        expect(make_request).to have_http_status(:not_found)
       end
     end
 
@@ -28,48 +29,34 @@ RSpec.shared_examples "a register API endpoint" do |url|
   end
 
   context "without a valid authentication token" do
-    before do
-      get url, headers: { Authorization: "Bearer fred" }
-    end
+    let(:token) { "Bearer fred" }
 
     it "returns status code 401" do
-      expect(response).to have_http_status(:unauthorized)
+      expect(make_request).to have_http_status(:unauthorized)
     end
   end
 
   context "with an expired authentication token" do
-    let(:token) do
-      authentication_token = create(:authentication_token, expires_at: 1.day.ago)
-      authentication_token.expire!
-      authentication_token.token
-    end
+    before { auth_token.expire! }
 
     it "returns status code 401" do
-      expect(response).to have_http_status(:unauthorized)
+      expect(make_request).to have_http_status(:unauthorized)
     end
   end
 
-  context "with revoked authentication token" do
-    let(:token) do
-      authentication_token = create(:authentication_token)
-      authentication_token.revoke!
-      authentication_token.token
-    end
+  context "with a revoked authentication token" do
+    before { auth_token.revoke! }
 
     it "returns status code 401" do
-      expect(response).to have_http_status(:unauthorized)
+      expect(make_request).to have_http_status(:unauthorized)
     end
   end
 
   context "with discarded api client's authentication token" do
-    let(:token) do
-      authentication_token = create(:authentication_token)
-      authentication_token.api_client.discard!
-      authentication_token.token
-    end
+    before { auth_token.api_client.discard! }
 
     it "returns status code 401" do
-      expect(response).to have_http_status(:unauthorized)
+      expect(make_request).to have_http_status(:unauthorized)
     end
   end
 end

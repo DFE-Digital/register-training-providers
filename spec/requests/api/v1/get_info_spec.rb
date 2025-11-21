@@ -1,7 +1,8 @@
 require "rails_helper"
 
 describe "`GET /info` endpoint", type: :request do
-  let!(:token) { create(:authentication_token).token }
+  let(:auth_token) { create(:authentication_token) }
+  let(:token) { auth_token.token }
 
   before do
     get "/api/#{version}/info", headers: { Authorization: token }
