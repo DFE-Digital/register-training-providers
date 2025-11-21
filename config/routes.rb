@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  extend ApiRoutes
+
   def checkable(model, module_prefix: nil)
     if module_prefix
       # Handle nested modules like providers/addresses
