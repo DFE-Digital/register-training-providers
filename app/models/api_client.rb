@@ -16,13 +16,26 @@
 class ApiClient < ApplicationRecord
   include Discard::Model
 
-  has_many :authentication_tokens, dependent: :destroy
-
-  before_discard do
-    authentication_tokens.active.each(&:revoke!)
-  end
-
   self.implicit_order_column = "created_at"
 
+  has_many :authentication_tokens, dependent: :destroy
+
   validates :name, presence: true, uniqueness: { case_sensitive: false }
+
+  before_discard do
+    revoke_all_active_tokens!
+  end
+
+  def revoke_all_active_tokens!
+    authentication_tokens.active.find_each(&:revoke!)
+  end
+
+  def expire_all_due_tokens!
+    authentication_tokens.due_for_expiry.find_each(&:expire!)
+  end
+
+  def self.sweep_all_tokens!
+    discarded.find_each(&:revoke_all_active_tokens!)
+    kept.find_each(&:expire_all_due_tokens!)
+  end
 end
