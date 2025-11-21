@@ -79,6 +79,7 @@ class AuthenticationToken < ApplicationRecord
       token_hash = hash_token(token)
       break unless exists?(token_hash:)
     end
+    expires_at ||= 6.months.from_now.to_date
 
     create!(api_client:, created_by:, expires_at:, token_hash:, token:)
   end
