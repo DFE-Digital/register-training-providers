@@ -1,3 +1,15 @@
+# Main daily expiry at midnight
+expire_authentication_tokens_midnight:
+  command: "ApiClient.sweep_all_tokens!"
+  priority: 100
+  schedule: "at 12:00 am every day"
+
+# Backup expiry 15 minutes later
+expire_authentication_tokens_backup:
+  command: "ApiClient.sweep_all_tokens!"
+  priority: 100
+  schedule: "at 12:15 am every day"
+
 remove_temporary_record_command:
   command: "TemporaryRecord.expired.delete_all"
   priority: 100
