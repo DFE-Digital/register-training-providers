@@ -68,6 +68,8 @@ class AuthenticationToken < ApplicationRecord
 
   scope :by_status_and_last_used_at, -> { order(:status, last_used_at: :desc) }
 
+  scope :due_for_expiry, -> { active.where(expires_at: ..Date.current) }
+
   def self.create_with_random_token(api_client:, created_by:, expires_at: 6.months.from_now.to_date)
     token = nil
     token_hash = nil
