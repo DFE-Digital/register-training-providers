@@ -33,3 +33,4 @@ tmp
 vendor
 .yarn/*
 .cursor/*
+public/openapi/*

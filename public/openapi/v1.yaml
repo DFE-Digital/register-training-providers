@@ -1,0 +1,104 @@
+---
+openapi: 3.0.3
+info:
+  title: Register of training providers API
+  version: v1
+servers: []
+paths:
+  "/api/{api_version}/*url":
+    get:
+      summary: Invalid API version
+      tags:
+      - Core
+      parameters:
+      - name: api_version
+        in: path
+        required: true
+        schema:
+          type: string
+        example: v0
+      - name: url
+        in: path
+        required: true
+        schema:
+          type: string
+        example: info
+      responses:
+        '404':
+          description: returns 404 Not Found for invalid version
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        error:
+                          type: string
+                        message:
+                          type: string
+                      required:
+                      - error
+                      - message
+                required:
+                - errors
+              example:
+                errors:
+                - error: NotFound
+                  message: Not found
+  "/api/{api_version}/info":
+    get:
+      summary: Provides general information about the API
+      tags:
+      - Info
+      parameters:
+      - name: api_version
+        in: path
+        required: true
+        schema:
+          type: string
+        example: v1
+      responses:
+        '200':
+          description: returns the requested and latest API version and status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  version:
+                    type: object
+                    properties:
+                      requested:
+                        type: string
+                      latest:
+                        type: string
+                    required:
+                    - requested
+                    - latest
+                required:
+                - status
+                - version
+              example:
+                status: ok
+                version:
+                  requested: v1
+                  latest: v1
+        '401':
+          description: returns 401 Unauthorized for invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Unauthorized
