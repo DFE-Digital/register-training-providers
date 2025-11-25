@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :provider do
+    id { Faker::Internet.unique.uuid }
     provider_type { :hei }
     accreditation_status { :unaccredited }
 

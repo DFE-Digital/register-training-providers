@@ -1,3 +1,11 @@
+generate_openapi = ENV.fetch("OPENAPI", nil) == "1"
+
+if generate_openapi
+  seed = ENV.fetch("OPENAPI_SEED", 0xFFFF)
+  srand(seed)
+  Faker::Config.random = Random.new(seed) if defined? Faker
+end
+
 RSpec.configure do |config|
   config.order = :defined
 
