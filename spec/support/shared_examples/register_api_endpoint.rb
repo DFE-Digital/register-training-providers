@@ -59,4 +59,28 @@ RSpec.shared_examples "a register API endpoint" do |url|
       expect(make_request).to have_http_status(:unauthorized)
     end
   end
+
+  context "with an expired authentication token" do
+    before { auth_token.expire! }
+
+    it "returns status code 401" do
+      expect(make_request).to have_http_status(:unauthorized)
+    end
+  end
+
+  context "with a revoked authentication token" do
+    before { auth_token.revoke! }
+
+    it "returns status code 401" do
+      expect(make_request).to have_http_status(:unauthorized)
+    end
+  end
+
+  context "with discarded api client's authentication token" do
+    before { auth_token.api_client.discard! }
+
+    it "returns status code 401" do
+      expect(make_request).to have_http_status(:unauthorized)
+    end
+  end
 end
