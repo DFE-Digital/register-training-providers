@@ -22,7 +22,7 @@ paths:
         required: true
         schema:
           type: string
-        example: info
+        example: providers
       responses:
         '404':
           description: returns 404 Not Found for invalid version
@@ -89,6 +89,75 @@ paths:
                 version:
                   requested: v1
                   latest: v1
+        '401':
+          description: returns 401 Unauthorized for invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Unauthorized
+  "/api/{api_version}/providers":
+    get:
+      summary: Get many providers
+      tags:
+      - providers
+      parameters:
+      - name: api_version
+        in: path
+        required: true
+        schema:
+          type: string
+        example: v1
+      responses:
+        '200':
+          description: |
+            This endpoint can be used to retrieve providers for a given academic year.
+            This is intended to make it possible to check for new or updated providers regularly.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        operating_name:
+                          type: string
+                        provider_type:
+                          type: string
+                        code:
+                          type: string
+                        accreditation_status:
+                          type: string
+                        updated_at:
+                          type: string
+                      required:
+                      - id
+                      - operating_name
+                      - provider_type
+                      - code
+                      - accreditation_status
+                      - updated_at
+                required:
+                - data
+              example:
+                data:
+                - id: db05f4ef-9a42-4729-9a8f-19aa671b36b2
+                  operating_name: Clearcourt College
+                  provider_type: hei
+                  code: DM3
+                  accreditation_status: unaccredited
+                  updated_at: '2025-09-15T12:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
           content:
