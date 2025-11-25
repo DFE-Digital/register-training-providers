@@ -192,6 +192,10 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Verify openapi
+        if: always()
+        run: bin/verify_openapi
+
   merge-dependabot:
     name: Merge dependabot
     permissions:
