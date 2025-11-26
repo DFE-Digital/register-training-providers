@@ -72,6 +72,9 @@ gem "stackprof"
 # Blazer
 gem "blazer"
 
+# for sending analytics data to the analytics platform
+gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.15.1"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
