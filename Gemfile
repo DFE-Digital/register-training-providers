@@ -75,6 +75,8 @@ gem "blazer"
 # Finite state machines for Ruby classes, including ActiveRecord models.
 gem "stateful_enum"
 
+gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.15.10"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
