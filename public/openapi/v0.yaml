@@ -84,9 +84,19 @@ paths:
         required: true
         schema:
           type: string
-        example: test_cd04a04e71ec3e6682d2f574709228f5a75ca7682f539b3a88a70c23c601c25f
+        example: test_c25f336f7383819188fa488a20cfc3354a235d35ff9d4e5f18b03fe4b5e2ae53
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
+      - name: academic_year
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 2025
+        description: |
+          Filters providers to only those in the specified academic
+          year. The value must be a 4-digit year, for example: 2025. If not provided,
+          the API will return providers active in the current academic year.
       - name: api_version
         in: path
         required: true
@@ -140,10 +150,10 @@ paths:
                 - data
               example:
                 data:
-                - id: b1d35cf4-df58-4370-953c-93b7ab89ad6f
-                  operating_name: Higher education institution (HEI) 8073
+                - id: 78a6a325-1d94-47bd-a626-05d7590ee088
+                  operating_name: Higher education institution (HEI) 9474
                   provider_type: hei
-                  code: 2AD
+                  code: 6OC
                   accreditation_status: accredited
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
