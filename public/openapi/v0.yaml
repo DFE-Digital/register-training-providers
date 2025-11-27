@@ -2,53 +2,9 @@
 openapi: 3.0.3
 info:
   title: Register of training providers API
-  version: v1
+  version: v0
 servers: []
 paths:
-  "/api/{api_version}/*url":
-    get:
-      summary: Invalid API version
-      tags:
-      - Core
-      parameters:
-      - name: api_version
-        in: path
-        required: true
-        schema:
-          type: string
-        example: v0
-      - name: url
-        in: path
-        required: true
-        schema:
-          type: string
-        example: providers
-      responses:
-        '404':
-          description: returns 404 Not Found for invalid version
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        error:
-                          type: string
-                        message:
-                          type: string
-                      required:
-                      - error
-                      - message
-                required:
-                - errors
-              example:
-                errors:
-                - error: NotFound
-                  message: Not found
   "/api/{api_version}/info":
     get:
       summary: Provides general information about the API
@@ -60,7 +16,7 @@ paths:
         required: true
         schema:
           type: string
-        example: v1
+        example: v0
       responses:
         '200':
           description: returns the requested and latest API version and status
@@ -87,8 +43,8 @@ paths:
               example:
                 status: ok
                 version:
-                  requested: v1
-                  latest: v1
+                  requested: v0
+                  latest: v0
         '401':
           description: returns 401 Unauthorized for invalid token
           content:
@@ -113,7 +69,7 @@ paths:
         required: true
         schema:
           type: string
-        example: v1
+        example: v0
       responses:
         '200':
           description: |

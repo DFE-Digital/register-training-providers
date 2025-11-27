@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "`GET /providers` endpoint", type: :request do
-  version = "v1"
+  version = "v0"
 
   it_behaves_like "a register API endpoint", "/api/#{version}/providers"
 

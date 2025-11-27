@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "`GET /info` endpoint", type: :request do
-  version = "v1"
+  version = "v0"
 
   it_behaves_like "a register API endpoint", "/api/#{version}/info"
 
@@ -15,7 +15,7 @@ RSpec.describe "`GET /info` endpoint", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to eq(
         "status" => "ok",
-        "version" => { "latest" => "v1", "requested" => "v1" }
+        "version" => { "latest" => "v0", "requested" => "v0" }
       )
     end
   end
