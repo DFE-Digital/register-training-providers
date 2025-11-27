@@ -136,7 +136,7 @@ GEM
       logger (~> 1.5)
     choice (0.2.0)
     concurrent-ruby (1.3.5)
-    connection_pool (2.5.4)
+    connection_pool (2.5.5)
     crack (1.0.1)
       bigdecimal
       rexml
@@ -144,7 +144,7 @@ GEM
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
     csv (3.3.5)
-    database_consistency (2.0.6)
+    database_consistency (2.0.8)
       activerecord (>= 3.2)
     date (3.5.0)
     debug (1.11.0)
@@ -259,7 +259,7 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     mini_mime (1.1.5)
-    minitest (5.26.1)
+    minitest (5.26.2)
     msgpack (1.8.0)
     net-http (0.6.0)
       uri
