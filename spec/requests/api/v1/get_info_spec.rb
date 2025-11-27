@@ -1,20 +1,22 @@
 require "rails_helper"
 
-describe "`GET /info` endpoint", type: :request do
-  let(:auth_token) { create(:authentication_token) }
-  let(:token) { auth_token.token }
+RSpec.describe "`GET /info` endpoint", type: :request do
+  version = "v1"
 
-  before do
-    get "/api/#{version}/info", headers: { Authorization: token }
-  end
+  it_behaves_like "a register API endpoint", "/api/#{version}/info"
 
-  context "using version v1" do
-    let(:version) { "v1" }
+  context "response content" do
+    let(:auth_token) { create(:authentication_token) }
+    let(:token) { auth_token.token }
 
-    it_behaves_like "a register API endpoint", "/api/v1/info"
+    it "returns the requested and latest API version and status", openapi: { summary: "Provides general information about the API", tags: ["Info"] } do
+      get "/api/#{version}/info", headers: { Authorization: token }
 
-    it "shows the requested version" do
-      expect(response.parsed_body).to eq({ "status" => "ok", "version" => { "latest" => "v1", "requested" => "v1" } })
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq(
+        "status" => "ok",
+        "version" => { "latest" => "v1", "requested" => "v1" }
+      )
     end
   end
 end
