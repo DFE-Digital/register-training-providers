@@ -32,7 +32,7 @@ namespace :api_clients do
     puts "  Client: #{token.api_client.name}"
     puts "  Token: #{token.token}"
     puts "  Expires at: #{token.expires_at}"
-    puts "Curl: curl -H 'Authorization: Bearer #{token.token}' http://localhost:1025/api/v1/info"
+    puts "Curl: curl -H 'Authorization: Bearer #{token.token}' http://localhost:1025/api/v0/info"
   end
 
   desc <<~DESC
