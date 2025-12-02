@@ -1,2 +1,86 @@
 ---
-shared: {}
+:sessions:
+- id
+- created_at
+- data
+- session_id
+- updated_at
+:audits:
+- id
+- action
+- associated_id
+- associated_type
+- auditable_id
+- auditable_type
+- audited_changes
+- comment
+- created_at
+- remote_address
+- request_uuid
+- user_id
+- user_type
+- username
+- version
+:solid_queue_semaphores:
+- id
+- created_at
+- expires_at
+- key
+- updated_at
+- value
+:solid_queue_recurring_tasks:
+- id
+- arguments
+- class_name
+- command
+- created_at
+- description
+- key
+- priority
+- queue_name
+- schedule
+- static
+- updated_at
+:solid_queue_processes:
+- id
+- created_at
+- hostname
+- kind
+- last_heartbeat_at
+- metadata
+- name
+- pid
+- supervisor_id
+:solid_queue_pauses:
+- id
+- created_at
+- queue_name
+:solid_queue_jobs:
+- id
+- active_job_id
+- arguments
+- class_name
+- concurrency_key
+- created_at
+- finished_at
+- priority
+- queue_name
+- scheduled_at
+- updated_at
+:solid_queue_scheduled_executions:
+- id
+- latitude
+- longitude
+- postcode
+- provider_id
+- town_or_city
+- updated_at
+:addresses:
+- address_line_1
+- address_line_2
+- address_line_3
+- postcode
+- county
+- latitude
+- longitude
+- town_or_city

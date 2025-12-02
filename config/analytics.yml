@@ -1,2 +1,16 @@
 ---
-shared: {}
+:accreditations:
+- id
+- created_at
+- discarded_at
+- end_date
+- number
+- provider_id
+- start_date
+- updated_at
+:contacts:
+- id
+- created_at
+- discarded_at
+- provider_id
+- updated_at
