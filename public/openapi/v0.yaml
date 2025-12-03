@@ -70,6 +70,12 @@ paths:
         schema:
           type: string
         example: v0
+      - name: changed_since
+        in: query
+        required: false
+        schema:
+          type: string
+        example: '2025-09-14T12:34:56Z'
       responses:
         '200':
           description: |
@@ -108,11 +114,11 @@ paths:
                 - data
               example:
                 data:
-                - id: db05f4ef-9a42-4729-9a8f-19aa671b36b2
-                  operating_name: Clearcourt College
+                - id: 1d4c72fb-5cdf-4c43-8419-dad3cdb1569b
+                  operating_name: Williamson-Haley
                   provider_type: hei
-                  code: DM3
-                  accreditation_status: unaccredited
+                  code: 8GK
+                  accreditation_status: accredited
                   updated_at: '2025-09-15T12:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
