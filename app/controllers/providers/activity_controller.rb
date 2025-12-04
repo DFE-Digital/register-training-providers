@@ -4,7 +4,7 @@ module Providers
 
     def index
       authorize provider, :show?
-      audits = AuditsQuery.call(provider: provider)
+      audits = AuditsQuery.call(provider:)
       @pagy, @audits = pagy(audits, limit: 25)
       @provider = provider
     end
@@ -16,4 +16,3 @@ module Providers
     end
   end
 end
-

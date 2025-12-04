@@ -18,4 +18,3 @@ module ActivityDayHeading
     end
   end
 end
-

@@ -2,17 +2,19 @@ class UpdateAuditsForUuidSupport < ActiveRecord::Migration[8.1]
   def up
     truncate_tables :audits
 
-    remove_column :audits, :auditable_id
-    remove_column :audits, :associated_id
-    remove_column :audits, :user_id
+    change_table :audits, bulk: true do |t|
+      t.remove :auditable_id
+      t.remove :associated_id
+      t.remove :user_id
 
-    add_column :audits, :auditable_id, :uuid
-    add_column :audits, :associated_id, :uuid
-    add_column :audits, :user_id, :uuid
+      t.uuid :auditable_id
+      t.uuid :associated_id
+      t.uuid :user_id
 
-    add_index :audits, [:auditable_type, :auditable_id, :version], name: "auditable_index"
-    add_index :audits, [:associated_type, :associated_id], name: "associated_index"
-    add_index :audits, [:user_id, :user_type], name: "user_index"
+      t.index [:auditable_type, :auditable_id, :version], name: "auditable_index"
+      t.index [:associated_type, :associated_id], name: "associated_index"
+      t.index [:user_id, :user_type], name: "user_index"
+    end
   end
 
   def down

@@ -4,12 +4,11 @@
   <p class="govuk-body">There is no activity to show.</p>
 <% else %>
   <% group_audits_by_day(@audits).each do |date, audits| %>
-    <%= render ActivityDayHeading::View.new(date: date) %>
+    <%= render ActivityDayHeading::View.new(date:) %>
     <% audits.each do |audit| %>
-      <%= render ActivityItem::View.new(audit: audit) %>
+      <%= render ActivityItem::View.new(audit:) %>
     <% end %>
   <% end %>
 
   <%= render PaginationDisplay::View.new(pagy: @pagy) %>
 <% end %>
-

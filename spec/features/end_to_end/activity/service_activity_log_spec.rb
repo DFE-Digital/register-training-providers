@@ -75,4 +75,3 @@ RSpec.feature "Service Activity Log" do
     given_i_am_authenticated(user:)
   end
 end
-
