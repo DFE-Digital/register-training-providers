@@ -8,9 +8,9 @@ module ActivityDayHeading
     end
 
     def day_label
-      if date == Date.current
+      if date == Time.current.to_date
         "Today"
-      elsif date == Date.current - 1.day
+      elsif date == Time.current.to_date - 1.day
         "Yesterday"
       else
         date.to_fs(:govuk)
