@@ -45,6 +45,7 @@ class Provider < ApplicationRecord
   has_many :contacts, dependent: :destroy
 
   audited
+  has_associated_audits
 
   include ProviderTypeEnum
   include AccreditationStatusEnum
