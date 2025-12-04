@@ -97,4 +97,3 @@ RSpec.feature "Provider Activity Log" do
     given_i_am_authenticated(user:)
   end
 end
-

@@ -3,4 +3,3 @@ module ActivityHelper
     audits.group_by { |audit| audit.created_at.in_time_zone.to_date }
   end
 end
-

@@ -44,4 +44,3 @@ module ActivityItem
     end
   end
 end
-

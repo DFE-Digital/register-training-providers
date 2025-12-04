@@ -6,4 +6,3 @@ class ActivityController < ApplicationController
     @pagy, @audits = pagy(audits, limit: 25)
   end
 end
-
