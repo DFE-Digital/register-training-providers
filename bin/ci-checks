@@ -111,6 +111,14 @@ main() {
         else
             exit_code=1
         fi
+        
+        # OpenAPI verification (runs after test suite since specs generate the YAML)
+        print_step "OpenAPI Verification"
+        if run_check "OpenAPI Specs" bin/verify_openapi; then
+            :
+        else
+            exit_code=1
+        fi
     else
         print_warning "Test Suite skipped (RAILS_ENV not set to 'test')"
         print_status "$BLUE" "To run tests: RAILS_ENV=test ./bin/ci-checks"
