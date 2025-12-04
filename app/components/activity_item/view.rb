@@ -19,8 +19,14 @@ module ActivityItem
       ACTIVITY_LABELS[audit.auditable_type] || audit.auditable_type
     end
 
+    ACTION_LABELS = {
+      "create" => "created",
+      "update" => "updated",
+      "destroy" => "deleted"
+    }.freeze
+
     def action_text
-      audit.action
+      ACTION_LABELS[audit.action] || audit.action
     end
 
     def full_description
