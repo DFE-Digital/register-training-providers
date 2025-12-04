@@ -30,7 +30,7 @@ class Accreditation < ApplicationRecord
 
   belongs_to :provider
 
-  audited
+  audited associated_with: :provider
 
   validates :number, presence: true, accreditation_number: true
   validates :start_date, presence: true
