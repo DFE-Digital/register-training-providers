@@ -15,4 +15,3 @@ class AuditsQuery
     end
   end
 end
-
