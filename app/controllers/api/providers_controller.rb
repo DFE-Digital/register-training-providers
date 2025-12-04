@@ -12,7 +12,7 @@ module Api
           only: %i[
             id operating_name provider_type code accreditation_status
           ]
-        ).merge("updated_at" => p.updated_at.iso8601)
+        ).merge("updated_at" => p.updated_at.utc.iso8601)
       end
 
       render(json: { data: })
