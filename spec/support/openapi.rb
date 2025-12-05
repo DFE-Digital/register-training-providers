@@ -44,7 +44,7 @@ RSpec.configure do |config|
     if example.metadata[:time_sensitive]
       example.run
     else
-      fixed_time = Time.zone.local(current_academic_year, 9, 15, 12, 34, 56)
+      fixed_time = Time.zone.local(AcademicYearHelper.current_academic_year, 9, 15, 12, 34, 56)
       Timecop.freeze(fixed_time) { example.run }
     end
   end
