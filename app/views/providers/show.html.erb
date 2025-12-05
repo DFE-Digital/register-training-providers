@@ -40,9 +40,10 @@
   <h4 class="govuk-heading-s">Imported data</h4>
   <%= govuk_table(
         rows: [["Field", { text: "Value" }]] +
-              @provider.seed_data_notes["row_imported"].compact.map do |field, field_row_imported|
-                [field, { text: field_row_imported }]
+              I18n.t("imported_data.fields.provider").filter_map do |field, label|
+                value = @provider.seed_data_notes["row_imported"]["provider"][field.to_s].present? ? { text: @provider.seed_data_notes["row_imported"]["provider"][field.to_s] } : not_entered
+                [label, value]
               end,
         first_cell_is_header: true
-      ) if @provider.seed_data_notes["row_imported"].present? %>
+      ) if @provider.seed_data_notes["row_imported"]["provider"].present? %>
 <% end %>
