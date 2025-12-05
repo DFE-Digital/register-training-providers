@@ -15,12 +15,9 @@ namespace :seed_data do
       end
     end
 
-    ENV["CSV"] = ENV["CSV"] || Rails.root.join("lib/data/provider_25-26.csv").to_s
-
-    # Make sure task can be run again (in case it was run before)
-    Rake::Task["import:providers"].reenable
-
-    # Call the import:providers task
-    Rake::Task["import:providers"].invoke
+    ["import:providers_xlsx"].each do |task|
+      Rake::Task[task].reenable
+      Rake::Task[task].invoke
+    end
   end
 end
