@@ -26,7 +26,7 @@ class User < ApplicationRecord
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
 
-  audited
+  audited except: [:dfe_sign_in_uid, :last_signed_in_at]
 
   before_validation :sanitise_email
 

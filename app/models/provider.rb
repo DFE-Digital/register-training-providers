@@ -42,7 +42,7 @@ class Provider < ApplicationRecord
   has_many :addresses, dependent: :destroy
   has_many :contacts, dependent: :destroy
 
-  audited
+  audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
 
   include ProviderTypeEnum
