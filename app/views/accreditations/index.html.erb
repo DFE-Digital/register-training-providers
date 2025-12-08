@@ -1,5 +1,5 @@
 <%= content_for(:breadcrumbs) do %>
-  <%= govuk_back_link(text: "Back", href: providers_path) %>
+  <%= govuk_back_link(text: "Back", href: providers_path(debug: params[:debug])) %>
 <% end %>
 
 <% provider_page_data(@provider) %>
@@ -7,7 +7,7 @@
 <%= content_for(:secondary_navigation) do %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Accreditations") %>
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Accreditations", debug_mode: debug_mode?) %>
     </div>
   </div>
 <% end %>
