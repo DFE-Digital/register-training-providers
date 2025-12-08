@@ -13,18 +13,7 @@
             end
           end
           card.with_summary_list(rows: summary_card[:rows]) do |summary_list|
-            if debug_mode? && provider.seed_data_notes.dig("row_imported", "accreditation", "number") == summary_card[:number]
-              summary_list.with_row do |row|
-                row.with_key(text: "Imported data")
-
-                debug_rows = I18n.t("imported_data.fields.accreditation").filter_map do |field, label|
-                  value = provider.seed_data_notes["row_imported"]["accreditation"][field.to_s].present? ? { text: provider.seed_data_notes["row_imported"]["accreditation"][field.to_s] } : not_entered
-                  { key: { text: label }, value: value }
-                end
-
-                row.with_value(text: govuk_summary_list(rows: debug_rows))
-              end
-            end
+            debug_accreditation(provider, summary_card[:number], summary_list)
           end
         end %>
   <% end %>
