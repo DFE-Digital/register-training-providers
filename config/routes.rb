@@ -113,6 +113,7 @@ Rails.application.routes.draw do
       checkable(:contacts, module_prefix: :providers)
       resource :delete, only: [:show, :destroy], module: "providers/contacts"
     end
+    resources :partnerships, only: [:index], controller: "providers/partnerships"
 
     # === Addresses ===
 

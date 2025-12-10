@@ -17,7 +17,11 @@ namespace :example_data do
 
     ENV["CSV"] = ENV["CSV"] || Rails.root.join("lib/data/provider_25-26.csv").to_s
 
-    ["import:providers", "generate:addresses", "generate:contacts"].each do |task|
+    ["import:providers",
+     "generate:addresses",
+     "generate:contacts",
+     "generate:academic_cycles",
+     "generate:partnerships"].each do |task|
       Rake::Task[task].reenable
       Rake::Task[task].invoke
     end

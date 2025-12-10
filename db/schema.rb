@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_01_092605) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
+
+  create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.daterange "duration"
+    t.datetime "updated_at", null: false
+  end
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -165,6 +172,27 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
     t.index ["discarded_at"], name: "index_contacts_on_discarded_at"
     t.index ["email", "provider_id"], name: "index_contacts_on_email_and_provider_id", unique: true
     t.index ["provider_id"], name: "index_contacts_on_provider_id"
+  end
+
+  create_table "partnership_academic_cycles", force: :cascade do |t|
+    t.uuid "academic_cycle_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.uuid "partnership_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["academic_cycle_id"], name: "index_partnership_academic_cycles_on_academic_cycle_id"
+    t.index ["partnership_id"], name: "index_partnership_academic_cycles_on_partnership_id"
+  end
+
+  create_table "partnerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "accredited_provider_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.daterange "duration"
+    t.uuid "provider_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accredited_provider_id"], name: "index_partnerships_on_accredited_provider_id"
+    t.index ["provider_id"], name: "index_partnerships_on_provider_id"
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -355,6 +383,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
   add_foreign_key "authentication_tokens", "users", column: "revoked_by_id"
   add_foreign_key "contacts", "providers"
+  add_foreign_key "partnership_academic_cycles", "academic_cycles"
+  add_foreign_key "partnership_academic_cycles", "partnerships"
+  add_foreign_key "partnerships", "providers"
+  add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
