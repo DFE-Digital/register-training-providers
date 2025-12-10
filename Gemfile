@@ -115,6 +115,8 @@ group :development do
   gem "syntax_tree-rbs", require: false
 
   gem "database_consistency", require: false
+
+  gem "openssl"
 end
 
 group :development, :review, :test, :qa do
