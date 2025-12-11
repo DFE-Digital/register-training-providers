@@ -27,7 +27,7 @@
 #
 #  fk_rails_...  (api_client_id => api_clients.id)
 #  fk_rails_...  (created_by_id => users.id)
-#  fk_rails_...  (revoked_by_id => users.id)
+#  fk_rails_...  (revoked_by_id => users.id) ON DELETE => nullify
 #
 class AuthenticationToken < ApplicationRecord
   self.implicit_order_column = :created_at
