@@ -27,7 +27,7 @@
 #
 #  fk_rails_...  (api_client_id => api_clients.id)
 #  fk_rails_...  (created_by_id => users.id)
-#  fk_rails_...  (revoked_by_id => users.id)
+#  fk_rails_...  (revoked_by_id => users.id) ON DELETE => nullify
 #
 class AuthenticationToken < ApplicationRecord
   self.implicit_order_column = :created_at
@@ -55,8 +55,8 @@ class AuthenticationToken < ApplicationRecord
   end
 
   belongs_to :api_client
-  belongs_to :created_by, class_name: "User"
-  belongs_to :revoked_by, class_name: "User", optional: true
+  belongs_to :created_by, class_name: "User", inverse_of: :created_authentication_tokens
+  belongs_to :revoked_by, class_name: "User", inverse_of: :revoked_authentication_tokens, optional: true
 
   scope :will_expire, ->(date = nil) {
     if date.present?
