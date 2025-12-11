@@ -58,16 +58,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_114814) do
 
   create_table "audits", force: :cascade do |t|
     t.string "action"
-    t.uuid "associated_id"
+    t.integer "associated_id"
     t.string "associated_type"
-    t.uuid "auditable_id"
+    t.bigint "auditable_id"
     t.string "auditable_type"
     t.jsonb "audited_changes"
     t.string "comment"
     t.datetime "created_at"
     t.string "remote_address"
     t.string "request_uuid"
-    t.uuid "user_id"
+    t.integer "user_id"
     t.string "user_type"
     t.string "username"
     t.integer "version", default: 0
