@@ -50,7 +50,7 @@ module ActivityItem
     def provider_archived_or_restored?
       audit.auditable_type == "Provider" &&
         audit.action == "update" &&
-        audit.audited_changes.key?("archived_at")
+        audit.audited_changes&.key?("archived_at")
     end
 
     def archived_or_restored_action
