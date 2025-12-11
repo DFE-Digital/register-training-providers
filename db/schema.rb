@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_114814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -353,7 +353,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
   add_foreign_key "addresses", "providers"
   add_foreign_key "authentication_tokens", "api_clients"
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
-  add_foreign_key "authentication_tokens", "users", column: "revoked_by_id"
+  add_foreign_key "authentication_tokens", "users", column: "revoked_by_id", on_delete: :nullify
   add_foreign_key "contacts", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
