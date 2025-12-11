@@ -74,15 +74,15 @@ RSpec.feature "Provider Activity Log" do
   end
 
   def and_i_should_see_activity_items_for_this_provider
-    expect(page).to have_text("Provider details created")
-    expect(page).to have_text("Provider address created")
+    expect(page).to have_text("Provider added")
+    expect(page).to have_text("Provider address added")
     expect(page).to have_text("By #{user.name}")
   end
 
   def then_i_should_only_see_activity_for_my_provider
-    expect(page).to have_text("Provider details created")
-    expect(page).to have_text("Provider address created")
-    expect(page).not_to have_text("Provider contact created")
+    expect(page).to have_text("Provider added")
+    expect(page).to have_text("Provider address added")
+    expect(page).not_to have_text("Provider contact added")
   end
 
   def then_i_should_see_the_empty_state

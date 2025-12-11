@@ -50,8 +50,8 @@ RSpec.feature "Service Activity Log" do
   end
 
   def and_i_should_see_activity_items
-    expect(page).to have_text("Provider details created")
-    expect(page).to have_text("Provider contact created")
+    expect(page).to have_text("Provider added")
+    expect(page).to have_text("Provider contact added")
     expect(page).to have_text("By #{user.name}")
   end
 
