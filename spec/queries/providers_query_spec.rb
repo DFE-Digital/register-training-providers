@@ -141,7 +141,7 @@ RSpec.describe ProvidersQuery do
 
   describe "#call (search term)" do
     let!(:matching_provider) { create(:provider, operating_name: "Bright Future Academy", urn: "123456", ukprn: "78901234") }
-    let!(:other_provider)    { create(:provider, operating_name: "Sunshine School", urn: "654321", ukprn: "43210987") }
+    let!(:other_provider)    { create(:provider, operating_name: "Sunshine School", legal_name: "Sunny School", urn: "654321", ukprn: "43210987") }
 
     context "when search term matches operating_name" do
       it "returns matching providers" do
