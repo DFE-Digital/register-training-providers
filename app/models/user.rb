@@ -25,16 +25,7 @@ class User < ApplicationRecord
   include SaveAsTemporary
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
-  has_many :created_authentication_tokens,
-           class_name: "AuthenticationToken",
-           foreign_key: :created_by_id,
-           inverse_of: :created_by,
-           dependent: :restrict_with_exception
-  has_many :revoked_authentication_tokens,
-           class_name: "AuthenticationToken",
-           foreign_key: :revoked_by_id,
-           inverse_of: :revoked_by,
-           dependent: :nullify
+  has_many :authentication_tokens, foreign_key: :created_by_id, dependent: :destroy
 
   audited
 

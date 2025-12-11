@@ -55,8 +55,8 @@ class AuthenticationToken < ApplicationRecord
   end
 
   belongs_to :api_client
-  belongs_to :created_by, class_name: "User", inverse_of: :created_authentication_tokens
-  belongs_to :revoked_by, class_name: "User", inverse_of: :revoked_authentication_tokens, optional: true
+  belongs_to :created_by, class_name: "User"
+  belongs_to :revoked_by, class_name: "User", optional: true
 
   scope :will_expire, ->(date = nil) {
     if date.present?
