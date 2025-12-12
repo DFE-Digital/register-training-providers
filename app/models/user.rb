@@ -25,6 +25,7 @@ class User < ApplicationRecord
   include SaveAsTemporary
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
+  has_many :authentication_tokens, foreign_key: :created_by_id, dependent: :destroy
 
   audited
 
