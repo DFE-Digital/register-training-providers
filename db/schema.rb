@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_092605) do
     t.datetime "discarded_at"
     t.daterange "duration"
     t.datetime "updated_at", null: false
+    t.index ["duration"], name: "index_academic_cycles_on_duration"
   end
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

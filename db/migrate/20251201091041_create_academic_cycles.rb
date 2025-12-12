@@ -6,5 +6,7 @@ class CreateAcademicCycles < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
+
+    add_index :academic_cycles, :duration
   end
 end

@@ -8,8 +8,12 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
+# Indexes
+#
+#  index_academic_cycles_on_duration  (duration)
+#
 class AcademicCycle < ApplicationRecord
-  self.implicit_order_column = :created_at
+  self.implicit_order_column = :duration
   include PgSearch::Model
   include Discard::Model
 

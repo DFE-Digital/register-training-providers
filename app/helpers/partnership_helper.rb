@@ -40,7 +40,7 @@ module PartnershipHelper
         end,
         tag.div(class: "govuk-summary-list__row") do
           tag.dt("Ends on", class: "govuk-summary-list__key") +
-          tag.dd(duration.end&.to_fs(:govuk), class: "govuk-summary-list__value")
+          tag.dd(optional_value(duration.end&.to_fs(:govuk)), class: "govuk-summary-list__value")
         end
       ])
     end

@@ -35,7 +35,7 @@ module Generators
         partnership = Partnership.create!(
           provider: provider,
           accredited_provider: accredited_provider,
-          duration: accredited_period_start..accredited_period_end
+          duration: accredited_period_start...accredited_period_end
         )
 
         academic_cycles.each { |ac| PartnershipAcademicCycle.create(academic_cycle: ac, partnership: partnership) }

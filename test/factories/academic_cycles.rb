@@ -1,5 +1,8 @@
 FactoryBot.define do
   factory :academic_cycle do
-    duration { Time.zone.local(2025, 9, 1).beginning_of_day..Time.zone.local(2026, 8, 31).end_of_day }
+    duration do
+      Time.zone.local(Time.zone.now.year, 8,
+                      1).beginning_of_day...Time.zone.local(Time.zone.now.year + 1, 7, 31).end_of_day
+    end
   end
 end

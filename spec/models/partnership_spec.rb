@@ -21,4 +21,18 @@ RSpec.describe Partnership, type: :model do
     it { is_expected.to belong_to(:accredited_provider) }
     it { is_expected.to have_many(:academic_cycles).through(:partnership_academic_cycles) }
   end
+
+  describe "#other_partner" do
+    context "when it is the training partner" do
+      it "is expected to return the accreddited provider" do
+        expect(partnership.other_partner(partnership.provider)).to eq(partnership.accredited_provider)
+      end
+    end
+
+    context "when it is the accredited provider" do
+      it "is expected to return the accredited provider" do
+        expect(partnership.other_partner(partnership.accredited_provider)).to eq(partnership.provider)
+      end
+    end
+  end
 end
