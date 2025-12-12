@@ -150,5 +150,5 @@ end
 
 gem "pundit", "~> 2.5"
 
-gem "axlsx"
 gem "roo", "~> 3.0.0"
+gem "write_xlsx"
