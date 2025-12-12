@@ -8,10 +8,11 @@ module ActivityItem
       "User" => "User"
     }.freeze
 
-    attr_reader :audit
+    attr_reader :audit, :show_title
 
-    def initialize(audit:)
+    def initialize(audit:, show_title: true)
       @audit = audit
+      @show_title = show_title
       super()
     end
 

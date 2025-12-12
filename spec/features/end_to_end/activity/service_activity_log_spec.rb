@@ -5,6 +5,7 @@ RSpec.feature "Service Activity Log" do
     when_i_click_activity_log_in_the_navigation
     then_i_should_see_the_activity_log_page
     and_i_should_see_activity_items
+    and_i_should_see_summary_cards_with_titles
   end
 
   scenario "User sees empty state when there is no activity" do
@@ -53,6 +54,13 @@ RSpec.feature "Service Activity Log" do
     expect(page).to have_text("Provider added")
     expect(page).to have_text("Provider contact added")
     expect(page).to have_text("By #{user.name}")
+  end
+
+  def and_i_should_see_summary_cards_with_titles
+    # Service-level activity shows summary cards WITH titles (provider/entity names)
+    expect(page).to have_selector(".govuk-summary-card__title", text: @provider.operating_name)
+    # Spot-check that card content renders (UKPRN proves provider rows loaded)
+    expect(page).to have_selector(".govuk-summary-list__value", text: @provider.ukprn)
   end
 
   def and_all_audits_are_cleared

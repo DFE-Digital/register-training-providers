@@ -3,15 +3,9 @@ module AddressHelper
     return [] if addresses.empty?
 
     addresses.map do |address|
-      all_rows = address_basic_row(address)
-
-      if show_location_section?(address)
-        all_rows << location_row_with_coords(address)
-      end
-
       card = {
         title: "#{address.town_or_city}, #{address.postcode}",
-        rows: all_rows
+        rows: address_summary_card_rows(address)
       }
 
       if include_actions && !provider.archived?
@@ -27,6 +21,12 @@ module AddressHelper
 
       card
     end
+  end
+
+  def address_summary_card_rows(address)
+    rows = address_basic_row(address)
+    rows << location_row_with_coords(address) if show_location_section?(address)
+    rows
   end
 
   def address_basic_row(address)
