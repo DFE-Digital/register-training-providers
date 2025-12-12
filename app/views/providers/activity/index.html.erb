@@ -22,7 +22,7 @@
   <% group_audits_by_day(@audits).each do |date, audits| %>
     <%= render ActivityDayHeading::View.new(date:) %>
     <% audits.each do |audit| %>
-      <%= render ActivityItem::View.new(audit:) %>
+      <%= render ActivityItem::View.new(audit: audit, show_title: false) %>
     <% end %>
   <% end %>
 

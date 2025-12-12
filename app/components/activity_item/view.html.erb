@@ -2,3 +2,5 @@
   <strong><%= full_description %></strong><br>
   By <%= user_name %> <%= timestamp %>
 </p>
+
+<%= render ActivitySummaryCard::View.new(audit:, show_title:) %>
