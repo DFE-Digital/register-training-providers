@@ -31,7 +31,7 @@ class Partnership < ApplicationRecord
 
   belongs_to :provider
   belongs_to :accredited_provider, class_name: "Provider"
-  has_many :partnership_academic_cycles
+  has_many :partnership_academic_cycles, dependent: :destroy
   has_many :academic_cycles, through: :partnership_academic_cycles
 
   def other_partner(partner)
