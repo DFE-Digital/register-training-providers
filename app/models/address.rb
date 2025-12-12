@@ -39,5 +39,5 @@ class Address < ApplicationRecord
   validates :county, length: { maximum: 255 }, allow_blank: true
   validates :postcode, presence: true, postcode: true
 
-  audited associated_with: :provider, except: [:provider_id, :latitude, :longitude]
+  audited associated_with: :provider, except: [:provider_id]
 end
