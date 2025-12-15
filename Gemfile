@@ -147,3 +147,5 @@ group :development, :production do
 end
 
 gem "pundit", "~> 2.5"
+
+gem "roo", "~> 3.0.0"

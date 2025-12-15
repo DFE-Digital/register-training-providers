@@ -12,7 +12,9 @@
               card.with_action { govuk_link_to(action[:text], action[:href]) }
             end
           end
-          card.with_summary_list(rows: summary_card[:rows])
+          card.with_summary_list(rows: summary_card[:rows]) do |summary_list|
+            debug_accreditation(provider, summary_card[:number], summary_list)
+          end
         end %>
   <% end %>
 <% else %>
