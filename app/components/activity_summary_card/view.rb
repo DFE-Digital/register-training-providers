@@ -18,7 +18,7 @@ module ActivitySummaryCard
       @record ||= audit.revision
     end
 
-    def title
+    def title_text
       return nil unless show_title
       return nil unless record
 
@@ -29,6 +29,33 @@ module ActivitySummaryCard
         audit.associated&.operating_name
       when "User"
         record.name
+      end
+    end
+
+    def title_link_path
+      return nil unless linkable?
+
+      case audit.auditable_type
+      when "Provider"
+        helpers.provider_path(provider)
+      when "Contact"
+        helpers.provider_contacts_path(provider)
+      when "Address"
+        helpers.provider_addresses_path(provider)
+      when "Accreditation"
+        helpers.provider_accreditations_path(provider)
+      when "User"
+        helpers.user_path(audit.auditable)
+      end
+    end
+
+    def title
+      return nil unless title_text
+
+      if title_link_path
+        helpers.govuk_link_to(title_text, title_link_path)
+      else
+        title_text
       end
     end
 
@@ -53,6 +80,27 @@ module ActivitySummaryCard
 
     def render?
       record.present? && rows.any?
+    end
+
+  private
+
+    def provider
+      @provider ||= case audit.auditable_type
+                    when "Provider"
+                      audit.auditable
+                    when "Accreditation", "Address", "Contact"
+                      audit.associated
+                    end
+    end
+
+    def linkable?
+      if provider.present?
+        !provider.discarded?
+      elsif audit.auditable_type == "User"
+        audit.auditable.present? && !audit.auditable.discarded?
+      else
+        false
+      end
     end
   end
 end
