@@ -15,7 +15,7 @@ module Generators
     end
 
     def accreditable_providers
-      rovider.where(provider_type: ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys)
+      Provider.where(provider_type: ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys)
     end
 
     def process_provider(provider)
