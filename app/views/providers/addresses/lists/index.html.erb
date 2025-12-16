@@ -7,7 +7,7 @@
 <%= content_for(:secondary_navigation) do %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Addresses") %>
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Addresses", debug_mode: debug_mode?) %>
     </div>
   </div>
 <% end %>

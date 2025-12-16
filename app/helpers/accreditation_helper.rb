@@ -51,6 +51,7 @@ module AccreditationHelper
     accreditations.map do |accreditation|
       card = {
         title: "Accreditation #{accreditation.number}",
+        number: accreditation.number,
         rows: accreditation_rows(accreditation)
       }
 

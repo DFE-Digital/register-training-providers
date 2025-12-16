@@ -189,3 +189,25 @@ en:
         select:
           no_search_data: "Please search for an address first"
           invalid_index: "Please select a valid address"
+  imported_data:
+    fields:
+      provider:
+        provider_type: "Provider type"
+        accreditation_status: "Accreditation type"
+        operating_name: "Operating name"
+        legal_name: "Legal name"
+        ukprn: "UK provider reference number (UKPRN)"
+        urn: "Unique reference number (URN)"
+        code: "Provider code"
+        academic_years_active: "Academic years active"
+      accreditation:
+        number: "Accreditation number"
+        start_date: "Date accreditation starts"
+        end_date: "Date accreditation ends"
+      address:
+        address_line_1: "Address line 1"
+        address_line_2: "Address line 2 (optional)"
+        address_line_3: "Address line 3 (optional)"
+        town_or_city: "Town or city"
+        county: "County (optional)"
+        postcode: "Postcode"

@@ -1,20 +1,21 @@
 module ProviderNavigation
   class View < ApplicationComponent
-    attr_reader :provider, :active_tab
+    attr_reader :provider, :active_tab, :debug_mode
 
-    def initialize(provider:, active_tab:)
+    def initialize(provider:, active_tab:, debug_mode: false)
       @provider = provider
       @active_tab = active_tab
+      @debug_mode = debug_mode
       super()
     end
 
     def tabs
       [
-        { name: "Provider details", path: provider_path(provider) },
-        { name: "Accreditations", path: provider_accreditations_path(provider) },
-        { name: "Addresses", path: provider_addresses_path(provider) },
-        { name: "Contacts", path: provider_contacts_path(provider) },
-        { name: "Partnerships", path: provider_partnerships_path(provider) },
+        { name: "Provider details", path: provider_path(provider, path_options) },
+        { name: "Accreditations", path: provider_accreditations_path(provider, path_options) },
+        { name: "Addresses", path: provider_addresses_path(provider, path_options) },
+        { name: "Contacts", path: provider_contacts_path(provider, path_options) },
+        { name: "Partnerships", path: provider_partnerships_path(provider, path_options) },
       ]
     end
 
@@ -31,6 +32,10 @@ module ProviderNavigation
           current_page: tab[:name] == active_tab ? "page" : nil
         }
       end
+    end
+
+    def path_options
+      @path_options ||= debug_mode ? { debug: "true" } : {}
     end
   end
 end
