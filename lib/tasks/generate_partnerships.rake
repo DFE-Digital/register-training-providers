@@ -1,7 +1,7 @@
 require Rails.root.join("config/environment")
 
 namespace :generate do
-  desc "Generate example accreditation data for providers"
+  desc "Generate example accreditation data for partnerships"
   task partnerships: :environment do
     raise "THIS TASK CANNOT BE RUN IN PRODUCTION" if Rails.env.production?
 

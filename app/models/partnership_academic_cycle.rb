@@ -28,6 +28,6 @@ class PartnershipAcademicCycle < ApplicationRecord
 
   audited
 
-  belongs_to :partnership, dependent: :destroy
-  belongs_to :academic_cycle, dependent: :destroy
+  belongs_to :partnership
+  belongs_to :academic_cycle
 end

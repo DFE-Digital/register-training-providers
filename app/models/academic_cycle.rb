@@ -14,10 +14,7 @@
 #
 class AcademicCycle < ApplicationRecord
   self.implicit_order_column = :duration
-  include PgSearch::Model
   include Discard::Model
-
-  include SaveAsTemporary
 
   has_many :partnership_academic_cycles, dependent: :destroy
   has_many :partnerships, through: :partnership_academic_cycles

@@ -14,8 +14,8 @@ module Generators
       :accrediting_provider_partnerships
     end
 
-    def accredited_providers
-      Provider.where.not(provider_type: "school")
+    def accreditable_providers
+      rovider.where(provider_type: ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys)
     end
 
     def process_provider(provider)
@@ -23,8 +23,8 @@ module Generators
     end
 
     def create_partnerships_for_provider(provider)
-      accredited_providers.order("RANDOM()").limit(2).each do |accredited_provider|
-        accredited_period_start = accredited_provider.accreditations.pluck(:start_date).min&.to_time
+      accreditable_providers.order("RANDOM()").limit(2).each do |accreditable_provider|
+        accredited_period_start = accreditable_provider.accreditations.pluck(:start_date).min&.to_time
         next if accredited_period_start.blank?
 
         accredited_period_end = accredited_period_start + 2.years
@@ -34,7 +34,7 @@ module Generators
 
         partnership = Partnership.create!(
           provider: provider,
-          accredited_provider: accredited_provider,
+          accredited_provider: accreditable_provider,
           duration: accredited_period_start...accredited_period_end
         )
 
