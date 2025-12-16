@@ -13,7 +13,6 @@
 ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
-  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
   create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -51,6 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
     t.uuid "provider_id", null: false
     t.string "town_or_city", null: false
     t.datetime "updated_at", null: false
+    t.string "uprn", limit: 15
     t.index ["created_at"], name: "index_addresses_on_created_at"
     t.index ["provider_id"], name: "index_addresses_on_provider_id"
   end
