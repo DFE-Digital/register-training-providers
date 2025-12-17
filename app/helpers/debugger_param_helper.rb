@@ -43,15 +43,23 @@ module DebuggerParamHelper
     end
   end
 
-  def debug_accreditation(provider, accreditation_number, summary_list)
-    accreditation = provider.seed_data_notes.dig("row_imported", "accreditation")
-    return unless debug_mode? && accreditation.present? && accreditation["number"] == accreditation_number
+  def debug_accreditation(imported_data, summary_list)
+    debug_summary_list("accreditation", imported_data, summary_list)
+  end
+
+  def debug_address(imported_data, summary_list)
+    debug_summary_list("address", imported_data, summary_list)
+  end
+
+  def debug_summary_list(imported_model_name, imported_data, summary_list)
+    return unless debug_mode?
+    return if imported_data.blank?
 
     summary_list.with_row do |row|
       row.with_key(text: "Imported data")
 
-      debug_rows = I18n.t("imported_data.fields.accreditation").filter_map do |field, label|
-        value = accreditation[field.to_s].present? ? { text: accreditation[field.to_s] } : not_entered
+      debug_rows = I18n.t("imported_data.fields.#{imported_model_name}").filter_map do |field, label|
+        value = imported_data[field.to_s].present? ? { text: imported_data[field.to_s] } : not_entered
         { key: { text: label }, value: value }
       end
 
