@@ -7,6 +7,10 @@ module AddressHelper
         "saved_as", "address_id"
       ) == address.id
 
+      imported_data = provider.seed_data_notes.dig("row_imported", "address") if provider.seed_data_notes.dig(
+        "saved_as", "address_id"
+      ) == address.id
+
       card = {
         title: "#{address.town_or_city}, #{address.postcode}",
         rows: address_summary_card_rows(address),
