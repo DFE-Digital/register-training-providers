@@ -45,7 +45,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
           "address_line_1" => "10, Downing Street",
           "town_or_city" => "London",
           "postcode" => "SW1A 2AA",
-          "UPRN" => "100023336956",
+          "uprn" => "100023336956",
           "latitude" => 51.5034,
           "longitude" => -0.1278
         )
