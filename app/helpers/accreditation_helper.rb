@@ -49,10 +49,14 @@ module AccreditationHelper
     return [] if accreditations.empty?
 
     accreditations.map do |accreditation|
+      imported_data = provider.seed_data_notes.dig("row_imported", "accreditation") if provider.seed_data_notes.dig(
+        "saved_as", "accreditation_id"
+      ) == accreditation.id
+
       card = {
         title: "Accreditation #{accreditation.number}",
-        number: accreditation.number,
-        rows: accreditation_rows(accreditation)
+        rows: accreditation_rows(accreditation),
+        imported_data: imported_data
       }
 
       if include_actions
