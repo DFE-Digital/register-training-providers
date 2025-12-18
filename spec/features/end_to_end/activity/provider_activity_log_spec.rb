@@ -8,6 +8,7 @@ RSpec.feature "Provider Activity Log" do
     and_the_activity_log_tab_should_be_active
     and_i_should_see_the_activity_count
     and_i_should_see_activity_items_for_this_provider
+    and_i_should_see_summary_cards_without_titles
   end
 
   scenario "User only sees activity for the specific provider" do
@@ -77,6 +78,15 @@ RSpec.feature "Provider Activity Log" do
     expect(page).to have_text("Provider added")
     expect(page).to have_text("Provider address added")
     expect(page).to have_text("By #{user.name}")
+  end
+
+  def and_i_should_see_summary_cards_without_titles
+    # Provider-level activity shows summary cards WITHOUT title headers
+    expect(page).not_to have_selector(".govuk-summary-card__title-wrapper")
+    # But still has bordered card structure with content
+    expect(page).to have_selector(".govuk-summary-card .govuk-summary-list")
+    # Spot-check that card content renders (UKPRN proves provider rows loaded)
+    expect(page).to have_selector(".govuk-summary-list__value", text: @provider.ukprn)
   end
 
   def then_i_should_only_see_activity_for_my_provider

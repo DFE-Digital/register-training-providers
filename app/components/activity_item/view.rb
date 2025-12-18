@@ -8,10 +8,11 @@ module ActivityItem
       "User" => "User"
     }.freeze
 
-    attr_reader :audit
+    attr_reader :audit, :show_title
 
-    def initialize(audit:)
+    def initialize(audit:, show_title: true)
       @audit = audit
+      @show_title = show_title
       super()
     end
 
@@ -27,6 +28,7 @@ module ActivityItem
 
     def action_text
       return archived_or_restored_action if provider_archived_or_restored?
+      return discarded_or_restored_action if record_discarded_or_restored?
 
       ACTION_LABELS[audit.action] || audit.action
     end
@@ -56,6 +58,16 @@ module ActivityItem
     def archived_or_restored_action
       old_value, _new_value = audit.audited_changes["archived_at"]
       old_value.nil? ? "archived" : "restored"
+    end
+
+    def record_discarded_or_restored?
+      audit.action == "update" &&
+        audit.audited_changes&.key?("discarded_at")
+    end
+
+    def discarded_or_restored_action
+      old_value, _new_value = audit.audited_changes["discarded_at"]
+      old_value.nil? ? "deleted" : "restored"
     end
   end
 end
