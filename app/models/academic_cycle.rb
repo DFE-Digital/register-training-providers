@@ -22,7 +22,7 @@ class AcademicCycle < ApplicationRecord
   audited
 
   def current?
-    duration.include?(Time.zone.today)
+    duration.cover?(Time.zone.today)
   end
 
   def next?
