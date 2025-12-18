@@ -84,7 +84,8 @@ class Provider < ApplicationRecord
   end
 
   def archive!
-    update!(archived_at: Time.zone.now.utc)
+    self.archived_at = Time.zone.now.utc
+    save!(validate: false)
   end
 
   def archived?
@@ -96,7 +97,8 @@ class Provider < ApplicationRecord
   end
 
   def restore!
-    update!(archived_at: nil)
+    self.archived_at = nil
+    save!(validate: false)
   end
 
   def current_accreditations
