@@ -122,6 +122,9 @@ Rails.application.routes.draw do
 
     # === Addresses ===
 
+    get "addresses/imported/new", to: "providers/addresses/select#imported_data", as: :imported_data
+    post "imported-data", to: "providers/addresses/find#imported_data"
+
     # Listing
     get "addresses", to: "providers/addresses/lists#index", as: :addresses
 

@@ -51,6 +51,27 @@ module Providers
         redirect_to success_path
       end
 
+      def imported_data
+        postcode = provider.seed_data_notes["row_imported"]["address"]["postcode"]
+        @results = OrdnanceSurvey::AddressLookupService.call(
+          postcode:,
+        )
+
+        @presenter = AddressJourney::SelectPresenter.new(
+          results: @results,
+          postcode: postcode,
+          building_name_or_number: nil
+        )
+        @form = ::Addresses::SelectForm.new
+        @back_path = back_path
+        @form_url = form_url
+        @change_search_path = change_search_path
+        @manual_entry_path = manual_entry_path
+        @cancel_path = cancel_path
+        @page_subtitle = page_subtitle
+        @page_caption = page_caption
+      end
+
     private
 
       def render_select_form
