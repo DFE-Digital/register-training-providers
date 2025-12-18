@@ -75,7 +75,7 @@ paths:
         required: false
         schema:
           type: string
-        example: '2025-09-14T12:34:56Z'
+        example: '2025-09-14T11:34:56Z'
       responses:
         '200':
           description: |
@@ -119,7 +119,7 @@ paths:
                   provider_type: hei
                   code: 8GK
                   accreditation_status: accredited
-                  updated_at: '2025-09-15T12:34:56Z'
+                  updated_at: '2025-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
           content:

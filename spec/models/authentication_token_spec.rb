@@ -169,15 +169,15 @@ RSpec.describe AuthenticationToken, type: :model do
     end
 
     describe ".revoke!" do
-      let(:current_time) { Time.current.beginning_of_day }
+      let(:current_date) { Time.current.to_date }
 
       it "revokes the token" do
-        Timecop.freeze(current_time) do
+        Timecop.freeze(current_date) do
           subject.revoke!
 
           expect(subject.revoked?).to be(true)
           expect(subject.revoked_by).to eq(user)
-          expect(subject.revoked_at).to eq(current_time)
+          expect(subject.revoked_at).to eq(current_date)
         end
       end
     end
