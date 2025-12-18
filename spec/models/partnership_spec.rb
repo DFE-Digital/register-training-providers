@@ -11,7 +11,7 @@ RSpec.describe Partnership, type: :model do
       partnership.discard!
     end
 
-    it "the user is discarded" do
+    it "the partnership is discarded" do
       expect(partnership).to be_discarded
     end
   end
