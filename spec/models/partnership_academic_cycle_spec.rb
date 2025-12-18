@@ -11,7 +11,7 @@ RSpec.describe PartnershipAcademicCycle, type: :model do
       partnership_academic_cycle.discard!
     end
 
-    it "the user is discarded" do
+    it "the partnership_academic_cycle is discarded" do
       expect(partnership_academic_cycle).to be_discarded
     end
   end
