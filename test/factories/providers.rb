@@ -5,17 +5,26 @@ FactoryBot.define do
     accreditation_status { :unaccredited }
 
     legal_name do
-      case provider_type.to_s
-      when "school", "scitt"
-        [Faker::Educator.secondary_school, Faker::Educator.primary_school].sample
-      when "hei"
-        Faker::Educator.university
-      else
-        Faker::Company.name
+      loop do
+        name = case provider_type.to_s
+               when "school", "scitt"
+                 [Faker::Educator.secondary_school, Faker::Educator.primary_school].sample
+               when "hei"
+                 Faker::Educator.university
+               else
+                 Faker::Company.name
+               end
+        break name unless name.include?("'")
       end
     end
 
-    operating_name { [legal_name, Faker::Company.name].compact.sample }
+    operating_name do
+      loop do
+        candidates = [legal_name, Faker::Company.name].compact.reject { |n| n.include?("'") }
+        name = candidates.sample
+        break name if name
+      end
+    end
 
     urn do
       if %i[school scitt].include?(provider_type.to_sym)
