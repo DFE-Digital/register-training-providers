@@ -91,6 +91,9 @@ Rails.application.routes.draw do
 
   # Provider setup - addresses flow (reuses main address controllers)
   namespace :providers do
+    namespace :addresses do
+      get "/", to: "/providers/addresses/lists#imported_data", as: :addresses
+    end
     namespace :setup, path: "new" do
       namespace :addresses do
         get "", to: "/providers/addresses/manual_entry#new", as: :address
