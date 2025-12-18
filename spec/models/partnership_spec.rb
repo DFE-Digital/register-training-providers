@@ -24,7 +24,7 @@ RSpec.describe Partnership, type: :model do
 
   describe "#other_partner" do
     context "when it is the training partner" do
-      it "is expected to return the accreddited provider" do
+      it "is expected to return the accredited provider" do
         expect(partnership.other_partner(partnership.provider)).to eq(partnership.accredited_provider)
       end
     end
