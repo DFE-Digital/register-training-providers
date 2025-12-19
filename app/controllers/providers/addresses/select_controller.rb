@@ -63,11 +63,11 @@ module Providers
           building_name_or_number: nil
         )
         @form = ::Addresses::SelectForm.new
-        @back_path = back_path
+        @back_path = providers_addresses_addresses_path
         @form_url = form_url
         @change_search_path = change_search_path
         @manual_entry_path = manual_entry_path
-        @cancel_path = cancel_path
+        @cancel_path = providers_addresses_addresses_path
         @page_subtitle = page_subtitle
         @page_caption = page_caption
       end
