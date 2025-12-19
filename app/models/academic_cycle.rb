@@ -17,8 +17,6 @@ class AcademicCycle < ApplicationRecord
   has_many :partnership_academic_cycles, dependent: :destroy
   has_many :partnerships, through: :partnership_academic_cycles
 
-  audited
-
   def current?
     duration.cover?(Time.zone.today)
   end
