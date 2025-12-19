@@ -4,7 +4,7 @@ require "rails_helper"
 RSpec.describe ProviderXlsxRowImporter do
   subject(:call_importer) { described_class.call(row) }
 
-  let(:row) do
+  let(:base_row) do
     {
       "provider__code" => "W1P",
       "provider__legal_name" => "Legal Name Ltd",
@@ -29,6 +29,8 @@ RSpec.describe ProviderXlsxRowImporter do
       "found" => "true"
     }
   end
+
+  let(:row) { base_row }
 
   describe ".call" do
     it "instantiates and calls the service" do
@@ -79,6 +81,51 @@ RSpec.describe ProviderXlsxRowImporter do
       end
     end
 
+    describe "provider_type mapping" do
+      context "when provider_type is scitt and accreditation_status is unaccredited" do
+        let(:row) do
+          base_row.merge(
+            "provider__provider_type" => "scitt",
+            "provider__accreditation_status" => "unaccredited"
+          )
+        end
+
+        it "persists provider_type as school" do
+          call_importer
+          expect(Provider.last.provider_type).to eq("school")
+        end
+      end
+
+      context "when provider_type is scitt but accreditation_status is accredited" do
+        let(:row) do
+          base_row.merge(
+            "provider__provider_type" => "scitt",
+            "provider__accreditation_status" => "accredited",
+            "accreditation__number" => "5001",
+          )
+        end
+
+        it "keeps provider_type as scitt" do
+          call_importer
+          expect(Provider.last.provider_type).to eq("scitt")
+        end
+      end
+
+      context "when provider_type is not scitt" do
+        let(:row) do
+          base_row.merge(
+            "provider__provider_type" => "hei",
+            "provider__accreditation_status" => "unaccredited"
+          )
+        end
+
+        it "keeps provider_type unchanged" do
+          call_importer
+          expect(Provider.last.provider_type).to eq("hei")
+        end
+      end
+    end
+
     context "when the provider already exists" do
       let!(:provider) { create(:provider, code: "W1P", legal_name: "Old Name") }
 
@@ -100,7 +147,8 @@ RSpec.describe ProviderXlsxRowImporter do
 
         expect(provider.ukprn).to eq("00000000")
         expect(provider.seed_data_with_issues).to be(true)
-        expect(provider.seed_data_notes.dig("errors", "ukprn")).to include("Not found")
+        expect(provider.seed_data_notes.dig("errors", "ukprn"))
+          .to include("Not found")
       end
     end
 
@@ -109,9 +157,7 @@ RSpec.describe ProviderXlsxRowImporter do
 
       it "does not create an accreditation" do
         expect { call_importer }.not_to change(Accreditation, :count)
-
-        provider = Provider.last
-        expect(provider.accreditations).to be_empty
+        expect(Provider.last.accreditations).to be_empty
       end
     end
 
@@ -120,9 +166,7 @@ RSpec.describe ProviderXlsxRowImporter do
 
       it "does not create an address" do
         expect { call_importer }.not_to change(Address, :count)
-
-        provider = Provider.last
-        expect(provider.addresses).to be_empty
+        expect(Provider.last.addresses).to be_empty
       end
     end
 
