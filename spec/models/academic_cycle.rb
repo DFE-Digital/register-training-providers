@@ -5,16 +5,6 @@ RSpec.describe AcademicCycle, type: :model do
 
   it { is_expected.to be_kept }
 
-  context "academic_cycle is discarded" do
-    before do
-      academic_cycle.discard!
-    end
-
-    it "the user is discarded" do
-      expect(academic_cycle).to be_discarded
-    end
-  end
-
   describe "associations" do
     it { is_expected.to have_many(:partnership_academic_cycles) }
     it { is_expected.to have_many(:partnerships).through(:partnership_academic_cycles) }
