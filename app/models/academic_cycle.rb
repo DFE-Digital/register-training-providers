@@ -2,11 +2,10 @@
 #
 # Table name: academic_cycles
 #
-#  id           :uuid             not null, primary key
-#  discarded_at :datetime
-#  duration     :daterange
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id         :uuid             not null, primary key
+#  duration   :daterange
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
@@ -14,7 +13,6 @@
 #
 class AcademicCycle < ApplicationRecord
   self.implicit_order_column = :duration
-  include Discard::Model
 
   has_many :partnership_academic_cycles, dependent: :destroy
   has_many :partnerships, through: :partnership_academic_cycles
