@@ -43,6 +43,9 @@ class Provider < ApplicationRecord
   has_many :accreditations, dependent: :destroy
   has_many :addresses, dependent: :destroy
   has_many :contacts, dependent: :destroy
+  has_many :accredited_provider_partnerships, class_name: "Partnership", dependent: :destroy
+  has_many :accrediting_provider_partnerships, class_name: "Partnership", foreign_key: :accredited_provider_id,
+                                               dependent: :destroy
 
   audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
@@ -126,6 +129,10 @@ class Provider < ApplicationRecord
     updates[:provider_type] = new_provider_type if provider_type != new_provider_type
 
     update_columns(updates) if updates.any?
+  end
+
+  def partnerships
+    accrediting_provider_partnerships.or(accredited_provider_partnerships)
   end
 
 private

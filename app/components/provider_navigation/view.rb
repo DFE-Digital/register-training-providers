@@ -15,6 +15,7 @@ module ProviderNavigation
         { name: "Accreditations", path: provider_accreditations_path(provider, path_options) },
         { name: "Addresses", path: provider_addresses_path(provider, path_options) },
         { name: "Contacts", path: provider_contacts_path(provider, path_options) },
+        { name: "Partnerships", path: provider_partnerships_path(provider, path_options) },
         { name: "Activity log", path: provider_activity_path(provider, path_options) },
       ]
     end

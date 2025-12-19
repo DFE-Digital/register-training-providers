@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_11_114814) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -18,9 +18,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_114814) do
 
   create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "discarded_at"
     t.daterange "duration"
     t.datetime "updated_at", null: false
+    t.index ["duration"], name: "index_academic_cycles_on_duration"
   end
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
