@@ -1,0 +1,9 @@
+<% if title.present? %>
+  <%= govuk_summary_list(card: { title: }, rows: rows) %>
+<% else %>
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__content">
+      <%= govuk_summary_list(rows:) %>
+    </div>
+  </div>
+<% end %>

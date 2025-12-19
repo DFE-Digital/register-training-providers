@@ -41,7 +41,7 @@ class Contact < ApplicationRecord
     UkTelephoneNumberFormatValidator.new(record).validate if telephone_number.present?
   end
 
-  audited
+  audited associated_with: :provider, except: [:provider_id]
 
   def full_name
     "#{first_name} #{last_name}"

@@ -7,17 +7,19 @@ module SummaryHelper
     { text: "Not entered", classes: "govuk-hint" }
   end
 
-  def user_rows(user, change_path)
-    [
-      { key: { text: "First name" },
-        value: { text: user.first_name },
-        actions: [{ href: change_path, visually_hidden_text: "first name" }] },
-      { key: { text: "Last name" },
-        value: { text: user.last_name },
-        actions: [{ href: change_path, visually_hidden_text: "last name" }] },
-      { key: { text: "Email address" },
-        value: { text: user.email },
-        actions: [{ href: change_path, visually_hidden_text: "email address" }] },
+  def user_rows(user, change_path = nil)
+    rows = [
+      { key: { text: "First name" }, value: { text: user.first_name } },
+      { key: { text: "Last name" }, value: { text: user.last_name } },
+      { key: { text: "Email address" }, value: { text: user.email } },
     ]
+
+    if change_path
+      rows[0][:actions] = [{ href: change_path, visually_hidden_text: "first name" }]
+      rows[1][:actions] = [{ href: change_path, visually_hidden_text: "last name" }]
+      rows[2][:actions] = [{ href: change_path, visually_hidden_text: "email address" }]
+    end
+
+    rows
   end
 end

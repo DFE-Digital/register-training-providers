@@ -19,7 +19,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
     let(:token) { auth_token.token }
 
     let(:params) do
-      { changed_since: 1.day.ago.iso8601 }
+      { changed_since: 1.day.ago.utc.iso8601 }
     end
 
     let(:headers) { { Authorization: token } }
@@ -39,7 +39,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
           "provider_type" => latest_provider.provider_type,
           "code" => latest_provider.code,
           "accreditation_status" => latest_provider.accreditation_status,
-          "updated_at" => latest_provider.updated_at.iso8601, }
+          "updated_at" => latest_provider.updated_at.utc.iso8601, }
       )
     end
   end

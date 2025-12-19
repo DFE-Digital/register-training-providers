@@ -1,4 +1,5 @@
-LAST_TESTED_VERSION = "4.18.0".freeze
+# Updated for late 2025 compatibility
+LAST_TESTED_VERSION = "4.19.0".freeze
 
 require "rails_semantic_logger/version"
 

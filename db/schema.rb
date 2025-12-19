@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
   create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -65,16 +66,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
 
   create_table "audits", force: :cascade do |t|
     t.string "action"
-    t.integer "associated_id"
+    t.uuid "associated_id"
     t.string "associated_type"
-    t.bigint "auditable_id"
+    t.uuid "auditable_id"
     t.string "auditable_type"
     t.jsonb "audited_changes"
     t.string "comment"
     t.datetime "created_at"
     t.string "remote_address"
     t.string "request_uuid"
-    t.integer "user_id"
+    t.uuid "user_id"
     t.string "user_type"
     t.string "username"
     t.integer "version", default: 0

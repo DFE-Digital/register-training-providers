@@ -39,6 +39,7 @@
           navigation_items: [
             { text: "Providers", href: providers_path, active_when: providers_path },
             { text: "Support users", href: users_path, active_when: users_path },
+            { text: "Activity log", href: activity_path, active_when: activity_path },
           ]
         ) if @current_user.present? %>
 
