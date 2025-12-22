@@ -13,7 +13,6 @@
 ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
-  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
   create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
