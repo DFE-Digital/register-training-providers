@@ -16,7 +16,7 @@ module Generators
     end
 
     def accredited_providers
-      Provider.where(accreditation_status: "accredited")
+      Provider.accredited
     end
 
     def process_provider(provider)
