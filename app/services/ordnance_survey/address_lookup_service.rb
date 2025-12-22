@@ -58,6 +58,7 @@ module OrdnanceSurvey
           "town_or_city" => format_address_line(dpa["POST_TOWN"]),
           "county" => format_address_line(dpa["COUNTY"]),
           "postcode" => dpa["POSTCODE"],
+          "uprn" => dpa["UPRN"],
           "latitude" => dpa["LAT"],
           "longitude" => dpa["LNG"]
         }
