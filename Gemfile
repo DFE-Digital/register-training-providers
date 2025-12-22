@@ -115,6 +115,8 @@ group :development do
   gem "syntax_tree-rbs", require: false
 
   gem "database_consistency", require: false
+
+  gem "openssl"
 end
 
 group :development, :review, :test, :qa do
@@ -149,3 +151,4 @@ end
 gem "pundit", "~> 2.5"
 
 gem "roo", "~> 3.0.0"
+gem "write_xlsx"

@@ -8,7 +8,9 @@
               end
             end
           end
-          card.with_summary_list(rows: summary_card[:rows])
+          card.with_summary_list(rows: summary_card[:rows]) do |summary_list|
+            debug_address(summary_card[:imported_data], summary_list)
+          end
         end %>
   <% end %>
 <% else %>
