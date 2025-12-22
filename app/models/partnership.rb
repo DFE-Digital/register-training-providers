@@ -27,7 +27,7 @@ class Partnership < ApplicationRecord
 
   include SaveAsTemporary
 
-  audited
+  audited except: [:provider_id, :accredited_provider_id]
 
   belongs_to :provider
   belongs_to :accredited_provider, class_name: "Provider"

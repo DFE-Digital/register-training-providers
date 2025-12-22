@@ -4,6 +4,7 @@ module ActivitySummaryCard
     include AccreditationHelper
     include AddressHelper
     include ContactHelper
+    include PartnershipHelper
     include SummaryHelper
 
     attr_reader :audit, :show_title
@@ -15,12 +16,19 @@ module ActivitySummaryCard
     end
 
     def record
-      @record ||= audit.revision
+      return @record if defined?(@record)
+
+      @record = if audit.auditable_type == "Partnership"
+                  audit.auditable
+                else
+                  audit.revision
+                end
     end
 
     def title_text
       return nil unless show_title
       return nil unless record
+      return nil if audit.auditable_type == "Partnership"
 
       case audit.auditable_type
       when "Provider"
@@ -50,6 +58,7 @@ module ActivitySummaryCard
     end
 
     def title
+      return partnership_title if audit.auditable_type == "Partnership" && show_title && record
       return nil unless title_text
 
       if title_link_path
@@ -66,13 +75,15 @@ module ActivitySummaryCard
       when "Provider"
         provider_summary_card_rows(record)
       when "Accreditation"
-        accreditation_rows(record) # reuse existing helper
+        accreditation_rows(record)
       when "Address"
         address_summary_card_rows(record)
       when "Contact"
-        contact_rows(record) # reuse existing helper
+        contact_rows(record)
+      when "Partnership"
+        partnership_rows(record)
       when "User"
-        user_rows(record) # reuse existing helper
+        user_rows(record)
       else
         []
       end
@@ -101,6 +112,22 @@ module ActivitySummaryCard
       else
         false
       end
+    end
+
+    def partnership_title
+      accredited = record.accredited_provider
+      training = record.provider
+
+      accredited_link = provider_link_or_text(accredited)
+      training_link = provider_link_or_text(training)
+
+      helpers.safe_join([accredited_link, " – ", training_link])
+    end
+
+    def provider_link_or_text(prov)
+      return prov.operating_name if prov.discarded?
+
+      helpers.govuk_link_to(prov.operating_name, helpers.provider_partnerships_path(prov))
     end
   end
 end
