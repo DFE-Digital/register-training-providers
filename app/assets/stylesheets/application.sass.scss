@@ -10,6 +10,8 @@ $govuk-assets-path: "/";
 
 @import "search";
 
+@import "accessible-autocomplete";
+
 .govuk-tag__heading {
   position: relative;
   top: -7px;
