@@ -27,6 +27,15 @@ en:
       scitt: "School-centred initial teacher training (SCITT)"
       school: "School"
       other: "Other"
+    partnerships:
+      find:
+        new:
+          details:
+            summary_text: I cannot find the training partner
+            text_html:
+              <p class="govuk-body">Make sure you’ve spelt the training partner name correctly.</p>
+              <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
+              <p class="govuk-body">You may need to add the training partner first.</p>
   activerecord:
     errors:
       models:
@@ -101,6 +110,9 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+        academic_cycles:
+          academic_cycle_ids:
+            blank: Select academic year
   activemodel:
     errors:
       messages:
@@ -141,6 +153,9 @@ en:
         contact_form:
           add: "Contact added"
           update: "Contact updated"
+        partnership:
+          add: "Partnership added"
+          update: "Partnership updated"
       address:
         add: "Address added"
         update: "Address updated"
@@ -171,6 +186,12 @@ en:
         label: Email address
       telephone_number:
         label: Phone number
+    partnerships:
+      dates:
+        start_date:
+          label: Partnership start date
+        end_date:
+          label: Partnership end date (optional)
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"
