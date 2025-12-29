@@ -361,7 +361,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
     t.string "purpose", default: "0", null: false
     t.string "record_type", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_by", "record_type", "purpose"], name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
+    t.index ["created_by", "record_type", "purpose"],
+            name: "index_temporary_records_on_created_by_record_type_purpose", unique: true
     t.index ["expires_at"], name: "index_temporary_records_on_expires_at"
   end
 

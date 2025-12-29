@@ -5,6 +5,7 @@ module ActivityItem
       "Address" => "Provider address",
       "Accreditation" => "Provider accreditation",
       "Contact" => "Provider contact",
+      "Partnership" => "Provider partnership",
       "User" => "User"
     }.freeze
 
