@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include DfE::Autocomplete::ApplicationHelper
+
   def provider_page_data(provider)
     tag = []
     tag = [" ", govuk_tag(text: "Archived", classes: "govuk-tag__heading")] if provider.archived?

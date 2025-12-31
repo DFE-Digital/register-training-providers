@@ -7,20 +7,22 @@
 
 <% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption, error: @form.errors.present?) %>
 
-<%= form_for @form, url: @form_url, method: :post, html: { data: { module: "app-partners-autocomplete" } } do |form| %>
+<%= form_for @form, url: @form_url, method: :post do |form| %>
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
-  <%= form.govuk_text_field :partner_id, label: nil %>
-
-  <%#= form.govuk_text_field(
-        :query,
-        label: nil,
-        value: query,
-        "data-field" => "partners-autocomplete",
-        width: "three-quarters",
+  <%= render DfE::Autocomplete::View.new(
+        form,
+        attribute_name: :partner_id,
+        form_field: form.govuk_select(
+          :partner_id,
+          options_for_select(
+            dfe_autocomplete_options(@partners),
+            form.object.partner_id
+          ),
+          label: { text: "Search for a training partner", size: "s" }
+        )
       ) %>
 
-  <%#= form.hidden_field :partner_id, id: "training-partners-id" %>
   <%= govuk_details summary_text: t(".details.summary_text"), text: t(".details.text_html") %>
   <%= form.govuk_submit "Continue" %>
 <% end %>

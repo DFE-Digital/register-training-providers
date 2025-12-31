@@ -5,6 +5,7 @@ module Providers
 
       def new
         @form = ::Partnerships::FindForm.new
+        @partners = load_eligible_partners
 
         setup_view_data
       end
@@ -22,12 +23,26 @@ module Providers
 
           redirect_to dates_path
         else
+          @partners = load_eligible_partners
           setup_view_data
           render :new
         end
       end
 
     private
+
+      PartnerOption = Struct.new(:name, :value, keyword_init: true)
+
+      def load_eligible_partners
+        providers = if provider.accredited?
+                      Provider.where(provider_type: ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys)
+                        .order(:operating_name)
+                    else
+                      Provider.accredited.order(:operating_name)
+                    end
+
+        providers.map { |p| PartnerOption.new(name: p.operating_name, value: p.id) }
+      end
 
       def dates_path
         provider_new_partnership_dates_path(provider)
