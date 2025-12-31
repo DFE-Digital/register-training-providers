@@ -1,6 +1,7 @@
 {
   "name": "app",
   "dependencies": {
+    "dfe-autocomplete": "github:DFE-Digital/dfe-autocomplete",
     "govuk-frontend": "5.13.0",
     "sass": "^1.97.1"
   },
