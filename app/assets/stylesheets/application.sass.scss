@@ -10,7 +10,7 @@ $govuk-assets-path: "/";
 
 @import "search";
 
-@import "dfe-autocomplete/src/dfe-autocomplete";
+@import "components/autocomplete";
 
 .govuk-tag__heading {
   position: relative;

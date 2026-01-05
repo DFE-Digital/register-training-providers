@@ -418,7 +418,7 @@ __metadata:
   resolution: "app@workspace:."
   dependencies:
     "@prettier/plugin-ruby": "npm:^4.0.4"
-    dfe-autocomplete: "github:DFE-Digital/dfe-autocomplete"
+    accessible-autocomplete: "npm:^3.0.1"
     esbuild: "npm:^0.27.2"
     govuk-frontend: "npm:5.13.0"
     prettier: "npm:^3.7.4"
@@ -488,15 +488,6 @@ __metadata:
   bin:
     detect-libc: ./bin/detect-libc.js
   checksum: 10c0/4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
-  languageName: node
-  linkType: hard
-
-"dfe-autocomplete@github:DFE-Digital/dfe-autocomplete":
-  version: 0.2.1
-  resolution: "dfe-autocomplete@https://github.com/DFE-Digital/dfe-autocomplete.git#commit=966efa70f058585fdbc91e7217d678092db62303"
-  dependencies:
-    accessible-autocomplete: "npm:^3.0.1"
-  checksum: 10c0/5b9c4ab0b5c923a849c8f7d5d6fdf20bdae842662d90b09891a3aefcec50f6e9c5c848a32ca59207f550017cf3599cc0eee0bd08889419f62162d253d58d8e55
   languageName: node
   linkType: hard
 
