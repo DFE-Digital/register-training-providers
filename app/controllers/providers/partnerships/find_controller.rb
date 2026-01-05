@@ -3,6 +3,8 @@ module Providers
     class FindController < ApplicationController
       include PartnershipJourneyController
 
+      PartnerOption = Struct.new(:name, :value, keyword_init: true)
+
       def new
         @form = ::Partnerships::FindForm.new
         @partners = load_eligible_partners
@@ -30,8 +32,6 @@ module Providers
       end
 
     private
-
-      PartnerOption = Struct.new(:name, :value, keyword_init: true)
 
       def load_eligible_partners
         providers = if provider.accredited?

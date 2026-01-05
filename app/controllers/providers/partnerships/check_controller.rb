@@ -8,7 +8,7 @@ module Providers
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership
-        @form = partnership_data ? ::PartnershipForm.new(partnership_data) : ::PartnershipForm.from_partnership(@partnership)
+        @form = build_partnership_form(partnership_data, @partnership)
 
         if @form.invalid?
           redirect_to provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
@@ -26,8 +26,7 @@ module Providers
           return
         end
 
-        @form = ::PartnershipForm.new(partnership_data.except(:partner_id,
-                                                              :training_partner_search).merge(set_partners(partnership_data)))
+        @form = build_form_from_session(partnership_data)
 
         if @form.invalid?
           redirect_to provider_new_partnership_path(provider, goto: "confirm", skip_finder: "true")
@@ -45,8 +44,7 @@ module Providers
           return
         end
 
-        @form = ::PartnershipForm.new(partnership_data.except(:partner_id,
-                                                              :training_partner_search).merge(set_partners(partnership_data)))
+        @form = build_form_from_session(partnership_data)
 
         partnership = provider.partnerships.build(@form.to_partnership_attributes)
         authorize partnership
@@ -65,7 +63,7 @@ module Providers
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership
-        @form = partnership_data ? ::PartnershipForm.new(partnership_data) : ::PartnershipForm.from_partnership(@partnership)
+        @form = build_partnership_form(partnership_data, @partnership)
 
         if @partnership.update(@form.to_partnership_attributes)
           partnership_session.clear!
@@ -124,10 +122,24 @@ module Providers
       end
 
       def set_partners(partnership_data)
-        return { provider_id: partnership_data[:partner_id],
-                 accredited_provider_id: provider.id } if provider.accredited?
+        if provider.accredited?
+          { provider_id: partnership_data[:partner_id], accredited_provider_id: provider.id }
+        else
+          { accredited_provider_id: partnership_data[:partner_id], provider_id: provider.id }
+        end
+      end
 
-        { accredited_provider_id: partnership_data[:partner_id], provider_id: provider.id }
+      def build_partnership_form(partnership_data, partnership)
+        if partnership_data
+          ::PartnershipForm.new(partnership_data)
+        else
+          ::PartnershipForm.from_partnership(partnership)
+        end
+      end
+
+      def build_form_from_session(partnership_data)
+        form_attrs = partnership_data.except(:partner_id, :training_partner_search)
+        ::PartnershipForm.new(form_attrs.merge(set_partners(partnership_data)))
       end
 
       def setup_view_data(context)

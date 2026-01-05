@@ -162,4 +162,3 @@ private
     "#{academic_cycle.duration.begin.year} to #{academic_cycle.duration.end.year}"
   end
 end
-

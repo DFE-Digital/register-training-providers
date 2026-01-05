@@ -20,7 +20,7 @@ module PartnershipHelper
     end
   end
 
-  def partnership_rows(partnership, include_actions: false)
+  def partnership_rows(partnership, include_actions: false) # rubocop:disable Lint/UnusedMethodArgument
     [
       { key: { text: "Accredited Provider" },
         value: { text: partnership.accredited_provider.operating_name.to_s }, },

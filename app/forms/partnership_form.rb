@@ -17,8 +17,6 @@ class PartnershipForm
   validates :start_date, presence: true
   validate :academic_cycle_ids_must_not_be_empty
 
-  attr_reader :provider, :accredited_provider, :academic_cycles
-
   def self.from_dates(dates)
     form = new
 

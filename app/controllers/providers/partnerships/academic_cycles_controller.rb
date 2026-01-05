@@ -17,7 +17,8 @@ module Providers
         partnership_attributes = partnership_session.load_partnership
 
         if @form.valid?
-          partnership_session.store_partnership(partnership_attributes.merge(academic_cycle_ids: @form.academic_cycle_ids))
+          merged_attributes = partnership_attributes.merge(academic_cycle_ids: @form.academic_cycle_ids)
+          partnership_session.store_partnership(merged_attributes)
           redirect_to check_path
         else
           setup_view_data

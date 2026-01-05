@@ -55,4 +55,3 @@ RSpec.describe Partnerships::FindForm, type: :model do
     end
   end
 end
-
