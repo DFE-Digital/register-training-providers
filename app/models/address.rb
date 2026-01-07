@@ -12,6 +12,7 @@
 #  longitude      :decimal(10, 6)
 #  postcode       :string           not null
 #  town_or_city   :string           not null
+#  uprn           :string(15)
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  provider_id    :uuid             not null
@@ -40,4 +41,6 @@ class Address < ApplicationRecord
   validates :postcode, presence: true, postcode: true
 
   audited associated_with: :provider, except: [:provider_id]
+
+  validates :uprn, length: { maximum: 15 }
 end

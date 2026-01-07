@@ -166,6 +166,7 @@ RSpec.describe AddressForm, type: :model do
 
   describe "#to_address_attributes" do
     it "returns address attributes hash" do
+      subject.uprn = "100023336956"
       subject.latitude = 51.503396
       subject.longitude = -0.127764
       attributes = subject.to_address_attributes
@@ -177,6 +178,7 @@ RSpec.describe AddressForm, type: :model do
         town_or_city: "Test City",
         county: "Test County",
         postcode: "SW1A 1AA",
+        uprn: "100023336956",
         latitude: 51.503396,
         longitude: -0.127764,
         provider_id: provider.id
@@ -231,7 +233,7 @@ RSpec.describe AddressForm, type: :model do
   end
 
   describe ".from_address" do
-    let(:address) { create(:address, provider: provider, latitude: 51.5, longitude: -0.1) }
+    let(:address) { create(:address, provider: provider, latitude: 51.5, longitude: -0.1, uprn: "100023336956") }
 
     it "creates form from existing address with coordinates" do
       form = described_class.from_address(address)
@@ -243,6 +245,7 @@ RSpec.describe AddressForm, type: :model do
       expect(form.town_or_city).to eq(address.town_or_city)
       expect(form.county).to eq(address.county)
       expect(form.postcode).to eq(address.postcode)
+      expect(form.uprn).to eq(address.uprn)
       expect(form.latitude).to eq(address.latitude)
       expect(form.longitude).to eq(address.longitude)
       expect(form.provider_id).to eq(address.provider_id)
@@ -262,6 +265,7 @@ RSpec.describe AddressForm, type: :model do
         town_or_city: "London",
         county: nil,
         postcode: "SW1A 2AA",
+        uprn: "100023336956",
         latitude: 51.503396,
         longitude: -0.127764
       }
@@ -277,6 +281,7 @@ RSpec.describe AddressForm, type: :model do
       expect(form.town_or_city).to eq("London")
       expect(form.county).to be_nil
       expect(form.postcode).to eq("SW1A 2AA")
+      expect(form.uprn).to eq("100023336956")
       expect(form.latitude).to eq(51.503396)
       expect(form.longitude).to eq(-0.127764)
     end
