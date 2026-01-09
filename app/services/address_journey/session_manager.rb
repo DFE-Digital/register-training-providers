@@ -45,6 +45,8 @@ module AddressJourney
     end
 
     def session_key
+      return :imported_data_address_creation if @context == :imported_data
+
       @context == :setup ? :provider_creation : :address_creation
     end
   end
