@@ -4,6 +4,8 @@ module Providers
       include AddressJourneyController
 
       def new
+        import_seed_if_needed
+
         search_data = address_session.load_search
 
         unless search_data
@@ -51,28 +53,22 @@ module Providers
         redirect_to success_path
       end
 
-      def imported_data
-        postcode = provider.seed_data_notes["row_imported"]["address"]["postcode"]
-        @results = OrdnanceSurvey::AddressLookupService.call(
-          postcode:,
-        )
-
-        @presenter = AddressJourney::SelectPresenter.new(
-          results: @results,
-          postcode: postcode,
-          building_name_or_number: nil
-        )
-        @form = ::Addresses::SelectForm.new
-        @back_path = providers_addresses_addresses_path
-        @form_url = form_url
-        @change_search_path = change_search_path
-        @manual_entry_path = manual_entry_path
-        @cancel_path = providers_addresses_addresses_path
-        @page_subtitle = page_subtitle
-        @page_caption = page_caption
-      end
-
     private
+
+      def import_seed_if_needed
+        if imported_data_context? && !address_import_new_journey?
+          postcode = provider.seed_data_notes["row_imported"]["address"]["postcode"]
+          results = OrdnanceSurvey::AddressLookupService.call(
+            postcode:,
+          )
+
+          address_session.store_search(
+            postcode: postcode,
+            building_name_or_number: nil,
+            results: results
+          )
+        end
+      end
 
       def render_select_form
         search_data = address_session.load_search
@@ -98,11 +94,16 @@ module Providers
             journey_coordinator(:address_select).next_path
           end
         else
-          provider_new_address_confirm_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_address_confirm_path(provider, query_params)
         end
       end
 
       def back_path
+        return providers_addresses_imported_data_path if imported_data_context?
+
         setup_context? ? journey_coordinator(:address_select).back_path : manage_back_path
       end
 
@@ -110,7 +111,10 @@ module Providers
         if params[:goto] == "confirm"
           provider_new_address_confirm_path(provider)
         else
-          provider_new_find_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_find_path(provider, query_params)
         end
       end
 
@@ -147,23 +151,27 @@ module Providers
         if setup_context?
           providers_setup_addresses_select_path(options)
         else
+          options[:debug] = true if imported_data_context?
+
           provider_select_path(provider, options)
         end
       end
 
       def change_search_path
+        query_params = {}
+
         if setup_context?
-          options = {}
-          options[:goto] = params[:goto] if params[:goto].present?
-          providers_setup_addresses_find_path(options)
+          query_params[:goto] = params[:goto] if params[:goto].present?
+          providers_setup_addresses_find_path(query_params)
         else
-          provider_new_find_path(provider)
+          query_params[:debug] = true if imported_data_context?
+          provider_new_find_path(provider, query_params)
         end
       end
 
       def manual_entry_path
         query_params = { skip_finder: "true" }
-        search_data = address_session.load_search
+        search_data = address_session&.load_search
         results = search_data&.dig(:results) || []
         query_params[:from] = "select" if results.present?
         query_params[:goto] = params[:goto] if params[:goto].present?
@@ -171,11 +179,15 @@ module Providers
         if setup_context?
           providers_setup_addresses_address_path(query_params)
         else
+          query_params[:debug] = true if imported_data_context?
+
           provider_new_address_path(provider, query_params)
         end
       end
 
       def cancel_path
+        return providers_addresses_imported_data_path if imported_data_context?
+
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 
