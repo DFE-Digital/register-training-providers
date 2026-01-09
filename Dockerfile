@@ -13,10 +13,11 @@ RUN apk add --update --no-cache tzdata && \
     echo "Europe/London" > /etc/timezone
 
 # build-base: dependencies for bundle
+# git: required for gems from git repositories
 # yarn: node package manager
 # postgresql-dev: postgres driver and libraries
 # yaml-dev: psych issues
-RUN apk add --no-cache build-base yarn postgresql16-dev yaml-dev
+RUN apk add --no-cache build-base git yarn postgresql16-dev yaml-dev
 
 # Install gems defined in Gemfile
 COPY Gemfile Gemfile.lock ./

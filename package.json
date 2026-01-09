@@ -1,6 +1,7 @@
 {
   "name": "app",
   "dependencies": {
+    "accessible-autocomplete": "^3.0.1",
     "govuk-frontend": "5.13.0",
     "sass": "^1.97.1"
   },
