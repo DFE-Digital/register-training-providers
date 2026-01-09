@@ -11,8 +11,12 @@
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
   <%= form.hidden_field :provider_id %>
+  <%= hidden_field_tag("debug", true) if debug_mode? %>
 
   <%= form.govuk_fieldset legend: { text: "Address" }, caption: { text: @page_caption } do %>
+
+  <%= debug_address_summary_card(provider) %>
+
     <%= form.govuk_text_field :address_line_1,
                               label: { text: "Address line 1", size: "s" },
                               width: "full" %>
