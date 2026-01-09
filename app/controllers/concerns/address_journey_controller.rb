@@ -1,5 +1,6 @@
 module AddressJourneyController
   extend ActiveSupport::Concern
+  include DebuggerParamHelper
 
 private
 
@@ -11,12 +12,22 @@ private
                   end
   end
 
+  def journey_context
+    return :imported_data if debug_mode?
+
+    params[:provider_id].present? ? :manage : :setup
+  end
+
   def setup_context?
-    params[:provider_id].blank?
+    journey_context == :setup
+  end
+
+  def imported_data_context?
+    journey_context == :imported_data
   end
 
   def address_session
-    context = setup_context? ? :setup : :manage
+    context = journey_context
     @address_session ||= AddressJourney::SessionManager.new(session, context:)
   end
 
