@@ -22,7 +22,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -55,12 +55,12 @@ RSpec.describe "Creating accreditation", type: :feature do
       start_year = Date.current.year
       end_year = Date.current.year + 1
       fill_in "Accredited provider number", with: "5678"
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "15"
         fill_in "Month", with: "6"
         fill_in "Year", with: start_year.to_s
       end
-      within_fieldset("Date accreditation ends") do
+      within_fieldset("Accreditation end date") do
         fill_in "Day", with: "31"
         fill_in "Month", with: "12"
         fill_in "Year", with: end_year.to_s
@@ -85,7 +85,7 @@ RSpec.describe "Creating accreditation", type: :feature do
       visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -104,7 +104,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
-      expect(page).to have_error_summary("Enter date accreditation starts")
+      expect(page).to have_error_summary("Enter accreditation start date")
       expect(TemporaryRecord.count).to eq(0)
     end
 
@@ -113,7 +113,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "5678"
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -131,7 +131,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1678"
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -152,7 +152,7 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       fill_in "Accredited provider number", with: "1234"
-      within_fieldset("Date accreditation starts") do
+      within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
