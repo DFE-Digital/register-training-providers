@@ -27,7 +27,7 @@
                    } %>
 
         <%= render "selected_filter_list",
-                   title: "Accreditation type",
+                   title: "Accreditation status",
                    values: provider_filters[:accreditation_statuses],
                    labels: t("accreditation_labels"),
                    remove_path: ->(status) {
@@ -65,7 +65,7 @@
           <% end %>
         <% end %>
 
-        <%= f.govuk_check_boxes_fieldset :accreditation_statuses, small: true, legend: { text: "Accreditation type", size: "s" } do %>
+        <%= f.govuk_check_boxes_fieldset :accreditation_statuses, small: true, legend: { text: "Accreditation status", size: "s" } do %>
           <% t("accreditation_labels").each do |value, label| %>
             <%= f.govuk_check_box :accreditation_statuses, value, label: { text: label }, checked: filter_checked?(:accreditation_statuses, value) %>
           <% end %>

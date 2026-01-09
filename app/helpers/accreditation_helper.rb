@@ -8,16 +8,16 @@ module AccreditationHelper
       { key: { text: "Accredited provider number" },
         value: { text: accreditation_form.number },
         actions: [{ href: change_path, visually_hidden_text: "accredited provider number" }] },
-      { key: { text: "Date accreditation starts" },
+      { key: { text: "Accreditation start date" },
         value: { text: accreditation_form.start_date&.to_fs(:govuk) },
-        actions: [{ href: change_path, visually_hidden_text: "date accreditation starts" }] },
-      { key: { text: "Date accreditation ends" },
+        actions: [{ href: change_path, visually_hidden_text: "accreditation start date" }] },
+      { key: { text: "Accreditation end date" },
         value: if accreditation_form.end_date.present?
                  { text: accreditation_form.end_date.to_fs(:govuk) }
                else
                  not_entered
                end,
-        actions: [{ href: change_path, visually_hidden_text: "date accreditation ends" }] }
+        actions: [{ href: change_path, visually_hidden_text: "accreditation end date" }] }
     ]
   end
 
@@ -25,24 +25,33 @@ module AccreditationHelper
     rows = [
       { key: { text: "Accreditation number" },
         value: { text: accreditation.number } },
-      { key: { text: "Date accreditation starts" },
-        value: { text: accreditation.start_date&.to_fs(:govuk) } },
-      { key: { text: "Date accreditation ends" },
-        value: if accreditation.end_date.present?
-                 { text: accreditation.end_date.to_fs(:govuk) }
-               else
-                 not_entered
-               end }
+      accreditation_dates(accreditation.start_date, accreditation.end_date),
     ]
 
     if change_path
-      rows.each_with_index do |row, index|
-        visually_hidden_texts = ["accreditation number", "date accreditation starts", "date accreditation ends"]
-        row[:actions] = [{ href: change_path, visually_hidden_text: visually_hidden_texts[index] }]
-      end
+      rows[0][:actions] = [{ href: change_path, visually_hidden_text: "accreditation number" }]
+      rows[1][:actions] = [{ href: change_path, visually_hidden_text: "accreditation dates" }]
     end
 
     rows
+  end
+
+  def accreditation_dates(start_date, end_date)
+    dates_html = tag.dl(class: "govuk-summary-list") do
+      safe_join([
+        tag.div(class: "govuk-summary-list__row") do
+          tag.dt("Starts on", class: "govuk-summary-list__key") +
+          tag.dd(start_date&.to_fs(:govuk), class: "govuk-summary-list__value")
+        end,
+        tag.div(class: "govuk-summary-list__row") do
+          tag.dt("Ends on", class: "govuk-summary-list__key") +
+          tag.dd(optional_value(end_date&.to_fs(:govuk))[:text], class: "govuk-summary-list__value")
+        end
+      ])
+    end
+
+    { key: { text: "Accreditation dates" },
+      value: { text: dates_html } }
   end
 
   def accreditation_summary_cards(accreditations, provider, include_actions: true)

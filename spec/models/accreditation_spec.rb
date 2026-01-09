@@ -25,7 +25,7 @@ RSpec.describe Accreditation, type: :model do
     it "requires a start_date" do
       accreditation = build(:accreditation, start_date: nil)
       expect(accreditation).not_to be_valid
-      expect(accreditation.errors[:start_date]).to include("Enter date accreditation starts")
+      expect(accreditation.errors[:start_date]).to include("Enter accreditation start date")
     end
   end
 

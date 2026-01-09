@@ -36,8 +36,8 @@ class AccreditationForm
 
   validates :number, presence: true, accreditation_number: true
   validates :provider_id, presence: true, unless: :provider_creation_mode?
-  validates_govuk_date :start_date, required: true, human_name: "date accreditation starts"
-  validates_govuk_date :end_date, required: false, same_or_after: :start_date, human_name: "date accreditation ends"
+  validates_govuk_date :start_date, required: true, human_name: "accreditation start date"
+  validates_govuk_date :end_date, required: false, same_or_after: :start_date, human_name: "accreditation end date"
 
   def initialize(attributes = {})
     super
