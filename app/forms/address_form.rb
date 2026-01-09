@@ -12,6 +12,7 @@ class AddressForm
   attribute :postcode, :string
   attribute :latitude, :decimal
   attribute :longitude, :decimal
+  attribute :uprn, :string
   attribute :provider_id, :string
   attribute :provider_creation_mode, :boolean, default: false
   attribute :manual_entry, :boolean, default: false
@@ -32,6 +33,7 @@ class AddressForm
       town_or_city: address.town_or_city,
       county: address.county,
       postcode: address.postcode,
+      uprn: address.uprn,
       latitude: address.latitude,
       longitude: address.longitude,
       provider_id: address.provider_id
@@ -46,6 +48,7 @@ class AddressForm
       town_or_city: os_address_hash[:town_or_city],
       county: os_address_hash[:county],
       postcode: os_address_hash[:postcode],
+      uprn: os_address_hash[:uprn],
       latitude: os_address_hash[:latitude],
       longitude: os_address_hash[:longitude],
       manual_entry: false
@@ -70,6 +73,7 @@ class AddressForm
       town_or_city:,
       county:,
       postcode:,
+      uprn:,
       latitude:,
       longitude:,
       provider_id:

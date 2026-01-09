@@ -16,7 +16,6 @@ namespace :example_data do
     end
 
     ["import:providers_xlsx",
-     "generate:addresses",
      "generate:contacts",
      "generate:academic_cycles",
      "generate:partnerships"].each do |task|

@@ -11,10 +11,12 @@ class ProviderXlsxRowImporter
     )
 
     assign_provider_attributes(provider)
-    assign_accreditation(provider)
-    attach_seed_data(provider)
+    assign_accreditation(provider) if raw_provider["accreditation_status"] == "accredited"
+    assign_address(provider)
 
-    provider.seed_data_with_issues = provider.errors.any?
+    provider.save!(validate: false)
+
+    attach_seed_data(provider)
 
     provider.save!(validate: false)
   end
@@ -26,13 +28,18 @@ private
   def assign_provider_attributes(provider)
     provider.legal_name        = raw_provider["legal_name"]
     provider.operating_name    = raw_provider["operating_name"]
-    provider.provider_type     = raw_provider["provider_type"]&.downcase
+    provider.provider_type     = provider_type
     provider.accreditation_status = raw_provider["accreditation_status"]
     provider.ukprn             = parsed_ukprn
     provider.urn               = raw_provider["urn"]
+  end
 
-    provider.valid?
-    provider.errors.add(:ukprn, "Not found") if ukprn_not_found?
+  def provider_type
+    if raw_provider["provider_type"] == "scitt" && raw_provider["accreditation_status"] == "unaccredited"
+      "school"
+    else
+      raw_provider["provider_type"]
+    end
   end
 
   def assign_accreditation(provider)
@@ -45,11 +52,60 @@ private
     end
   end
 
+  def assign_address(provider)
+    postcode = value("address__postcode")
+    has_clean_address = value("found") == "true" && postcode.present?
+    return unless has_clean_address
+
+    provider.addresses.find_or_initialize_by(postcode:) do |address|
+      address.address_line_1 = raw_address["address_line_1"]
+      address.address_line_2 = raw_address["address_line_2"]
+      address.address_line_3 = raw_address["address_line_3"]
+      address.county = raw_address["county"]
+      address.latitude = raw_address["latitude"]
+      address.longitude = raw_address["longitude"]
+
+      address.town_or_city = raw_address["town_or_city"]
+      address.uprn = raw_address["uprn"]
+    end
+  end
+
   def attach_seed_data(provider)
+    provider.valid?
+
+    provider.errors.add(:ukprn, "Not found") if ukprn_not_found?
+
+    provider.seed_data_with_issues = provider.errors.any?
+
     provider.seed_data_notes = {
       row_imported: row_imported,
-      errors: provider.errors.to_hash
+      errors: provider.errors.to_hash,
+      saved_as: {
+        provider_id: provider.id,
+        accreditation_id: accreditation_id_for(provider),
+        address_id: address_id_for(provider),
+      }
     }
+  end
+
+  def address_id_for(provider)
+    postcode = value("address__postcode")
+    has_clean_address = value("found") == "true" && postcode.present?
+    return unless has_clean_address
+
+    provider.addresses
+            .detect { |address| address.postcode == postcode }
+            &.id
+  end
+
+  def accreditation_id_for(provider)
+    number = value("accreditation__number")
+
+    return nil if number.blank?
+
+    provider.accreditations
+            .detect { |acc| acc.number == number.to_s }
+            &.id
   end
 
   def raw_provider

@@ -22,6 +22,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
           "THOROUGHFARE_NAME" => "DOWNING STREET",
           "POST_TOWN" => "LONDON",
           "POSTCODE" => "SW1A 2AA",
+          "UPRN" => "100023336956",
           "LAT" => 51.5034,
           "LNG" => -0.1278
         }.merge(overrides)
@@ -44,6 +45,7 @@ RSpec.describe OrdnanceSurvey::AddressLookupService do
           "address_line_1" => "10, Downing Street",
           "town_or_city" => "London",
           "postcode" => "SW1A 2AA",
+          "uprn" => "100023336956",
           "latitude" => 51.5034,
           "longitude" => -0.1278
         )
