@@ -22,7 +22,9 @@ module Providers
         address_data = address_session.load_address
 
         unless address_data
-          redirect_to provider_new_address_path(provider, skip_finder: "true")
+          query_params = { skip_finder: "true" }
+          query_params[:debug] = true if imported_data_context?
+          redirect_to provider_new_address_path(provider, query_params)
           return
         end
 
@@ -30,7 +32,9 @@ module Providers
         @form.provider_id = provider.id
 
         if @form.invalid?
-          redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+          query_params = { goto: "confirm", skip_finder: "true" }
+          query_params[:debug] = true if imported_data_context?
+          redirect_to provider_new_address_path(provider, query_params)
           return
         end
 
@@ -38,6 +42,9 @@ module Providers
       end
 
       def create
+        redirect_to providers_addresses_imported_data_path(provider) and return if imported_data_context? &&
+          provider.seed_data_notes.dig("saved_as", "address_id").present?
+
         address_data = address_session.load_address
 
         unless address_data
@@ -53,8 +60,25 @@ module Providers
 
         if address.save
           address_session.clear!
-          redirect_to provider_addresses_path(provider),
-                      flash: { success: I18n.t("flash_message.success.check.address.add") }
+
+          if imported_data_context?
+            provider.update_column(
+              :seed_data_notes,
+              provider.seed_data_notes.deep_merge(
+                "saved_as" => {
+                  "address_id" => address.id,
+                  "address_notes" => "User confirmed address during data import"
+                }
+              )
+            )
+
+            redirect_to providers_addresses_imported_data_path, flash: { success: I18n.t(
+              "flash_message.success.check.address.add_imported_data", provider_operating_name: provider.operating_name
+            ) }
+          else
+            redirect_to provider_addresses_path(provider),
+                        flash: { success: I18n.t("flash_message.success.check.address.add") }
+          end
         else
           redirect_to provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
         end
@@ -104,10 +128,16 @@ module Providers
           provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
         elsif search_available? && !manual_entry_only?
           # User used finder, go back to select page
-          provider_new_select_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_select_path(provider, query_params)
         else
           # User did manual entry or no search available
-          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+          query_params = { goto: "confirm", skip_finder: "true" }
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_address_path(provider, query_params)
         end
       end
 
@@ -115,9 +145,18 @@ module Providers
         if edit_context?
           provider_edit_address_path(@address, provider_id: provider.id, goto: "confirm")
         elsif search_available? && !manual_entry_only?
-          provider_new_select_path(provider, goto: "confirm")
+
+          query_params = { goto: "confirm" }
+
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_select_path(provider, query_params)
         else
-          provider_new_address_path(provider, goto: "confirm", skip_finder: "true")
+          query_params = { goto: "confirm", skip_finder: "true" }
+
+          query_params[:debug] = true if imported_data_context?
+
+          provider_new_address_path(provider, query_params)
         end
       end
 
@@ -125,11 +164,16 @@ module Providers
         if edit_context?
           provider_address_check_path(@address, provider_id: provider.id)
         else
-          provider_address_confirm_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+
+          provider_address_confirm_path(provider, query_params)
         end
       end
 
       def cancel_path
+        return providers_addresses_imported_data_path if imported_data_context?
+
         provider_addresses_path(provider)
       end
 
