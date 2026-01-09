@@ -4,6 +4,8 @@
 
 <% page_data(title: "Check your answers", subtitle: @page_subtitle, caption: @page_caption) %>
 
+<%= debug_address_summary_card(@provider) %>
+
 <%= govuk_summary_list(rows: address_rows(@form, @change_path)) %>
 
 <% if show_location_section?(@form) %>

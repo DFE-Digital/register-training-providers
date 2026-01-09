@@ -3,6 +3,10 @@ module DebuggerParamHelper
     params["debug"] == "true"
   end
 
+  def address_import_new_journey?
+    params["address_import_new_journey"] == "true"
+  end
+
   def debug_provider(provider)
     return unless debug_mode? && provider.seed_data_notes.present?
 
@@ -51,19 +55,36 @@ module DebuggerParamHelper
     debug_summary_list("address", imported_data, summary_list)
   end
 
-  def debug_summary_list(imported_model_name, imported_data, summary_list)
+  def debug_address_summary_card(provider)
     return unless debug_mode?
+
+    imported_data = provider.seed_data_notes.dig("row_imported", "address")
+
     return if imported_data.blank?
+
+    govuk_summary_card(title: "Imported data") do |card|
+      rows = debug_rows("address", imported_data)
+
+      card.with_summary_list(rows:)
+    end
+  end
+
+  def debug_summary_list(imported_model_name, imported_data, summary_list)
+    return unless debug_mode? && imported_data.present?
 
     summary_list.with_row do |row|
       row.with_key(text: "Imported data")
 
-      debug_rows = I18n.t("imported_data.fields.#{imported_model_name}").filter_map do |field, label|
-        value = imported_data[field.to_s].present? ? { text: imported_data[field.to_s] } : not_entered
-        { key: { text: label }, value: value }
-      end
+      rows = debug_rows(imported_model_name, imported_data)
 
-      row.with_value(text: govuk_summary_list(rows: debug_rows))
+      row.with_value(text: govuk_summary_list(rows:))
+    end
+  end
+
+  def debug_rows(imported_model_name, imported_data)
+    I18n.t("imported_data.fields.#{imported_model_name}").filter_map do |field, label|
+      value = imported_data[field.to_s].present? ? { text: imported_data[field.to_s] } : not_entered
+      { key: { text: label }, value: value }
     end
   end
 end

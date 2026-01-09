@@ -52,11 +52,17 @@ module Providers
         if setup_context?
           providers_setup_addresses_select_path(goto: params[:goto])
         else
-          provider_new_select_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+          query_params[:address_import_new_journey] = true if imported_data_context?
+
+          provider_new_select_path(provider, query_params)
         end
       end
 
       def back_path
+        return provider_new_select_path(provider, { debug: true }) if imported_data_context?
+
         setup_context? ? journey_coordinator(:address_find).back_path : manage_back_path
       end
 
@@ -65,14 +71,25 @@ module Providers
       end
 
       def form_url
-        setup_context? ? providers_setup_addresses_find_path : provider_find_path(provider)
+        if setup_context?
+          providers_setup_addresses_find_path
+        else
+          options = {}
+          options[:debug] = true if imported_data_context?
+
+          provider_find_path(provider, options)
+        end
       end
 
       def cancel_path
+        return providers_addresses_imported_data_path if imported_data_context?
+
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 
       def manual_entry_path
+        return provider_new_address_path(provider, { skip_finder: true, debug: true }) if debug_mode?
+
         if setup_context?
           providers_setup_addresses_address_path(skip_finder: "true")
         else

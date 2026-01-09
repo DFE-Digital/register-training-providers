@@ -7,6 +7,8 @@
 
 <% page_data(title: @presenter.page_title, subtitle: @page_subtitle, caption: @page_caption, error: @form&.errors.present?) %>
 
+<%= debug_address_summary_card(provider) %>
+
 <% if @presenter.results.empty? %>
   <p class="govuk-body">
     <%= govuk_link_to("Change your search", @change_search_path) %> or <%= govuk_link_to("enter the address manually", @manual_entry_path) %>

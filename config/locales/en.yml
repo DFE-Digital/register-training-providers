@@ -137,6 +137,7 @@ en:
           update: "Address updated"
         address:
           add: "Address added"
+          add_imported_data: "Address added for %{provider_operating_name}"
           update: "Address updated"
         contact_form:
           add: "Contact added"
