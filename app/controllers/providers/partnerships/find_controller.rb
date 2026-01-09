@@ -3,10 +3,10 @@ module Providers
     class FindController < ApplicationController
       include PartnershipJourneyController
 
-      PartnerOption = Struct.new(:name, :value, keyword_init: true)
+      PartnerOption = Struct.new(:name, :value, :hint, :search_text, keyword_init: true)
 
       def new
-        @form = ::Partnerships::FindForm.new
+        @form = ::Partnerships::FindForm.new(provider_accredited: provider.accredited?)
         @partners = load_eligible_partners
 
         setup_view_data
@@ -15,6 +15,7 @@ module Providers
       def create
         @form = ::Partnerships::FindForm.new(
           partner_id: params.dig(:find, :partner_id),
+          provider_accredited: provider.accredited?
         )
 
         if @form.valid?
@@ -41,7 +42,26 @@ module Providers
                       Provider.accredited.order(:operating_name)
                     end
 
-        providers.map { |p| PartnerOption.new(name: p.operating_name, value: p.id) }
+        providers.map do |p|
+          PartnerOption.new(
+            name: p.operating_name,
+            value: p.id,
+            hint: partner_hint(p),
+            search_text: partner_search_text(p)
+          )
+        end
+      end
+
+      def partner_hint(provider_record)
+        parts = ["Provider code: #{provider_record.code}", "UKPRN: #{provider_record.ukprn}"]
+        parts << "URN: #{provider_record.urn}" if provider_record.urn.present?
+        parts.join(", ")
+      end
+
+      def partner_search_text(provider_record)
+        parts = [provider_record.operating_name, provider_record.code, provider_record.ukprn]
+        parts << provider_record.urn if provider_record.urn.present?
+        parts.join(" | ")
       end
 
       def dates_path
@@ -72,9 +92,18 @@ module Providers
         @back_path = back_path
         @form_url = form_url
         @cancel_path = cancel_path
-        @page_title = "Enter training partner name, code, UKPRN or URN"
+        @page_title = page_title
         @page_subtitle = page_subtitle
         @page_caption = page_caption
+        @provider_accredited = provider.accredited?
+      end
+
+      def page_title
+        if provider.accredited?
+          "Enter training partner name, code, UKPRN or URN"
+        else
+          "Enter accredited provider name, code, UKPRN or URN"
+        end
       end
     end
   end

@@ -1,24 +1,28 @@
-
 <%= content_for(:breadcrumbs) do %>
   <%= render GovukComponent::BackLinkComponent.new(
         text: "Back",
-        href: back_path,
+        href: @back_path,
       ) %>
 <% end %>
 
-<%= form_for @form, url: form_url, method: form_method do |form| %>
-  <% page_data(title: page_title, header: false, error: @form.errors.present?) %>
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
 
+<%= form_for @form, url: @form_url, method: @form_method do |form| %>
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  <%= form.govuk_fieldset legend: { text: "Partnership dates" } do %>
+
+  <%= form.govuk_fieldset legend: { text: "Partnership dates", size: "l" }, caption: { text: @page_caption, size: "l" } do %>
     <%= form.govuk_date_field :start_date, legend: { text: I18n.t("forms.partnerships.dates.start_date.label"), size: "s" }, hint: { text: "For example, 1 8 2024" } %>
+
+    <%= govuk_details(
+          summary_text: t("forms.partnerships.dates.start_date.details.summary_text"),
+          text: t("forms.partnerships.dates.start_date.details.text")
+        ) %>
 
     <%= form.govuk_date_field :end_date, legend: { text: I18n.t("forms.partnerships.dates.end_date.label"), size: "s" }, hint: { text: "For example, 31 7 2026" } %>
   <% end %>
   <%= form.govuk_submit %>
-
 <% end %>
 
 <p class="govuk-body">
-  <%= govuk_link_to("Cancel", cancel_path) %>
+  <%= govuk_link_to("Cancel", @cancel_path) %>
 </p>

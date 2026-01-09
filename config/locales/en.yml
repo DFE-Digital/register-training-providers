@@ -30,12 +30,20 @@ en:
     partnerships:
       find:
         new:
-          details:
-            summary_text: I cannot find the training partner
-            text_html:
-              <p class="govuk-body">Make sure you’ve spelt the training partner name correctly.</p>
-              <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
-              <p class="govuk-body">You may need to add the training partner first.</p>
+          accredited_provider:
+            details:
+              summary_text: I cannot find the accredited provider
+              text_html:
+                <p class="govuk-body">Make sure you've spelt the accredited provider name correctly.</p>
+                <p class="govuk-body">If you still cannot find it, check that the accredited provider is already listed in the register.</p>
+                <p class="govuk-body">You may need to add the accredited provider first.</p>
+          training_partner:
+            details:
+              summary_text: I cannot find the training partner
+              text_html:
+                <p class="govuk-body">Make sure you've spelt the training partner name correctly.</p>
+                <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
+                <p class="govuk-body">You may need to add the training partner first.</p>
   activerecord:
     errors:
       models:
@@ -84,6 +92,9 @@ en:
               invalid_postcode_format: "Enter a full UK postcode"
             building_name_or_number:
               too_long: "Building name or number is too long (maximum is %{count} characters)"
+            partner_id:
+              blank_training_partner: "Enter training partner name, code, UKPRN or URN"
+              blank_accredited_provider: "Enter accredited provider name, code, UKPRN or URN"
         select:
           attributes:
             selected_address_index:
@@ -110,9 +121,14 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+        dates:
+          attributes:
+            start_date:
+              blank: "Enter date the partnership started"
         academic_cycles:
-          academic_cycle_ids:
-            blank: Select academic year
+          attributes:
+            academic_cycle_ids:
+              blank: Select academic year
   activemodel:
     errors:
       messages:
@@ -190,6 +206,9 @@ en:
       dates:
         start_date:
           label: Partnership start date
+          details:
+            summary_text: I do not know the start date
+            text: If you do not know the start date, use today's date, or the date the academic year starts, for example, 1 August 2024.
         end_date:
           label: Partnership end date (optional)
   provider_types_labels:

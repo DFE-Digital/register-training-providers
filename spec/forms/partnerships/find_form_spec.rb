@@ -3,18 +3,18 @@ require "rails_helper"
 RSpec.describe Partnerships::FindForm, type: :model do
   describe "validations" do
     describe "partner_id" do
-      it "requires partner_id to be present" do
-        form = described_class.new(partner_id: nil)
+      it "requires partner_id with accredited provider context" do
+        form = described_class.new(partner_id: nil, provider_accredited: true)
 
         expect(form).not_to be_valid
-        expect(form.errors[:partner_id]).to include("can't be blank")
+        expect(form.errors[:partner_id]).to include("Enter training partner name, code, UKPRN or URN")
       end
 
-      it "requires partner_id to not be blank" do
-        form = described_class.new(partner_id: "")
+      it "requires partner_id with unaccredited provider context" do
+        form = described_class.new(partner_id: "", provider_accredited: false)
 
         expect(form).not_to be_valid
-        expect(form.errors[:partner_id]).to include("can't be blank")
+        expect(form.errors[:partner_id]).to include("Enter accredited provider name, code, UKPRN or URN")
       end
     end
 

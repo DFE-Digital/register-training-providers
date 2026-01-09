@@ -6,8 +6,9 @@ module Partnerships
 
     attribute :partner_id, :string
     attribute :partner_id_raw, :string
+    attribute :provider_accredited, :boolean
 
-    validates :partner_id, presence: true
+    validate :partner_id_present
     validate :partner_must_exist, if: -> { partner_id.present? }
 
     def self.model_name
@@ -19,6 +20,13 @@ module Partnerships
     end
 
   private
+
+    def partner_id_present
+      return if partner_id.present?
+
+      error_key = provider_accredited ? :blank_training_partner : :blank_accredited_provider
+      errors.add(:partner_id, error_key)
+    end
 
     def partner_must_exist
       return if Provider.exists?(partner_id)

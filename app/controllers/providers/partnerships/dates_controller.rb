@@ -58,8 +58,9 @@ module Providers
       def setup_view_data
         @back_path = back_path
         @form_url = form_url
+        @form_method = :post
         @cancel_path = cancel_path
-        @page_title = "Add partnership - #{@provider.operating_name}"
+        @page_title = "Partnership dates"
         @page_subtitle = page_subtitle
         @page_caption = page_caption
       end

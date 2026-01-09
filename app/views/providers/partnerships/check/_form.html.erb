@@ -4,7 +4,7 @@
 
 <% page_data(title: "Check your answers", subtitle: @page_subtitle, caption: @page_caption) %>
 
-<%= govuk_summary_list(rows: partnership_rows(@form)) %>
+<%= govuk_summary_list(rows: partnership_rows(@form, change_paths: @change_paths, provider_accredited: @provider_accredited)) %>
 
 <%= govuk_button_to(@save_button_text, @save_path, method: @form_method) %>
 

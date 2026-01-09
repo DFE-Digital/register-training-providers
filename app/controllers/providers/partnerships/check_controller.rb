@@ -148,6 +148,8 @@ module Providers
         @save_path = save_path
         @cancel_path = cancel_path
         @save_button_text = "Save partnership"
+        @provider_accredited = provider.accredited?
+        @change_paths = build_change_paths(context)
 
         if context == :edit
           @form_method = :patch
@@ -158,6 +160,14 @@ module Providers
           @page_subtitle = "Add partnership - #{provider.operating_name}"
           @page_caption = "Add partnership - #{provider.operating_name}"
         end
+      end
+
+      def build_change_paths(_context)
+        {
+          partner: provider_new_partnership_find_path(provider, goto: "confirm"),
+          dates: provider_new_partnership_dates_path(provider, goto: "confirm"),
+          academic_cycles: provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
+        }
       end
     end
   end

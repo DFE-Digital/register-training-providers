@@ -21,7 +21,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       expect(page).to have_content("Enter training partner name")
 
-      select unaccredited_partner.operating_name, from: "Search for a training partner"
+      select_partner(unaccredited_partner.operating_name)
       click_button "Continue"
 
       expect(page).to have_content("Partnership dates")
@@ -66,7 +66,9 @@ RSpec.describe "Creating partnership", type: :feature do
         click_link "Add partnership"
       end
 
-      select accredited_partner.operating_name, from: "Search for a training partner"
+      expect(page).to have_content("Enter accredited provider name")
+
+      select_partner(accredited_partner.operating_name)
       click_button "Continue"
 
       fill_in_start_date
@@ -101,24 +103,25 @@ RSpec.describe "Creating partnership", type: :feature do
       click_button "Continue"
 
       expect(page).to have_content("Error")
-      expect(page).to have_content("can't be blank")
+      expect(page).to have_content("Enter training partner name, code, UKPRN or URN")
     end
 
     scenario "shows error when no start date entered" do
       visit provider_new_partnership_find_path(provider)
 
-      select partner.operating_name, from: "Search for a training partner"
+      select_partner(partner.operating_name)
       click_button "Continue"
 
       click_button "Continue"
 
       expect(page).to have_content("Error")
+      expect(page).to have_content("Enter date the partnership started")
     end
 
     scenario "shows error when no academic year selected" do
       visit provider_new_partnership_find_path(provider)
 
-      select partner.operating_name, from: "Search for a training partner"
+      select_partner(partner.operating_name)
       click_button "Continue"
 
       fill_in_start_date
@@ -127,7 +130,7 @@ RSpec.describe "Creating partnership", type: :feature do
       click_button "Continue"
 
       expect(page).to have_content("Error")
-      expect(page).to have_content("can't be blank")
+      expect(page).to have_content("Select academic year")
     end
   end
 
@@ -138,7 +141,7 @@ RSpec.describe "Creating partnership", type: :feature do
     scenario "can cancel and return to partnerships" do
       visit provider_new_partnership_find_path(provider)
 
-      select partner.operating_name, from: "Search for a training partner"
+      select_partner(partner.operating_name)
 
       click_link "Cancel"
 
@@ -148,6 +151,11 @@ RSpec.describe "Creating partnership", type: :feature do
   end
 
 private
+
+  def select_partner(name)
+    # The autocomplete enhances the select - find the underlying select and set its value
+    find("select[name='find[partner_id]']", visible: false).find("option", text: name, visible: false).select_option
+  end
 
   def fill_in_start_date
     current_year = Date.current.year

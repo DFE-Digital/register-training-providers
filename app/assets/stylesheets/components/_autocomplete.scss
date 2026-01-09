@@ -64,21 +64,6 @@ body .suggestions {
     box-shadow: inset 0 0 0 $govuk-border-width-form-element;
   }
 
-  .autocomplete__input--show-all-values {
-    padding-right: (govuk-spacing(1) + 24px + govuk-spacing(2));
-    cursor: pointer;
-  }
-
-  .autocomplete__dropdown-arrow-down {
-    display: inline-block;
-    height: 24px;
-    position: absolute;
-    right: govuk-spacing(2);
-    top: govuk-spacing(2);
-    width: 24px;
-    pointer-events: none;
-  }
-
   .autocomplete__menu {
     background-color: govuk-colour("white");
     border: $govuk-border-width-form-element solid $govuk-input-border-colour;

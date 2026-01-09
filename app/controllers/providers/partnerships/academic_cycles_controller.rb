@@ -56,7 +56,7 @@ module Providers
         @back_path = back_path
         @form_url = form_url
         @cancel_path = cancel_path
-        @page_title = "Add partnership - #{@provider.operating_name}"
+        @page_title = "Academic year"
         @page_subtitle = page_subtitle
         @page_caption = page_caption
         @academic_cycles = academic_cycles
@@ -72,16 +72,18 @@ module Providers
         Provider.find(partnership_data[:partner_id])
       end
 
-      def accredited_date_range
-        start_date = accredited_provider.accreditations.pluck(:start_date).min
-        end_date = accredited_provider.accreditations.pluck(:end_date).max
+      def partnership_start_date
+        partnership_data[:start_date]
+      end
 
-        { start_date:, end_date: }
+      def next_academic_cycle_end
+        next_year_date = Time.zone.today + 1.year
+        fallback_date = Time.zone.today + 2.years
+        AcademicCycle.find_by("duration @> ?::date", next_year_date)&.duration&.end || fallback_date
       end
 
       def academic_cycles
-        AcademicCycle.where("duration && daterange(?, ?)", accredited_date_range[:start_date],
-                            accredited_date_range[:end_date])
+        AcademicCycle.where("duration && daterange(?, ?)", partnership_start_date, next_academic_cycle_end)
       end
     end
   end
