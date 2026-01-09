@@ -7,8 +7,12 @@
 
 <% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption, error: @form.errors.present?) %>
 
+<%= debug_address_summary_card(provider) %>
+
 <%= form_for @form, url: @form_url, method: :post do |form| %>
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= hidden_field_tag("debug", true) if debug_mode? %>
 
   <%= form.govuk_text_field :postcode,
                             label: { text: "Postcode", size: "s" },
