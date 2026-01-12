@@ -6,7 +6,18 @@ module Providers
       PartnerOption = Struct.new(:name, :value, :hint, :search_text, keyword_init: true)
 
       def new
-        @form = ::Partnerships::FindForm.new(provider_accredited: provider.accredited?)
+        # Clear session for fresh start, keep data only when editing from confirm page
+        if params[:goto] == "confirm"
+          partnership_data = partnership_session.load_partnership
+        else
+          partnership_session.clear!
+          partnership_data = nil
+        end
+
+        @form = ::Partnerships::FindForm.new(
+          partner_id: partnership_data&.dig(:partner_id),
+          provider_accredited: provider.accredited?
+        )
         @partners = load_eligible_partners
 
         setup_view_data
@@ -65,10 +76,14 @@ module Providers
       end
 
       def dates_path
+        return provider_new_partnership_confirm_path(provider) if params[:goto] == "confirm"
+
         provider_new_partnership_dates_path(provider)
       end
 
       def back_path
+        return provider_new_partnership_confirm_path(provider) if params[:goto] == "confirm"
+
         provider_partnerships_path(provider)
       end
 

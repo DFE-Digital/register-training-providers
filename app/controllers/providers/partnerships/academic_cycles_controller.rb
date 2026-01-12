@@ -4,7 +4,14 @@ module Providers
       include PartnershipJourneyController
 
       def new
-        @form = ::Partnerships::AcademicCyclesForm.new
+        partnership_data = partnership_session.load_partnership
+
+        # Keep previous selections only when coming from confirm page to change them
+        # Otherwise start fresh (dates may have changed, invalidating previous selections)
+        previous_ids = params[:goto] == "confirm" ? partnership_data&.dig(:academic_cycle_ids) : nil
+        @form = ::Partnerships::AcademicCyclesForm.new(
+          academic_cycle_ids: previous_ids || []
+        )
 
         setup_view_data
       end
@@ -33,6 +40,8 @@ module Providers
       end
 
       def back_path
+        return provider_new_partnership_confirm_path(provider) if params[:goto] == "confirm"
+
         provider_new_partnership_dates_path(provider)
       end
 

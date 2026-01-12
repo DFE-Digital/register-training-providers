@@ -17,7 +17,8 @@
     <% @academic_cycles.each do |academic_cycle| %>
       <%= form.govuk_check_box :academic_cycle_ids, academic_cycle.id,
                                label: { text: display_academic_year(academic_cycle) },
-                               hint: { text: academic_year_helper_text(academic_cycle) } %>
+                               hint: { text: academic_year_helper_text(academic_cycle) },
+                               checked: @form.academic_cycle_ids&.include?(academic_cycle.id) %>
     <% end %>
   <% end %>
 

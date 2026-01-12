@@ -3,8 +3,11 @@ module Providers
     class DatesController < ApplicationController
       include PartnershipJourneyController
 
+      DateValues = Struct.new(:start_date, :end_date, keyword_init: true)
+
       def new
-        @form = ::Partnerships::DatesForm.new
+        partnership_data = partnership_session.load_partnership
+        @form = build_form_from_session(partnership_data)
 
         setup_view_data
       end
@@ -32,11 +35,25 @@ module Providers
       end
 
       def academic_cycles_path
+        return provider_new_partnership_confirm_path(provider) if params[:goto] == "confirm"
+
         provider_new_partnership_academic_cycles_path(provider)
       end
 
       def back_path
+        return provider_new_partnership_confirm_path(provider) if params[:goto] == "confirm"
+
         provider_new_partnership_find_path(provider)
+      end
+
+      def build_form_from_session(partnership_data)
+        return ::Partnerships::DatesForm.new unless partnership_data&.dig(:start_date)
+
+        dates_object = DateValues.new(
+          start_date: partnership_data[:start_date],
+          end_date: partnership_data[:end_date]
+        )
+        ::Partnerships::DatesForm.from_dates(dates_object)
       end
 
       def form_url
