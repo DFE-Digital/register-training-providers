@@ -7,7 +7,7 @@
         There are no providers.
       </p>
     <% else %>
-    <ul>
+    <ul class="govuk-list govuk-list--spaced">
       <% @providers.each do |provider| %>
       <li>
         <%= govuk_link_to(provider.operating_name, provider_new_select_path(provider, { debug: true })) %>
