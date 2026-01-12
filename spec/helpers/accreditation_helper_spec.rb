@@ -30,7 +30,7 @@ RSpec.describe AccreditationHelper, type: :helper do
 
           rows = card[:rows]
           expect(rows.size).to eq(2)
-          expect(rows[0][:key][:text]).to eq("Accreditation number")
+          expect(rows[0][:key][:text]).to eq("Accredited provider number")
           expect(rows[0][:value][:text]).to eq(accreditation.number)
           expect(rows[1][:key][:text]).to eq("Accreditation dates")
         end
@@ -48,7 +48,7 @@ RSpec.describe AccreditationHelper, type: :helper do
 
           rows = card[:rows]
           expect(rows.size).to eq(2)
-          expect(rows[0][:key][:text]).to eq("Accreditation number")
+          expect(rows[0][:key][:text]).to eq("Accredited provider number")
           expect(rows[0][:value][:text]).to eq(accreditation.number)
           expect(rows[1][:key][:text]).to eq("Accreditation dates")
         end

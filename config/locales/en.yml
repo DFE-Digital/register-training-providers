@@ -201,7 +201,7 @@ en:
         code: "Provider code"
         academic_years_active: "Academic years active"
       accreditation:
-        number: "Accreditation number"
+        number: "Accredited provider number"
         start_date: "Accreditation start date"
         end_date: "Accreditation end date"
       address:

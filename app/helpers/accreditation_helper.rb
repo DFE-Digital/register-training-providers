@@ -4,39 +4,37 @@ module AccreditationHelper
 
     change_path ||= new_provider_accreditation_path(goto: "confirm")
 
+    dates_row = accreditation_dates_row(accreditation_form.start_date, accreditation_form.end_date)
+    dates_row[:actions] = [{ href: change_path, visually_hidden_text: "accreditation dates" }]
+
     [
       { key: { text: "Accredited provider number" },
         value: { text: accreditation_form.number },
         actions: [{ href: change_path, visually_hidden_text: "accredited provider number" }] },
-      { key: { text: "Accreditation start date" },
-        value: { text: accreditation_form.start_date&.to_fs(:govuk) },
-        actions: [{ href: change_path, visually_hidden_text: "accreditation start date" }] },
-      { key: { text: "Accreditation end date" },
-        value: if accreditation_form.end_date.present?
-                 { text: accreditation_form.end_date.to_fs(:govuk) }
-               else
-                 not_entered
-               end,
-        actions: [{ href: change_path, visually_hidden_text: "accreditation end date" }] }
+      dates_row
     ]
   end
 
   def accreditation_rows(accreditation, change_path = nil)
     rows = [
-      { key: { text: "Accreditation number" },
+      { key: { text: "Accredited provider number" },
         value: { text: accreditation.number } },
-      accreditation_dates(accreditation.start_date, accreditation.end_date),
+      accreditation_dates_row(accreditation.start_date, accreditation.end_date),
     ]
 
     if change_path
-      rows[0][:actions] = [{ href: change_path, visually_hidden_text: "accreditation number" }]
+      rows[0][:actions] = [{ href: change_path, visually_hidden_text: "accredited provider number" }]
       rows[1][:actions] = [{ href: change_path, visually_hidden_text: "accreditation dates" }]
     end
 
     rows
   end
 
-  def accreditation_dates(start_date, end_date)
+  def accreditation_dates_row(start_date, end_date)
+    has_end_date = end_date.present?
+    end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
+    end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
+
     dates_html = tag.dl(class: "govuk-summary-list") do
       safe_join([
         tag.div(class: "govuk-summary-list__row") do
@@ -45,7 +43,7 @@ module AccreditationHelper
         end,
         tag.div(class: "govuk-summary-list__row") do
           tag.dt("Ends on", class: "govuk-summary-list__key") +
-          tag.dd(optional_value(end_date&.to_fs(:govuk))[:text], class: "govuk-summary-list__value")
+          tag.dd(end_date_text, class: end_date_class)
         end
       ])
     end
