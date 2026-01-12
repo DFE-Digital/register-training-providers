@@ -33,7 +33,7 @@ module PartnershipHelper
 
   def partnership_dates(duration)
     end_date = duration.end
-    has_end_date = end_date.present? && end_date.respond_to?(:to_fs) && !end_date.to_f.infinite?
+    has_end_date = end_date.present? && end_date.respond_to?(:to_fs)
     end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
     end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
 
