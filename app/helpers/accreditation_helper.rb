@@ -41,7 +41,7 @@ module AccreditationHelper
           tag.dt("Starts on", class: "govuk-summary-list__key") +
           tag.dd(start_date&.to_fs(:govuk), class: "govuk-summary-list__value")
         end,
-        tag.div(class: "govuk-summary-list__row") do
+        tag.div(class: "govuk-summary-list__row govuk-summary-list__row--no-border") do
           tag.dt("Ends on", class: "govuk-summary-list__key") +
           tag.dd(end_date_text, class: end_date_class)
         end
