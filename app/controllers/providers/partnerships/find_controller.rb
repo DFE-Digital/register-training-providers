@@ -100,7 +100,7 @@ module Providers
       end
 
       def page_caption
-        "Add partnership - #{@provider.operating_name}"
+        "Add partnership - #{provider.operating_name}"
       end
 
       def setup_view_data
