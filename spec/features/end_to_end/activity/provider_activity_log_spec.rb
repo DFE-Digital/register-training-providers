@@ -127,7 +127,7 @@ RSpec.feature "Provider Activity Log" do
   end
 
   def and_i_should_see_partnership_details_in_summary_card
-    expect(page).to have_selector(".govuk-summary-list__key", text: "Accredited Provider")
+    expect(page).to have_selector(".govuk-summary-list__key", text: "Accredited provider")
     expect(page).to have_selector(".govuk-summary-list__value", text: @accredited_provider.operating_name)
     expect(page).to have_selector(".govuk-summary-list__key", text: "Training partner")
     expect(page).to have_selector(".govuk-summary-list__value", text: @provider.operating_name)

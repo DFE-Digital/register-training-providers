@@ -100,7 +100,7 @@ RSpec.feature "Service Activity Log" do
       ".govuk-summary-card__title",
       text: "#{@accredited_provider.operating_name} – #{@training_provider.operating_name}"
     )
-    expect(page).to have_selector(".govuk-summary-list__key", text: "Accredited Provider")
+    expect(page).to have_selector(".govuk-summary-list__key", text: "Accredited provider")
     expect(page).to have_selector(".govuk-summary-list__value", text: @accredited_provider.operating_name)
   end
 
