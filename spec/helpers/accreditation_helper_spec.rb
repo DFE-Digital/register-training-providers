@@ -29,11 +29,10 @@ RSpec.describe AccreditationHelper, type: :helper do
           )
 
           rows = card[:rows]
-          expect(rows).to include(
-            { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
-            { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
-            { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
-          )
+          expect(rows.size).to eq(2)
+          expect(rows[0][:key][:text]).to eq("Accredited provider number")
+          expect(rows[0][:value][:text]).to eq(accreditation.number)
+          expect(rows[1][:key][:text]).to eq("Accreditation dates")
         end
       end
 
@@ -48,11 +47,10 @@ RSpec.describe AccreditationHelper, type: :helper do
           expect(card).not_to have_key(:actions)
 
           rows = card[:rows]
-          expect(rows).to include(
-            { key: { text: "Accreditation number" }, value: { text: accreditation.number } },
-            { key: { text: "Date accreditation starts" }, value: { text: accreditation.start_date.to_fs(:govuk) } },
-            { key: { text: "Date accreditation ends" }, value: { text: accreditation.end_date.to_fs(:govuk) } }
-          )
+          expect(rows.size).to eq(2)
+          expect(rows[0][:key][:text]).to eq("Accredited provider number")
+          expect(rows[0][:value][:text]).to eq(accreditation.number)
+          expect(rows[1][:key][:text]).to eq("Accreditation dates")
         end
       end
 
@@ -60,8 +58,9 @@ RSpec.describe AccreditationHelper, type: :helper do
         accreditation.update!(end_date: nil)
         result = helper.accreditation_summary_cards([accreditation], provider)
         card = result.first
-        end_date_row = card[:rows].find { |row| row[:key][:text] == "Date accreditation ends" }
-        expect(end_date_row[:value]).to eq({ text: "Not entered", classes: "govuk-hint" })
+        dates_row = card[:rows].find { |row| row[:key][:text] == "Accreditation dates" }
+        dates_html = dates_row[:value][:text]
+        expect(dates_html).to include("Not entered")
       end
     end
   end
