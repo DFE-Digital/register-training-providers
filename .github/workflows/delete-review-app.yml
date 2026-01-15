@@ -3,7 +3,7 @@ name: Delete Review App
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, feature/224-provider-partnership-add]
   workflow_dispatch:
     inputs:
       pr_number:

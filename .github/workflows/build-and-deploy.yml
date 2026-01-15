@@ -28,6 +28,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/224-provider-partnership-add
     types: [opened, reopened, synchronize, labeled]
   merge_group:
     branches:

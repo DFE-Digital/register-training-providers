@@ -160,9 +160,14 @@ Rails.application.routes.draw do
     get "partnerships/check/new", to: "providers/partnerships/check#new", as: :new_partnership_confirm
     post "partnerships/check", to: "providers/partnerships/check#create", as: :partnership_confirm
 
-    #
-    #     get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
-    #     patch "partnerships/:id/check", to: "providers/partnerships/check#update"
+    # Edit partnership flow - entry point is dates#edit
+    get "partnerships/:id/dates", to: "providers/partnerships/dates#edit", as: :edit_partnership_dates
+    patch "partnerships/:id/dates", to: "providers/partnerships/dates#update"
+    get "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#edit",
+                                            as: :edit_partnership_academic_cycles
+    patch "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#update"
+    get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
+    patch "partnerships/:id/check", to: "providers/partnerships/check#update"
   end
 
   resources :accreditations, except: [:index, :show] do

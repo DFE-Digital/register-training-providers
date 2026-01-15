@@ -23,6 +23,22 @@ class PartnershipForm
     new(form.extract_date_components_from(dates))
   end
 
+  def self.from_partnership(partnership)
+    form = new
+
+    # Create a struct to map duration to start_date/end_date for extract_date_components_from
+    dates_object = Struct.new(:start_date, :end_date).new(
+      partnership.duration.begin,
+      partnership.duration.end.is_a?(Date) ? partnership.duration.end : nil
+    )
+
+    new(form.extract_date_components_from(dates_object).merge(
+          provider_id: partnership.provider_id,
+          accredited_provider_id: partnership.accredited_provider_id,
+          academic_cycle_ids: partnership.academic_cycle_ids
+        ))
+  end
+
   def self.model_name
     ActiveModel::Name.new(self, nil, "Dates")
   end
