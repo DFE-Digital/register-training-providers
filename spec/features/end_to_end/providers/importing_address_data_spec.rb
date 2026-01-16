@@ -1,4 +1,4 @@
-RSpec.feature "Importuning addresses for training providers" do
+RSpec.feature "Importing addresses for training providers" do
   let(:api_response) do
     [
       {
