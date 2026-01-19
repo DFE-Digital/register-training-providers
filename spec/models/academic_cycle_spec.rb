@@ -61,4 +61,19 @@ RSpec.describe AcademicCycle, type: :model do
       end
     end
   end
+
+  describe ".for_year" do
+    context "when an academic cycle exists for the given year" do
+      it "returns the matching academic cycle" do
+        academic_cycle
+        expect(described_class.for_year(2025)).to eq(academic_cycle)
+      end
+    end
+
+    context "when no academic cycle exists for the given year" do
+      it "returns nil" do
+        expect(described_class.for_year(2023)).to be_nil
+      end
+    end
+  end
 end
