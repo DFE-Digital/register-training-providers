@@ -33,7 +33,7 @@ RSpec.describe AccreditationForm, type: :model do
       subject.start_date_month = nil
       subject.start_date_year = nil
       expect(subject).not_to be_valid
-      expect(subject.errors[:start_date]).to include("Enter date accreditation starts")
+      expect(subject.errors[:start_date]).to include("Enter accreditation start date")
     end
 
     it "validates end date is after start date" do

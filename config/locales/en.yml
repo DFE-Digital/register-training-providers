@@ -64,7 +64,7 @@ en:
               invalid_format_scitt: "Enter accredited provider number in the correct format, like 5678"
               invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
             start_date:
-              blank: "Enter date accreditation starts"
+              blank: "Enter accreditation start date"
         address:
           attributes:
             address_line_1:
@@ -165,6 +165,7 @@ en:
           update: "Address updated"
         address:
           add: "Address added"
+          add_imported_data: "Address added for %{provider_operating_name}"
           update: "Address updated"
         contact_form:
           add: "Contact added"
@@ -190,9 +191,9 @@ en:
       number:
         label: "Accredited provider number"
       start_date:
-        label: "Date accreditation starts"
+        label: "Accreditation start date"
       end_date:
-        label: "Date accreditation ends (optional)"
+        label: "Accreditation end date (optional)"
     contacts:
       first_name:
         label: First name
@@ -233,7 +234,7 @@ en:
     fields:
       provider:
         provider_type: "Provider type"
-        accreditation_status: "Accreditation type"
+        accreditation_status: "Accreditation status"
         operating_name: "Operating name"
         legal_name: "Legal name"
         ukprn: "UK provider reference number (UKPRN)"
@@ -241,9 +242,9 @@ en:
         code: "Provider code"
         academic_years_active: "Academic years active"
       accreditation:
-        number: "Accreditation number"
-        start_date: "Date accreditation starts"
-        end_date: "Date accreditation ends"
+        number: "Accredited provider number"
+        start_date: "Accreditation start date"
+        end_date: "Accreditation end date"
       address:
         address_line_1: "Address line 1"
         address_line_2: "Address line 2 (optional)"

@@ -92,5 +92,43 @@ FactoryBot.define do
         create_list(:contact, evaluator.contact_count, provider:)
       end
     end
+
+    trait :with_address_issue do
+      after(:create) do |provider|
+        address = create(:address, provider:)
+
+        provider.seed_data_notes = {
+          "row_imported" => {
+            "address" => address.attributes.to_json
+          },
+          "saved_as" => {
+            provider_id: provider.id,
+            accreditation_id: provider.accreditations.first&.id,
+            address_id: nil,
+          }
+        }
+
+        provider.save!
+      end
+    end
+
+    trait :without_address_issue do
+      after(:create) do |provider|
+        address = create(:address, provider:)
+
+        provider.seed_data_notes = {
+          "row_imported" => {
+            "address" => address.attributes.to_json
+          },
+          "saved_as" => {
+            provider_id: provider.id,
+            accreditation_id: provider.accreditations.first&.id,
+            address_id: address.id,
+          }
+        }
+
+        provider.save!
+      end
+    end
   end
 end

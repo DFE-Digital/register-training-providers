@@ -4,7 +4,7 @@ module ProviderHelper
   def provider_summary_card_rows(provider)
     [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
-      { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
+      { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" }, value: { text: provider.operating_name } },
       { key: { text: "Legal name" }, value: optional_value(provider.legal_name) },
       { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
@@ -67,7 +67,7 @@ module ProviderHelper
 
     return rows if provider.archived?
 
-    # Add edit actions to editable fields (skip Provider type and Accreditation type)
+    # Add edit actions to editable fields (skip Provider type and Accreditation status)
     editable_fields = {
       "Operating name" => "operating name",
       "Legal name" => "legal name",
