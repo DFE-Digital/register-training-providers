@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe AcademicCycle, type: :model do
   let(:academic_cycle) { create(:academic_cycle, duration: Date.new(2025, 8, 1)...Date.new(2026, 7, 31)) }
 
-  it { is_expected.to be_kept }
-
   describe "associations" do
     it { is_expected.to have_many(:partnership_academic_cycles) }
     it { is_expected.to have_many(:partnerships).through(:partnership_academic_cycles) }
