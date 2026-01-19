@@ -76,11 +76,6 @@ module Providers
 
     private
 
-      def manual_entry_only?
-        partnership_data = partnership_session.load_partnership
-        partnership_data&.dig(:manual_entry) == true || partnership_data&.dig("manual_entry") == true
-      end
-
       def edit_context?
         params[:id].present?
       end
@@ -96,7 +91,6 @@ module Providers
         elsif edit_context?
           provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
         else
-          # User did manual entry or no search available
           provider_new_partnership_find_path(provider, goto: "confirm", skip_finder: "true")
         end
       end

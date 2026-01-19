@@ -47,10 +47,10 @@ module Providers
 
       def load_eligible_partners
         providers = if provider.accredited?
-                      Provider.where(provider_type: ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys)
+                      Provider.kept.where(provider_type: ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys)
                         .order(:operating_name)
                     else
-                      Provider.accredited.order(:operating_name)
+                      Provider.kept.accredited.order(:operating_name)
                     end
 
         providers.map do |p|
