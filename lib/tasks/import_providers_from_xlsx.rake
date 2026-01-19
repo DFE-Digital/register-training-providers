@@ -3,7 +3,7 @@ require "roo"
 namespace :import do
   desc "Import providers data from XLSX file"
   task providers_xlsx: :environment do
-    xlsx_path = ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_2.1_without_pii.xlsx").to_s
+    xlsx_path = ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_2.2_without_pii.xlsx").to_s
 
     unless xlsx_path && File.exist?(xlsx_path)
       puts "XLSX file not found at #{xlsx_path}"
