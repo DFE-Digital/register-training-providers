@@ -15,10 +15,9 @@ RSpec.describe Partnerships::DatesForm, type: :model do
   end
 
   describe ".from_dates" do
-    DateValues = Struct.new(:start_date, :end_date, keyword_init: true)
-
     it "creates form from date object" do
-      dates = DateValues.new(start_date: Date.new(2024, 9, 1), end_date: Date.new(2025, 8, 31))
+      dates = Struct.new(:start_date, :end_date, keyword_init: true)
+                    .new(start_date: Date.new(2024, 9, 1), end_date: Date.new(2025, 8, 31))
       form = described_class.from_dates(dates)
 
       expect(form.start_date_day).to eq(1)
