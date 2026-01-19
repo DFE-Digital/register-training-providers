@@ -119,6 +119,54 @@ RSpec.describe "Editing partnership", type: :feature do
         expect(page).not_to have_link("Change")
       end
     end
+
+    scenario "clicking back from dates page returns to check page when coming via change link" do
+      visit provider_partnerships_path(accredited_provider)
+
+      within(".govuk-summary-card", text: training_partner.operating_name) do
+        click_link "Change"
+      end
+
+      fill_in_new_dates
+      click_button "Continue"
+
+      check display_academic_year(academic_cycle_current)
+      click_button "Continue"
+
+      expect(page).to have_content("Check your answers")
+
+      click_link "Change", match: :first
+
+      expect(page).to have_content("Partnership dates")
+
+      click_link "Back"
+
+      expect(page).to have_content("Check your answers")
+    end
+
+    scenario "clicking back from academic years page returns to check page when coming via change link" do
+      visit provider_partnerships_path(accredited_provider)
+
+      within(".govuk-summary-card", text: training_partner.operating_name) do
+        click_link "Change"
+      end
+
+      fill_in_new_dates
+      click_button "Continue"
+
+      check display_academic_year(academic_cycle_current)
+      click_button "Continue"
+
+      expect(page).to have_content("Check your answers")
+
+      click_link "Change academic years"
+
+      expect(page).to have_content("Academic year")
+
+      click_link "Back"
+
+      expect(page).to have_content("Check your answers")
+    end
   end
 
   context "with validation errors" do

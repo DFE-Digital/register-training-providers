@@ -70,7 +70,7 @@ module Providers
 
       def next_path(context)
         if context == :edit
-          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id)
+          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id, goto: params[:goto])
         elsif params[:goto] == "confirm"
           provider_new_partnership_confirm_path(provider)
         else
@@ -79,7 +79,9 @@ module Providers
       end
 
       def back_path(context)
-        if context == :edit
+        if context == :edit && params[:goto] == "confirm"
+          provider_partnership_check_path(@partnership, provider_id: provider.id)
+        elsif context == :edit
           provider_partnerships_path(provider)
         elsif params[:goto] == "confirm"
           provider_new_partnership_confirm_path(provider)
@@ -112,9 +114,9 @@ module Providers
 
       def form_url(context)
         if context == :edit
-          provider_edit_partnership_dates_path(@partnership, provider_id: provider.id)
+          provider_edit_partnership_dates_path(@partnership, provider_id: provider.id, goto: params[:goto])
         else
-          provider_partnership_dates_path(provider)
+          provider_partnership_dates_path(provider, goto: params[:goto])
         end
       end
 

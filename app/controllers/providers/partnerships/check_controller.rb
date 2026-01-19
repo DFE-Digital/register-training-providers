@@ -150,9 +150,9 @@ module Providers
         if context == :edit
           # Edit flow: only dates and academic years are changeable (partner locked)
           {
-            dates: provider_edit_partnership_dates_path(@partnership, provider_id: provider.id),
+            dates: provider_edit_partnership_dates_path(@partnership, provider_id: provider.id, goto: "confirm"),
             academic_cycles: provider_edit_partnership_academic_cycles_path(
-              @partnership, provider_id: provider.id
+              @partnership, provider_id: provider.id, goto: "confirm"
             )
           }
         else
