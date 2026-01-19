@@ -15,10 +15,10 @@ namespace :example_data do
       persona.discard! if persona_attributes[:discarded?] && persona.kept?
     end
 
-    ["import:providers_xlsx",
-     "generate:contacts",
-     "generate:academic_cycles",
-     "generate:partnerships"].each do |task|
+    ["generate:academic_cycles",
+     "import:providers_xlsx",
+     "import:partnerships_xlsx",
+     "generate:contacts",].each do |task|
       Rake::Task[task].reenable
       Rake::Task[task].invoke
     end
