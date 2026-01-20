@@ -18,7 +18,7 @@
 
 <% unless @provider.archived? %>
   <div class="govuk-button-group">
-    <%= govuk_button_link_to("Add partnership", "#") %>
+    <%= govuk_button_link_to("Add partnership", provider_new_partnership_find_path(@provider)) %>
   </div>
 <% end %>
 

@@ -39,6 +39,9 @@ gem "govuk-components"
 gem "govuk_design_system_formbuilder"
 gem "govuk_markdown"
 
+# DfE autocomplete component
+gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete"
+
 # Shim to load environment variables from .env into ENV
 gem "dotenv-rails"
 

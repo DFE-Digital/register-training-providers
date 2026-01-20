@@ -1,0 +1,38 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
+
+<%= form_for @form, url: @form_url, method: :post do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_fieldset legend: { text: @page_title, size: "l" }, caption: { text: @page_caption, size: "l" } do %>
+    <%= render DfE::Autocomplete::View.new(
+          form,
+          attribute_name: :partner_id,
+          form_field: form.govuk_select(
+            :partner_id,
+            options_for_select(
+              @partners.map { |p| [p.search_text, p.value, { data: { hint: p.hint, name: p.name } }] },
+              form.object.partner_id
+            ),
+            label: { hidden: true, text: @page_title },
+            options: { include_blank: true }
+          )
+        ) %>
+  <% end %>
+
+  <%= govuk_details(
+        summary_text: t(".#{@provider_accredited ? 'training_partner' : 'accredited_provider'}.details.summary_text"),
+        text: t(".#{@provider_accredited ? 'training_partner' : 'accredited_provider'}.details.text_html")
+      ) %>
+  <%= form.govuk_submit "Continue" %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

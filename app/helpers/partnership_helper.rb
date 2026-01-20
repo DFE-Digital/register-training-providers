@@ -6,7 +6,7 @@ module PartnershipHelper
       card = {
         title: link_to(partnership.other_partner(provider).operating_name.to_s,
                        provider_partnerships_path(partnership.other_partner(provider))),
-        rows: partnership_rows(partnership)
+        rows: partnership_rows(partnership, change_paths: {}, provider_accredited: nil)
       }
 
       if include_actions && !provider.archived?
@@ -20,24 +20,45 @@ module PartnershipHelper
     end
   end
 
-  def partnership_rows(partnership)
-    [
-      { key: { text: "Accredited Provider" },
-        value: { text: partnership.accredited_provider.operating_name.to_s }, },
-      { key: { text: "Training partner" },
-        value: { text: partnership.provider.operating_name.to_s }, },
-      partnership_dates(partnership.duration),
-      academic_years(partnership.academic_cycles),
-    ]
+  def partnership_rows(partnership, change_paths: {}, provider_accredited: nil)
+    rows = []
+
+    ap_row = { key: { text: "Accredited provider" },
+               value: { text: partnership.accredited_provider.operating_name.to_s } }
+    if provider_accredited == false && change_paths[:partner].present?
+      ap_row[:actions] = [{ href: change_paths[:partner], visually_hidden_text: "accredited provider" }]
+    end
+    rows << ap_row
+
+    tp_row = { key: { text: "Training partner" },
+               value: { text: partnership.provider.operating_name.to_s } }
+    if provider_accredited == true && change_paths[:partner].present?
+      tp_row[:actions] = [{ href: change_paths[:partner], visually_hidden_text: "training partner" }]
+    end
+    rows << tp_row
+
+    dates_row = partnership_dates_row(partnership.duration)
+    if change_paths[:dates].present?
+      dates_row[:actions] = [{ href: change_paths[:dates], visually_hidden_text: "partnership dates" }]
+    end
+    rows << dates_row
+
+    years_row = academic_years_row(partnership.academic_cycles)
+    if change_paths[:academic_cycles].present?
+      years_row[:actions] = [{ href: change_paths[:academic_cycles], visually_hidden_text: "academic years" }]
+    end
+    rows << years_row
+
+    rows
   end
 
-  def partnership_dates(duration)
+  def partnership_dates_row(duration)
     end_date = duration.end
-    has_end_date = end_date.present? && end_date.respond_to?(:to_fs)
+    has_end_date = end_date.present? && end_date.is_a?(Date)
     end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
     end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
 
-    dates_html = tag.dl(class: "govuk-summary-list") do
+    dates_html = tag.dl(class: "govuk-summary-list govuk-summary-list--no-border") do
       safe_join([
         tag.div(class: "govuk-summary-list__row") do
           tag.dt("Starts on", class: "govuk-summary-list__key") +
@@ -54,17 +75,13 @@ module PartnershipHelper
       value: { text: dates_html } }
   end
 
-  def academic_years(academic_cycles)
-    academic_cycles_html = tag.dl(class: "govuk-summary-list") do
-      safe_join([
-        tag.ul(class: "govuk-list govuk-list--bullet") do
-          academic_cycles.collect do |academic_cycle|
-            concat tag.li(raw(display_academic_year(academic_cycle) + tag.br + tag.span(
-              academic_year_helper_text(academic_cycle), class: "govuk-hint"
-            )))
-          end
-        end
-      ])
+  def academic_years_row(academic_cycles)
+    academic_cycles_html = tag.ul(class: "govuk-list govuk-list--bullet") do
+      academic_cycles.collect do |academic_cycle|
+        concat tag.li(raw(display_academic_year(academic_cycle) + tag.br + tag.span(
+          academic_year_helper_text(academic_cycle), class: "govuk-hint"
+        )))
+      end
     end
 
     { key: { text: "Academic years" },
