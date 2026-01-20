@@ -16,10 +16,6 @@ module Partnerships
       new(form.extract_date_components_from(dates))
     end
 
-    def self.model_name
-      ActiveModel::Name.new(self, nil, "Dates")
-    end
-
     def self.i18n_scope
       :activerecord
     end

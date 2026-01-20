@@ -30,7 +30,7 @@ module Providers
     private
 
       def dates_form_params
-        params.expect(dates: [*::Partnerships::DatesForm::PARAM_CONVERSION.keys])
+        params.expect(partnerships_dates_form: [*::Partnerships::DatesForm::PARAM_CONVERSION.keys])
           .transform_keys { |k| ::Partnerships::DatesForm::PARAM_CONVERSION.fetch(k, k) }
       end
 
