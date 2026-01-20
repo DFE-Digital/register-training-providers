@@ -89,6 +89,14 @@ module Providers
         end
       end
 
+      def change_path
+        if edit_context?
+          provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
+        else
+          provider_new_partnership_find_path(provider, goto: "confirm", skip_finder: "true")
+        end
+      end
+
       def save_path
         if edit_context?
           provider_partnership_check_path(@partnership, provider_id: provider.id)

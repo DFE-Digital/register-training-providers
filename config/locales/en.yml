@@ -121,14 +121,18 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
-        dates:
-          attributes:
-            start_date:
-              blank: "Enter date the partnership started"
         academic_cycles:
           attributes:
             academic_cycle_ids:
               blank: Select academic year
+        partnerships/dates_form:
+          attributes:
+            start_date:
+              blank: "Enter date the partnership started"
+        partnership_form:
+          attributes:
+            start_date:
+              blank: "Enter date the partnership started"
   activemodel:
     errors:
       messages:
