@@ -59,7 +59,7 @@ module PartnershipHelper
     end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
     end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
 
-    dates_html = tag.dl(class: "govuk-summary-list") do
+    dates_html = tag.dl(class: "govuk-summary-list govuk-summary-list--no-border") do
       safe_join([
         tag.div(class: "govuk-summary-list__row") do
           tag.dt("Starts on", class: "govuk-summary-list__key") +
