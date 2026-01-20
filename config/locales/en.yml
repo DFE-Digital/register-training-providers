@@ -173,6 +173,7 @@ en:
         partnership:
           add: "Partnership added"
           update: "Partnership updated"
+          deleted: "Partnership deleted"
       address:
         add: "Address added"
         update: "Address updated"
@@ -181,6 +182,8 @@ en:
         add: "Contact added"
         update: "Contact updated"
         deleted: "Contact deleted"
+      partnership:
+        deleted: "Partnership deleted"
   forms:
     providers:
       is_the_provider_accredited:

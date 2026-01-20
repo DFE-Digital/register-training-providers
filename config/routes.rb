@@ -171,6 +171,9 @@ Rails.application.routes.draw do
     patch "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#update"
     get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
     patch "partnerships/:id/check", to: "providers/partnerships/check#update"
+    # Delete
+    get "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#show", as: :partnership_delete
+    delete "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#destroy"
   end
 
   resources :accreditations, except: [:index, :show] do
