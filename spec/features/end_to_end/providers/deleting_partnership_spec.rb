@@ -55,6 +55,25 @@ RSpec.describe "Deleting partnership", type: :feature do
       expect(provider.partnerships.kept.count).to eq(1)
       expect(partnership.reload.discarded?).to be false
     end
+
+    scenario "when there is no end date" do
+      visit provider_partnerships_path(provider)
+      click_link "Delete", match: :first
+
+      expect(page).to have_content("If you do not want to delete the partnership, but update that it has ended, add the partnership end date.")
+    end
+
+    scenario "when there is an end date" do
+      t = Time.zone.now
+      partnership.duration = (t...(t + 1.year))
+      partnership.save!
+      partnership.reload
+
+      visit provider_partnerships_path(provider)
+      click_link "Delete", match: :first
+
+      expect(page).not_to have_content("If you do not want to delete the partnership, but update that it has ended, add the partnership end date.")
+    end
   end
 
   context "with multiple partnerships" do

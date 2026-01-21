@@ -4,8 +4,9 @@
 
 <% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
 
-
-<p class="govuk-body">If you do not want to delete the partnership, but update that it has ended, <%=govuk_link_to "add the partnership end date.", provider_edit_partnership_dates_path(@partnership,  provider_id: provider.id) %></p>
+<% if @partnership.duration.end.infinite? %>
+  <p class="govuk-body">If you do not want to delete the partnership, but update that it has ended, <%= govuk_link_to "add the partnership end date.", provider_edit_partnership_dates_path(@partnership, provider_id: provider.id) %></p>
+<% end %>
 
 <%= govuk_warning_text(text: "Deleting a partnership is permanent – you cannot undo it.") %>
 
