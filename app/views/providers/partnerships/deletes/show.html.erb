@@ -7,7 +7,7 @@
 
 <p class="govuk-body">If you do not want to delete the partnership, but update that it has ended, <%=govuk_link_to "add the partnership end date.", provider_edit_partnership_dates_path(@partnership,  provider_id: provider.id) %></p>
 
-<%= govuk_warning_text(text: "Deleting an partnership is permanent – you cannot undo it.") %>
+<%= govuk_warning_text(text: "Deleting a partnership is permanent – you cannot undo it.") %>
 
 <%= govuk_button_to("Delete partnership", @delete_path, method: :delete, warning: true) %>
 

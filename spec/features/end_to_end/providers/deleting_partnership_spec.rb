@@ -22,7 +22,7 @@ RSpec.describe "Deleting partnership", type: :feature do
       expect(page).to have_content("Confirm you want to delete the partnership with #{accredited_provider.operating_name}")
       expect(page).to have_content("Delete partnership")
 
-      expect(page).to have_content("Deleting an partnership is permanent – you cannot undo it.")
+      expect(page).to have_content("Deleting a partnership is permanent – you cannot undo it.")
 
       expect(page).to have_link("Cancel", href: provider_partnerships_path(provider))
 
