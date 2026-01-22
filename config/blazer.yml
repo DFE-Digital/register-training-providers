@@ -3,9 +3,9 @@
 data_sources:
   main:
     url: <%= ENV["BLAZER_DATABASE_URL"] %>
+
     # statement timeout, in seconds
-    # none by default
-    # timeout: 15
+    timeout: 30
 
     # caching settings
     # can greatly improve speed
@@ -35,16 +35,16 @@ data_sources:
 audit: true
 
 # change the time zone
-# time_zone: "Pacific Time (US & Canada)"
+time_zone: "London"
 
 # class name of the user model
-# user_class: User
+user_class: User
 
 # method name for the current user
-# user_method: current_user
+user_method: current_user
 
 # method name for the display name
-# user_name: name
+user_name: name
 
 # custom before_action to use for auth
 # before_action_method: require_admin

@@ -17,7 +17,8 @@ module "application_configuration" {
     PGSSLMODE        = local.postgres_ssl_mode
   }
   secret_variables = {
-    DATABASE_URL = module.postgres.url
+    DATABASE_URL        = module.postgres.url
+    BLAZER_DATABASE_URL = module.postgres.url
   }
 }
 
