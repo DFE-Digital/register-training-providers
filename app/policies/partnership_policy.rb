@@ -17,6 +17,16 @@ class PartnershipPolicy < ApplicationPolicy
     provider_policy.edit?
   end
 
+  def update?
+    provider_policy.edit?
+  end
+
+  def destroy?
+    provider_policy.edit?
+  end
+
+  delegate :show?, to: :provider_policy
+
   delegate :edit?, to: :provider_policy
 
 private

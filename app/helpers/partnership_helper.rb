@@ -11,8 +11,10 @@ module PartnershipHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Change", href: "#" },
-          { text: "Delete", href: "#" },
+          { text: "Change",
+            href: provider_edit_partnership_dates_path(partnership, provider_id: provider.id) },
+          { text: "Delete",
+            href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
         ]
       end
 
