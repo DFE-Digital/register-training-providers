@@ -1,0 +1,56 @@
+name: Dependabot Auto-Merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  # Packages excluded from auto-merge (require manual review)
+  EXCLUDED_PACKAGES: |
+    govuk-components
+    govuk_design_system_formbuilder
+    govuk-frontend
+    @ministryofjustice/frontend
+    dfe-analytics
+
+jobs:
+  auto-approve-and-merge:
+    name: Auto-approve and merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if package is excluded from auto-merge
+        id: excluded
+        run: |
+          DEPENDENCY="${{ steps.metadata.outputs.dependency-names }}"
+
+          while IFS= read -r EXCLUDED; do
+            [ -z "$EXCLUDED" ] && continue
+            if echo "$DEPENDENCY" | grep -q "$EXCLUDED"; then
+              echo "Excluded package detected: $EXCLUDED"
+              echo "is_excluded=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          done <<< "$EXCLUDED_PACKAGES"
+
+          echo "is_excluded=false" >> $GITHUB_OUTPUT
+
+      - name: Approve and auto-merge minor/patch updates
+        if: |
+          steps.excluded.outputs.is_excluded == 'false' &&
+          (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor')
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
