@@ -11,7 +11,8 @@ module PartnershipHelper
 
       if include_actions && !provider.archived?
         card[:actions] = [
-          { text: "Change", href: "#" },
+          { text: "Change",
+            href: provider_edit_partnership_dates_path(partnership, provider_id: provider.id) },
           { text: "Delete", href: "#" },
         ]
       end
@@ -58,7 +59,7 @@ module PartnershipHelper
     end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
     end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
 
-    dates_html = tag.dl(class: "govuk-summary-list govuk-summary-list--no-border") do
+    dates_html = tag.dl(class: "govuk-summary-list") do
       safe_join([
         tag.div(class: "govuk-summary-list__row") do
           tag.dt("Starts on", class: "govuk-summary-list__key") +

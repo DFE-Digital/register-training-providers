@@ -8,10 +8,10 @@ module Providers
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership
-        @form = build_partnership_form(partnership_data, @partnership)
+        @form = build_partnership_form_for_edit(partnership_data, @partnership)
 
         if @form.invalid?
-          redirect_to provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
+          redirect_to provider_edit_partnership_dates_path(@partnership, provider_id: provider.id)
           return
         end
 
@@ -22,14 +22,14 @@ module Providers
         partnership_data = partnership_session.load_partnership
 
         unless partnership_data
-          redirect_to provider_new_partnership_path(provider, skip_finder: "true")
+          redirect_to provider_new_partnership_find_path(provider)
           return
         end
 
         @form = build_form_from_session(partnership_data)
 
         if @form.invalid?
-          redirect_to provider_new_partnership_path(provider, goto: "confirm", skip_finder: "true")
+          redirect_to provider_new_partnership_find_path(provider, goto: "confirm")
           return
         end
 
@@ -40,7 +40,7 @@ module Providers
         partnership_data = partnership_session.load_partnership
 
         unless partnership_data
-          redirect_to provider_new_partnership_find_path(provider, skip_finder: "true")
+          redirect_to provider_new_partnership_find_path(provider)
           return
         end
 
@@ -54,7 +54,7 @@ module Providers
           redirect_to provider_partnerships_path(provider),
                       flash: { success: I18n.t("flash_message.success.check.partnership.add") }
         else
-          redirect_to provider_new_partnership_path(provider, goto: "confirm", skip_finder: "true")
+          redirect_to provider_new_partnership_find_path(provider, goto: "confirm")
         end
       end
 
@@ -63,14 +63,15 @@ module Providers
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership
-        @form = build_partnership_form(partnership_data, @partnership)
+        @form = build_partnership_form_for_edit(partnership_data, @partnership)
 
         if @partnership.update(@form.to_partnership_attributes)
           partnership_session.clear!
           redirect_to provider_partnerships_path(provider),
                       flash: { success: I18n.t("flash_message.success.check.partnership.update") }
         else
-          redirect_to provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
+          setup_view_data(:edit)
+          render :new
         end
       end
 
@@ -80,18 +81,11 @@ module Providers
         params[:id].present?
       end
 
-      def back_path
-        if params[:goto] == "confirm"
-          # Coming from check page after editing - return to check
-          if edit_context?
-            provider_partnership_check_path(@partnership, provider_id: provider.id)
-          else
-            provider_new_partnership_confirm_path(provider)
-          end
-        elsif edit_context?
-          provider_edit_partnership_path(@partnership, provider_id: provider.id, goto: "confirm")
+      def back_path(context)
+        if context == :edit
+          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id)
         else
-          provider_new_partnership_find_path(provider, goto: "confirm", skip_finder: "true")
+          provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
         end
       end
 
@@ -123,10 +117,15 @@ module Providers
         end
       end
 
-      def build_partnership_form(partnership_data, partnership)
-        if partnership_data
-          ::PartnershipForm.new(partnership_data)
+      def build_partnership_form_for_edit(partnership_data, partnership)
+        if partnership_data&.dig(:start_date)
+          # Session has dates from edit flow - merge with partnership's partner IDs
+          ::PartnershipForm.new(partnership_data.merge(
+                                  provider_id: partnership.provider_id,
+                                  accredited_provider_id: partnership.accredited_provider_id
+                                ))
         else
+          # No session data - load entirely from partnership
           ::PartnershipForm.from_partnership(partnership)
         end
       end
@@ -137,8 +136,7 @@ module Providers
       end
 
       def setup_view_data(context)
-        @back_path = back_path
-        @change_path = change_path
+        @back_path = back_path(context)
         @save_path = save_path
         @cancel_path = cancel_path
         @save_button_text = "Save partnership"
@@ -156,12 +154,23 @@ module Providers
         end
       end
 
-      def build_change_paths(_context)
-        {
-          partner: provider_new_partnership_find_path(provider, goto: "confirm"),
-          dates: provider_new_partnership_dates_path(provider, goto: "confirm"),
-          academic_cycles: provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
-        }
+      def build_change_paths(context)
+        if context == :edit
+          # Edit flow: only dates and academic years are changeable (partner locked)
+          {
+            dates: provider_edit_partnership_dates_path(@partnership, provider_id: provider.id, goto: "confirm"),
+            academic_cycles: provider_edit_partnership_academic_cycles_path(
+              @partnership, provider_id: provider.id, goto: "confirm"
+            )
+          }
+        else
+          # Add flow: all fields changeable
+          {
+            partner: provider_new_partnership_find_path(provider, goto: "confirm"),
+            dates: provider_new_partnership_dates_path(provider, goto: "confirm"),
+            academic_cycles: provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
+          }
+        end
       end
     end
   end
