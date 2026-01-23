@@ -28,6 +28,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/224-provider-partnership-add
     types: [opened, reopened, synchronize, labeled]
   merge_group:
     branches:
@@ -198,26 +199,6 @@ jobs:
       - name: Verify openapi
         if: always()
         run: bin/verify_openapi
-
-  merge-dependabot:
-    name: Merge dependabot
-    permissions:
-      pull-requests: write
-      contents: write
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'dependencies') }}
-    needs: [quality_checks, test, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Merge minor dependency updates
-        uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          target: minor
-          exclude: "govuk-components,govuk_design_system_formbuilder,govuk-frontend,@ministryofjustice/frontend,dfe-analytics"
-          merge-method: squash
 
   deploy-review-app:
     name: Deployment To Review
