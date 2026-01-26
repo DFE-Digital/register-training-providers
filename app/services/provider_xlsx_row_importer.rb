@@ -32,6 +32,7 @@ private
     provider.accreditation_status = raw_provider["accreditation_status"]
     provider.ukprn             = parsed_ukprn
     provider.urn               = raw_provider["urn"]
+    provider.academic_years_active = parse_academic_years
   end
 
   def provider_type

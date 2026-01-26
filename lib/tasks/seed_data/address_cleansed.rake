@@ -34,10 +34,10 @@ MODEL_VS_OS_FIELD_COMBOS = [
 namespace :seed_data do
   desc "Address washing machine – cleansed output with full traceability"
   task address_cleansed: :environment do
-    minor = 2
+    minor = 0
 
     input_path =
-      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_2.#{minor}_without_pii.xlsx").to_s
+      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_3.#{minor}_without_pii.xlsx").to_s
 
     output_path =
       Rails.root.join("lib/data/provider_seed_report_v_2.#{minor + 1}_with_pii.xlsx").to_s
