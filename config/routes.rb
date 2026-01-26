@@ -72,6 +72,8 @@ Rails.application.routes.draw do
 
   resource :account, only: [:show]
 
+  get "/activity", to: "activity#index", as: :activity
+
   # Provider creation wizard
   scope path: "/providers/new", as: :new_provider, module: :providers do
     get "", to: "onboarding#new", as: :onboarding
@@ -89,6 +91,9 @@ Rails.application.routes.draw do
 
   # Provider setup - addresses flow (reuses main address controllers)
   namespace :providers do
+    namespace :addresses do
+      get "/", to: "/providers/addresses/lists#imported_data", as: :imported_data
+    end
     namespace :setup, path: "new" do
       namespace :addresses do
         get "", to: "/providers/addresses/manual_entry#new", as: :address
@@ -108,11 +113,13 @@ Rails.application.routes.draw do
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
+    get "activity", to: "providers/activity#index", as: :activity
     resources :accreditations, only: [:index], controller: "accreditations"
     resources :contacts, only: [:index, :new, :create, :edit, :update], controller: "providers/contacts" do
       checkable(:contacts, module_prefix: :providers)
       resource :delete, only: [:show, :destroy], module: "providers/contacts"
     end
+    resources :partnerships, only: [:index], controller: "providers/partnerships"
 
     # === Addresses ===
 
@@ -140,6 +147,30 @@ Rails.application.routes.draw do
     # Delete
     get "addresses/:address_id/delete", to: "providers/addresses/deletes#show", as: :address_delete
     delete "addresses/:address_id/delete", to: "providers/addresses/deletes#destroy"
+
+    # === Partnerships ===
+
+    # Finder flow
+    get "partnerships/find/new", to: "providers/partnerships/find#new", as: :new_partnership_find
+    post "partnerships/find", to: "providers/partnerships/find#create", as: :partnership_find
+    get "partnerships/dates/new", to: "providers/partnerships/dates#new", as: :new_partnership_dates
+    post "partnerships/dates", to: "providers/partnerships/dates#create", as: :partnership_dates
+    get "partnerships/academic_cycles/new", to: "providers/partnerships/academic_cycles#new",
+                                            as: :new_partnership_academic_cycles
+    post "partnerships/academic_cycles", to: "providers/partnerships/academic_cycles#create",
+                                         as: :partnership_academic_cycles
+    # Check/confirm
+    get "partnerships/check/new", to: "providers/partnerships/check#new", as: :new_partnership_confirm
+    post "partnerships/check", to: "providers/partnerships/check#create", as: :partnership_confirm
+
+    # Edit partnership flow - entry point is dates#edit
+    get "partnerships/:id/dates", to: "providers/partnerships/dates#edit", as: :edit_partnership_dates
+    patch "partnerships/:id/dates", to: "providers/partnerships/dates#update"
+    get "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#edit",
+                                            as: :edit_partnership_academic_cycles
+    patch "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#update"
+    get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
+    patch "partnerships/:id/check", to: "providers/partnerships/check#update"
   end
 
   resources :accreditations, except: [:index, :show] do

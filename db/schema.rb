@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
+
+  create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.daterange "duration"
+    t.datetime "updated_at", null: false
+    t.index ["duration"], name: "index_academic_cycles_on_duration"
+  end
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -43,6 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
     t.uuid "provider_id", null: false
     t.string "town_or_city", null: false
     t.datetime "updated_at", null: false
+    t.string "uprn", limit: 15
     t.index ["created_at"], name: "index_addresses_on_created_at"
     t.index ["provider_id"], name: "index_addresses_on_provider_id"
   end
@@ -58,16 +66,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
 
   create_table "audits", force: :cascade do |t|
     t.string "action"
-    t.integer "associated_id"
+    t.uuid "associated_id"
     t.string "associated_type"
-    t.bigint "auditable_id"
+    t.uuid "auditable_id"
     t.string "auditable_type"
     t.jsonb "audited_changes"
     t.string "comment"
     t.datetime "created_at"
     t.string "remote_address"
     t.string "request_uuid"
-    t.integer "user_id"
+    t.uuid "user_id"
     t.string "user_type"
     t.string "username"
     t.integer "version", default: 0
@@ -167,7 +175,29 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
     t.index ["provider_id"], name: "index_contacts_on_provider_id"
   end
 
+  create_table "partnership_academic_cycles", force: :cascade do |t|
+    t.uuid "academic_cycle_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.uuid "partnership_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["academic_cycle_id"], name: "index_partnership_academic_cycles_on_academic_cycle_id"
+    t.index ["partnership_id"], name: "index_partnership_academic_cycles_on_partnership_id"
+  end
+
+  create_table "partnerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "accredited_provider_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.daterange "duration"
+    t.uuid "provider_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accredited_provider_id"], name: "index_partnerships_on_accredited_provider_id"
+    t.index ["provider_id"], name: "index_partnerships_on_provider_id"
+  end
+
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "academic_years_active", default: [], null: false, array: true
     t.string "accreditation_status", null: false
     t.datetime "archived_at", precision: nil
     t.citext "code", null: false
@@ -182,6 +212,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
     t.string "ukprn", limit: 8, null: false
     t.datetime "updated_at", null: false
     t.string "urn", limit: 6
+    t.index ["academic_years_active"], name: "index_providers_on_academic_years_active", using: :gin
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
@@ -353,8 +384,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_173012) do
   add_foreign_key "addresses", "providers"
   add_foreign_key "authentication_tokens", "api_clients"
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
-  add_foreign_key "authentication_tokens", "users", column: "revoked_by_id"
+  add_foreign_key "authentication_tokens", "users", column: "revoked_by_id", on_delete: :nullify
   add_foreign_key "contacts", "providers"
+  add_foreign_key "partnership_academic_cycles", "academic_cycles"
+  add_foreign_key "partnership_academic_cycles", "partnerships"
+  add_foreign_key "partnerships", "providers"
+  add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

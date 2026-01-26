@@ -1,0 +1,30 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: providers_path) %>
+<% end %>
+
+<% provider_page_data(@provider) %>
+
+<%= content_for(:secondary_navigation) do %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Activity log") %>
+    </div>
+  </div>
+<% end %>
+
+<h2 class="govuk-heading-m">
+  Activity<%= " (#{@pagy.count})" if @audits.any? %>
+</h2>
+
+<% if @audits.empty? %>
+  <p class="govuk-body">There is no activity to show.</p>
+<% else %>
+  <% group_audits_by_day(@audits).each do |date, audits| %>
+    <%= render ActivityDayHeading::View.new(date:) %>
+    <% audits.each do |audit| %>
+      <%= render ActivityItem::View.new(audit: audit, show_title: false) %>
+    <% end %>
+  <% end %>
+
+  <%= render PaginationDisplay::View.new(pagy: @pagy) %>
+<% end %>

@@ -1,4 +1,6 @@
 class Providers::AccreditationController < CheckController
+  include DebuggerParamHelper
+
   helper_method :back_path
 
   def new

@@ -17,7 +17,7 @@ RSpec.describe ProviderHelper, type: :helper do
 
       expect(result[:rows]).to match_array([
         { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
-        { key: { text: "Accreditation type" }, value: { text: provider.accreditation_status_label } },
+        { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
         { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
         { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
@@ -152,7 +152,7 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: provider.provider_type_label },
         },
         {
-          key: { text: "Accreditation type" },
+          key: { text: "Accreditation status" },
           value: { text: provider.accreditation_status_label },
         },
         {
@@ -193,7 +193,7 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.provider_type_label },
           },
           {
-            key: { text: "Accreditation type" },
+            key: { text: "Accreditation status" },
             value: { text: provider.accreditation_status_label },
           },
           {

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+OPENAPI=1 bundle exec rspec spec/requests/api > /dev/null
+
+if ! git diff --exit-code --quiet public/openapi; then
+  echo "❌ OpenAPI specs are out of date! Commit the updated YAML."
+  git --no-pager diff public/openapi
+  exit 1
+fi

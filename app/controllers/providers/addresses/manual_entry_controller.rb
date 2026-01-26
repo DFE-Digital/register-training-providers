@@ -110,11 +110,15 @@ module Providers
             journey_coordinator(:address_manual_entry).next_path
           end
         else
-          provider_new_address_confirm_path(provider)
+          query_params = {}
+          query_params[:debug] = true if imported_data_context?
+          provider_new_address_confirm_path(provider, query_params)
         end
       end
 
       def back_path
+        return provider_new_select_path(provider, { debug: true }) if imported_data_context?
+
         setup_context? ? journey_coordinator(:address_manual_entry).back_path : manage_back_path
       end
 
@@ -148,6 +152,7 @@ module Providers
         if setup_context?
           providers_setup_addresses_address_path(form_params)
         else
+          form_params[:debug] = true if imported_data_context?
           provider_addresses_path(provider, form_params)
         end
       end
@@ -159,6 +164,8 @@ module Providers
       end
 
       def cancel_path
+        return providers_addresses_imported_data_path if imported_data_context?
+
         setup_context? ? providers_path : provider_addresses_path(provider)
       end
 

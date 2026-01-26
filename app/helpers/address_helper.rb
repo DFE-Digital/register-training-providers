@@ -3,15 +3,14 @@ module AddressHelper
     return [] if addresses.empty?
 
     addresses.map do |address|
-      all_rows = address_basic_row(address)
-
-      if show_location_section?(address)
-        all_rows << location_row_with_coords(address)
-      end
+      imported_data = provider.seed_data_notes.dig("row_imported", "address") if provider.seed_data_notes.dig(
+        "saved_as", "address_id"
+      ) == address.id
 
       card = {
         title: "#{address.town_or_city}, #{address.postcode}",
-        rows: all_rows
+        rows: address_summary_card_rows(address),
+        imported_data: imported_data
       }
 
       if include_actions && !provider.archived?
@@ -27,6 +26,12 @@ module AddressHelper
 
       card
     end
+  end
+
+  def address_summary_card_rows(address)
+    rows = address_basic_row(address)
+    rows << location_row_with_coords(address) if show_location_section?(address)
+    rows
   end
 
   def address_basic_row(address)

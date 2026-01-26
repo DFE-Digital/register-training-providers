@@ -50,17 +50,7 @@ module OrdnanceSurvey
         dpa = result["DPA"]
         next unless dpa
 
-        {
-          "organisation_name" => format_address_line(dpa["ORGANISATION_NAME"]),
-          "address_line_1" => format_address_line(build_address_line_1(dpa)),
-          "address_line_2" => format_address_line(build_address_line_2(dpa)),
-          "address_line_3" => format_address_line(build_address_line_3(dpa)),
-          "town_or_city" => format_address_line(dpa["POST_TOWN"]),
-          "county" => format_address_line(dpa["COUNTY"]),
-          "postcode" => dpa["POSTCODE"],
-          "latitude" => dpa["LAT"],
-          "longitude" => dpa["LNG"]
-        }
+        OrdnanceSurvey::AddressParserService.call(dpa).with_indifferent_access
       end
     end
 
@@ -72,38 +62,6 @@ module OrdnanceSurvey
       addresses.select do |address|
         address["address_line_1"].downcase.include?(search_term)
       end
-    end
-
-    def build_address_line_1(dpa)
-      return dpa["BUILDING_NAME"] if dpa["BUILDING_NAME"].present?
-
-      parts = [
-        dpa["BUILDING_NUMBER"],
-        dpa["THOROUGHFARE_NAME"]
-      ].compact
-
-      parts.join(", ").presence || dpa["ADDRESS"]
-    end
-
-    def build_address_line_2(dpa)
-      return dpa["DEPENDENT_LOCALITY"] if dpa["BUILDING_NAME"].blank?
-
-      parts = [
-        dpa["BUILDING_NUMBER"],
-        dpa["THOROUGHFARE_NAME"]
-      ].compact
-
-      parts.join(", ")
-    end
-
-    def build_address_line_3(dpa)
-      dpa["DEPENDENT_LOCALITY"] if dpa["BUILDING_NAME"].present?
-    end
-
-    def format_address_line(text)
-      return nil if text.blank?
-
-      text.titleize
     end
 
     def api_key

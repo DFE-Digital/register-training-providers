@@ -3,6 +3,7 @@
 # Table name: providers
 #
 #  id                    :uuid             not null, primary key
+#  academic_years_active :integer          default([]), not null, is an Array
 #  accreditation_status  :string           not null
 #  archived_at           :datetime
 #  code                  :citext           not null
@@ -20,15 +21,16 @@
 #
 # Indexes
 #
-#  index_providers_on_accreditation_status  (accreditation_status)
-#  index_providers_on_archived_at           (archived_at)
-#  index_providers_on_code                  (code) UNIQUE
-#  index_providers_on_discarded_at          (discarded_at)
-#  index_providers_on_legal_name            (legal_name)
-#  index_providers_on_provider_type         (provider_type)
-#  index_providers_on_searchable            (searchable) USING gin
-#  index_providers_on_ukprn                 (ukprn)
-#  index_providers_on_urn                   (urn)
+#  index_providers_on_academic_years_active  (academic_years_active) USING gin
+#  index_providers_on_accreditation_status   (accreditation_status)
+#  index_providers_on_archived_at            (archived_at)
+#  index_providers_on_code                   (code) UNIQUE
+#  index_providers_on_discarded_at           (discarded_at)
+#  index_providers_on_legal_name             (legal_name)
+#  index_providers_on_provider_type          (provider_type)
+#  index_providers_on_searchable             (searchable) USING gin
+#  index_providers_on_ukprn                  (ukprn)
+#  index_providers_on_urn                    (urn)
 #
 class Provider < ApplicationRecord
   self.implicit_order_column = :created_at
@@ -41,8 +43,12 @@ class Provider < ApplicationRecord
   has_many :accreditations, dependent: :destroy
   has_many :addresses, dependent: :destroy
   has_many :contacts, dependent: :destroy
+  has_many :accredited_provider_partnerships, class_name: "Partnership", dependent: :destroy
+  has_many :accrediting_provider_partnerships, class_name: "Partnership", foreign_key: :accredited_provider_id,
+                                               dependent: :destroy
 
-  audited
+  audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
+  has_associated_audits
 
   include ProviderTypeEnum
   include AccreditationStatusEnum
@@ -60,6 +66,7 @@ class Provider < ApplicationRecord
                   if: -> { urn.present? && requires_urn? }
   validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z0-9]{3}\z/i }, length: { is: 3 }
 
+  after_initialize :set_default_academic_years_active, if: :new_record?
   before_save :upcase_code
   before_save :update_searchable
 
@@ -81,7 +88,8 @@ class Provider < ApplicationRecord
   end
 
   def archive!
-    update!(archived_at: Time.zone.now.utc)
+    self.archived_at = Time.zone.now.utc
+    save!(validate: false)
   end
 
   def archived?
@@ -93,7 +101,8 @@ class Provider < ApplicationRecord
   end
 
   def restore!
-    update!(archived_at: nil)
+    self.archived_at = nil
+    save!(validate: false)
   end
 
   def current_accreditations
@@ -120,6 +129,10 @@ class Provider < ApplicationRecord
     updates[:provider_type] = new_provider_type if provider_type != new_provider_type
 
     update_columns(updates) if updates.any?
+  end
+
+  def partnerships
+    accrediting_provider_partnerships.or(accredited_provider_partnerships)
   end
 
 private
@@ -157,5 +170,9 @@ private
 
   def legal_name_normalised
     ReplaceAbbreviation.call(string: StripPunctuation.call(string: legal_name))
+  end
+
+  def set_default_academic_years_active
+    self.academic_years_active ||= [AcademicYearHelper.current_academic_year]
   end
 end

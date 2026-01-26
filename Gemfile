@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.1.1"
+gem "rails", "~> 8.1.2"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
@@ -38,6 +38,9 @@ gem "thruster", require: false
 gem "govuk-components"
 gem "govuk_design_system_formbuilder"
 gem "govuk_markdown"
+
+# DfE autocomplete component
+gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete"
 
 # Shim to load environment variables from .env into ENV
 gem "dotenv-rails"
@@ -88,6 +91,8 @@ group :development, :test do
   gem "rspec-rails"
 
   gem "capybara-screenshot"
+
+  gem "rspec-openapi"
 end
 
 group :development do
@@ -115,6 +120,8 @@ group :development do
   gem "syntax_tree-rbs", require: false
 
   gem "database_consistency", require: false
+
+  gem "openssl"
 end
 
 group :development, :review, :test, :qa do
@@ -147,3 +154,6 @@ group :development, :production do
 end
 
 gem "pundit", "~> 2.5"
+
+gem "roo", "~> 3.0.0"
+gem "write_xlsx"

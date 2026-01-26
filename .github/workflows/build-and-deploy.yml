@@ -29,6 +29,9 @@ on:
     branches:
       - main
     types: [opened, reopened, synchronize, labeled]
+  merge_group:
+    branches:
+      - main
 
 env:
   TERRAFORM_BASE: terraform/application
@@ -49,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         name: Checkout
 
       - name: Build and push docker image
@@ -92,7 +95,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -156,7 +159,7 @@ jobs:
             google-chrome-stable
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -185,32 +188,16 @@ jobs:
 
       - name: Upload test failure screenshots
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-failure-screenshots
           path: tmp/screenshots/
           if-no-files-found: ignore
           retention-days: 7
 
-  merge-dependabot:
-    name: Merge dependabot
-    permissions:
-      pull-requests: write
-      contents: write
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'dependencies') }}
-    needs: [quality_checks, test, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Merge minor dependency updates
-        uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          target: minor
-          exclude: "govuk-components,govuk_design_system_formbuilder,govuk-frontend,@ministryofjustice/frontend,dfe-analytics"
-          merge-method: squash
+      - name: Verify openapi
+        if: always()
+        run: bin/verify_openapi
 
   deploy-review-app:
     name: Deployment To Review

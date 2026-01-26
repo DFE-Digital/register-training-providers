@@ -1,0 +1,135 @@
+---
+openapi: 3.0.3
+info:
+  title: Register of training providers API
+  version: v0
+servers: []
+paths:
+  "/api/{api_version}/info":
+    get:
+      summary: Provides general information about the API
+      tags:
+      - Info
+      parameters:
+      - name: api_version
+        in: path
+        required: true
+        schema:
+          type: string
+        example: v0
+      responses:
+        '200':
+          description: returns the requested and latest API version and status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  version:
+                    type: object
+                    properties:
+                      requested:
+                        type: string
+                      latest:
+                        type: string
+                    required:
+                    - requested
+                    - latest
+                required:
+                - status
+                - version
+              example:
+                status: ok
+                version:
+                  requested: v0
+                  latest: v0
+        '401':
+          description: returns 401 Unauthorized for invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Unauthorized
+  "/api/{api_version}/providers":
+    get:
+      summary: Get many providers
+      tags:
+      - providers
+      parameters:
+      - name: api_version
+        in: path
+        required: true
+        schema:
+          type: string
+        example: v0
+      - name: changed_since
+        in: query
+        required: false
+        schema:
+          type: string
+        example: '2025-09-14T11:34:56Z'
+      responses:
+        '200':
+          description: |
+            This endpoint can be used to retrieve providers for a given academic year.
+            This is intended to make it possible to check for new or updated providers regularly.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        operating_name:
+                          type: string
+                        provider_type:
+                          type: string
+                        code:
+                          type: string
+                        accreditation_status:
+                          type: string
+                        updated_at:
+                          type: string
+                      required:
+                      - id
+                      - operating_name
+                      - provider_type
+                      - code
+                      - accreditation_status
+                      - updated_at
+                required:
+                - data
+              example:
+                data:
+                - id: 1d4c72fb-5cdf-4c43-8419-dad3cdb1569b
+                  operating_name: Williamson-Haley
+                  provider_type: hei
+                  code: 8GK
+                  accreditation_status: accredited
+                  updated_at: '2025-09-15T11:34:56Z'
+        '401':
+          description: returns 401 Unauthorized for invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Unauthorized

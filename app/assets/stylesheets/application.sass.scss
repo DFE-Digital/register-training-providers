@@ -10,7 +10,13 @@ $govuk-assets-path: "/";
 
 @import "search";
 
+@import "components/autocomplete";
+
 .govuk-tag__heading {
   position: relative;
   top: -7px;
+}
+
+.govuk-summary-list__row--no-border {
+  border: 0;
 }

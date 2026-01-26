@@ -14,6 +14,7 @@
     <%= favicon_link_tag asset_path("rebrand/images/govuk-icon-180.png"), rel: "apple-touch-icon", type: "image/png", size: "180x180" %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%#= stylesheet_link_tag "accessible-autocomplete/dist/accessible-autocomplete.min" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
     <%= sentry_trace_meta %>
   </head>
@@ -39,6 +40,7 @@
           navigation_items: [
             { text: "Providers", href: providers_path, active_when: providers_path },
             { text: "Support users", href: users_path, active_when: users_path },
+            { text: "Activity log", href: activity_path, active_when: activity_path },
           ]
         ) if @current_user.present? %>
 

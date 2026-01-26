@@ -27,6 +27,23 @@ en:
       scitt: "School-centred initial teacher training (SCITT)"
       school: "School"
       other: "Other"
+    partnerships:
+      find:
+        new:
+          accredited_provider:
+            details:
+              summary_text: I cannot find the accredited provider
+              text_html:
+                <p class="govuk-body">Make sure you've spelt the accredited provider name correctly.</p>
+                <p class="govuk-body">If you still cannot find it, check that the accredited provider is already listed in the register.</p>
+                <p class="govuk-body">You may need to add the accredited provider first.</p>
+          training_partner:
+            details:
+              summary_text: I cannot find the training partner
+              text_html:
+                <p class="govuk-body">Make sure you've spelt the training partner name correctly.</p>
+                <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
+                <p class="govuk-body">You may need to add the training partner first.</p>
   activerecord:
     errors:
       models:
@@ -47,7 +64,7 @@ en:
               invalid_format_scitt: "Enter accredited provider number in the correct format, like 5678"
               invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
             start_date:
-              blank: "Enter date accreditation starts"
+              blank: "Enter accreditation start date"
         address:
           attributes:
             address_line_1:
@@ -75,6 +92,9 @@ en:
               invalid_postcode_format: "Enter a full UK postcode"
             building_name_or_number:
               too_long: "Building name or number is too long (maximum is %{count} characters)"
+            partner_id:
+              blank_training_partner: "Enter training partner name, code, UKPRN or URN"
+              blank_accredited_provider: "Enter accredited provider name, code, UKPRN or URN"
         select:
           attributes:
             selected_address_index:
@@ -101,6 +121,18 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+        academic_cycles:
+          attributes:
+            academic_cycle_ids:
+              blank: Select academic year
+        partnerships/dates_form:
+          attributes:
+            start_date:
+              blank: "Enter date the partnership started"
+        partnership_form:
+          attributes:
+            start_date:
+              blank: "Enter date the partnership started"
   activemodel:
     errors:
       messages:
@@ -137,10 +169,14 @@ en:
           update: "Address updated"
         address:
           add: "Address added"
+          add_imported_data: "Address added for %{provider_operating_name}"
           update: "Address updated"
         contact_form:
           add: "Contact added"
           update: "Contact updated"
+        partnership:
+          add: "Partnership added"
+          update: "Partnership updated"
       address:
         add: "Address added"
         update: "Address updated"
@@ -159,9 +195,9 @@ en:
       number:
         label: "Accredited provider number"
       start_date:
-        label: "Date accreditation starts"
+        label: "Accreditation start date"
       end_date:
-        label: "Date accreditation ends (optional)"
+        label: "Accreditation end date (optional)"
     contacts:
       first_name:
         label: First name
@@ -171,6 +207,15 @@ en:
         label: Email address
       telephone_number:
         label: Phone number
+    partnerships:
+      dates:
+        start_date:
+          label: Partnership start date
+          details:
+            summary_text: I do not know the start date
+            text: If you do not know the start date, use today's date, or the date the academic year starts, for example, 1 August 2024.
+        end_date:
+          label: Partnership end date (optional)
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt_or_school: "School"
@@ -189,3 +234,25 @@ en:
         select:
           no_search_data: "Please search for an address first"
           invalid_index: "Please select a valid address"
+  imported_data:
+    fields:
+      provider:
+        provider_type: "Provider type"
+        accreditation_status: "Accreditation status"
+        operating_name: "Operating name"
+        legal_name: "Legal name"
+        ukprn: "UK provider reference number (UKPRN)"
+        urn: "Unique reference number (URN)"
+        code: "Provider code"
+        academic_years_active: "Academic years active"
+      accreditation:
+        number: "Accredited provider number"
+        start_date: "Accreditation start date"
+        end_date: "Accreditation end date"
+      address:
+        address_line_1: "Address line 1"
+        address_line_2: "Address line 2 (optional)"
+        address_line_3: "Address line 3 (optional)"
+        town_or_city: "Town or city"
+        county: "County (optional)"
+        postcode: "Postcode"
