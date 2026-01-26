@@ -44,15 +44,17 @@
           ]
         ) if @current_user.present? %>
 
-    <div class="govuk-width-container">
-      <%= govuk_phase_banner(
-            tag: { text: "Beta" },
-            text: safe_join([
-              "This is a new service – your ",
-              govuk_link_to("feedback", "mailto:becomingateacher@digital.education.gov.uk"),
-              " will help us to improve it."
-            ]),
-          ) %>
+    <div class="app-phase-banner app-phase-banner__env--<%= Rails.env %>">
+      <div class="govuk-width-container">
+        <%= govuk_phase_banner(
+              tag: { text: "Beta" },
+              text: safe_join([
+                "This is a new service – your ",
+                govuk_link_to("feedback", "mailto:becomingateacher@digital.education.gov.uk"),
+                " will help us to improve it."
+              ]),
+            ) %>
+      </div>
     </div>
 
     <div class="govuk-width-container">
