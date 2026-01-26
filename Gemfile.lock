@@ -1,11 +1,11 @@
 GIT
   remote: https://github.com/DFE-Digital/dfe-analytics.git
-  revision: 23ae21ef25f5bd1ce081631fbada4cd3b2667cf7
-  tag: v1.15.10
+  revision: 31c25462e5fa824c1e75a1099c06e0676724731c
+  tag: v1.15.14
   specs:
-    dfe-analytics (1.15.10)
+    dfe-analytics (1.15.14)
       google-cloud-bigquery (~> 1.38)
-      httparty (~> 0.21)
+      httparty (~> 0.24)
       multi_xml (~> 0.6.0)
       request_store_rails (~> 2)
 
@@ -264,7 +264,7 @@ GEM
       logger
     html-attributes-utils (1.0.2)
       activesupport (>= 6.1.4.4)
-    httparty (0.23.2)
+    httparty (0.24.2)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -843,7 +843,7 @@ CHECKSUMS
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   debug (1.11.1) sha256=2e0b0ac6119f2207a6f8ac7d4a73ca8eb4e440f64da0a3136c30343146e952b6
   declarative (0.0.20) sha256=8021dd6cb17ab2b61233c56903d3f5a259c5cf43c80ff332d447d395b17d9ff9
-  dfe-analytics (1.15.10)
+  dfe-analytics (1.15.14)
   dfe-autocomplete (0.2.1)
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   discard (1.4.0) sha256=6efcd2a53ddf96781f81b825d398f1c88ab88c0faa84e131bea6e16ef95d65d0
@@ -878,7 +878,7 @@ CHECKSUMS
   hashdiff (1.2.1) sha256=9c079dbc513dfc8833ab59c0c2d8f230fa28499cc5efb4b8dd276cf931457cd1
   hashie (5.1.0) sha256=c266471896f323c446ea8207f8ffac985d2718df0a0ba98651a3057096ca3870
   html-attributes-utils (1.0.2) sha256=594e0b37b3dd4e554abe893bee9719896f876675fd08fe534fc2e6e1b4e2538c
-  httparty (0.23.2) sha256=72d52830ab5862115a3c9a4b16738dd67d9a691ffd796cf86bad8abaa8f1febb
+  httparty (0.24.2) sha256=8fca6a54aa0c4aa4303a0fd33e5e2156175d6a5334f714263b458abd7fda9c38
   i18n (1.14.8) sha256=285778639134865c5e0f6269e0b818256017e8cde89993fdfcbfb64d088824a5
   io-console (0.8.2) sha256=d6e3ae7a7cc7574f4b8893b4fca2162e57a825b223a177b7afa236c5ef9814cc
   irb (1.16.0) sha256=2abe56c9ac947cdcb2f150572904ba798c1e93c890c256f8429981a7675b0806
