@@ -2,6 +2,12 @@ en:
   service:
     name: Register of training providers
     email: becomingateacher@digital.education.gov.uk
+    phase_banner:
+      development: Development
+      review: Review
+      staging: Staging
+      qa: QA
+      production: Beta
   sign_in:
     new:
       heading: Ask for an account to access the Register of training providers

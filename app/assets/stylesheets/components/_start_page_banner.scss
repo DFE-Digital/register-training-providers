@@ -65,7 +65,7 @@
   }
 
   .govuk-phase-banner__text .govuk-link:focus {
-    color: govuk-colour('black');
+    color: govuk-colour("black");
   }
 
   .govuk-tag {
@@ -84,7 +84,7 @@
   }
 
   .govuk-link:focus {
-    color: govuk-colour('black');
+    color: govuk-colour("black");
   }
 
   @include govuk-media-query($from: tablet) {
