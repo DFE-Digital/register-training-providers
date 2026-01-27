@@ -12,6 +12,8 @@ $govuk-assets-path: "/";
 
 @import "components/autocomplete";
 
+@import "components/start_page_banner";
+
 .govuk-tag__heading {
   position: relative;
   top: -7px;
