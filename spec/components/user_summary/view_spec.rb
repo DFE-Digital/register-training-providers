@@ -13,7 +13,7 @@ RSpec.describe UserSummary::View, type: :component do
     end
 
     describe "view support user" do
-      subject { render_preview(:view_support_user) }
+      subject { render_preview(:view_user) }
 
       it "renders heading" do
         expect(subject).to have_heading("h1", user.name)

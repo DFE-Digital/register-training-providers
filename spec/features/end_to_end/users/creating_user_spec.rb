@@ -4,7 +4,7 @@ RSpec.feature "User management" do
   scenario "creating users" do
     given_i_am_an_authenticated_user
     and_i_am_on_the_user_support_listing_page
-    and_i_can_see_the_page_title_support_users_with_the_count
+    and_i_can_see_the_page_title_users_with_the_count
     and_i_click_on("Add user")
     and_i_am_taken_to("/users/new")
     and_i_can_see_the_page_title_for_personal_details
@@ -22,11 +22,11 @@ RSpec.feature "User management" do
     and_i_am_taken_to("/users")
 
     then_i_see_the_success_message
-    and_i_can_see_the_page_title_support_users_with_the_count(count: 2)
+    and_i_can_see_the_page_title_users_with_the_count(count: 2)
   end
 
-  def and_i_can_see_the_page_title_support_users_with_the_count(count: 1)
-    expect(page).to have_title("Support users (#{count}) - Register of training providers - GOV.UK")
+  def and_i_can_see_the_page_title_users_with_the_count(count: 1)
+    expect(page).to have_title("Users (#{count}) - Register of training providers - GOV.UK")
   end
 
   def and_i_am_on_the_user_support_listing_page

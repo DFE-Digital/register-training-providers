@@ -5,7 +5,7 @@ RSpec.feature "User management" do
     given_i_am_an_authenticated_user
     and_i_have_a_user_to_edit
     and_i_am_on_the_user_support_listing_page
-    and_i_can_see_the_page_title_support_users_with_the_count(count: 2)
+    and_i_can_see_the_page_title_users_with_the_count(count: 2)
 
     and_i_click_on(current_user.name)
     and_i_cannot_find("Change first name")
@@ -14,7 +14,7 @@ RSpec.feature "User management" do
     and_i_click_on(user_to_edit.name)
     and_i_am_taken_to("/users/#{user_to_edit.id}")
 
-    and_i_can_see_the_page_title_for_view_support_user
+    and_i_can_see_the_page_title_for_view_user
     and_i_click_on("Change first name")
     and_i_am_taken_to("/users/#{user_to_edit.id}/edit")
 
@@ -43,7 +43,7 @@ RSpec.feature "User management" do
     then_i_see_the_success_message
     and_i_am_taken_to("/users")
 
-    and_i_can_see_the_page_title_support_users_with_the_count(count: 2)
+    and_i_can_see_the_page_title_users_with_the_count(count: 2)
     and_i_cannot_find(old_user_to_edit_name)
     and_the_user_to_edit_is_edited
     and_i_see_my_changes(user_to_edit.name)
@@ -82,8 +82,8 @@ RSpec.feature "User management" do
     expect(page).not_to have_link(button_or_link)
   end
 
-  def and_i_can_see_the_page_title_support_users_with_the_count(count: 1)
-    expect(page).to have_title("Support users (#{count}) - Register of training providers - GOV.UK")
+  def and_i_can_see_the_page_title_users_with_the_count(count: 1)
+    expect(page).to have_title("Users (#{count}) - Register of training providers - GOV.UK")
   end
 
   def and_i_am_on_the_user_support_listing_page
@@ -110,7 +110,7 @@ RSpec.feature "User management" do
     expect(page).to have_heading("h1", "Support user - #{user_to_edit.name}Check your answers")
   end
 
-  def and_i_can_see_the_page_title_for_view_support_user
+  def and_i_can_see_the_page_title_for_view_user
     expect(page).to have_title("View support user - Register of training providers - GOV.UK")
   end
 
