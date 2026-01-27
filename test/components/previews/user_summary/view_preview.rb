@@ -1,20 +1,20 @@
 # module UserSummary
 class UserSummary::ViewPreview < ViewComponent::Preview
-  def view_support_user_with_no_delete_or_change_links
+  def view_user_with_no_delete_or_change_links
     render(UserSummary::View.new(
-             title: "View support user", caption: "Support user", back_path: users_path, user: user
+             title: "View user", caption: "User", back_path: users_path, user: user
            ))
   end
 
-  def view_support_user_with_no_delete_link
+  def view_user_with_no_delete_link
     render(UserSummary::View.new(
-             title: "View support user", caption: "Support user", back_path: users_path, user: user, editable: true
+             title: "View user", caption: "User", back_path: users_path, user: user, editable: true
            ))
   end
 
-  def view_support_user
+  def view_user
     render(UserSummary::View.new(
-             title: "View support user", caption: "Support user", back_path: users_path, delete_path: "#delete",
+             title: "View user", caption: "User", back_path: users_path, delete_path: "#delete",
              user: user, editable: true
            ))
   end

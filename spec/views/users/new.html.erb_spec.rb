@@ -14,7 +14,7 @@ RSpec.describe "users/new.html.erb", type: :view do
     expect(view).to have_received(:page_data).with({ error: false,
                                                      header: false,
                                                      subtitle: "personal details",
-                                                     title: "Add support user" })
+                                                     title: "Add user" })
   end
 
   it "renders the continue button" do
@@ -22,7 +22,7 @@ RSpec.describe "users/new.html.erb", type: :view do
   end
 
   it "renders heading" do
-    caption = "Add support user"
+    caption = "Add user"
     heading = "Personal details"
     expect(rendered).to have_heading("h1", "#{caption}#{heading}")
   end
@@ -52,7 +52,7 @@ RSpec.describe "users/new.html.erb", type: :view do
       expect(view).to have_received(:page_data).with({ error: true,
                                                        header: false,
                                                        subtitle: "personal details",
-                                                       title: "Add support user" })
+                                                       title: "Add user" })
     end
 
     it "renders the error summary" do
