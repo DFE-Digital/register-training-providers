@@ -14,7 +14,7 @@ class UserSummary::ViewPreview < ViewComponent::Preview
 
   def view_user
     render(UserSummary::View.new(
-             title: "View user", caption: "Support user", back_path: users_path, delete_path: "#delete",
+             title: "View user", caption: "User", back_path: users_path, delete_path: "#delete",
              user: user, editable: true
            ))
   end
