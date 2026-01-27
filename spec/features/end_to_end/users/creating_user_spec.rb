@@ -38,7 +38,7 @@ RSpec.feature "User management" do
   end
 
   def then_i_see_the_success_message
-    expect(page).to have_notification_banner("Success", "Support user added")
+    expect(page).to have_notification_banner("Success", "User added")
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers

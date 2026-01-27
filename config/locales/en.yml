@@ -159,7 +159,7 @@ en:
         deleted: "Accreditation deleted"
       check:
         user:
-          add: "Support user added"
+          add: "User added"
           update: "User updated"
         provider:
           add: "Provider added"

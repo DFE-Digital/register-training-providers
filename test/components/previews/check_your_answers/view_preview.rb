@@ -9,7 +9,7 @@ module CheckYourAnswers
 
     def existing_user_check_your_answers
       render(CheckYourAnswers::View.new(
-               rows: existing_user_rows, subtitle: "Support user", caption: "Support user", back_path: back_path,
+               rows: existing_user_rows, subtitle: "User", caption: "User", back_path: back_path,
                save_button_text: "Save user", save_path: save_path, cancel_path: cancel_path, method: :patch
              ))
     end

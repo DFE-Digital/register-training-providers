@@ -2,7 +2,7 @@
 class UserSummary::ViewPreview < ViewComponent::Preview
   def view_user_with_no_delete_or_change_links
     render(UserSummary::View.new(
-             title: "View user", caption: "Support user", back_path: users_path, user: user
+             title: "View user", caption: "User", back_path: users_path, user: user
            ))
   end
 

@@ -56,7 +56,7 @@ RSpec.feature "User management" do
   alias_method :and_i_have_a_user_to_delete, :user_to_delete
 
   def then_i_see_the_success_message
-    expect(page).to have_notification_banner("Success", "Support user deleted")
+    expect(page).to have_notification_banner("Success", "User deleted")
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers

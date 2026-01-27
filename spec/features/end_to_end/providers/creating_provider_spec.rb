@@ -214,7 +214,7 @@ RSpec.feature "Add Provider" do
     end
 
     def then_i_see_the_success_message
-      expect(page).to have_notification_banner("Success", "Support user added")
+      expect(page).to have_notification_banner("Success", "User added")
     end
 
     def and_i_do_not_see_error_summary
