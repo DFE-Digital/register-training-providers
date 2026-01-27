@@ -60,14 +60,14 @@ RSpec.feature "User management" do
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
-    expect(page).to have_title("Check your answers - Add support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("Check your answers - Add user - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_confirm_you_want_to_delete_user
-    expect(page).to have_title("Confirm you want to delete support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("Confirm you want to delete user - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_view_user
-    expect(page).to have_title("View support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("View user - Register of training providers - GOV.UK")
   end
 end

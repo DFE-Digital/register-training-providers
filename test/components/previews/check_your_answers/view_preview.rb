@@ -2,7 +2,7 @@ module CheckYourAnswers
   class ViewPreview < ViewComponent::Preview
     def new_user_check_your_answers
       render(CheckYourAnswers::View.new(
-               rows: new_user_rows, subtitle: "Add support user", caption: "Add support user", back_path: back_path,
+               rows: new_user_rows, subtitle: "Add user", caption: "Add user", back_path: back_path,
                save_button_text: "Save user", save_path: save_path, cancel_path: cancel_path, method: :post
              ))
     end

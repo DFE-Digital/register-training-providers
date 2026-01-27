@@ -6,11 +6,11 @@
 <% end %>
 
 <%= form_for @user  do  |form| %>
-  <% page_data(title: "Add support user", subtitle: "personal details", header: false, error: @user.errors.present?) %>
+  <% page_data(title: "Add user", subtitle: "personal details", header: false, error: @user.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
-  <%= form.govuk_fieldset legend: { text: "Personal details" }, caption: { text: "Add support user" } do %>
+  <%= form.govuk_fieldset legend: { text: "Personal details" }, caption: { text: "Add user" } do %>
     <%= render partial: "fields", locals: { form: } %>
     <%= form.govuk_submit %>
   <% end %>

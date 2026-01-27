@@ -42,15 +42,15 @@ RSpec.feature "User management" do
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
-    expect(page).to have_title("Check your answers - Add support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("Check your answers - Add user - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_personal_details_with_error
-    expect(page).to have_title("Error: Add support user - personal details - Register of training providers - GOV.UK")
+    expect(page).to have_title("Error: Add user - personal details - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_personal_details
-    expect(page).to have_title("Add support user - personal details - Register of training providers - GOV.UK")
+    expect(page).to have_title("Add user - personal details - Register of training providers - GOV.UK")
   end
 
   def and_i_do_not_see_error_summary

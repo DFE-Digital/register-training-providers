@@ -101,25 +101,25 @@ RSpec.feature "User management" do
   alias_method :and_i_have_a_user_to_edit, :user_to_edit
 
   def then_i_see_the_success_message
-    expect(page).to have_notification_banner("Success", "Support user updated")
+    expect(page).to have_notification_banner("Success", "User updated")
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
-    expect(page).to have_title("Change support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("Change user - Register of training providers - GOV.UK")
 
-    expect(page).to have_heading("h1", "Support user - #{user_to_edit.name}Check your answers")
+    expect(page).to have_heading("h1", "User - #{user_to_edit.name}Check your answers")
   end
 
   def and_i_can_see_the_page_title_for_view_user
-    expect(page).to have_title("View support user - Register of training providers - GOV.UK")
+    expect(page).to have_title("View user - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_personal_details
-    expect(page).to have_title("Change support user - personal details - Register of training providers - GOV.UK")
+    expect(page).to have_title("Change user - personal details - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_for_personal_details_with_error
-    expect(page).to have_title("Error: Change support user - personal details - Register of training providers - GOV.UK")
+    expect(page).to have_title("Error: Change user - personal details - Register of training providers - GOV.UK")
   end
 
   def and_i_do_not_see_error_summary

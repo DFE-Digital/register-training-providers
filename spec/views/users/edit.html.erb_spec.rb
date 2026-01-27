@@ -16,7 +16,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
     expect(view).to have_received(:page_data).with({ error: false,
                                                      header: false,
                                                      subtitle: "personal details",
-                                                     title: "Change support user" })
+                                                     title: "Change user" })
   end
 
   it "renders the continue button" do
@@ -24,7 +24,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
   end
 
   it "renders heading" do
-    caption = "Support user - #{user.name}"
+    caption = "User - #{user.name}"
     heading = "Personal details"
     expect(rendered).to have_heading("h1", "#{caption}#{heading}")
   end
@@ -66,7 +66,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
       expect(view).to have_received(:page_data).with({ error: true,
                                                        header: false,
                                                        subtitle: "personal details",
-                                                       title: "Change support user" })
+                                                       title: "Change user" })
     end
 
     it "renders the error summary" do

@@ -160,7 +160,7 @@ en:
       check:
         user:
           add: "Support user added"
-          update: "Support user updated"
+          update: "User updated"
         provider:
           add: "Provider added"
           update: "Provider updated"

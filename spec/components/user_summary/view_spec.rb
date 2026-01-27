@@ -12,7 +12,7 @@ RSpec.describe UserSummary::View, type: :component do
       ]
     end
 
-    describe "view support user" do
+    describe "View user" do
       subject { render_preview(:view_user) }
 
       it "renders heading" do
