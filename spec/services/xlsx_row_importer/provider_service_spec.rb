@@ -1,7 +1,7 @@
 # spec/services/provider_xlsx_row_importer_spec.rb
 require "rails_helper"
 
-RSpec.describe ProviderXlsxRowImporter do
+RSpec.describe XlsxRowImporter::ProviderService do
   subject(:call_importer) { described_class.call(row) }
 
   let(:base_row) do
@@ -45,7 +45,7 @@ RSpec.describe ProviderXlsxRowImporter do
 
   describe "#call" do
     context "when the provider does not exist" do
-      it "creates a provider, accreditation, and clean address" do
+      it "creates a provider, accreditation and address" do
         expect { call_importer }
           .to change(Provider, :count).by(1)
           .and change(Accreditation, :count).by(1)
@@ -177,9 +177,12 @@ RSpec.describe ProviderXlsxRowImporter do
         notes = provider.seed_data_notes
 
         expect(notes["row_imported"]["raw"]).to eq(row)
-        expect(notes["saved_as"]["provider_id"]).to eq(provider.id)
-        expect(notes["saved_as"]["accreditation_id"]).to eq(provider.accreditations.first.id)
-        expect(notes["saved_as"]["address_id"]).to eq(provider.addresses.first.id)
+
+        expect(notes["saved_as"]).to match(
+          "provider_id" => provider.id,
+          "accreditation_id" => provider.accreditations.first.id,
+          "address_id" => provider.addresses.first.id,
+        )
       end
     end
   end

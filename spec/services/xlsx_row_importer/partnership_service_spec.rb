@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PartnershipXlsxRowImporter do
+RSpec.describe XlsxRowImporter::PartnershipService do
   subject(:call_importer) { described_class.call(row) }
 
   let!(:accredited_provider) { create(:provider, code: "1CS") }
