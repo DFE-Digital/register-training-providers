@@ -7,7 +7,7 @@ namespace :import do
   desc "Import providers from XLSX"
   task providers_xlsx: :environment do
     file_path = ENV["XLSX"] ||
-      Rails.root.join("lib/data/provider_seed_report_v_3.0_without_pii.xlsx").to_s
+      Rails.root.join("lib/data/provider_seed_report_v_4.0_without_pii.xlsx").to_s
 
     import_xlsx(
       file_path: file_path,
@@ -19,7 +19,7 @@ namespace :import do
   desc "Import partnerships from XLSX"
   task partnerships_xlsx: :environment do
     file_path = ENV["XLSX"] ||
-      Rails.root.join("lib/data/provider_seed_report_v_3.0_without_pii.xlsx").to_s
+      Rails.root.join("lib/data/provider_seed_report_v_4.0_without_pii.xlsx").to_s
 
     import_xlsx(
       file_path: file_path,
