@@ -12,7 +12,7 @@ namespace :import do
     import_xlsx(
       file_path: file_path,
       sheet_name: "provider_report",
-      importer_class: ProviderXlsxRowImporter
+      importer_class: XlsxRowImporter::ProviderService
     )
   end
 
@@ -24,7 +24,7 @@ namespace :import do
     import_xlsx(
       file_path: file_path,
       sheet_name: "partnerships-export-2024 onward",
-      importer_class: PartnershipXlsxRowImporter
+      importer_class: XlsxRowImporter::PartnershipService
     )
   end
 end
