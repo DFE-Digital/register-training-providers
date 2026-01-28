@@ -153,7 +153,7 @@ module XlsxRowImporter
       v = raw_provider["academic_years_active"]
       return [] if v.blank?
 
-      JSON.parse(v)
+      v.split(",").map(&:to_i)
     end
 
     def parsed_ukprn
