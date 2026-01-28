@@ -84,7 +84,8 @@ module XlsxRowImporter
     end
 
     def academic_years
-      v = value("academic_cycles__academic_years_active")
+      v = value("partnership__academic_years_active")
+
       return [] if v.blank?
 
       if v.is_a?(Array)

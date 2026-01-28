@@ -12,7 +12,7 @@ module XlsxRowImporter
       )
 
       assign_provider_attributes(provider)
-      assign_accreditation(provider) if raw_provider["accreditation_status"] == "accredited"
+      assign_accreditation(provider) if accreditation_status == "accredited"
       assign_address(provider)
 
       provider.save!(validate: false)
@@ -26,22 +26,31 @@ module XlsxRowImporter
 
     attr_reader :row
 
+    def accreditation_status
+      if value("accreditation__number").blank?
+        "unaccredited"
+      else
+        "accredited"
+
+      end
+    end
+
     def assign_provider_attributes(provider)
       provider.legal_name        = raw_provider["legal_name"]
       provider.operating_name    = raw_provider["operating_name"]
       provider.provider_type     = provider_type
-      provider.accreditation_status = raw_provider["accreditation_status"]
+      provider.accreditation_status = accreditation_status
       provider.ukprn             = parsed_ukprn
       provider.urn               = raw_provider["urn"]
       provider.academic_years_active = parse_academic_years
     end
 
     def provider_type
-      if raw_provider["provider_type"] == "scitt" && raw_provider["accreditation_status"] == "unaccredited"
-        "school"
-      else
-        raw_provider["provider_type"]
-      end
+      # if raw_provider["provider_type"] == "scitt" && raw_provider["accreditation_status"] == "unaccredited"
+      #   "school"
+      # else
+      raw_provider["provider_type"]
+      # end
     end
 
     def assign_accreditation(provider)
@@ -152,8 +161,9 @@ module XlsxRowImporter
     def parse_academic_years
       v = raw_provider["academic_years_active"]
       return [] if v.blank?
+      return [v] if v.is_a?(Integer)
 
-      JSON.parse(v)
+      v.split(",").map(&:to_i)
     end
 
     def parsed_ukprn
