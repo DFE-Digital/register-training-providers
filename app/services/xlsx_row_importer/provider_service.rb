@@ -65,7 +65,7 @@ module XlsxRowImporter
 
     def assign_address(provider)
       postcode = value("address__postcode")
-      has_clean_address = value("found") == "true" && postcode.present?
+      has_clean_address = postcode.present?
       return unless has_clean_address
 
       provider.addresses.find_or_initialize_by(postcode:) do |address|
