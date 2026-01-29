@@ -6,6 +6,8 @@
   <% end %>
 <% end %>
 
+<p class="govuk-hint govuk-!-font-size-16"><%= user_last_signed_in_at(user) %></p>
+
 <% if show_delete_link? %>
 <p class="govuk-body">
   <%= govuk_link_to("Delete user", delete_path) %>

@@ -57,4 +57,10 @@ module ApplicationHelper
       "A unique 4 digit code starting with ‘1’ or ‘5’ assigned by DfE to accredited providers, for example 1234 or 5678"
     end
   end
+
+  def user_last_signed_in_at(user)
+    return "Last signed in at #{user.last_signed_in_at.to_fs(:govuk_date_and_time)}" if user.last_signed_in_at.present?
+
+    "User has never signed in"
+  end
 end

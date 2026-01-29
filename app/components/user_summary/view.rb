@@ -38,5 +38,11 @@ module UserSummary
     def use_breadcrumbs?
       back_path == root_path
     end
+
+    def last_signed_in_at
+      return "User last signed in at #{user.last_signed_in_at.to_fs(:govuk_date_and_time)}" if user.last_signed_in_at.present?
+
+      "User has never signed in"
+    end
   end
 end
