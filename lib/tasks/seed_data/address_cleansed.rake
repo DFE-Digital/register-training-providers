@@ -18,7 +18,7 @@ OS_EXTRA_FIELD_MAP = {
 }.freeze
 
 ROW_TYPE_COL     = "row_type".freeze
-FOUND_COL        = "found".freeze
+FOUND_COL        = "address__found".freeze
 MODEL_FIELDS_COL = "model_fields".freeze
 OS_FIELDS_COL    = "os_fields".freeze
 
@@ -37,16 +37,16 @@ namespace :seed_data do
     minor = 0
 
     input_path =
-      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_3.#{minor}_without_pii.xlsx").to_s
+      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_4.#{minor}_without_pii.xlsx").to_s
 
     output_path =
-      Rails.root.join("lib/data/provider_seed_report_v_2.#{minor + 1}_with_pii.xlsx").to_s
+      Rails.root.join("lib/data/provider_seed_report_v_4.#{minor + 1}_without_pii.xlsx").to_s
 
     # --------------------------------------------------
     # Load input
     # --------------------------------------------------
     wb_in    = Roo::Spreadsheet.open(input_path)
-    sheet_in = wb_in.sheet("provider_report")
+    sheet_in = wb_in.sheet("providers")
 
     header = sheet_in.row(1).map(&:to_s)
 
@@ -55,7 +55,7 @@ namespace :seed_data do
     # --------------------------------------------------
     workbook = WriteXLSX.new(output_path)
 
-    provider_sheet            = workbook.add_worksheet("provider_report")
+    provider_sheet            = workbook.add_worksheet("providers")
     first_pass_ws             = workbook.add_worksheet("one_match_from_first_pass")
     second_pass_ws            = workbook.add_worksheet("one_match_from_second_pass")
     zero_ws                   = workbook.add_worksheet("zero_matched_results")
@@ -123,11 +123,15 @@ namespace :seed_data do
 
       postcode = row_hash["address__postcode"].to_s.strip
 
-      os_results =
-        OrdnanceSurvey::AddressLookupService.call(
-          postcode: postcode,
-          building_name_or_number: nil
-        ) || []
+      os_results = if postcode.blank?
+                     []
+                   else
+                     OrdnanceSurvey::AddressLookupService.call(
+                       postcode: postcode,
+                       building_name_or_number: nil
+                     ) || []
+
+                   end
 
       valid_os_results = os_results.select { |r| os_has_address_line_1.call(r) }
 
