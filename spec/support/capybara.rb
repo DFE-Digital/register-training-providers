@@ -10,7 +10,7 @@ Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
   description = example.full_description
                        .downcase
                        .gsub(/\s+/, "-") # spaces → dashes
-                       .gsub(/[\"<>|:*?\\\/\r\n]/, "") # remove invalid characters
+                       .gsub(/["<>|:*?\\\/\r\n]/, "") # remove invalid characters
                        .gsub(/[^a-z0-9\-_]/, "") # strip anything not a-z, 0-9, -, _
 
   "#{description}_#{timestamp}"
