@@ -65,7 +65,8 @@ module XlsxRowImporter
 
     def assign_address(provider)
       postcode = value("address__postcode")
-      has_clean_address = value("address_found") == "true" && postcode.present?
+      has_clean_address = value("address__found") == "true" && postcode.present?
+
       return unless has_clean_address
 
       provider.addresses.find_or_initialize_by(postcode:) do |address|
@@ -101,12 +102,11 @@ module XlsxRowImporter
 
     def address_id_for(provider)
       postcode = value("address__postcode")
-      has_clean_address = value("found") == "true" && postcode.present?
+      has_clean_address = value("address__found") == "true" && postcode.present?
+
       return unless has_clean_address
 
-      provider.addresses
-              .detect { |address| address.postcode == postcode }
-              &.id
+      Address.find_by(provider:, postcode:)&.id
     end
 
     def accreditation_id_for(provider)
@@ -114,9 +114,7 @@ module XlsxRowImporter
 
       return nil if number.blank?
 
-      provider.accreditations
-              .detect { |acc| acc.number == number.to_s }
-              &.id
+      Accreditation.find_by(provider:, number:)&.id
     end
 
     def raw_provider

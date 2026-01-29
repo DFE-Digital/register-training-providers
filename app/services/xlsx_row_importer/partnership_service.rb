@@ -66,13 +66,13 @@ module XlsxRowImporter
 
     def accredited_provider
       @accredited_provider ||= Provider.find_by!(
-        code: value("partnerships__accredited_provider_id_lookup_by_code")
+        code: value("partnership__accredited_provider_provider_code")
       )
     end
 
     def provider
       @provider ||= Provider.find_by!(
-        code: value("partnerships__provider_id_lookup_by_code")
+        code: value("partnership__training_partner_provider_code")
       )
     end
 
@@ -88,14 +88,10 @@ module XlsxRowImporter
 
       return [] if v.blank?
 
-      if v.is_a?(Array)
-        v.map(&:to_i)
-      else
-        v.to_s
-         .delete("[]")
-         .split(",")
-         .map { |x| x.strip.to_i }
-      end
+      return [] if v.blank?
+      return [v] if v.is_a?(Integer)
+
+      v.split(",").map(&:to_i)
     end
 
     def parse_date(raw)
