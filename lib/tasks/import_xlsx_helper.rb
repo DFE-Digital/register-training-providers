@@ -1,15 +1,15 @@
 module ImportXlsxHelper
   def import_xlsx(file_path:, sheet_name:, importer_class:)
-    unless File.exist?(file_path)
-      abort "XLSX file not found at #{file_path}"
-    end
+    raise Errno::ENOENT, "XLSX file not found at #{file_path}" unless File.exist?(file_path)
 
     puts "Importing from #{file_path}, sheet: #{sheet_name}..."
 
     xlsx = Roo::Excelx.new(file_path)
 
     unless xlsx.sheets.include?(sheet_name)
-      abort "Sheet '#{sheet_name}' not found"
+      available = xlsx.sheets.map { |s| "• #{s}" }.join("\n")
+      raise ArgumentError,
+            "Sheet '#{sheet_name}' not found in #{file_path}.\nAvailable sheets:\n#{available}"
     end
 
     sheet = xlsx.sheet(sheet_name)

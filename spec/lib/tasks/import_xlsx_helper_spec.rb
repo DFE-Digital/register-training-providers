@@ -58,7 +58,7 @@ RSpec.describe ImportXlsxHelper do
           sheet_name: "Sheet1",
           importer_class: dummy_class
         )
-      }.to raise_error(SystemExit)
+      }.to raise_error(Errno::ENOENT)
     end
 
     it "aborts if sheet does not exist" do
@@ -70,7 +70,7 @@ RSpec.describe ImportXlsxHelper do
           sheet_name: "NoSheet",
           importer_class: dummy_class
         )
-      }.to raise_error(SystemExit)
+      }.to raise_error(ArgumentError)
     end
 
     it "rescues row exceptions and continues" do
