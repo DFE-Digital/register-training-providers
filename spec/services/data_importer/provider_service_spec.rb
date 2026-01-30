@@ -26,7 +26,7 @@ RSpec.describe DataImporter::ProviderService do
       "address__latitude" => "51.5033635",
       "address__longitude" => "-0.1276248",
 
-      "found" => "true"
+      "address__found" => "true"
     }
   end
 
@@ -162,7 +162,7 @@ RSpec.describe DataImporter::ProviderService do
     end
 
     context "when address is not clean" do
-      before { row["found"] = nil }
+      before { row["address__found"] = nil }
 
       it "does not create an address" do
         expect { call_importer }.not_to change(Address, :count)

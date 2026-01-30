@@ -12,7 +12,7 @@ module DataImporter
       )
 
       assign_provider_attributes(provider)
-      assign_accreditation(provider) if accreditation_status == "accredited"
+      assign_accreditation(provider) if raw_provider["accreditation_status"] == "accredited"
       assign_address(provider)
 
       provider.save!(validate: false)
@@ -26,31 +26,22 @@ module DataImporter
 
     attr_reader :row
 
-    def accreditation_status
-      if value("accreditation__number").blank?
-        "unaccredited"
-      else
-        "accredited"
-
-      end
-    end
-
     def assign_provider_attributes(provider)
       provider.legal_name        = raw_provider["legal_name"]
       provider.operating_name    = raw_provider["operating_name"]
       provider.provider_type     = provider_type
-      provider.accreditation_status = accreditation_status
+      provider.accreditation_status = raw_provider["accreditation_status"]
       provider.ukprn             = parsed_ukprn
       provider.urn               = raw_provider["urn"]
       provider.academic_years_active = parse_academic_years
     end
 
     def provider_type
-      # if raw_provider["provider_type"] == "scitt" && raw_provider["accreditation_status"] == "unaccredited"
-      #   "school"
-      # else
-      raw_provider["provider_type"]
-      # end
+      if raw_provider["provider_type"] == "scitt" && raw_provider["accreditation_status"] == "unaccredited"
+        "school"
+      else
+        raw_provider["provider_type"]
+      end
     end
 
     def assign_accreditation(provider)
@@ -82,14 +73,8 @@ module DataImporter
       end
     end
 
-    def attach_seed_data(provider)
-      provider.valid?
-
-      provider.errors.add(:ukprn, "Not found") if ukprn_not_found?
-
-      provider.seed_data_with_issues = provider.errors.any?
-
-      provider.seed_data_notes = {
+    def seed_data_payload(provider)
+      {
         row_imported: row_imported,
         errors: provider.errors.to_hash,
         saved_as: {
@@ -98,6 +83,19 @@ module DataImporter
           address_id: address_id_for(provider),
         }
       }
+    end
+
+    def attach_seed_data(provider)
+      provider.valid?
+
+      provider.errors.add(:ukprn, "Not found") if ukprn_not_found?
+
+      provider.seed_data_with_issues = provider.errors.any?
+
+      provider.seed_data_notes =
+        (provider.seed_data_notes || {}).deep_merge(
+          seed_data_payload(provider)
+        )
     end
 
     def address_id_for(provider)
