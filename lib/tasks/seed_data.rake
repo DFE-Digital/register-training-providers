@@ -16,8 +16,8 @@ namespace :seed_data do
     end
 
     ["generate:academic_cycles",
-     "import:providers_xlsx",
-     "import:partnerships_xlsx"].each do |task|
+     "import:providers",
+     "import:partnerships"].each do |task|
       Rake::Task[task].reenable
       Rake::Task[task].invoke
     end

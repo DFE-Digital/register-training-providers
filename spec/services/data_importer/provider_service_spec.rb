@@ -1,7 +1,7 @@
 # spec/services/provider_xlsx_row_importer_spec.rb
 require "rails_helper"
 
-RSpec.describe XlsxRowImporter::ProviderService do
+RSpec.describe DataImporter::ProviderService do
   subject(:call_importer) { described_class.call(row) }
 
   let(:base_row) do
