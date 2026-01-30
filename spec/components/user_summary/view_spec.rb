@@ -36,6 +36,10 @@ RSpec.describe UserSummary::View, type: :component do
       it "renders delete link" do
         expect(subject).to have_link("Delete user", href: "#delete")
       end
+
+      it "renders last signed in information" do
+        expect(subject).to have_css("p.govuk-hint", text: "User has never signed in")
+      end
     end
 
     describe "your_account" do
@@ -61,6 +65,10 @@ RSpec.describe UserSummary::View, type: :component do
 
       it "does not renders delete link" do
         expect(subject).not_to have_link("Delete user", href: "#delete")
+      end
+
+      it "renders last signed in information" do
+        expect(subject).to have_css("p.govuk-hint", text: "User has never signed in")
       end
     end
   end
