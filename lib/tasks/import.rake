@@ -1,30 +1,28 @@
 require "roo"
-require_relative "import_xlsx_helper"
+require_relative "import_tabular_helper"
 
 namespace :import do
-  extend ImportXlsxHelper
+  extend ImportTabularHelper
 
-  desc "Import providers from XLSX"
-  task providers_xlsx: :environment do
-    file_path = ENV["XLSX"] ||
-      Rails.root.join("lib/data/provider_seed_report_v_3.0_without_pii.xlsx").to_s
+  desc "Import providers from CSV or XLSX"
+  task providers: :environment do
+    file_path = ENV["FILE"] ||
+      Rails.root.join("lib/data/providers.csv").to_s
 
-    import_xlsx(
+    import_file(
       file_path: file_path,
-      sheet_name: "provider_report",
-      importer_class: ProviderXlsxRowImporter
+      importer_class: DataImporter::ProviderService
     )
   end
 
-  desc "Import partnerships from XLSX"
-  task partnerships_xlsx: :environment do
-    file_path = ENV["XLSX"] ||
-      Rails.root.join("lib/data/provider_seed_report_v_3.0_without_pii.xlsx").to_s
+  desc "Import partnerships from CSV or XLSX"
+  task partnerships: :environment do
+    file_path = ENV["FILE"] ||
+      Rails.root.join("lib/data/provider-partnerships.csv").to_s
 
-    import_xlsx(
+    import_file(
       file_path: file_path,
-      sheet_name: "partnerships-export-2024 onward",
-      importer_class: PartnershipXlsxRowImporter
+      importer_class: DataImporter::PartnershipService
     )
   end
 end

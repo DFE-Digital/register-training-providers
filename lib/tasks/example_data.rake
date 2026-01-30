@@ -16,8 +16,8 @@ namespace :example_data do
     end
 
     ["generate:academic_cycles",
-     "import:providers_xlsx",
-     "import:partnerships_xlsx",
+     "import:providers",
+     "import:partnerships",
      "generate:contacts",].each do |task|
       Rake::Task[task].reenable
       Rake::Task[task].invoke
