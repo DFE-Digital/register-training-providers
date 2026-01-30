@@ -83,3 +83,4 @@ Layout/LineLength:
     - "spec/**/*.rb"
     - "app/views/**/*.erb"
     - "app/components/**/*.erb"
+    - "config/initializers/dfe_analytics.rb"
