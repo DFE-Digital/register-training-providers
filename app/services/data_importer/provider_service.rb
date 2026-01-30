@@ -1,4 +1,4 @@
-module XlsxRowImporter
+module DataImporter
   class ProviderService
     include ServicePattern
 
