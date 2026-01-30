@@ -11,7 +11,6 @@ namespace :import do
 
     import_file(
       file_path: file_path,
-      sheet_name: "providers",
       importer_class: DataImporter::ProviderService
     )
   end
@@ -23,7 +22,6 @@ namespace :import do
 
     import_file(
       file_path: file_path,
-      sheet_name: "provider-partnerships",
       importer_class: DataImporter::PartnershipService
     )
   end

@@ -72,7 +72,7 @@ RSpec.describe DataImporter::PartnershipService do
 
       let(:second_row) do
         row.merge(
-          "partnerships__provider_id_lookup_by_code" => "2CG"
+          "partnership__training_partner_provider_code" => "2CG"
         )
       end
 
@@ -96,7 +96,7 @@ RSpec.describe DataImporter::PartnershipService do
 
       let(:second_row) do
         row.merge(
-          "partnerships__accredited_provider_id_lookup_by_code" => "3AB"
+          "partnership__accredited_provider_provider_code" => "3AB"
         )
       end
 
