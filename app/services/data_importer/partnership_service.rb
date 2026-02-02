@@ -77,8 +77,8 @@ module DataImporter
     end
 
     def duration_range
-      start_date = parse_date(value("partnership__duration_start"))
-      end_date   = parse_date(value("partnership__duration_end"))
+      start_date = parse_date(value("partnership__start_date"))
+      end_date   = parse_date(value("partnership__end_date"))
 
       start_date..end_date
     end
@@ -112,8 +112,8 @@ module DataImporter
         accredited_provider_code: value("partnership__accredited_provider_provider_code"),
         provider_code: value("partnership__training_partner_provider_code"),
         duration: {
-          start: value("partnership__duration_start"),
-          end: value("partnership__duration_end")
+          start: value("partnership__start_date"),
+          end: value("partnership__end_date")
         },
         academic_years: academic_years
       }
