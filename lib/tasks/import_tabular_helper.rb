@@ -34,7 +34,7 @@ private
       end
     rescue StandardError => e
       invalid_count += 1
-      Rails.logger.error("Failed row: #{row_hash.inspect}")
+      Rails.logger.error("Failed row: #{row.inspect}")
       Rails.logger.error(e.message)
     end
 
