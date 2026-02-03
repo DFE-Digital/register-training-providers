@@ -13,7 +13,8 @@ module PartnershipHelper
         card[:actions] = [
           { text: "Change",
             href: provider_edit_partnership_dates_path(partnership, provider_id: provider.id) },
-          { text: "Delete", href: "#" },
+          { text: "Delete",
+            href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
         ]
       end
 

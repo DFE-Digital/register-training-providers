@@ -37,10 +37,10 @@ namespace :seed_data do
     minor = 0
 
     input_path =
-      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_2.#{minor}_without_pii.xlsx").to_s
+      ENV["XLSX"] || Rails.root.join("lib/data/provider_seed_report_v_3.#{minor}_without_pii.xlsx").to_s
 
     output_path =
-      Rails.root.join("lib/data/provider_seed_report_v_2.#{minor + 1}_without_pii.xlsx").to_s
+      Rails.root.join("lib/data/provider_seed_report_v_2.#{minor + 1}_with_pii.xlsx").to_s
 
     # --------------------------------------------------
     # Load input

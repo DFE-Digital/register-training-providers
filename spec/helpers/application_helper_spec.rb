@@ -134,4 +134,24 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+  describe "#user_last_signed_in_at" do
+    let(:user) { build_stubbed(:user, last_signed_in_at:) }
+
+    context "when the user has never signed in" do
+      let(:last_signed_in_at) { nil }
+
+      it "displays that the user has never signed in" do
+        expect(helper.user_last_signed_in_at(user)).to eq("User has never signed in")
+      end
+    end
+
+    context "when the user has signed in" do
+      let(:last_signed_in_at) { Time.zone.local(2026, 1, 1) }
+
+      it "displays the date and time the user last signed in" do
+        expect(helper.user_last_signed_in_at(user)).to eq("Last signed in at 1 January 2026 at 12am (midnight)")
+      end
+    end
+  end
 end

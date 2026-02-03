@@ -2,6 +2,12 @@ en:
   service:
     name: Register of training providers
     email: becomingateacher@digital.education.gov.uk
+    phase_banner:
+      development: Development
+      review: Review
+      staging: Staging
+      qa: QA
+      production: Beta
   sign_in:
     new:
       heading: Ask for an account to access the Register of training providers
@@ -153,8 +159,8 @@ en:
         deleted: "Accreditation deleted"
       check:
         user:
-          add: "Support user added"
-          update: "Support user updated"
+          add: "User added"
+          update: "User updated"
         provider:
           add: "Provider added"
           update: "Provider updated"
@@ -177,6 +183,7 @@ en:
         partnership:
           add: "Partnership added"
           update: "Partnership updated"
+          deleted: "Partnership deleted"
       address:
         add: "Address added"
         update: "Address updated"
@@ -185,6 +192,8 @@ en:
         add: "Contact added"
         update: "Contact updated"
         deleted: "Contact deleted"
+      partnership:
+        deleted: "Partnership deleted"
   forms:
     providers:
       is_the_provider_accredited:

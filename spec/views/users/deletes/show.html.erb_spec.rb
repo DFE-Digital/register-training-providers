@@ -10,8 +10,8 @@ RSpec.describe "users/deletes/show.html.erb", type: :view do
 
   it "calls page_data" do
     expect(view).to have_received(:page_data).with({
-      caption: "Delete support user",
-      title: "Confirm you want to delete support user",
+      caption: "Delete user",
+      title: "Confirm you want to delete user",
       header: "Confirm you want to delete #{user.name}"
     })
   end

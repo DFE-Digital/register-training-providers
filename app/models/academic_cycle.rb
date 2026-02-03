@@ -28,4 +28,9 @@ class AcademicCycle < ApplicationRecord
   def last?
     duration.include?(Time.zone.today - 1.year)
   end
+
+  def self.for_year(year)
+    start_date = Date.new(year, 8, 1)
+    where("duration @> ?::date", start_date).first
+  end
 end

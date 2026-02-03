@@ -7,7 +7,7 @@ class ErrorsController < ApplicationController
   end
 
   def unprocessable_entity
-    render "unprocessable_entity", status: :unprocessable_entity
+    render "unprocessable_entity", status: :unprocessable_content
   end
 
   def internal_server_error

@@ -2,8 +2,8 @@
   <%= govuk_back_link(text: "Back", href: user_path(@user)) %>
 <% end %>
 
-<% page_data(header: "Confirm you want to delete #{@user.name}", title: "Confirm you want to delete support user",
-             caption: "Delete support user") %>
+<% page_data(header: "Confirm you want to delete #{@user.name}", title: "Confirm you want to delete user",
+             caption: "Delete user") %>
 
 <%= govuk_warning_text(text: "Deleting a user is permanent – you cannot undo it.") %>
 

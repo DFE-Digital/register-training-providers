@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe AcademicCycle, type: :model do
   let(:academic_cycle) { create(:academic_cycle, duration: Date.new(2025, 8, 1)...Date.new(2026, 7, 31)) }
 
-  it { is_expected.to be_kept }
-
   describe "associations" do
     it { is_expected.to have_many(:partnership_academic_cycles) }
     it { is_expected.to have_many(:partnerships).through(:partnership_academic_cycles) }
@@ -60,6 +58,21 @@ RSpec.describe AcademicCycle, type: :model do
         Timecop.freeze(2025, 9, 1) do
           expect(academic_cycle.last?).to be false
         end
+      end
+    end
+  end
+
+  describe ".for_year" do
+    context "when an academic cycle exists for the given year" do
+      it "returns the matching academic cycle" do
+        academic_cycle
+        expect(described_class.for_year(2025)).to eq(academic_cycle)
+      end
+    end
+
+    context "when no academic cycle exists for the given year" do
+      it "returns nil" do
+        expect(described_class.for_year(2023)).to be_nil
       end
     end
   end

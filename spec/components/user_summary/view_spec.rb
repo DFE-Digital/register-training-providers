@@ -12,8 +12,8 @@ RSpec.describe UserSummary::View, type: :component do
       ]
     end
 
-    describe "view support user" do
-      subject { render_preview(:view_support_user) }
+    describe "View user" do
+      subject { render_preview(:view_user) }
 
       it "renders heading" do
         expect(subject).to have_heading("h1", user.name)
@@ -35,6 +35,10 @@ RSpec.describe UserSummary::View, type: :component do
 
       it "renders delete link" do
         expect(subject).to have_link("Delete user", href: "#delete")
+      end
+
+      it "renders last signed in information" do
+        expect(subject).to have_css("p.govuk-hint", text: "User has never signed in")
       end
     end
 
@@ -61,6 +65,10 @@ RSpec.describe UserSummary::View, type: :component do
 
       it "does not renders delete link" do
         expect(subject).not_to have_link("Delete user", href: "#delete")
+      end
+
+      it "renders last signed in information" do
+        expect(subject).to have_css("p.govuk-hint", text: "User has never signed in")
       end
     end
   end

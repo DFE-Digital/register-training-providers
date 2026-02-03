@@ -39,20 +39,22 @@
           current_path: request.path,
           navigation_items: [
             { text: "Providers", href: providers_path, active_when: providers_path },
-            { text: "Support users", href: users_path, active_when: users_path },
+            { text: "Users", href: users_path, active_when: users_path },
             { text: "Activity log", href: activity_path, active_when: activity_path },
           ]
         ) if @current_user.present? %>
 
-    <div class="govuk-width-container">
-      <%= govuk_phase_banner(
-            tag: { text: "Beta" },
-            text: safe_join([
-              "This is a new service – your ",
-              govuk_link_to("feedback", "mailto:becomingateacher@digital.education.gov.uk"),
-              " will help us to improve it."
-            ]),
-          ) %>
+    <div class="app-phase-banner app-phase-banner__env--<%= Rails.env %>">
+      <div class="govuk-width-container">
+        <%= govuk_phase_banner(
+              tag: { text: t("service.phase_banner.#{Rails.env}") },
+              text: safe_join([
+                "This is a new service – your ",
+                govuk_link_to("feedback", "mailto:becomingateacher@digital.education.gov.uk"),
+                " will help us to improve it."
+              ]),
+            ) %>
+      </div>
     </div>
 
     <div class="govuk-width-container">

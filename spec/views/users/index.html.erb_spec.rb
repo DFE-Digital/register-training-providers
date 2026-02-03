@@ -18,7 +18,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   end
 
   it "calls page_data with govuk_number count" do
-    expect(view).to have_received(:page_data).with(title: "Support users (2)")
+    expect(view).to have_received(:page_data).with(title: "Users (2)")
   end
 
   it "renders the add user button" do
@@ -44,7 +44,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   context "when pagy count is over 25" do
     let(:count) { 1_000_000 }
     it "calls page_data with govuk_number count" do
-      expect(view).to have_received(:page_data).with(title: "Support users (1,000,000)")
+      expect(view).to have_received(:page_data).with(title: "Users (1,000,000)")
     end
     it "does renders the pagination component" do
       expect(rendered).to have_pagination

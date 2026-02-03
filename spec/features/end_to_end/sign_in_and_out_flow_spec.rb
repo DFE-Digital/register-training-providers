@@ -10,8 +10,8 @@ RSpec.feature "Sign in and_out flow" do
     and_i_sign_in_via_dfe_sign_in
 
     and_i_am_redirect_to_provider_page
-    and_i_click_on("Support users")
-    and_i_go_to_the_support_users_page
+    and_i_click_on("Users")
+    and_i_go_to_the_users_page
     and_i_click_on("Register of training providers")
     and_i_am_taken_to("/providers")
 
@@ -29,7 +29,7 @@ RSpec.feature "Sign in and_out flow" do
     and_i_visit_the_sign_in_page
   end
 
-  def and_i_go_to_the_support_users_page
+  def and_i_go_to_the_users_page
     expect(page).to have_current_path("/users")
   end
 
