@@ -10,6 +10,7 @@ namespace :import do
                    [ENV["FILE"]]
                  else
                    [
+                     "lib/data/accredited_providers_swapped.csv",
                      "lib/data/accredited_providers_amended_accreditation_start_date.csv",
                      "lib/data/accredited_providers_amended_legal_name.csv",
                      "lib/data/accredited_providers_unmatched_unaccredited_providers.csv",
