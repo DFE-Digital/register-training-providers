@@ -23,7 +23,6 @@ This project uses `asdf`, refer to [.tool-versions](.tool-versions) for the actu
 brew install asdf # Mac-specific
 asdf plugin add ruby
 asdf plugin add nodejs
-asdf plugin add yarn
 asdf plugin add postgres
 
 # To install (or update, following a change to .tool-versions)
