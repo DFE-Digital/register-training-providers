@@ -6,17 +6,18 @@ namespace :import do
 
   desc "Import providers from CSV or XLSX"
   task providers: :environment do
-    file_paths = if ENV["FILE"].present?
-                   [ENV["FILE"]]
+    file_paths = if ENV["DATASET"].present? && ENV["DATASET"] == "pre-2024"
+                   ["lib/data/pre-2024/unaccredited_providers_filtered_unmatched_accredited_providers.csv",
+                    "lib/data/pre-2024/unaccredited_providers_filtered.csv"]
                  else
                    [
-                     "lib/data/accredited_providers_swapped.csv",
-                     "lib/data/accredited_providers_amended_accreditation_start_date.csv",
-                     "lib/data/accredited_providers_amended_legal_name.csv",
-                     "lib/data/accredited_providers_unmatched_unaccredited_providers.csv",
-                     "lib/data/accredited_providers.csv",
-                     "lib/data/unaccredited_providers_unmatched_accredited_providers.csv",
-                     "lib/data/unaccredited_providers.csv",
+                     "lib/data/2024/accredited_providers_amended_accreditation_start_date.csv",
+                     "lib/data/2024/accredited_providers_amended_legal_name.csv",
+                     "lib/data/2024/accredited_providers_swapped.csv",
+                     "lib/data/2024/accredited_providers_unmatched_unaccredited_providers.csv",
+                     "lib/data/2024/accredited_providers.csv",
+                     "lib/data/2024/unaccredited_providers_filtered_unmatched_accredited_providers.csv",
+                     "lib/data/2024/unaccredited_providers_filtered.csv",
                    ]
                  end
     file_paths.each do |path|
@@ -30,11 +31,14 @@ namespace :import do
 
   desc "Import partnerships from CSV or XLSX"
   task partnerships: :environment do
-    file_path = ENV["FILE"] ||
-      Rails.root.join("lib/data/provider-partnerships.csv").to_s
+    file_path = if ENV["DATASET"].present? && ENV["DATASET"] == "pre-2024"
+                  "lib/data/pre-2024/provider-partnerships_filtered.csv"
+                else
+                  "lib/data/2024/provider-partnerships_filtered.csv"
+                end
 
     import_file(
-      file_path: file_path,
+      file_path: Rails.root.join(file_path).to_s,
       importer_class: DataImporter::PartnershipService
     )
   end
