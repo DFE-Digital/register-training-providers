@@ -86,7 +86,6 @@ module DataImporter
     def academic_years
       v = value("partnership__academic_years_active")
 
-      return [] if v.blank?
 
       return [] if v.blank?
       return [v] if v.is_a?(Integer)
