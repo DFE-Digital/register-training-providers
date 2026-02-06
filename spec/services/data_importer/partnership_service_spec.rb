@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PartnershipXlsxRowImporter do
+RSpec.describe DataImporter::PartnershipService do
   subject(:call_importer) { described_class.call(row) }
 
   let!(:accredited_provider) { create(:provider, code: "1CS") }
@@ -8,11 +8,11 @@ RSpec.describe PartnershipXlsxRowImporter do
 
   let(:row) do
     {
-      "partnerships__accredited_provider_id_lookup_by_code" => "1CS",
-      "partnerships__provider_id_lookup_by_code" => "2CJ",
-      "partnerships__duration_start" => Date.new(2024, 8, 1),
-      "partnerships__duration_end" => nil,
-      "academic_cycles__academic_years_active" => "[2024, 2025, 2026]"
+      "partnership__accredited_provider_provider_code" => "1CS",
+      "partnership__training_partner_provider_code" => "2CJ",
+      "partnership__start_date" => Date.new(2024, 8, 1),
+      "partnership__end_date" => nil,
+      "partnership__academic_years_active" => "2024, 2025, 2026"
     }
   end
 
@@ -72,7 +72,7 @@ RSpec.describe PartnershipXlsxRowImporter do
 
       let(:second_row) do
         row.merge(
-          "partnerships__provider_id_lookup_by_code" => "2CG"
+          "partnership__training_partner_provider_code" => "2CG"
         )
       end
 
@@ -96,7 +96,7 @@ RSpec.describe PartnershipXlsxRowImporter do
 
       let(:second_row) do
         row.merge(
-          "partnerships__accredited_provider_id_lookup_by_code" => "3AB"
+          "partnership__accredited_provider_provider_code" => "3AB"
         )
       end
 
