@@ -1,0 +1,11 @@
+---
+:shared:
+  :contacts:
+    - first_name
+    - last_name
+    - email
+    - telephone_number
+  :users:
+    - first_name
+    - last_name
+    - email
