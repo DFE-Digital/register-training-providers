@@ -57,7 +57,13 @@ DfE::Analytics.configure do |config|
   # enable analytics. You might want to hook this up to a feature flag or
   # environment variable.
   #
-  # config.enable_analytics = proc { true }
+  config.enable_analytics = proc {
+    if ENV.fetch("RAILS_ENV", "development") == "development"
+      false
+    else
+      ENV.fetch("ENABLE_ANALYTICS", "true") == "true"
+    end
+  }
 
   # The environment we’re running in. This value will be attached
   # to all events we send to BigQuery.
@@ -72,7 +78,7 @@ DfE::Analytics.configure do |config|
 
   # Whether to run entity table checksum job.
   #
-  # config.entity_table_checks_enabled = false
+  config.entity_table_checks_enabled = ENV.fetch("ENTITY_TABLE_CHECKS_ENABLED", "true") == "true"
 
   # A proc which will be called with the rack env, and which should
   # return a boolean indicating whether the page is cached and will
@@ -89,7 +95,7 @@ DfE::Analytics.configure do |config|
   # instead of the BigQuery API JSON Key. Note that this also will also
   # use a new version of the BigQuery streaming APIs.
   #
-  # config.azure_federated_auth = false
+  config.azure_federated_auth = true
 
   # Client Id of the app in azure
   #
