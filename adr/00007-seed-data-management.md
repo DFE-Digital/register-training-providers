@@ -22,14 +22,14 @@ All datasets are free from any personally identifiable information (PII). The pr
 
 ## Decision
 
-- **Maintain Environmental Independence**: Each environment (**Production**, **Staging**, and **QA**) will remain entirely independent, with no shared data mechanisms required.
+- **Maintain environmental independence**: Each environment (**Production**, **Staging**, and **QA**) will remain entirely independent, with no shared data mechanisms required.
 
-- **Ad Hoc Data Seeding Process**: An ad hoc process will be developed to generate exact copies of the production data for the forthcoming academic year ie **2025** dataset, ensuring all copies are free from PII.
+- **Ad hoc data seeding process**: An ad hoc process will be developed to generate exact copies of the production data for the forthcoming academic year ie **2025** dataset, ensuring all copies are free from PII.
 
 ## Consequences
 
-- **Single Source of Truth Time Drift**: Production will act as the definitive source for all records, thus ensuring data integrity across services. Each environment will represent a version of this truth at a specific point in time.
+- **Single source of truth time drift**: Production will act as the definitive source for all records, thus ensuring data integrity across services. Each environment will represent a version of this truth at a specific point in time.
 
-- **Custom Seeding Process**: A tailored ad hoc approach is necessary for creating exact copies of the production data. This approach provides flexibility while adhering to privacy standards.
+- **Custom seeding process**: A tailored ad hoc approach is necessary for creating exact copies of the production data. This approach provides flexibility while adhering to privacy standards.
 
 This structured method of seed data management enhances security and functionality in development and testing environments, as other services
