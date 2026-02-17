@@ -13,7 +13,8 @@ Sentry.init do |config|
 
   config.send_default_pii = false
 
-  config.enable_logs = false
+  config.enable_logs = !(Rails.env.development? || Rails.env.review?)
+
   config.enabled_patches = [:logger]
 
   config.traces_sampler = lambda do |sampling_context|
