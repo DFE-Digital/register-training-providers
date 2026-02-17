@@ -83,3 +83,10 @@ Layout/LineLength:
     - "spec/**/*.rb"
     - "app/views/**/*.erb"
     - "app/components/**/*.erb"
+
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - production
+    - review
