@@ -1,0 +1,100 @@
+---
+:shared:
+  :providers:
+    - id
+    - academic_years_active
+    - accreditation_status
+    - archived_at
+    - code
+    - created_at
+    - discarded_at
+    - legal_name
+    - operating_name
+    - provider_type
+    - seed_data_notes
+    - seed_data_with_issues
+    - ukprn
+    - updated_at
+    - urn
+  :users:
+    - id
+    - created_at
+    - dfe_sign_in_uid
+    - discarded_at
+    - email
+    - first_name
+    - last_name
+    - last_signed_in_at
+    - system_admin
+    - updated_at
+  :partnership_academic_cycles:
+    - id
+    - academic_cycle_id
+    - created_at
+    - discarded_at
+    - partnership_id
+    - updated_at
+  :partnerships:
+    - id
+    - accredited_provider_id
+    - created_at
+    - discarded_at
+    - duration
+    - provider_id
+    - updated_at
+  :contacts:
+    - id
+    - created_at
+    - discarded_at
+    - email
+    - first_name
+    - last_name
+    - provider_id
+    - telephone_number
+    - updated_at
+  :authentication_tokens:
+    - id
+    - api_client_id
+    - created_at
+    - created_by_id
+    - expires_at
+    - last_used_at
+    - revoked_at
+    - revoked_by_id
+    - status
+    - updated_at
+  :api_clients:
+    - id
+    - created_at
+    - discarded_at
+    - name
+    - updated_at
+  :addresses:
+    - id
+    - address_line_1
+    - address_line_2
+    - address_line_3
+    - county
+    - created_at
+    - discarded_at
+    - latitude
+    - longitude
+    - postcode
+    - provider_id
+    - town_or_city
+    - updated_at
+    - uprn
+  :accreditations:
+    - id
+    - created_at
+    - discarded_at
+    - end_date
+    - number
+    - provider_id
+    - start_date
+    - updated_at
+  :academic_cycles:
+    - id
+    - created_at
+    - duration
+    - updated_at

@@ -1,0 +1,163 @@
+---
+:shared:
+  :sessions:
+    - id
+    - created_at
+    - data
+    - session_id
+    - updated_at
+  :audits:
+    - id
+    - action
+    - associated_id
+    - associated_type
+    - auditable_id
+    - auditable_type
+    - audited_changes
+    - comment
+    - created_at
+    - remote_address
+    - request_uuid
+    - user_id
+    - user_type
+    - username
+    - version
+  :solid_queue_semaphores:
+    - id
+    - created_at
+    - expires_at
+    - key
+    - updated_at
+    - value
+  :solid_queue_recurring_tasks:
+    - id
+    - arguments
+    - class_name
+    - command
+    - created_at
+    - description
+    - key
+    - priority
+    - queue_name
+    - schedule
+    - static
+    - updated_at
+  :solid_queue_processes:
+    - id
+    - created_at
+    - hostname
+    - kind
+    - last_heartbeat_at
+    - metadata
+    - name
+    - pid
+    - supervisor_id
+  :solid_queue_pauses:
+    - id
+    - created_at
+    - queue_name
+  :solid_queue_jobs:
+    - id
+    - active_job_id
+    - arguments
+    - class_name
+    - concurrency_key
+    - created_at
+    - finished_at
+    - priority
+    - queue_name
+    - scheduled_at
+    - updated_at
+  :solid_queue_scheduled_executions:
+    - id
+    - created_at
+    - job_id
+    - priority
+    - queue_name
+    - scheduled_at
+  :solid_queue_recurring_executions:
+    - id
+    - created_at
+    - job_id
+    - run_at
+    - task_key
+  :solid_queue_ready_executions:
+    - id
+    - created_at
+    - job_id
+    - priority
+    - queue_name
+  :solid_queue_failed_executions:
+    - id
+    - created_at
+    - error
+    - job_id
+  :solid_queue_claimed_executions:
+    - id
+    - created_at
+    - job_id
+    - process_id
+  :solid_queue_blocked_executions:
+    - id
+    - concurrency_key
+    - created_at
+    - expires_at
+    - job_id
+    - priority
+    - queue_name
+  :blazer_queries:
+    - id
+    - created_at
+    - creator_id
+    - data_source
+    - description
+    - name
+    - statement
+    - status
+    - updated_at
+  :blazer_dashboard_queries:
+    - id
+    - created_at
+    - dashboard_id
+    - position
+    - query_id
+    - updated_at
+  :blazer_dashboards:
+    - id
+    - created_at
+    - creator_id
+    - name
+    - updated_at
+  :blazer_checks:
+    - id
+    - check_type
+    - created_at
+    - creator_id
+    - emails
+    - last_run_at
+    - message
+    - query_id
+    - schedule
+    - slack_channels
+    - state
+    - updated_at
+  :blazer_audits:
+    - id
+    - created_at
+    - data_source
+    - query_id
+    - statement
+    - user_id
+  :temporary_records:
+    - id
+    - created_at
+    - created_by
+    - data
+    - expires_at
+    - purpose
+    - record_type
+    - updated_at
+  :authentication_tokens:
+    - token_hash
+  :providers:
+    - searchable
