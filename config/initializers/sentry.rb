@@ -13,7 +13,9 @@ Sentry.init do |config|
 
   config.send_default_pii = false
 
-  config.enable_logs = !(Rails.env.development? || Rails.env.review?)
+  logging_envs = %w[production qa staging].freeze
+
+  config.enable_logs = logging_envs.include?(Rails.env)
 
   config.enabled_patches = [:logger]
 

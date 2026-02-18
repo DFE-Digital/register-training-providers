@@ -90,3 +90,5 @@ Rails/UnknownEnv:
     - test
     - production
     - review
+    - qa
+    - staging
