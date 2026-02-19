@@ -13,10 +13,7 @@ Sentry.init do |config|
 
   config.send_default_pii = false
 
-  logging_envs = %w[production qa staging].freeze
-
-  config.enable_logs = logging_envs.include?(Rails.env)
-
+  config.enable_logs = false
   config.enabled_patches = [:logger]
 
   config.traces_sampler = lambda do |sampling_context|
