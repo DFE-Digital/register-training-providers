@@ -1,6 +1,8 @@
 name: Dependabot Auto-Merge
 
-on: pull_request
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, dequeued]
 
 permissions:
   contents: write
@@ -19,7 +21,9 @@ jobs:
   auto-approve-and-merge:
     name: Auto-approve and merge Dependabot PRs
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: >
+      github.event.action != 'dequeued' &&
+      github.actor == 'dependabot[bot]'
 
     steps:
       - name: Fetch Dependabot metadata
@@ -50,6 +54,23 @@ jobs:
           (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor')
         run: |
           gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  retry-after-dequeue:
+    name: Retry auto-merge after dequeue
+    runs-on: ubuntu-latest
+    if: >
+      github.event.action == 'dequeued' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.state == 'open'
+
+    steps:
+      - name: Re-enable auto-merge
+        run: |
+          echo "PR was removed from merge queue, re-enabling auto-merge"
           gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
