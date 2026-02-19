@@ -13,6 +13,8 @@ require "capybara-screenshot/rspec"
 require "pundit/rspec"
 require "webmock/rspec"
 
+require_relative "support/faker_extensions"
+
 Rails.root.glob("spec/support/**/*.rb").each { |f| require f }
 
 # Add additional requires below this line. Rails is not loaded until this point!
