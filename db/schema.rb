@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_16_145309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -117,7 +117,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
   create_table "blazer_checks", force: :cascade do |t|
     t.string "check_type"
     t.datetime "created_at", null: false
-    t.bigint "creator_id"
+    t.uuid "creator_id"
     t.text "emails"
     t.datetime "last_run_at"
     t.text "message"
@@ -142,7 +142,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
 
   create_table "blazer_dashboards", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "creator_id"
+    t.uuid "creator_id"
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_dashboards_on_creator_id"
@@ -150,7 +150,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_092221) do
 
   create_table "blazer_queries", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "creator_id"
+    t.uuid "creator_id"
     t.string "data_source"
     t.text "description"
     t.string "name"
