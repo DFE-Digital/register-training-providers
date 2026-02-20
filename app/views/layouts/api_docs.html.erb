@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template govuk-template--rebranded">
+  <head>
+    <title><%= [yield(:page_title).presence, yield(:page_subtitle).presence, t("service.name"), "GOV.UK"].compact.join(" - ") %></title>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= tag.meta(name: "viewport", content: "width=device-width, initial-scale=1") %>
+    <%= tag.meta(property: "og:image", content: asset_path("rebrand/images/govuk-opengraph-image.png")) %>
+    <%= tag.meta(name: "theme-color", content: "#0b0c0c") %>
+    <%= favicon_link_tag asset_path("rebrand/images/favicon.ico") %>
+    <%= favicon_link_tag asset_path("rebrand/images/govuk-icon-mask.svg"), rel: "mask-icon", type: "image/svg", color: "#0b1c0c" %>
+    <%= favicon_link_tag asset_path("rebrand/images/govuk-icon-180.png"), rel: "apple-touch-icon", type: "image/png", size: "180x180" %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= sentry_trace_meta %>
+  </head>
+
+  <body class="govuk-template__body">
+    <script>
+      document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
+
+    <%= govuk_skip_link %>
+
+    <%= govuk_header(full_width_border: true, homepage_url: root_path, navigation_classes: "govuk-header__navigation--end") %>
+
+    <%= govuk_service_navigation(
+          current_path: request.path,
+          navigation_items: []
+        ) %>
+
+    <div class="govuk-width-container">
+      <%= govuk_phase_banner(
+            tag: { text: "Beta" },
+            text: safe_join([
+              "This is a new service – your ",
+              govuk_link_to("feedback", "mailto:becomingateacher@digital.education.gov.uk"),
+              " will help us to improve it."
+            ]),
+          ) %>
+    </div>
+
+    <div class="govuk-width-container">
+      <%= yield :breadcrumbs %>
+      <main class="govuk-main-wrapper" id="main-content" role="main">
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+              <%= yield(:page_header) %>
+            </div>
+          </div>
+
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-<%= content_for(:column_width) || "two-thirds" %>">
+              <%= yield %>
+            </div>
+          </div>
+      </main>
+    </div>
+
+    <%= govuk_footer_component %>
+  </body>
+</html>

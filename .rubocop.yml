@@ -64,6 +64,10 @@ Rails/CreateTableWithTimestamps:
   Exclude:
     - db/migrate/20250512104418_install_audited.rb
 
+Rails/ApplicationController:
+  Exclude:
+    - app/controllers/api_docs/base_controller.rb
+
 Layout/IndentationWidth:
   Enabled: true
   Width: 2

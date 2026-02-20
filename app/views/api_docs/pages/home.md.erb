@@ -1,0 +1,36 @@
+---
+title: API documentation
+---
+
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_breadcrumbs(breadcrumbs: { "Home" => root_path }) %>
+<% end %>
+
+## API endpoints
+
+<ul class="govuk-list govuk-list--spaced">
+  <li>
+    GET /providers
+  </li>
+  <li>
+    GET /providers/{provider_id}
+  </li>
+  <li>
+    GET /providers/{provider_id}/accreditations
+  </li>
+  <li>
+    GET /providers/{provider_id}/addresses
+  </li>
+  <li>
+    GET /providers/{provider_id}/contacts
+  </li>
+  <li>
+    GET /providers/{provider_id}/partnerships
+  </li>
+</ul>
+
+## Get help
+
+If you have any questions or suggestions contact us at <a href="mailto:becomingateacher@digital.education.gov.uk" class="govuk-link">becomingateacher@digital.education.gov.uk</a>.
+
+We will get back to you within five working days.
