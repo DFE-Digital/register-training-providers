@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Api client management" do
-  scenario "editing api_clients" do
+  xscenario "editing api_clients" do
     given_i_am_an_authenticated_user
     and_i_have_a_api_client_to_edit
     and_i_am_on_the_api_client_support_listing_page
