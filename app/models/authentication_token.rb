@@ -34,7 +34,7 @@ class AuthenticationToken < ApplicationRecord
 
   validates :token_hash, presence: true, uniqueness: true
   validates :expires_at, presence: true
-  validate :expires_at_not_too_far_in_future
+  validate :expires_at_not_too_far_in_future, on: :create
 
   SECRET_KEY = Rails.application.key_generator.generate_key("api-token:v1", 32)
 
