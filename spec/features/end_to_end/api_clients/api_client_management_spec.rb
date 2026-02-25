@@ -19,7 +19,7 @@ RSpec.feature "Api Client management" do
   end
 
   def api_clients
-    @api_clients ||= create_list(:api_client, 24)
+    @api_clients ||= create_list(:api_client, 25)
   end
 
   def and_i_sign_in_via_dfe_sign_in
@@ -27,7 +27,7 @@ RSpec.feature "Api Client management" do
   end
 
   def then_i_can_see_the_page_title_api_clients_with_the_count
-    expect(page).to have_title("Api Clients (25) - Register of training providers - GOV.UK")
+    expect(page).to have_title("API Clients (25) - Register of training providers - GOV.UK")
   end
 
   def and_a_table_of_api_clients

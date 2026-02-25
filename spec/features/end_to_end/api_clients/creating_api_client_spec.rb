@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "api_client management" do
   scenario "creating api_clients" do
-    given_i_am_an_authenticated_api_client
+    given_i_am_an_authenticated_user
     and_i_am_on_the_api_client_support_listing_page
     and_i_can_see_the_page_title_api_clients_with_the_count
     and_i_click_on("Add api client")
@@ -26,7 +26,7 @@ RSpec.feature "api_client management" do
   end
 
   def and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
-    expect(page).to have_title("Api Clients (#{count}) - Register of training providers - GOV.UK")
+    expect(page).to have_title("API Clients (#{count}) - Register of training providers - GOV.UK")
   end
 
   def and_i_am_on_the_api_client_support_listing_page

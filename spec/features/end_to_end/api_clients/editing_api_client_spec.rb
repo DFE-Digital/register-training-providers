@@ -79,7 +79,7 @@ RSpec.feature "Api client management" do
   end
 
   def and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
-    expect(page).to have_title("Api clients (#{count}) - Register of training providers - GOV.UK")
+    expect(page).to have_title("API clients (#{count}) - Register of training providers - GOV.UK")
   end
 
   def and_i_am_on_the_api_client_support_listing_page
