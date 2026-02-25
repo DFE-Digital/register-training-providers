@@ -26,7 +26,7 @@ RSpec.feature "api_client management" do
   end
 
   def and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
-    expect(page).to have_title("API Clients (#{count}) - Register of training providers - GOV.UK")
+    expect(page).to have_title("API clients (#{count}) - Register of training providers - GOV.UK")
   end
 
   def and_i_am_on_the_api_client_support_listing_page
@@ -65,7 +65,7 @@ RSpec.feature "api_client management" do
   end
 
   def and_i_fill_in_the_client_details_correctly
-    start_year = Date.current.year + 2
+    start_year = Date.current.year + 1
 
     page.fill_in "Client name", with: api_client.client_name
     within_fieldset("Accreditation start date") do

@@ -2,7 +2,7 @@
   <%= govuk_back_link(text: "Back", href: api_client_path(@api_client)) %>
 <% end %>
 
-<% page_data(header: "Confirm you want to delete #{@api_client.name}", title: "Confirm you want to delete user",
+<% page_data(header: "Confirm you want to delete #{@api_client.name}", title: "Confirm you want to delete API client",
              caption: "Delete API client") %>
 
 <%= govuk_warning_text(text: "Deleting an API client is permanent – you cannot undo it.") %>
