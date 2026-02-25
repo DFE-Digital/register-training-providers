@@ -16,7 +16,6 @@ class ApiClientsController < ApplicationController
   def new
     current_user.clear_temporary(ApiClientForm, purpose: :check_your_answers) if params[:goto] != "confirm"
     @form = current_user.load_temporary(ApiClientForm, purpose: :check_your_answers, reset: false)
-    # authorize @api_client
   end
 
   def edit
@@ -27,14 +26,8 @@ class ApiClientsController < ApplicationController
 
   def create
     @form = ApiClientForm.new(api_client_params)
-    # @api_client = ApiClient.new(converted_api_client_params)
-    # authorize @api_client
 
     if @form.valid?
-      # api_client = ApiClient.new(name: @form.to_api_client_attributes[:name]).save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
-
-      # AuthenticationToken.create_with_random_token(api_client:, created_by: current_user, expires_at: @form.to_api_client_attributes[:expires_at])
-
       @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to new_api_client_confirm_path
     else

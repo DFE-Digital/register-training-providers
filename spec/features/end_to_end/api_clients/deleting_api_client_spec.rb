@@ -38,12 +38,12 @@ RSpec.feature "api client management" do
     expect(page).to have_title("Api clients (#{count}) - Register of training providers - GOV.UK")
   end
 
-  def and_i_am_on_the_api client_support_listing_page
+  def and_i_am_on_the_api(_client_support_listing_page)
     visit "/api_clients"
   end
 
   def api_client_to_delete
-    @api_client_to_delete ||= create(:api client)
+    @api_client_to_delete ||= create(:api_client)
   end
 
   def and_i_can_see_the_warning_text
@@ -59,11 +59,11 @@ RSpec.feature "api client management" do
     expect(page).to have_title("Check your answers - Add api client - Register of training providers - GOV.UK")
   end
 
-  def and_i_can_see_the_page_title_for_confirm_you_want_to_delete_api client
+  def and_i_can_see_the_page_title_for_confirm_you_want_to_delete_api(_client)
     expect(page).to have_title("Confirm you want to delete api client - Register of training providers - GOV.UK")
   end
 
-  def and_i_can_see_the_page_title_for_view_api client
+  def and_i_can_see_the_page_title_for_view_api(_client)
     expect(page).to have_title("View api client - Register of training providers - GOV.UK")
   end
 end
