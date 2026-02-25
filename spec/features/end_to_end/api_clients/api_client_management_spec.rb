@@ -19,7 +19,7 @@ RSpec.feature "Api Client management" do
   end
 
   def api_clients
-    @api_clients ||= create_list(:api_client, 25)
+    @api_clients ||= create_list(:api_client, 25, :with_authentication_token)
   end
 
   def and_i_sign_in_via_dfe_sign_in

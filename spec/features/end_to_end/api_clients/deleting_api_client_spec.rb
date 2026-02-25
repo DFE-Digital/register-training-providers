@@ -43,7 +43,7 @@ RSpec.feature "api client management" do
   end
 
   def api_client_to_delete
-    @api_client_to_delete ||= create(:api_client)
+    @api_client_to_delete ||= create(:api_client, :with_authentication_token)
   end
 
   def and_i_can_see_the_warning_text

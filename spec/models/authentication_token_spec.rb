@@ -26,48 +26,52 @@ RSpec.describe AuthenticationToken, type: :model do
     it { is_expected.to validate_uniqueness_of(:token_hash) }
     it { is_expected.to validate_presence_of(:expires_at) }
 
-    it "rejects expires_at > 6 months from now" do
-      too_far = 7.months.from_now.to_date
+    it "rejects expires_at > 12 months from now" do
+      too_far = 13.months.from_now.to_date
       token = build(:authentication_token, expires_at: too_far)
       expect(token).not_to be_valid
-      expect(token.errors[:expires_at]).to include("cannot be more than 6 months in the future")
+      expect(token.errors[:expires_at]).to include("must be between #{Time.current.to_date.to_fs(:govuk)} and #{1.year.from_now.to_date.to_fs(:govuk)}")
     end
 
-    it "accepts expires_at <= 6 months" do
-      valid_date = 3.months.from_now.to_date
+    it "accepts expires_at <= 1 year" do
+      valid_date = 11.months.from_now.to_date
       token = build(:authentication_token, expires_at: valid_date)
       expect(token).to be_valid
     end
   end
 
   describe "scopes" do
-    let(:date) { Time.current.to_date }
-    let(:yesterday) { 1.day.ago }
+    let(:date) { 1.day.from_now }
+    let(:yesterday) { Time.current.to_date }
 
     describe "::will_expire" do
       let!(:active_token) { create(:authentication_token) }
       let!(:active_token_will_expire_today) { create(:authentication_token, expires_at: date) }
       let!(:active_token_should_have_expired_yesterday) { create(:authentication_token, expires_at: yesterday) }
       let!(:active_token_will_expire_in_the_future) { create(:authentication_token, :will_expire) }
-      let!(:expired_token) { create(:authentication_token, :expired) }
+      let!(:expired_token) { create(:authentication_token, :expired, expires_at: yesterday) }
       let!(:revoked_token) { create(:authentication_token, :will_expire, :revoked) }
 
       context "when date is present" do
-        it "returns only the active tokens which will expire at the provided date" do
-          expect(described_class.will_expire(date)).to contain_exactly(
-            active_token_will_expire_today, active_token_should_have_expired_yesterday
-          )
+        Timecop.travel(1.day.from_now) do
+          it "returns only the active tokens which will expire at the provided date" do
+            expect(described_class.will_expire(date)).to contain_exactly(
+              active_token_will_expire_today, active_token_should_have_expired_yesterday
+            )
+          end
         end
       end
 
       context "when date is not present" do
-        it "returns all the active tokens with an expired_at date" do
-          expect(described_class.will_expire).to contain_exactly(
-            active_token,
-            active_token_will_expire_today,
-            active_token_should_have_expired_yesterday,
-            active_token_will_expire_in_the_future,
-          )
+        Timecop.travel(1.day.from_now) do
+          it "returns all the active tokens with an expired_at date" do
+            expect(described_class.will_expire).to contain_exactly(
+              active_token,
+              active_token_will_expire_today,
+              active_token_should_have_expired_yesterday,
+              active_token_will_expire_in_the_future,
+            )
+          end
         end
       end
     end
@@ -80,10 +84,12 @@ RSpec.describe AuthenticationToken, type: :model do
       let!(:revoked_token) { create(:authentication_token, :revoked, expires_at: yesterday) }
 
       it "returns only active tokens due for expiry" do
-        expect(described_class.due_for_expiry).to contain_exactly(
-          active_token_due_yesterday,
-          active_token_due_today
-        )
+        Timecop.travel(1.day.from_now) do
+          expect(described_class.due_for_expiry).to contain_exactly(
+            active_token_due_yesterday,
+            active_token_due_today
+          )
+        end
       end
     end
   end

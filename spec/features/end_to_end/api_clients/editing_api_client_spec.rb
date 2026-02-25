@@ -5,7 +5,7 @@ RSpec.feature "Api client management" do
     given_i_am_an_authenticated_user
     and_i_have_a_api_client_to_edit
     and_i_am_on_the_api_client_support_listing_page
-    and_i_can_see_the_page_title_api_clients_with_the_count(count: 2)
+    and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
 
     and_i_click_on(api_client_to_edit.name)
     and_i_am_taken_to("/api_clients/#{api_client_to_edit.id}")
@@ -14,13 +14,13 @@ RSpec.feature "Api client management" do
     and_i_click_on("Change")
     and_i_am_taken_to("/api_clients/#{api_client_to_edit.id}/edit")
 
-    and_i_can_see_the_page_title_for_personal_details
+    and_i_can_see_the_page_title_for_client_details
     and_i_do_not_see_error_summary
     and_i_fill_in_the_name_incorrectly
 
     and_i_click_on("Continue")
     and_i_can_see_the_error_summary
-    and_i_can_see_the_page_title_for_personal_details_with_error
+    and_i_can_see_the_page_title_for_client_details_with_error
 
     and_i_fill_in_the_name
 
@@ -87,7 +87,7 @@ RSpec.feature "Api client management" do
   end
 
   def api_client_to_edit
-    @api_client_to_edit ||= create(:api_client, name: old_name)
+    @api_client_to_edit ||= create(:api_client, :with_authentication_token, name: old_name)
   end
 
   def old_api_client_to_edit_name
@@ -107,15 +107,15 @@ RSpec.feature "Api client management" do
   end
 
   def and_i_can_see_the_page_title_for_view_api_client
-    expect(page).to have_title("View api_client - Register of training providers - GOV.UK")
+    expect(page).to have_title("View API client - Register of training providers - GOV.UK")
   end
 
-  def and_i_can_see_the_page_title_for_personal_details
-    expect(page).to have_title("Change api_client - personal details - Register of training providers - GOV.UK")
+  def and_i_can_see_the_page_title_for_client_details
+    expect(page).to have_title("Change API client - client details - Register of training providers - GOV.UK")
   end
 
-  def and_i_can_see_the_page_title_for_personal_details_with_error
-    expect(page).to have_title("Error: Change api_client - personal details - Register of training providers - GOV.UK")
+  def and_i_can_see_the_page_title_for_client_details_with_error
+    expect(page).to have_title("Error: Change API client - Register of training providers - GOV.UK")
   end
 
   def and_i_do_not_see_error_summary
@@ -124,7 +124,7 @@ RSpec.feature "Api client management" do
 
   def and_i_can_see_the_error_summary
     expect(page).to have_error_summary(
-      "Enter Client name",
+      "Enter client name",
     )
   end
 end
