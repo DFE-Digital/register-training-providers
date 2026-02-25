@@ -22,18 +22,3 @@ $govuk-assets-path: "/";
 .govuk-summary-list__row--no-border {
   border: 0;
 }
-
-.govuk-tag__active {
-  color: #0b4144;
-  background-color: #d0e6e7;
-}
-
-.govuk-tag__expired {
-  color: #0b0c0c;
-  background-color: #cecece;
-}
-
-.govuk-tag__revoked {
-  color: #7a3c1c;
-  background-color: #fde4d7;
-}

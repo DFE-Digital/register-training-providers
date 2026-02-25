@@ -6,9 +6,12 @@
   <% end %>
 <% end %>
 
-<p class="govuk-body">
+<p class="govuk-hint govuk-!-font-size-16">Created by <%= api_client.current_authentication_token.created_by.name %> on <%= api_client.created_at.to_fs(:govuk_date_and_time) %></p>
+
+<div class="govuk-button-group">
+  <%= govuk_button_to("Revoke API client", "#") %>
   <%= govuk_link_to("Delete API client", delete_path) %>
-</p>
+</div>
 
 <% page_data(title:, caption:, header:) %>
 
