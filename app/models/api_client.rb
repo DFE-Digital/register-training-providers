@@ -15,6 +15,7 @@
 #
 class ApiClient < ApplicationRecord
   include Discard::Model
+  include SaveAsTemporary
 
   self.implicit_order_column = "created_at"
 
@@ -25,6 +26,12 @@ class ApiClient < ApplicationRecord
   before_discard do
     revoke_all_active_tokens!
   end
+
+  def current_authentication_token
+    authentication_tokens.first
+  end
+
+  delegate :expires_at, to: :current_authentication_token
 
   def revoke_all_active_tokens!
     authentication_tokens.active.find_each(&:revoke!)

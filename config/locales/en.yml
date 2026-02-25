@@ -71,6 +71,13 @@ en:
               invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
             start_date:
               blank: "Enter accreditation start date"
+        api_client:
+          attributes:
+            name:
+              blank: Enter client name
+            expires_at:
+              blank: Enter expiry date
+              out_of_range: "Expiry date must be between %{start} and %{end}"
         address:
           attributes:
             address_line_1:
@@ -177,6 +184,10 @@ en:
           add: "Address added"
           add_imported_data: "Address added for %{provider_operating_name}"
           update: "Address updated"
+        api_client:
+          update: "API client updated"
+        api_client_form:
+          add: "API client added"
         contact_form:
           add: "Contact added"
           update: "Contact updated"
@@ -207,6 +218,11 @@ en:
         label: "Accreditation start date"
       end_date:
         label: "Accreditation end date (optional)"
+    api_client:
+      name:
+        label: "Client name"
+      expires_at:
+        label: Expiry date
     contacts:
       first_name:
         label: First name

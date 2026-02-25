@@ -1,0 +1,15 @@
+<%= content_for(:breadcrumbs) do %>
+  <% if use_breadcrumbs? %>
+    <%= govuk_breadcrumbs(breadcrumbs: { "Home" => back_path }) %>
+  <% else %>
+    <%= govuk_back_link(text: "Back", href: back_path) %>
+  <% end %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Delete API client", delete_path) %>
+</p>
+
+<% page_data(title:, caption:, header:) %>
+
+<%= govuk_summary_list(rows:) %>

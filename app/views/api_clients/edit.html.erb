@@ -1,0 +1,22 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: params[:goto] == "confirm" ? api_client_check_path(@api_client) : api_client_path(id: @form.id),
+      ) %>
+<% end %>
+
+<%= form_for @form, url: api_client_path(id: @form.id), method: :patch do |form| %>
+  <% page_data(title: "Change API client", subtitle: "client details", header: false, error: @form.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+  <%= form.govuk_fieldset legend: { text: "Client details" }, caption: { text: @form.name } do %>
+    <%= render partial: "editable_fields", locals: { form: } %>
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Expiry date</p>
+    <p class="govuk-body"><%= @form.expires_at.to_fs(:govuk) %></p>
+    <%= form.govuk_submit %>
+  <% end %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", api_client_path(id: @form.id)) %>
+</p>

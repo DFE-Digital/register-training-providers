@@ -185,4 +185,10 @@ Rails.application.routes.draw do
     checkable(:users)
     resource :delete, only: [:show, :destroy], module: :users
   end
+
+  resources :api_clients do
+    checkable(:api_clients)
+    resource :delete, only: [:show, :destroy], module: :api_clients
+    resource :confirmation, only: [:show], module: :api_clients
+  end
 end
