@@ -114,10 +114,10 @@ paths:
                 - data
               example:
                 data:
-                - id: 1d4c72fb-5cdf-4c43-8419-dad3cdb1569b
-                  operating_name: Williamson-Haley
+                - id: 5cf9862d-d155-4768-aa7d-4ab3a5820fb5
+                  operating_name: Adams-Halvorson
                   provider_type: hei
-                  code: 8GK
+                  code: 32E
                   accreditation_status: accredited
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
