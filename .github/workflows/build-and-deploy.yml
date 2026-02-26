@@ -259,6 +259,8 @@ jobs:
           healthcheck: ${{ env.HEALTHCHECK_CMD }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
           db-seed: ${{ matrix.environment == 'qa' && 'true' || 'false'}}
+          gcp-wip: ${{ vars.GCP_WIP }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
   deploy_domains_infra:
     name: Deploy Domains Infrastructure
