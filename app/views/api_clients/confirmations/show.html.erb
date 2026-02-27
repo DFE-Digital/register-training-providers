@@ -1,0 +1,17 @@
+
+<div class="govuk-panel govuk-panel--confirmation">
+  <h1 class="govuk-panel__title">
+    API client token created
+  </h1>
+
+  <div class="govuk-panel__body">
+    <strong class="govuk-!-display-block"><%= @api_client.name %></strong>
+    <span class="govuk-!-font-size-19">Token:</span>
+    <span class="govuk-!-font-size-19 app-panel-token"><%= @api_client.current_authentication_token.token_hash %></span>
+  </div>
+</div>
+
+<p class="govuk-body">Copy this token now. For security, it cannot be viewed again.</p>
+<p class="govuk-body">
+  <a class="govuk-link" href="/api_clients">Back to API clients</a>
+</p>

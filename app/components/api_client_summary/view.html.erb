@@ -1,0 +1,18 @@
+<%= content_for(:breadcrumbs) do %>
+  <% if use_breadcrumbs? %>
+    <%= govuk_breadcrumbs(breadcrumbs: { "Home" => back_path }) %>
+  <% else %>
+    <%= govuk_back_link(text: "Back", href: back_path) %>
+  <% end %>
+<% end %>
+
+<p class="govuk-hint govuk-!-font-size-16">Created by <%= api_client.current_authentication_token.created_by.name %> on <%= api_client.created_at.to_fs(:govuk_date_and_time) %></p>
+
+<div class="govuk-button-group">
+  <%= govuk_link_to("Revoke API client", "#", class: "govuk-button") %>
+  <%= govuk_link_to("Delete API client", delete_path) %>
+</div>
+
+<% page_data(title:, caption:, header:) %>
+
+<%= govuk_summary_list(rows:) %>

@@ -1,0 +1,14 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: api_client_path(@api_client)) %>
+<% end %>
+
+<% page_data(header: "Confirm you want to delete #{@api_client.name}", title: "Confirm you want to delete API client",
+             caption: "Delete API client") %>
+
+<%= govuk_warning_text(text: "Deleting an API client is permanent – you cannot undo it.") %>
+
+<%= govuk_button_to("Delete API client", api_client_delete_path(@api_client), method: :delete, warning: true) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", api_client_path(@api_client)) %>
+</p>
