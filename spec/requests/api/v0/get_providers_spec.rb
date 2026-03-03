@@ -7,11 +7,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
 
   openapi = {
     summary: "Get many providers",
-    tags: ["providers"],
-    description: <<~DESC
-      This endpoint can be used to retrieve providers for a given academic year.
-      This is intended to make it possible to check for new or updated providers regularly.
-    DESC
+    tags: ["providers"]
   }
 
   context "response content" do

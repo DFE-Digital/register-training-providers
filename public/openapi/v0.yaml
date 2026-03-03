@@ -106,9 +106,7 @@ paths:
           The value must be an ISO 8601 datetime, for example: 2025-09-14T11:34:56Z.
       responses:
         '200':
-          description: |
-            This endpoint can be used to retrieve providers for a given academic year.
-            This is intended to make it possible to check for new or updated providers regularly.
+          description: returns an array of training providers
           content:
             application/json:
               schema:
