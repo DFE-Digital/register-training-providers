@@ -9,7 +9,7 @@ module ApiDocs
     end
 
     def self.specification(version = "v0")
-      YAML.load_file("public/openapi/#{version}.yaml", permitted_classes: [Time])
+      YAML.load_file("public/openapi/#{version}.yaml", permitted_classes: [Time]).with_indifferent_access
     end
 
     def self.endpoints
