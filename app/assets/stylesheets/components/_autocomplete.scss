@@ -54,7 +54,7 @@ body .suggestions {
   }
 
   .autocomplete__hint {
-    color: govuk-colour("mid-grey");
+    color: govuk-colour("black", $variant: "tint-80");
     position: absolute;
   }
 
@@ -98,7 +98,7 @@ body .suggestions {
   }
 
   .autocomplete__option {
-    border-bottom: solid govuk-colour("mid-grey");
+    border-bottom: solid govuk-colour("black", $variant: "tint-80");
     border-width: 1px 0;
     cursor: pointer;
     display: block;
