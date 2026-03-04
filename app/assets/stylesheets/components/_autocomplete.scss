@@ -118,7 +118,7 @@ body .suggestions {
   }
 
   .autocomplete__option--odd {
-    background-color: govuk-colour("light-grey");
+    background-color: govuk-colour("black", $variant: "tint-95");
   }
 
   .autocomplete__option--hint {
@@ -138,7 +138,7 @@ body .suggestions {
   }
 
   .autocomplete__option--no-results {
-    background-color: govuk-colour("light-grey");
+    background-color: govuk-colour("black", $variant: "tint-95");
     color: govuk-colour("dark-grey");
     cursor: not-allowed;
   }
