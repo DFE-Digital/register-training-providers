@@ -21,7 +21,7 @@
 }
 
 .app-phase-banner__env--csv-sandbox .govuk-tag {
-  background-color: govuk-colour("turquoise");
+  background-color: govuk-colour("teal", $variant: "primary");
   color: govuk-colour("white");
 }
 
