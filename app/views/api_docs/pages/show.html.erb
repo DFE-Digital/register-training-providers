@@ -1,48 +1,82 @@
-<%= content_for(:breadcrumbs) do %>
-  <%= govuk_breadcrumbs(breadcrumbs: { "Home" => root_path, "API documentation" => api_docs_home_path }) %>
-<% end %>
 
 <% page_data(title: @endpoint.heading) %>
 
-<h2 class="govuk-heading-s">Contents</h2>
-
-<ul class="govuk-list app-list--dash govuk-!-margin-bottom-8">
-  <li><a class="govuk-link" href="#endpoint">Endpoint</a></li>
-  <li><a class="govuk-link" href="#authentication">Authentication</a></li>
-  <li><a class="govuk-link" href="#query-parameters">Query parameters</a></li>
-  <li><a class="govuk-link" href="#possible-responses">Possible response</a></li>
-</ul>
+<% content_for(:column_width, "full") %>
 
 <div class="app-markdown">
-  <% if @endpoint.summary.present? %>
-    <p class="govuk-body"><%= @endpoint.summary %></p>
-  <% end %>
 
-  <h2 class="govuk-heading-l" id="endpoint">Endpoint</h2>
-  <pre><code class="language-text"><%= @endpoint.http_method %> <%= @endpoint.path %>  </code></pre>
-
-  <h2 class="govuk-heading-l" id="authentication">Authentication</h2>
-  <p class="govuk-body">Send a bearer token from the API clients section:</p>
-  <pre><code class="language-text">Authorization: Bearer YOUR_TOKEN_VALUE</code></pre>
-  <p class="govuk-body">Tokens must be active, not revoked, and not expired.</p>
-
-  <h2 class="govuk-heading-l" id="query-parameters">Query parameters</h2>
-
-  <%= govuk_table(
-        head: ["Parameter", "In", "Type", "Required", "Description", "Example"],
-        rows: @endpoint.parameter_rows
-      ) %>
-
-  <h2 class="govuk-heading-l" id="possible-responses">Possible responses</h2>
-
-  <% ["200", "401"].each do |http_code| %>
-    <% if @endpoint.response(http_code).present? %>
-      <%= govuk_details(
-            summary_text: "HTTP #{http_code} #{@endpoint.response_description(http_code)}",
-            open: http_code == "200"
-          ) do %>
-        <pre><code class="language-text"><%= @endpoint.pretty_response_example(http_code) %></code></pre>
-      <% end %>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= content_for(:breadcrumbs) do %>
+      <%= govuk_breadcrumbs(breadcrumbs: { "Home" => root_path, "API documentation" => api_docs_home_path }) %>
     <% end %>
-  <% end %>
+
+    <h2 class="govuk-heading-s">Contents</h2>
+
+    <ul class="govuk-list app-list--dash govuk-!-margin-bottom-8">
+      <li><a class="govuk-link" href="#endpoint">Endpoint</a></li>
+      <li><a class="govuk-link" href="#authentication">Authentication</a></li>
+      <li><a class="govuk-link" href="#query-parameters">Query parameters</a></li>
+      <li><a class="govuk-link" href="#possible-responses">Possible response</a></li>
+    </ul>
+
+    <% if @endpoint.summary.present? %>
+      <p class="govuk-body"><%= @endpoint.summary %></p>
+    <% end %>
+
+    <h2 class="govuk-heading-l" id="endpoint">Endpoint</h2>
+    <pre><code class="language-text"><%= @endpoint.http_method %> <%= @endpoint.path %>  </code></pre>
+
+    <h2 class="govuk-heading-l" id="authentication">Authentication</h2>
+    <p class="govuk-body">Send a bearer token from the API clients section:</p>
+    <pre><code class="language-text">Authorization: Bearer YOUR_TOKEN_VALUE</code></pre>
+    <p class="govuk-body">Tokens must be active, not revoked, and not expired.</p>
+
+    <h2 class="govuk-heading-l" id="query-parameters">Query parameters</h2>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <%= govuk_table do |table|
+          table.with_head do |head|
+            head.with_row do |row|
+              ["Parameter", "In", "Type", "Required", "Description", "Example"].each do |heading|
+                options = { text: heading }
+                options[:width] = "one-quarter" if heading == "Example"
+
+                row.with_cell(**options)
+              end
+            end
+          end
+          table.with_body do |body|
+            @endpoint.parameter_rows.each do |parameter_row|
+              body.with_row do |row|
+                parameter_row.each do |parameter|
+                  options = { text: parameter }
+                  options[:html_attributes] = { class: "app-table-example" } if parameter == parameter_row.last
+
+                  row.with_cell(**options)
+                end
+              end
+            end
+          end
+        end %>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-l" id="possible-responses">Possible responses</h2>
+      <% ["200", "401"].each do |http_code|
+         if @endpoint.response(http_code).present? %>
+          <%= govuk_details(
+                summary_text: "HTTP #{http_code} #{@endpoint.response_description(http_code)}",
+                open: http_code == "200"
+              ) do %>
+            <pre><code class="language-text"><%= @endpoint.pretty_response_example(http_code) %></code></pre>
+          <% end %>
+        <% end %>
+      <% end %>
+  </div>
 </div>

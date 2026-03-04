@@ -40,3 +40,9 @@ $govuk-assets-path: "/";
     font-size: 0.875em;
   }
 }
+
+.app-table-example {
+  font-family: monospace;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
