@@ -22,3 +22,10 @@ $govuk-assets-path: "/";
 .govuk-summary-list__row--no-border {
   border: 0;
 }
+
+.app-panel-token {
+  display: block;
+  font-family: monospace;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}

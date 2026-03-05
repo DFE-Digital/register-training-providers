@@ -1,0 +1,4 @@
+<%= render ApiClientSummary::View.new(
+      title: "View API client", caption: "API client", back_path: api_clients_path, editable: true,
+      delete_path: api_client_delete_path(api_client_id: @api_client.id), api_client: @api_client
+    ) %>
