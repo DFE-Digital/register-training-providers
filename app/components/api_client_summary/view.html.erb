@@ -13,6 +13,6 @@
   <%= govuk_link_to("Delete API client", delete_path) %>
 </div>
 
-<% page_data(title:, caption:, header:) %>
+<% api_client_page_data(title: title, caption: caption, header: header, status: api_client.current_authentication_token.status) %>
 
 <%= govuk_summary_list(rows:) %>

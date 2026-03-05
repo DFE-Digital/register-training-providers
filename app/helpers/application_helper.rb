@@ -11,14 +11,6 @@ module ApplicationHelper
               header: safe_join([provider.operating_name] + tag))
   end
 
-  def api_client_page_data(api_client)
-    [" ",
-     govuk_tag(text: api_client.current_authentication_token.status.humanize, classes: "govuk-tag__heading",
-               colour: token_status_colour(api_client))]
-
-    page_data
-  end
-
   def page_data(title:, subtitle: nil, header: nil, header_size: "l", error: false, caption: nil)
     page_title = if error
                    "Error: #{title}"

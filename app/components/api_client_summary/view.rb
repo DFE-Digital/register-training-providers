@@ -1,5 +1,7 @@
 module ApiClientSummary
   class View < ApplicationComponent
+    include ApiClientHelper
+
     attr_reader :title, :caption, :back_path, :delete_path, :api_client, :editable, :deletable
 
     def initialize(title:, back_path:, api_client:, caption: nil, delete_path: nil, editable: false)
