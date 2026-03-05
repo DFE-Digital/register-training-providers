@@ -20,7 +20,6 @@ class ApiClientsController < ApplicationController
 
   def edit
     @api_client = scoped_api_client.find(api_client_id)
-    @form = ApiClientForm.from_api_client(@api_client)
     authorize @api_client
   end
 
@@ -45,7 +44,6 @@ class ApiClientsController < ApplicationController
       @api_client.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to api_client_check_path(@api_client)
     else
-      @form = ApiClientForm.from_api_client(@api_client)
       render :edit
     end
   end

@@ -27,11 +27,11 @@ class ApiClient < ApplicationRecord
     revoke_all_active_tokens!
   end
 
+  delegate :expires_at, to: :current_authentication_token
+
   def current_authentication_token
     authentication_tokens.first
   end
-
-  delegate :expires_at, to: :current_authentication_token
 
   def revoke_all_active_tokens!
     authentication_tokens.active.find_each(&:revoke!)
