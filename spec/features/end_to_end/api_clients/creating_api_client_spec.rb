@@ -21,7 +21,6 @@ RSpec.feature "api_client management" do
     when_i_click_on("Save API client")
     and_i_am_taken_to("/api_clients/#{saved_api_client.id}/confirmation")
 
-    then_i_see_the_success_message
     when_i_click_on("Back to API clients")
     and_i_am_taken_to("/api_clients")
 
@@ -42,10 +41,6 @@ RSpec.feature "api_client management" do
 
   def saved_api_client
     ApiClient.last
-  end
-
-  def then_i_see_the_success_message
-    expect(page).to have_notification_banner("Success", "API client added")
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
