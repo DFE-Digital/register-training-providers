@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe ProviderHelper, type: :helper do
   describe "#provider_summary_cards" do
-    let(:provider) { build_stubbed(:provider, legal_name: nil, urn: "50000") }
+    let(:provider) { build_stubbed(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000") }
     let(:providers) { [provider] }
 
     it "returns the expected not entered hash" do
@@ -13,6 +13,7 @@ RSpec.describe ProviderHelper, type: :helper do
       link = doc.at_css("a")
 
       expect(link["href"]).to eq("/providers/#{provider.id}")
+
       expect(link.text).to eq(provider.operating_name)
 
       expect(result[:rows]).to match_array([

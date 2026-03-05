@@ -22,3 +22,27 @@ $govuk-assets-path: "/";
 .govuk-summary-list__row--no-border {
   border: 0;
 }
+
+.app-markdown {
+  pre,
+  code {
+    @include govuk-font($size: 19);
+    font-family: monospace;
+    background-color: govuk-colour("light-grey");
+  }
+
+  pre {
+    padding: govuk-spacing(4);
+    overflow: scroll;
+  }
+
+  code {
+    font-size: 0.875em;
+  }
+}
+
+.app-table-example {
+  font-family: monospace;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}

@@ -9,24 +9,14 @@ title: API documentation
 ## API endpoints
 
 <ul class="govuk-list govuk-list--spaced">
-  <li>
-    GET /providers
-  </li>
-  <li>
-    GET /providers/{provider_id}
-  </li>
-  <li>
-    GET /providers/{provider_id}/accreditations
-  </li>
-  <li>
-    GET /providers/{provider_id}/addresses
-  </li>
-  <li>
-    GET /providers/{provider_id}/contacts
-  </li>
-  <li>
-    GET /providers/{provider_id}/partnerships
-  </li>
+  <% ApiDocs::OpenapiSpecification.endpoints.each do |path, data| %>
+    <% data[:specifications].each_key do|http_method| %>
+      <li>
+        <%= http_method.upcase %>
+        <%= link_to path, api_docs_endpoint_path(path, http_method) %>
+      </li>
+    <% end %>
+  <% end %>
 </ul>
 
 ## Get help

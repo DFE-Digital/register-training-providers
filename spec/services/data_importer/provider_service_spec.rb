@@ -16,7 +16,7 @@ RSpec.describe DataImporter::ProviderService do
 
       "accreditation__number" => "1001",
       "accreditation__start_date" => "2024-01-01",
-      "accreditation__end_date" => "2026-01-01",
+      "accreditation__end_date" => "#{AcademicYearHelper.next_academic_year}-08-01",
 
       "address__postcode" => "SW1A 1AA",
       "address__address_line_1" => "10 Downing Street",
@@ -67,7 +67,7 @@ RSpec.describe DataImporter::ProviderService do
         expect(accreditation).to have_attributes(
           number: "1001",
           start_date: Date.parse("2024-01-01"),
-          end_date: Date.parse("2026-01-01")
+          end_date: Date.parse("#{AcademicYearHelper.next_academic_year}-08-01")
         )
 
         expect(address).to have_attributes(

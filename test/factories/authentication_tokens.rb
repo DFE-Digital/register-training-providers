@@ -9,7 +9,8 @@ FactoryBot.define do
     status { "active" }
 
     transient do
-      raw_token { "#{Rails.env}_#{SecureRandom.hex(32)}" }
+      # NOTE: 64‑character hex string (32 bytes) → matches SecureRandom.hex(32)
+      raw_token { "#{Rails.env}_#{Faker::Token.hex(32 * 2)}" }
     end
 
     token_hash { AuthenticationToken.hash_token(raw_token) }

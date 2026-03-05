@@ -8,19 +8,18 @@ RSpec.describe "Editing partnership", type: :feature do
   context "when editing an existing partnership" do
     let(:accredited_provider) { create(:provider, :accredited) }
     let(:training_partner) { create(:provider, :hei, :unaccredited, operating_name: "Test Training Partner") }
-    let(:current_year) { Date.current.year }
     let!(:academic_cycle_current) do
-      create(:academic_cycle, duration: Date.new(current_year, 8, 1)...Date.new(current_year + 1, 7, 31))
+      create(:academic_cycle, :current)
     end
     let!(:academic_cycle_next) do
-      create(:academic_cycle, duration: Date.new(current_year + 1, 8, 1)...Date.new(current_year + 2, 7, 31))
+      create(:academic_cycle, :next)
     end
     let!(:partnership) do
       # Build without default academic cycle from factory callback
       p = Partnership.create!(
         provider: training_partner,
         accredited_provider: accredited_provider,
-        duration: Date.new(current_year, 1, 1)..
+        duration: academic_cycle_current.duration.to_a.sample..
       )
       p.academic_cycles << academic_cycle_current
       p
@@ -172,15 +171,14 @@ RSpec.describe "Editing partnership", type: :feature do
   context "with validation errors" do
     let(:provider) { create(:provider, :accredited) }
     let(:partner) { create(:provider, :hei, :unaccredited) }
-    let(:current_year) { Date.current.year }
     let!(:academic_cycle) do
-      create(:academic_cycle, duration: Date.new(current_year, 8, 1)...Date.new(current_year + 1, 7, 31))
+      create(:academic_cycle, :current)
     end
     let!(:partnership) do
       p = Partnership.create!(
         provider: partner,
         accredited_provider: provider,
-        duration: Date.new(current_year, 1, 1)..
+        duration: academic_cycle.duration.to_a.sample..
       )
       p.academic_cycles << academic_cycle
       p
@@ -222,7 +220,7 @@ RSpec.describe "Editing partnership", type: :feature do
     let(:partner) { create(:provider, :hei, :unaccredited) }
     let(:current_year) { Date.current.year }
     let!(:academic_cycle) do
-      create(:academic_cycle, duration: Date.new(current_year, 8, 1)...Date.new(current_year + 1, 7, 31))
+      create(:academic_cycle, :current)
     end
     let!(:partnership) do
       p = Partnership.create!(
@@ -248,7 +246,7 @@ RSpec.describe "Editing partnership", type: :feature do
 private
 
   def fill_in_new_dates
-    current_year = Date.current.year
+    current_year = AcademicYearHelper.current_academic_year
     within_fieldset("Partnership start date") do
       fill_in "Day", with: "15"
       fill_in "Month", with: "8"
@@ -257,7 +255,7 @@ private
   end
 
   def fill_in_different_dates
-    current_year = Date.current.year
+    current_year = AcademicYearHelper.current_academic_year
     within_fieldset("Partnership start date") do
       fill_in "Day", with: "1"
       fill_in "Month", with: "9"
