@@ -32,6 +32,7 @@ class ApiClientForm
   validates :name, presence: true
   validates_govuk_date :expires_at, presence: true, if: -> { id.blank? }
   validate :expires_at_within_one_year, if: -> { id.blank? }
+  validate :name_is_unique
 
   def initialize(attributes = {})
     super
@@ -70,5 +71,13 @@ private
 
     errors.add(:expires_at, :out_of_range, start: Time.zone.today.to_fs(:govuk),
                                            end: (Time.zone.today + 1.year).to_fs(:govuk))
+  end
+
+  def name_is_unique
+    names = ApiClient.pluck(:name)
+
+    return true unless names.include? name
+
+    errors.add(:name, :unique)
   end
 end

@@ -20,7 +20,7 @@ RSpec.feature "api client management" do
     then_i_see_the_success_message
     and_i_am_taken_to("/api_clients")
 
-    and_i_can_see_the_page_title_api_clients_with_the_count(count: 0)
+    and_i_can_see_the_page_title_api_clients_without_the_count
     and_i_cannot_find(api_client_to_delete.name)
     and_the_api_client_to_delete_is_deleted
   end
@@ -32,6 +32,10 @@ RSpec.feature "api client management" do
   def and_i_cannot_find(button_or_link)
     expect(page).not_to have_button(button_or_link)
     expect(page).not_to have_link(button_or_link)
+  end
+
+  def and_i_can_see_the_page_title_api_clients_without_the_count
+    expect(page).to have_title("API clients - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)

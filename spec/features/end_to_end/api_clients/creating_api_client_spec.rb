@@ -4,7 +4,7 @@ RSpec.feature "api_client management" do
   scenario "creating api_clients" do
     given_i_am_an_authenticated_user
     and_i_am_on_the_api_client_support_listing_page
-    and_i_can_see_the_page_title_api_clients_with_the_count(count: 0)
+    and_i_can_see_the_page_title_api_clients_without_the_count
     and_i_click_on("Add API Client")
     and_i_am_taken_to("/api_clients/new")
     and_i_can_see_the_page_title_for_client_details
@@ -25,6 +25,10 @@ RSpec.feature "api_client management" do
     and_i_am_taken_to("/api_clients")
 
     and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
+  end
+
+  def and_i_can_see_the_page_title_api_clients_without_the_count
+    expect(page).to have_title("API clients - Register of training providers - GOV.UK")
   end
 
   def and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)

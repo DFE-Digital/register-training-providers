@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Api client management" do
-  xscenario "editing api_clients" do
+  scenario "editing api_clients" do
     given_i_am_an_authenticated_user
     and_i_have_a_api_client_to_edit
     and_i_am_on_the_api_client_support_listing_page
@@ -33,19 +33,19 @@ RSpec.feature "Api client management" do
     and_i_click_on("Continue")
 
     and_i_can_see_the_page_title_for_check_your_answers
-    and_i_show_see_new_name
-    when_i_click_on("Save api client")
+    and_i_see_new_name
+    when_i_click_on("Save API client")
 
     then_i_see_the_success_message
     and_i_am_taken_to("/api_clients")
 
-    and_i_can_see_the_page_title_api_clients_with_the_count(count: 2)
+    and_i_can_see_the_page_title_api_clients_with_the_count(count: 1)
     and_i_cannot_find(old_api_client_to_edit_name)
     and_the_api_client_to_edit_is_edited
     and_i_see_my_changes(api_client_to_edit.name)
   end
 
-  def and_i_show_see_new_name
+  def and_i_see_new_name
     expect(page).to have_css(".govuk-summary-list__value", text: new_name)
   end
 
@@ -101,9 +101,9 @@ RSpec.feature "Api client management" do
   end
 
   def and_i_can_see_the_page_title_for_check_your_answers
-    expect(page).to have_title("Change api_client - Register of training providers - GOV.UK")
+    expect(page).to have_title("Change API client - Register of training providers - GOV.UK")
 
-    expect(page).to have_heading("h1", "API client - #{api_client_to_edit.name}Check your answers")
+    expect(page).to have_heading("h1", "API client - #{new_name} Check your answers")
   end
 
   def and_i_can_see_the_page_title_for_view_api_client
@@ -115,7 +115,7 @@ RSpec.feature "Api client management" do
   end
 
   def and_i_can_see_the_page_title_for_client_details_with_error
-    expect(page).to have_title("Error: Change API client - Register of training providers - GOV.UK")
+    expect(page).to have_title("Error: Change API client - client details - Register of training providers - GOV.UK")
   end
 
   def and_i_do_not_see_error_summary

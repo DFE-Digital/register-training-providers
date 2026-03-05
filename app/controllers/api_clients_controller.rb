@@ -19,7 +19,8 @@ class ApiClientsController < ApplicationController
   end
 
   def edit
-    @api_client = scoped_api_client.find(api_client_id)
+    @api_client = current_user.load_temporary(ApiClient, id: api_client_id,
+                                                         purpose: :check_your_answers) || scoped_api_client.find(api_client_id)
     authorize @api_client
   end
 

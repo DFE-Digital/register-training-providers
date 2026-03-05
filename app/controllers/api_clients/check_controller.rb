@@ -14,7 +14,7 @@ private
   end
 
   def model
-    @model ||= current_user.load_temporary(model_class, purpose:)
+    @model ||= current_user.load_temporary(model_class, id: model_id, purpose: purpose)
   end
 
   def success_path(model)
@@ -59,7 +59,7 @@ private
         api_client = model.save(user: current_user)
         redirect_to success_path(api_client)
       else
-        model.save!(user: current_user)
+        model.save!
         redirect_to success_path(model), flash: flash_message
       end
     else
