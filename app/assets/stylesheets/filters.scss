@@ -1,9 +1,9 @@
 .app-filter {
-  background-color: govuk-colour("light-grey");
+  background-color: govuk-colour("black", $variant: "tint-95");
 }
 
 .app-filter__header {
-  background-color: govuk-colour("light-grey");
+  background-color: govuk-colour("black", $variant: "tint-95");
   display: flex;
   justify-content: space-between;
   padding: govuk-spacing(2) govuk-spacing(3);
@@ -112,12 +112,12 @@
 }
 
 .app-filter__selected {
-  background-color: govuk-colour("light-grey");
+  background-color: govuk-colour("black", $variant: "tint-95");
   padding: govuk-spacing(1);
   padding-bottom: govuk-spacing(5);
   margin: govuk-spacing(2);
-  border-top: 1px solid govuk-colour("mid-grey");
-  border-bottom: 1px solid govuk-colour("mid-grey");
+  border-top: 1px solid govuk-colour("black", $variant: "tint-80");
+  border-bottom: 1px solid govuk-colour("black", $variant: "tint-80");
 
   ul:last-of-type {
     margin-bottom: 0;

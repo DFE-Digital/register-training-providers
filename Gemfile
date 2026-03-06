@@ -38,8 +38,8 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Govuk design system
-gem "govuk-components"
-gem "govuk_design_system_formbuilder"
+gem "govuk-components", ">= 6.0.0"
+gem "govuk_design_system_formbuilder", ">= 6.0.0"
 gem "govuk_markdown"
 
 # DfE autocomplete component

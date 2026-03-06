@@ -54,7 +54,7 @@ body .suggestions {
   }
 
   .autocomplete__hint {
-    color: govuk-colour("mid-grey");
+    color: govuk-colour("black", $variant: "tint-80");
     position: absolute;
   }
 
@@ -98,7 +98,7 @@ body .suggestions {
   }
 
   .autocomplete__option {
-    border-bottom: solid govuk-colour("mid-grey");
+    border-bottom: solid govuk-colour("black", $variant: "tint-80");
     border-width: 1px 0;
     cursor: pointer;
     display: block;
@@ -118,7 +118,7 @@ body .suggestions {
   }
 
   .autocomplete__option--odd {
-    background-color: govuk-colour("light-grey");
+    background-color: govuk-colour("black", $variant: "tint-95");
   }
 
   .autocomplete__option--hint {
@@ -138,8 +138,8 @@ body .suggestions {
   }
 
   .autocomplete__option--no-results {
-    background-color: govuk-colour("light-grey");
-    color: govuk-colour("dark-grey");
+    background-color: govuk-colour("black", $variant: "tint-95");
+    color: govuk-colour("black", $variant: "tint-25");
     cursor: not-allowed;
   }
 

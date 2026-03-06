@@ -46,3 +46,9 @@ $govuk-assets-path: "/";
   overflow-wrap: break-word;
   word-break: break-all;
 }
+
+.app-service-navigation__align-right {
+  @include govuk-media-query($from: tablet) {
+    margin-left: auto;
+  }
+}
