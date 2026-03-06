@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="govuk-template govuk-template--rebranded">
+<html lang="en" class="govuk-template">
   <head>
     <title><%= [yield(:page_title).presence, yield(:page_subtitle).presence, t("service.name"), "GOV.UK"].compact.join(" - ") %></title>
 
@@ -25,11 +25,13 @@
 
     <%= govuk_skip_link %>
 
-    <%= govuk_header(full_width_border: true, homepage_url: root_path, navigation_classes: "govuk-header__navigation--end") %>
+    <%= govuk_header(full_width_border: true, homepage_url: root_path) %>
 
     <%= govuk_service_navigation(
+          service_name: t("service.name"),
+          service_url: root_path,
           current_path: request.path,
-          navigation_items: []
+          navigation_items: navigation_items(signed_in: @current_user.present?)
         ) %>
 
     <div class="govuk-width-container">
