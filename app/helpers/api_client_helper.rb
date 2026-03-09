@@ -1,6 +1,6 @@
 module ApiClientHelper
   STATUS_COLOURS = {
-    active: "green",
+    active: "teal",
     expired: "grey",
     revoked: "orange"
   }.freeze
