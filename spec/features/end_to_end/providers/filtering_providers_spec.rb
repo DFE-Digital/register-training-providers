@@ -44,7 +44,13 @@ RSpec.feature "Filter Training Providers" do
     hei_providers.each do |provider|
       expect(page).to have_selector("h2", text: provider.operating_name)
     end
-    expect(page).to have_selector(".govuk-summary-list__value", text: "Higher education institution", count: hei_providers.count)
+    expect(page).to have_selector(
+      ".govuk-summary-list__row:has(.govuk-summary-list__key:text('Provider type')) " \
+      ".govuk-summary-list__value",
+      text: "Higher education institution (HEI)",
+      exact_text: true,
+      count: hei_providers.count
+    )
   end
 
   def when_i_check_the_box_for_accredited

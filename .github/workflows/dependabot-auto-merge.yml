@@ -1,8 +1,14 @@
+# Auto-approves and merges minor/patch dependabot PRs.
+# Uses direct merge (not --auto) to avoid merge_group check issues.
+
 name: Dependabot Auto-Merge
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, dequeued]
+    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["Build and Deploy"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -18,11 +24,11 @@ env:
     dfe-analytics
 
 jobs:
-  auto-approve-and-merge:
-    name: Auto-approve and merge Dependabot PRs
+  auto-approve:
+    name: Auto-approve Dependabot PRs
     runs-on: ubuntu-latest
     if: >
-      github.event.action != 'dequeued' &&
+      github.event_name == 'pull_request' &&
       github.actor == 'dependabot[bot]'
 
     steps:
@@ -32,6 +38,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Match dependency against EXCLUDED_PACKAGES list
       - name: Check if package is excluded from auto-merge
         id: excluded
         run: |
@@ -48,30 +55,44 @@ jobs:
 
           echo "is_excluded=false" >> $GITHUB_OUTPUT
 
-      - name: Approve and auto-merge minor/patch updates
+      - name: Approve minor/patch updates
         if: |
           steps.excluded.outputs.is_excluded == 'false' &&
           (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor')
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  retry-after-dequeue:
-    name: Retry auto-merge after dequeue
+  # Runs after Build and Deploy passes for dependabot pull_request events only
+  auto-merge:
+    name: Queue approved Dependabot PRs
     runs-on: ubuntu-latest
     if: >
-      github.event.action == 'dequeued' &&
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      github.event.pull_request.state == 'open'
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]'
 
     steps:
-      - name: Re-enable auto-merge
+      # Find the PR, check it was approved above, add to merge queue
+      - name: Find and merge Dependabot PR
         run: |
-          echo "PR was removed from merge queue, re-enabling auto-merge"
-          gh pr merge --auto --squash "$PR_URL"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found for branch $BRANCH"
+            exit 0
+          fi
+
+          REVIEW=$(gh pr view "$PR_NUMBER" --json reviewDecision --jq '.reviewDecision')
+          if [ "$REVIEW" != "APPROVED" ]; then
+            echo "PR #$PR_NUMBER is not approved, skipping"
+            exit 0
+          fi
+
+          echo "Adding PR #$PR_NUMBER to merge queue"
+          gh pr merge "$PR_NUMBER" --squash
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

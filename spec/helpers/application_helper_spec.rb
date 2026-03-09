@@ -154,4 +154,70 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+  describe "#navigation_items" do
+    context "when the user is signed in" do
+      let(:signed_in) { true }
+
+      subject(:items) { helper.navigation_items(signed_in:) }
+
+      it "returns an array of navigation hashes" do
+        expect(items).to be_an(Array)
+        expect(items.size).to eq(6)
+      end
+
+      it "includes the Providers link" do
+        providers = items.find { |i| i[:text] == "Providers" }
+        expect(providers).to include(
+          href: providers_path,
+          active_when: providers_path
+        )
+      end
+
+      it "includes the Users link" do
+        users = items.find { |i| i[:text] == "Users" }
+        expect(users).to include(
+          href: users_path,
+          active_when: users_path
+        )
+      end
+
+      it "includes the API clients link" do
+        api_clients = items.find { |i| i[:text] == "API clients" }
+        expect(api_clients).to include(
+          href: api_clients_path,
+          active_when: api_clients_path
+        )
+      end
+
+      it "includes the Activity log link" do
+        activity = items.find { |i| i[:text] == "Activity log" }
+        expect(activity).to include(
+          href: activity_path,
+          active_when: activity_path
+        )
+      end
+
+      it "includes the Your account link aligned to the right" do
+        account = items.find { |i| i[:text] == "Your account" }
+        expect(account).to include(
+          href: account_path,
+          classes: "app-service-navigation__align-right"
+        )
+      end
+
+      it "includes the Sign out link" do
+        sign_out = items.find { |i| i[:text] == "Sign out" }
+        expect(sign_out).to include(href: sign_out_path)
+      end
+    end
+
+    context "when the user is not signed in" do
+      let(:signed_in) { false }
+
+      it "returns an empty array" do
+        expect(helper.navigation_items(signed_in:)).to eq([])
+      end
+    end
+  end
 end

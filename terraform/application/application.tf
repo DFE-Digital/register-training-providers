@@ -15,10 +15,14 @@ module "application_configuration" {
   config_variables = {
     ENVIRONMENT_NAME = var.environment
     PGSSLMODE        = local.postgres_ssl_mode
+    BIGQUERY_PROJECT_ID = "rugged-abacus-218110"
+    BIGQUERY_TABLE_NAME = var.enable_dfe_analytics_federated_auth ? module.dfe_analytics[0].bigquery_table_name : null
+    BIGQUERY_DATASET    = var.enable_dfe_analytics_federated_auth ? module.dfe_analytics[0].bigquery_dataset : null
   }
   secret_variables = {
     DATABASE_URL        = module.postgres.url
     BLAZER_DATABASE_URL = module.postgres.url
+    GOOGLE_CLOUD_CREDENTIALS = var.enable_dfe_analytics_federated_auth ? module.dfe_analytics[0].google_cloud_credentials : null
   }
 }
 
@@ -89,4 +93,7 @@ module "worker_application" {
   max_memory = var.worker_memory_max
 
   enable_logit   = true
+
+  enable_gcp_wif = var.enable_dfe_analytics_federated_auth
+
 }
