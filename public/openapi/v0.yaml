@@ -94,9 +94,9 @@ paths:
           type: integer
         example: 2025
         description: |
-          Filters providers to only those in the specified academic
-          year. The value must be a 4-digit year, for example: 2025. If not provided,
-          the API will return providers active in the current academic year.
+          Filters providers by the specified academic year. The value
+          must be a 4-digit year, for example 2025. If not provided, the API will
+          return providers active in the current academic year.
       - name: api_version
         in: path
         required: true

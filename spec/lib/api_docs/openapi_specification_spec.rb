@@ -71,7 +71,7 @@ RSpec.describe ApiDocs::OpenapiSpecification do
 
         it_behaves_like "parameters-level descriptions", ["paths", "/api/{api_version}/providers", "get", "parameters"], [
           "A valid API token must be provided in the Authorization header to access this endpoint.",
-          "Filters providers to only those in the specified academic year. The value must be a 4-digit year, for example: 2025. If not provided, the API will return providers active in the current academic year.",
+          "Filters providers by the specified academic year. The value must be a 4-digit year, for example 2025. If not provided, the API will return providers active in the current academic year.",
           "The API version to use in the request path. This should be set to the latest version for this endpoint.",
           "Filters providers to only those updated after the specified timestamp. The value must be an ISO 8601 datetime, for example: 2025-09-14T11:34:56Z.",
         ]
