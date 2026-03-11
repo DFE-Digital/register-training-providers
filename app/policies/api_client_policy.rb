@@ -11,6 +11,10 @@ class ApiClientPolicy < ApplicationPolicy
     record.kept?
   end
 
+  def destroy?
+    record.kept?
+  end
+
   def create?
     true # record.new_record?
   end

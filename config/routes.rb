@@ -191,5 +191,6 @@ Rails.application.routes.draw do
     checkable(:api_clients)
     resource :delete, only: [:show, :destroy], module: :api_clients
     resource :confirmation, only: [:show], module: :api_clients
+    resource :revoke, only: [:show, :destroy], module: :api_clients
   end
 end
