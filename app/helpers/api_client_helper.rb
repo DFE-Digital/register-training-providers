@@ -31,7 +31,8 @@ module ApiClientHelper
     span = caption.present? ? tag.span(caption, class: "govuk-caption-#{header_size}") : ""
     status_tag = if status.present?
                    tag.strong(status.humanize,
-                              class: "govuk-tag govuk-tag--#{token_status_colour(status)} govuk-tag__heading")
+                              class: "govuk-tag govuk-tag--#{token_status_colour(status)}
+                                govuk-tag__heading govuk-tag__heading__status")
                  else
                    ""
                  end
