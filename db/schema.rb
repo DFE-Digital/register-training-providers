@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_16_145309) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_11_153235) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -194,6 +194,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_145309) do
     t.datetime "updated_at", null: false
     t.index ["accredited_provider_id"], name: "index_partnerships_on_accredited_provider_id"
     t.index ["provider_id"], name: "index_partnerships_on_provider_id"
+  end
+
+  create_table "provider_academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "academic_cycle_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.uuid "provider_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["academic_cycle_id"], name: "index_provider_academic_cycles_on_academic_cycle_id"
+    t.index ["provider_id", "academic_cycle_id"], name: "idx_on_provider_id_academic_cycle_id_6c9594c444", unique: true
+    t.index ["provider_id"], name: "index_provider_academic_cycles_on_provider_id"
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -390,6 +401,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_145309) do
   add_foreign_key "partnership_academic_cycles", "partnerships"
   add_foreign_key "partnerships", "providers"
   add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
+  add_foreign_key "provider_academic_cycles", "academic_cycles"
+  add_foreign_key "provider_academic_cycles", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
