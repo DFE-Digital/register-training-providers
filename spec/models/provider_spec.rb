@@ -7,6 +7,12 @@ RSpec.describe Provider, type: :model do
   it { is_expected.to be_audited }
   it { is_expected.to be_kept }
 
+  describe "associations" do
+    it { is_expected.to have_many(:provider_academic_cycles).dependent(:destroy) }
+
+    it { is_expected.to have_many(:academic_cycles).through(:provider_academic_cycles) }
+  end
+
   context "provider is discarded" do
     before do
       subject.discard!

@@ -21,6 +21,8 @@ FactoryBot.define do
     code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
 
+    with_current_academic_cycle
+
     trait :archived do
       archived_at { Time.zone.now }
     end
@@ -114,6 +116,17 @@ FactoryBot.define do
         }
 
         provider.save!
+      end
+    end
+
+    trait :with_current_academic_cycle do
+      after(:create) do |provider|
+        academic_cycle = create(:academic_cycle, :current)
+
+        ProviderAcademicCycle.find_or_create_by!(
+          provider:,
+          academic_cycle:
+        )
       end
     end
   end
