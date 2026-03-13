@@ -6,6 +6,10 @@ RSpec.describe AcademicCycle, type: :model do
   describe "associations" do
     it { is_expected.to have_many(:partnership_academic_cycles) }
     it { is_expected.to have_many(:partnerships).through(:partnership_academic_cycles) }
+
+    it { is_expected.to have_many(:provider_academic_cycles) }
+
+    it { is_expected.to have_many(:providers).through(:provider_academic_cycles) }
   end
 
   describe "#current?" do
