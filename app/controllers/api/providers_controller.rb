@@ -5,6 +5,8 @@ module Api
 
       scope = scope.where(updated_at: changed_since..) if changed_since.present?
 
+      scope = scope.where(academic_years_active: [academic_year])
+
       providers = scope.order(:updated_at)
 
       data = providers.map do |p|
@@ -21,7 +23,7 @@ module Api
   private
 
     def permitted_params
-      params.permit(:changed_since)
+      params.permit(:changed_since, :academic_year)
     end
 
     def changed_since
@@ -29,6 +31,11 @@ module Api
       return nil if value.blank?
 
       Time.zone.parse(value)
+    end
+
+    def academic_year
+      permitted_params[:academic_year].presence ||
+        AcademicYearHelper.current_academic_year
     end
   end
 end

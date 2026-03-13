@@ -3,6 +3,7 @@ FactoryBot.define do
     id { Faker::Internet.unique.uuid }
     provider_type { :hei }
     accreditation_status { :unaccredited }
+    academic_years_active { [AcademicYearHelper.current_academic_year] }
 
     legal_name do
       n = Faker::Number.number(digits: 4)
