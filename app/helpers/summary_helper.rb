@@ -22,4 +22,16 @@ module SummaryHelper
 
     rows
   end
+
+  def api_client_rows(api_client, change_path = nil, method = nil)
+    rows = [
+      { key: { text: "Client name" }, value: { text: api_client.name } },
+      { key: { text: "Expiry date" }, value: { text: api_client.expires_at.to_fs(:govuk) } },
+    ]
+
+    rows[0][:actions] = [{ href: change_path, visually_hidden_text: "client name" }] if change_path
+    rows[1][:actions] = [{ href: change_path, visually_hidden_text: "expiry name" }] if change_path && method == :post
+
+    rows
+  end
 end

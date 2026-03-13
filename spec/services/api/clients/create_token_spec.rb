@@ -81,10 +81,11 @@ RSpec.describe Api::Clients::CreateToken, type: :service do
     end
 
     context "with whitespace in expiry date" do
-      let(:expiry) { " 2025-03-01 " }
+      let(:date) { 3.months.from_now.strftime("%Y-%m-%d") }
+      let(:expiry) { " #{date} " }
 
       it "parses expiry correctly ignoring whitespace" do
-        expect(token.expires_at).to eq(Date.parse("2025-03-01"))
+        expect(token.expires_at).to eq(Date.parse(date))
       end
     end
   end

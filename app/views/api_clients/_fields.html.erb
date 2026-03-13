@@ -1,0 +1,2 @@
+<%= form.govuk_text_field :name, width: "two-thirds", label: { size: "s", text: I18n.t("forms.api_client.name.label") } %>
+<%= form.govuk_date_field :expires_at, legend: { text: I18n.t("forms.api_client.expires_at.label"), size: "s" }, hint: { text: "Must be within the next 12 months. For example, #{Time.zone.today.strftime('%d %m %Y')}" } %>

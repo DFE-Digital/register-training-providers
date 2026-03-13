@@ -1,0 +1,4 @@
+<%= render CheckYourAnswers::View.new(
+      rows: api_client_rows(model, change_path, method), subtitle: "Add API client", caption: "Add API client", back_path: back_path,
+      save_button_text: "Save API client", save_path: save_path, cancel_path: api_clients_path, method: method
+    ) %>
