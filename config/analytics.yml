@@ -2,7 +2,6 @@
 :shared:
   :providers:
     - id
-    - academic_years_active
     - accreditation_status
     - archived_at
     - code
