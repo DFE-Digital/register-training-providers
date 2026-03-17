@@ -11,7 +11,6 @@
 #
 # Indexes
 #
-#  idx_on_provider_id_academic_cycle_id_6c9594c444      (provider_id,academic_cycle_id) UNIQUE
 #  index_provider_academic_cycles_on_academic_cycle_id  (academic_cycle_id)
 #  index_provider_academic_cycles_on_provider_id        (provider_id)
 #

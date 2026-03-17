@@ -17,7 +17,7 @@ class AcademicCycle < ApplicationRecord
   has_many :partnership_academic_cycles, dependent: :destroy
   has_many :partnerships, through: :partnership_academic_cycles
 
-  has_many :provider_academic_cycles
+  has_many :provider_academic_cycles, dependent: :destroy
   has_many :providers, through: :provider_academic_cycles
 
   def current?

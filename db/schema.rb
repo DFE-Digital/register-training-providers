@@ -203,7 +203,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_153235) do
     t.uuid "provider_id", null: false
     t.datetime "updated_at", null: false
     t.index ["academic_cycle_id"], name: "index_provider_academic_cycles_on_academic_cycle_id"
-    t.index ["provider_id", "academic_cycle_id"], name: "idx_on_provider_id_academic_cycle_id_6c9594c444", unique: true
     t.index ["provider_id"], name: "index_provider_academic_cycles_on_provider_id"
   end
 
