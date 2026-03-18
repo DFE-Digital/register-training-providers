@@ -98,3 +98,10 @@
     - created_at
     - duration
     - updated_at
+  :provider_academic_cycles:
+    - id
+    - provider_id
+    - academic_cycle_id
+    - discarded_at
+    - created_at
+    - updated_at

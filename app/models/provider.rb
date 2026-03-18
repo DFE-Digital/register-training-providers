@@ -47,6 +47,9 @@ class Provider < ApplicationRecord
   has_many :accrediting_provider_partnerships, class_name: "Partnership", foreign_key: :accredited_provider_id,
                                                dependent: :destroy
 
+  has_many :provider_academic_cycles, dependent: :destroy
+  has_many :academic_cycles, through: :provider_academic_cycles
+
   audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
 
