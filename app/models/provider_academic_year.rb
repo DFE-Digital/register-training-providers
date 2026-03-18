@@ -19,7 +19,7 @@
 #  fk_rails_...  (academic_cycle_id => academic_cycles.id)
 #  fk_rails_...  (provider_id => providers.id)
 #
-class ProviderAcademicCycle < ApplicationRecord
+class ProviderAcademicYear < ApplicationRecord
   self.implicit_order_column = :created_at
   belongs_to :provider
   belongs_to :academic_cycle

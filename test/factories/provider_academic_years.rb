@@ -4,7 +4,7 @@ FactoryBot.define do
     academic_cycle
 
     initialize_with do
-      ProviderAcademicCycle.find_or_create_by!(
+      ProviderAcademicYear.find_or_create_by!(
         provider:,
         academic_cycle:
       )

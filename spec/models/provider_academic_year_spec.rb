@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProviderAcademicCycle, type: :model do
+RSpec.describe ProviderAcademicYear, type: :model do
   let(:provider_academic_cycle) { create(:provider_academic_cycle) }
 
   it { is_expected.to be_audited }

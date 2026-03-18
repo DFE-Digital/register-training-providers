@@ -174,6 +174,6 @@ private
   end
 
   def set_default_academic_years_active
-    self.academic_cycles ||= [AcademicCycle.for_year(AcademicYearHelper.current_academic_year)]
+    self.year = [AcademicYear.for_year(AcademicYearHelper.current_academic_year)]
   end
 end

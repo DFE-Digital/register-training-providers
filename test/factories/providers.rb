@@ -123,7 +123,7 @@ FactoryBot.define do
         if provider.academic_cycles.empty?
           academic_cycle = create(:academic_cycle, :current)
 
-          ProviderAcademicCycle.find_or_create_by!(
+          ProviderAcademicYear.find_or_create_by!(
             provider:,
             academic_cycle:
           )
