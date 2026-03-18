@@ -17,8 +17,30 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
     it { is_expected.to validate_presence_of(:name) }
+
+    context "name must be unique to kept api clients created by user" do
+      let(:api_client_with_different_user) { build(:api_client, name: subject.name, created_by: create(:user)) }
+      let(:api_client_with_same_user) { build(:api_client, name: subject.name, created_by: subject.created_by) }
+
+      it "will validate the api client created by another user with the same client name" do
+        expect(api_client_with_different_user).to be_valid
+      end
+
+      it "will not validate the api client created by the same user with the same client name" do
+        expect(api_client_with_same_user).not_to be_valid
+      end
+
+      context "when the client has been discarded" do
+        before do
+          api_client.discard!
+        end
+
+        it "will validate the api client created by the same user with the same client name" do
+          expect(api_client_with_same_user).to be_valid
+        end
+      end
+    end
   end
 
   describe "before_discard callback" do

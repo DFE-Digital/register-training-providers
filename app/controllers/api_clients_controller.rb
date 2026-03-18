@@ -25,7 +25,7 @@ class ApiClientsController < ApplicationController
   end
 
   def create
-    @form = ApiClientForm.new(api_client_params)
+    @form = ApiClientForm.new(api_client_params.merge(created_by_id: current_user.id))
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)

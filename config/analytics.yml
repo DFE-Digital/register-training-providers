@@ -69,6 +69,7 @@
     - discarded_at
     - name
     - updated_at
+    - created_by_id
   :addresses:
     - id
     - address_line_1

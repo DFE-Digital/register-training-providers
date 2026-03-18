@@ -10,6 +10,7 @@ class ApiClientForm
 
   attribute :name, :string
   attribute :id, :string
+  attribute :created_by_id, :string
 
   def self.model_name
     ActiveModel::Name.new(self, nil, "ApiClient")
@@ -54,7 +55,7 @@ class ApiClientForm
 
       api_client.update!(name:)
     else
-      api_client = ApiClient.new(name:)
+      api_client = ApiClient.new(name: name, created_by: user)
       ActiveRecord::Base.transaction do
         api_client.save!
         AuthenticationToken.create_with_random_token(api_client: api_client, expires_at: expires_at, created_by: user)
@@ -74,7 +75,7 @@ private
   end
 
   def name_is_unique
-    names = ApiClient.pluck(:name)
+    names = ApiClient.where(created_by_id:).kept.pluck(:name).map(&:downcase)
 
     return true unless names.include? name
 
