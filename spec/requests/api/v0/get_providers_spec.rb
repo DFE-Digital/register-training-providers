@@ -15,12 +15,14 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
     let(:token) { auth_token.token }
 
     let(:params) do
-      { changed_since: 1.day.ago.utc.iso8601 }
+      { changed_since: 1.day.ago.utc.iso8601,
+        academic_year: AcademicYearHelper.current_academic_year, }
     end
 
     let(:headers) { { Authorization: token } }
 
     it "returns an array of training providers", openapi: do
+      create(:provider, :accredited, academic_years_active: [AcademicYearHelper.next_academic_year, AcademicYearHelper.previous_academic_year])
       create(:provider, :accredited, updated_at: 3.days.ago)
       latest_provider = create(:provider, :accredited)
 
