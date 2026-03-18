@@ -84,7 +84,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_cd04a04e71ec3e6682d2f574709228f5a75ca7682f539b3a88a70c23c601c25f
+        example: test_9df6bed7c363f6a21614bc9f625d18547d29f4e72ee1318b80977c70a09633fa
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: api_version
@@ -140,10 +140,10 @@ paths:
                 - data
               example:
                 data:
-                - id: b1d35cf4-df58-4370-953c-93b7ab89ad6f
-                  operating_name: Higher education institution (HEI) 8073
+                - id: 883ed70f-fae9-4851-8828-a5bc8a3aa68d
+                  operating_name: Higher education institution (HEI) 1353
                   provider_type: hei
-                  code: 2AD
+                  code: 33O
                   accreditation_status: accredited
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
