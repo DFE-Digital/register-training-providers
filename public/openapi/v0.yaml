@@ -18,7 +18,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_d17350aab23d54cb56520ad457b579a66aad1bea58c5fc256ff9f0380c75cea4
+        example: test_92db1241b8721bddb4540fdbb4b1a56d4bbb54a006bd6086b133ff0ced37eb12
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: api_version
