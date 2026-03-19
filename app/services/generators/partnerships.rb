@@ -39,7 +39,7 @@ module Generators
           duration: accredited_period_start...accredited_period_end
         )
 
-        academic_cycles.each { |ac| PartnershipAcademicCycle.create(academic_cycle: ac, partnership: partnership) }
+        academic_cycles.each { |ac| PartnershipAcademicYear.create(academic_cycle: ac, partnership: partnership) }
       end
     end
   end

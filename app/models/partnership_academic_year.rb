@@ -19,7 +19,7 @@
 #  fk_rails_...  (academic_cycle_id => academic_cycles.id)
 #  fk_rails_...  (partnership_id => partnerships.id)
 #
-class PartnershipAcademicCycle < ApplicationRecord
+class PartnershipAcademicYear < ApplicationRecord
   self.implicit_order_column = :created_at
   include PgSearch::Model
   include Discard::Model

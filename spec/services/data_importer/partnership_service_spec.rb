@@ -46,7 +46,7 @@ RSpec.describe DataImporter::PartnershipService do
       call_importer
 
       expect { call_importer }
-        .not_to change(PartnershipAcademicCycle, :count)
+        .not_to change(PartnershipAcademicYear, :count)
     end
 
     it "does not create a duplicate partnership on re-import" do
