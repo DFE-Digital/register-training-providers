@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: academic_cycles
+# Table name: academic_years
 #
 #  id         :uuid             not null, primary key
 #  duration   :daterange
@@ -9,7 +9,7 @@
 #
 # Indexes
 #
-#  index_academic_cycles_on_duration  (duration)
+#  index_academic_years_on_duration  (duration)
 #
 class AcademicYear < ApplicationRecord
   self.implicit_order_column = :duration
