@@ -127,9 +127,9 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
-        academic_cycles:
+        academic_years:
           attributes:
-            academic_cycle_ids:
+            academic_year_ids:
               blank: Select academic year
         partnerships/dates_form:
           attributes:
