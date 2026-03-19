@@ -22,8 +22,8 @@
 class ProviderAcademicYear < ApplicationRecord
   self.implicit_order_column = :created_at
   belongs_to :provider
-  belongs_to :academic_cycle
+  belongs_to :academic_year
   include Discard::Model
 
-  audited except: [:provider_id, :academic_cycle_id]
+  audited except: [:provider_id, :academic_year_id]
 end

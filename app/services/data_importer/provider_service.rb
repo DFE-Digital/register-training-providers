@@ -33,7 +33,7 @@ module DataImporter
       provider.accreditation_status = raw_provider["accreditation_status"]
       provider.ukprn             = parsed_ukprn
       provider.urn               = raw_provider["urn"]
-      provider.academic_cycles = parse_academic_years.map { |year| AcademicCycle.for_year(year) }
+      provider.academic_years = parse_academic_years.map { |year| AcademicYear.for_year(year) }
     end
 
     def provider_type

@@ -1,12 +1,12 @@
 FactoryBot.define do
-  factory :provider_academic_cycle do
+  factory :provider_academic_year do
     provider
-    academic_cycle
+    academic_year
 
     initialize_with do
       ProviderAcademicYear.find_or_create_by!(
         provider:,
-        academic_cycle:
+        academic_year:
       )
     end
   end

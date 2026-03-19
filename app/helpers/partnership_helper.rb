@@ -45,9 +45,9 @@ module PartnershipHelper
     end
     rows << dates_row
 
-    years_row = academic_years_row(partnership.academic_cycles)
-    if change_paths[:academic_cycles].present?
-      years_row[:actions] = [{ href: change_paths[:academic_cycles], visually_hidden_text: "academic years" }]
+    years_row = academic_years_row(partnership.academic_years)
+    if change_paths[:academic_years].present?
+      years_row[:actions] = [{ href: change_paths[:academic_years], visually_hidden_text: "academic years" }]
     end
     rows << years_row
 
@@ -77,29 +77,29 @@ module PartnershipHelper
       value: { text: dates_html } }
   end
 
-  def academic_years_row(academic_cycles)
-    academic_cycles_html = tag.ul(class: "govuk-list govuk-list--bullet") do
-      academic_cycles.collect do |academic_cycle|
-        concat tag.li(raw(display_academic_year(academic_cycle) + tag.br + tag.span(
-          academic_year_helper_text(academic_cycle), class: "govuk-hint"
+  def academic_years_row(academic_years)
+    academic_years_html = tag.ul(class: "govuk-list govuk-list--bullet") do
+      academic_years.collect do |academic_year|
+        concat tag.li(raw(display_academic_year(academic_year) + tag.br + tag.span(
+          academic_year_helper_text(academic_year), class: "govuk-hint"
         )))
       end
     end
 
     { key: { text: "Academic years" },
-      value: { text: academic_cycles_html } }
+      value: { text: academic_years_html } }
   end
 
-  def display_academic_year(academic_cycle)
-    academic_year_text = "#{academic_cycle.duration.begin.year} to #{academic_cycle.duration.end.year}"
+  def display_academic_year(academic_year)
+    academic_year_text = "#{academic_year.duration.begin.year} to #{academic_year.duration.end.year}"
     [:current, :last, :next].each do |label|
-      academic_year_text += " - #{label}" if academic_cycle.send(:"#{label}?")
+      academic_year_text += " - #{label}" if academic_year.send(:"#{label}?")
     end
 
     academic_year_text
   end
 
-  def academic_year_helper_text(academic_cycle)
-    "Starts on 1 August #{academic_cycle.duration.begin.year}, ends on 31 July #{academic_cycle.duration.end.year}"
+  def academic_year_helper_text(academic_year)
+    "Starts on 1 August #{academic_year.duration.begin.year}, ends on 31 July #{academic_year.duration.end.year}"
   end
 end

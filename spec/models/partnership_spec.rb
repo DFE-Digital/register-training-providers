@@ -19,7 +19,7 @@ RSpec.describe Partnership, type: :model do
   describe "associations" do
     it { is_expected.to belong_to(:provider) }
     it { is_expected.to belong_to(:accredited_provider) }
-    it { is_expected.to have_many(:academic_cycles).through(:partnership_academic_cycles) }
+    it { is_expected.to have_many(:academic_years).through(:partnership_academic_years) }
   end
 
   describe "#other_partner" do

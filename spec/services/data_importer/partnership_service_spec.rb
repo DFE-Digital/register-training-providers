@@ -18,7 +18,7 @@ RSpec.describe DataImporter::PartnershipService do
 
   before do
     [2024, 2025, 2026].each do |year|
-      create(:academic_cycle, academic_year: year)
+      create(:academic_year, academic_year: year)
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe DataImporter::PartnershipService do
     it "creates academic cycles and links them to the partnership" do
       call_importer
 
-      years = Partnership.last.academic_cycles.map do |cycle|
+      years = Partnership.last.academic_years.map do |cycle|
         cycle.duration.begin.year
       end
 

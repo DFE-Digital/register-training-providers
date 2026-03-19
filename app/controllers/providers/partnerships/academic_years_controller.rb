@@ -1,6 +1,6 @@
 module Providers
   module Partnerships
-    class AcademicCyclesController < ApplicationController
+    class AcademicYearsController < ApplicationController
       include PartnershipJourneyController
 
       def new
@@ -8,9 +8,9 @@ module Providers
 
         # Keep previous selections only when coming from confirm page to change them
         # Otherwise start fresh (dates may have changed, invalidating previous selections)
-        previous_ids = params[:goto] == "confirm" ? partnership_data&.dig(:academic_cycle_ids) : nil
-        @form = ::Partnerships::AcademicCyclesForm.new(
-          academic_cycle_ids: previous_ids || []
+        previous_ids = params[:goto] == "confirm" ? partnership_data&.dig(:academic_year_ids) : nil
+        @form = ::Partnerships::AcademicYearsForm.new(
+          academic_year_ids: previous_ids || []
         )
 
         setup_view_data(:new)
@@ -28,8 +28,8 @@ module Providers
       end
 
       def create
-        @form = ::Partnerships::AcademicCyclesForm.new(
-          academic_cycle_ids: params.dig(:select, :academic_cycle_ids).compact_blank!,
+        @form = ::Partnerships::AcademicYearsForm.new(
+          academic_year_ids: params.dig(:select, :academic_year_ids).compact_blank!,
         )
 
         partnership_attributes = partnership_session.load_partnership
@@ -40,7 +40,7 @@ module Providers
         end
 
         if @form.valid?
-          merged_attributes = partnership_attributes.merge(academic_cycle_ids: @form.academic_cycle_ids)
+          merged_attributes = partnership_attributes.merge(academic_year_ids: @form.academic_year_ids)
           partnership_session.store_partnership(merged_attributes)
           redirect_to provider_new_partnership_confirm_path(provider)
         else
@@ -53,14 +53,14 @@ module Providers
         @partnership = provider.partnerships.kept.find(params[:id])
         authorize @partnership
 
-        @form = ::Partnerships::AcademicCyclesForm.new(
-          academic_cycle_ids: params.dig(:select, :academic_cycle_ids).compact_blank!,
+        @form = ::Partnerships::AcademicYearsForm.new(
+          academic_year_ids: params.dig(:select, :academic_year_ids).compact_blank!,
         )
 
         partnership_data = partnership_session.load_partnership || {}
 
         if @form.valid?
-          merged_attributes = partnership_data.merge(academic_cycle_ids: @form.academic_cycle_ids)
+          merged_attributes = partnership_data.merge(academic_year_ids: @form.academic_year_ids)
           partnership_session.store_partnership(merged_attributes)
           redirect_to provider_partnership_check_path(@partnership, provider_id: provider.id)
         else
@@ -72,10 +72,10 @@ module Providers
     private
 
       def build_form_for_edit(partnership_data, partnership)
-        if partnership_data&.dig(:academic_cycle_ids)
-          ::Partnerships::AcademicCyclesForm.new(academic_cycle_ids: partnership_data[:academic_cycle_ids])
+        if partnership_data&.dig(:academic_year_ids)
+          ::Partnerships::AcademicYearsForm.new(academic_year_ids: partnership_data[:academic_year_ids])
         else
-          ::Partnerships::AcademicCyclesForm.new(academic_cycle_ids: partnership.academic_cycle_ids)
+          ::Partnerships::AcademicYearsForm.new(academic_year_ids: partnership.academic_year_ids)
         end
       end
 
@@ -93,9 +93,9 @@ module Providers
 
       def form_url(context)
         if context == :edit
-          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id, goto: params[:goto])
+          provider_edit_partnership_academic_years_path(@partnership, provider_id: provider.id, goto: params[:goto])
         else
-          provider_partnership_academic_cycles_path(provider, goto: params[:goto])
+          provider_partnership_academic_years_path(provider, goto: params[:goto])
         end
       end
 
@@ -119,7 +119,7 @@ module Providers
         @page_title = "Academic year"
         @page_subtitle = provider.operating_name.to_s
         @page_caption = page_caption(context)
-        @academic_cycles = academic_cycles(context)
+        @academic_years = academic_years(context)
       end
 
       def partnership_data
@@ -154,13 +154,13 @@ module Providers
       def default_end_date
         next_year_date = Time.zone.today + 1.year
         fallback_date = Time.zone.today + 2.years
-        AcademicCycle.find_by("duration @> ?::date", next_year_date)&.duration&.end || fallback_date
+        AcademicYear.find_by("duration @> ?::date", next_year_date)&.duration&.end || fallback_date
       end
 
-      def academic_cycles(context)
+      def academic_years(context)
         start_date = partnership_start_date(context)
         end_date = partnership_end_date(context)
-        AcademicCycle.where("duration && daterange(?, ?)", start_date, end_date)
+        AcademicYear.where("duration && daterange(?, ?)", start_date, end_date)
       end
     end
   end

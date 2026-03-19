@@ -29,5 +29,5 @@ class PartnershipAcademicYear < ApplicationRecord
   audited
 
   belongs_to :partnership
-  belongs_to :academic_cycle
+  belongs_to :academic_year
 end

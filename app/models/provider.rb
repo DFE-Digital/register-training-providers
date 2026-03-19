@@ -45,8 +45,8 @@ class Provider < ApplicationRecord
   has_many :accrediting_provider_partnerships, class_name: "Partnership", foreign_key: :accredited_provider_id,
                                                dependent: :destroy
 
-  has_many :provider_academic_cycles, dependent: :destroy
-  has_many :academic_cycles, through: :provider_academic_cycles
+  has_many :provider_academic_years, dependent: :destroy
+  has_many :academic_years, through: :provider_academic_years
 
   audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
@@ -67,7 +67,7 @@ class Provider < ApplicationRecord
                   if: -> { urn.present? && requires_urn? }
   validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z0-9]{3}\z/i }, length: { is: 3 }
 
-  after_initialize :set_default_academic_years_active, if: :new_record?
+  after_initialize :set_default_academic_year, if: :new_record?
   before_save :upcase_code
   before_save :update_searchable
 
@@ -173,7 +173,7 @@ private
     ReplaceAbbreviation.call(string: StripPunctuation.call(string: legal_name))
   end
 
-  def set_default_academic_years_active
-    self.year = [AcademicYear.for_year(AcademicYearHelper.current_academic_year)]
+  def set_default_academic_year
+    self.academic_years = [AcademicYear.for_year(AcademicYearHelper.current_academic_year)]
   end
 end

@@ -30,8 +30,8 @@ module Generators
 
         accredited_period_end = accredited_period_start + 2.years
 
-        academic_cycles = AcademicCycle.where("duration && daterange(?, ?)", accredited_period_start,
-                                              accredited_period_end)
+        academic_years = AcademicYear.where("duration && daterange(?, ?)", accredited_period_start,
+                                            accredited_period_end)
 
         partnership = Partnership.create!(
           provider: provider,
@@ -39,7 +39,7 @@ module Generators
           duration: accredited_period_start...accredited_period_end
         )
 
-        academic_cycles.each { |ac| PartnershipAcademicYear.create(academic_cycle: ac, partnership: partnership) }
+        academic_years.each { |ac| PartnershipAcademicYear.create(academic_year: ac, partnership: partnership) }
       end
     end
   end

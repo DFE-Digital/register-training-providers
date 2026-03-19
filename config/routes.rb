@@ -156,10 +156,10 @@ Rails.application.routes.draw do
     post "partnerships/find", to: "providers/partnerships/find#create", as: :partnership_find
     get "partnerships/dates/new", to: "providers/partnerships/dates#new", as: :new_partnership_dates
     post "partnerships/dates", to: "providers/partnerships/dates#create", as: :partnership_dates
-    get "partnerships/academic_cycles/new", to: "providers/partnerships/academic_cycles#new",
-                                            as: :new_partnership_academic_cycles
-    post "partnerships/academic_cycles", to: "providers/partnerships/academic_cycles#create",
-                                         as: :partnership_academic_cycles
+    get "partnerships/academic_years/new", to: "providers/partnerships/academic_years#new",
+                                           as: :new_partnership_academic_years
+    post "partnerships/academic_years", to: "providers/partnerships/academic_years#create",
+                                        as: :partnership_academic_years
     # Check/confirm
     get "partnerships/check/new", to: "providers/partnerships/check#new", as: :new_partnership_confirm
     post "partnerships/check", to: "providers/partnerships/check#create", as: :partnership_confirm
@@ -167,9 +167,9 @@ Rails.application.routes.draw do
     # Edit partnership flow - entry point is dates#edit
     get "partnerships/:id/dates", to: "providers/partnerships/dates#edit", as: :edit_partnership_dates
     patch "partnerships/:id/dates", to: "providers/partnerships/dates#update"
-    get "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#edit",
-                                            as: :edit_partnership_academic_cycles
-    patch "partnerships/:id/academic_cycles", to: "providers/partnerships/academic_cycles#update"
+    get "partnerships/:id/academic_years", to: "providers/partnerships/academic_years#edit",
+                                           as: :edit_partnership_academic_years
+    patch "partnerships/:id/academic_years", to: "providers/partnerships/academic_years#update"
     get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
     patch "partnerships/:id/check", to: "providers/partnerships/check#update"
     # Delete

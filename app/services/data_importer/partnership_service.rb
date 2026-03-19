@@ -14,7 +14,7 @@ module DataImporter
 
         partnership.save!(validate: false)
 
-        attach_academic_cycles(partnership)
+        attach_academic_years(partnership)
 
         partnership.save!(validate: false)
 
@@ -37,12 +37,12 @@ module DataImporter
       partnership.duration = duration_range
     end
 
-    def attach_academic_cycles(partnership)
+    def attach_academic_years(partnership)
       academic_years.each do |year|
-        cycle = AcademicCycle.for_year(year)
+        cycle = AcademicYear.for_year(year)
 
-        partnership.partnership_academic_cycles
-                   .find_or_create_by!(academic_cycle: cycle)
+        partnership.partnership_academic_years
+                   .find_or_create_by!(academic_year: cycle)
       end
     end
 

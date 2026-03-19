@@ -83,9 +83,9 @@ module Providers
 
       def back_path(context)
         if context == :edit
-          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id)
+          provider_edit_partnership_academic_years_path(@partnership, provider_id: provider.id)
         else
-          provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
+          provider_new_partnership_academic_years_path(provider, goto: "confirm")
         end
       end
 
@@ -159,7 +159,7 @@ module Providers
           # Edit flow: only dates and academic years are changeable (partner locked)
           {
             dates: provider_edit_partnership_dates_path(@partnership, provider_id: provider.id, goto: "confirm"),
-            academic_cycles: provider_edit_partnership_academic_cycles_path(
+            academic_years: provider_edit_partnership_academic_years_path(
               @partnership, provider_id: provider.id, goto: "confirm"
             )
           }
@@ -168,7 +168,7 @@ module Providers
           {
             partner: provider_new_partnership_find_path(provider, goto: "confirm"),
             dates: provider_new_partnership_dates_path(provider, goto: "confirm"),
-            academic_cycles: provider_new_partnership_academic_cycles_path(provider, goto: "confirm")
+            academic_years: provider_new_partnership_academic_years_path(provider, goto: "confirm")
           }
         end
       end

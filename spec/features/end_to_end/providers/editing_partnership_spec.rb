@@ -8,20 +8,20 @@ RSpec.describe "Editing partnership", type: :feature do
   context "when editing an existing partnership" do
     let(:accredited_provider) { create(:provider, :accredited) }
     let(:training_partner) { create(:provider, :hei, :unaccredited, operating_name: "Test Training Partner") }
-    let!(:academic_cycle_current) do
-      create(:academic_cycle, :current)
+    let!(:academic_year_current) do
+      create(:academic_year, :current)
     end
-    let!(:academic_cycle_next) do
-      create(:academic_cycle, :next)
+    let!(:academic_year_next) do
+      create(:academic_year, :next)
     end
     let!(:partnership) do
       # Build without default academic cycle from factory callback
       p = Partnership.create!(
         provider: training_partner,
         accredited_provider: accredited_provider,
-        duration: academic_cycle_current.duration.to_a.sample..
+        duration: academic_year_current.duration.to_a.sample..
       )
-      p.academic_cycles << academic_cycle_current
+      p.academic_years << academic_year_current
       p
     end
 
@@ -44,8 +44,8 @@ RSpec.describe "Editing partnership", type: :feature do
 
       expect(page).to have_content("Academic year")
 
-      check display_academic_year(academic_cycle_current)
-      check display_academic_year(academic_cycle_next)
+      check display_academic_year(academic_year_current)
+      check display_academic_year(academic_year_next)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -58,7 +58,7 @@ RSpec.describe "Editing partnership", type: :feature do
       expect(page).to have_current_path(provider_partnerships_path(accredited_provider))
 
       partnership.reload
-      expect(partnership.academic_cycles).to include(academic_cycle_current, academic_cycle_next)
+      expect(partnership.academic_years).to include(academic_year_current, academic_year_next)
     end
 
     scenario "can change dates from check your answers page" do
@@ -71,7 +71,7 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
-      check display_academic_year(academic_cycle_current)
+      check display_academic_year(academic_year_current)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -88,7 +88,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       expect(page).to have_content("Academic year")
 
-      check display_academic_year(academic_cycle_current)
+      check display_academic_year(academic_year_current)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -108,7 +108,7 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
-      check display_academic_year(academic_cycle_current)
+      check display_academic_year(academic_year_current)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -129,7 +129,7 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
-      check display_academic_year(academic_cycle_current)
+      check display_academic_year(academic_year_current)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -153,7 +153,7 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
-      check display_academic_year(academic_cycle_current)
+      check display_academic_year(academic_year_current)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -171,16 +171,16 @@ RSpec.describe "Editing partnership", type: :feature do
   context "with validation errors" do
     let(:provider) { create(:provider, :accredited) }
     let(:partner) { create(:provider, :hei, :unaccredited) }
-    let!(:academic_cycle) do
-      create(:academic_cycle, :current)
+    let!(:academic_year) do
+      create(:academic_year, :current)
     end
     let!(:partnership) do
       p = Partnership.create!(
         provider: partner,
         accredited_provider: provider,
-        duration: academic_cycle.duration.to_a.sample..
+        duration: academic_year.duration.to_a.sample..
       )
-      p.academic_cycles << academic_cycle
+      p.academic_years << academic_year
       p
     end
 
@@ -206,7 +206,7 @@ RSpec.describe "Editing partnership", type: :feature do
       click_button "Continue"
 
       # Uncheck pre-selected academic years
-      uncheck display_academic_year(academic_cycle)
+      uncheck display_academic_year(academic_year)
 
       click_button "Continue"
 
@@ -219,8 +219,8 @@ RSpec.describe "Editing partnership", type: :feature do
     let(:provider) { create(:provider, :accredited) }
     let(:partner) { create(:provider, :hei, :unaccredited) }
     let(:current_year) { Date.current.year }
-    let!(:academic_cycle) do
-      create(:academic_cycle, :current)
+    let!(:academic_year) do
+      create(:academic_year, :current)
     end
     let!(:partnership) do
       p = Partnership.create!(
@@ -228,7 +228,7 @@ RSpec.describe "Editing partnership", type: :feature do
         accredited_provider: provider,
         duration: Date.new(current_year, 1, 1)..
       )
-      p.academic_cycles << academic_cycle
+      p.academic_years << academic_year
       p
     end
 
@@ -263,7 +263,7 @@ private
     end
   end
 
-  def display_academic_year(academic_cycle)
-    "#{academic_cycle.duration.begin.year} to #{academic_cycle.duration.end.year}"
+  def display_academic_year(academic_year)
+    "#{academic_year.duration.begin.year} to #{academic_year.duration.end.year}"
   end
 end

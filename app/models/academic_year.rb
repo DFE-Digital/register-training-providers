@@ -11,14 +11,14 @@
 #
 #  index_academic_cycles_on_duration  (duration)
 #
-class AcademicCycle < ApplicationRecord
+class AcademicYear < ApplicationRecord
   self.implicit_order_column = :duration
 
-  has_many :partnership_academic_cycles, dependent: :destroy
-  has_many :partnerships, through: :partnership_academic_cycles
+  has_many :partnership_academic_years, dependent: :destroy
+  has_many :partnerships, through: :partnership_academic_years
 
-  has_many :provider_academic_cycles, dependent: :destroy
-  has_many :providers, through: :provider_academic_cycles
+  has_many :provider_academic_years, dependent: :destroy
+  has_many :providers, through: :provider_academic_years
 
   def current?
     duration.cover?(Time.zone.today)

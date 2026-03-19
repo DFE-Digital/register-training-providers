@@ -10,7 +10,7 @@ RSpec.describe Provider, type: :model do
   describe "associations" do
     it { is_expected.to have_many(:provider_academic_years).dependent(:destroy) }
 
-    it { is_expected.to have_many(:academic_cycles).through(:provider_academic_years) }
+    it { is_expected.to have_many(:academic_years).through(:provider_academic_years) }
   end
 
   context "provider is discarded" do
