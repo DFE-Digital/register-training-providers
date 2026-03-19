@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_13_155246) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_100637) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -207,7 +207,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_155246) do
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "academic_years_active", default: [], null: false, array: true
     t.string "accreditation_status", null: false
     t.datetime "archived_at", precision: nil
     t.citext "code", null: false
@@ -222,7 +221,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_155246) do
     t.string "ukprn", limit: 8, null: false
     t.datetime "updated_at", null: false
     t.string "urn", limit: 6
-    t.index ["academic_years_active"], name: "index_providers_on_academic_years_active", using: :gin
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
