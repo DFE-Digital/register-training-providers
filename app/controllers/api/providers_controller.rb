@@ -6,8 +6,8 @@ module Api
       scope = scope.where(updated_at: changed_since..) if changed_since.present?
 
       scope = scope
-        .joins(:academic_cycles)
-        .where(academic_cycles: { id: AcademicCycle.for_year(academic_year) })
+        .joins(:academic_years)
+        .where(academic_years: { id: AcademicYear.for_year(academic_year) })
 
       providers = scope.order(:updated_at)
 

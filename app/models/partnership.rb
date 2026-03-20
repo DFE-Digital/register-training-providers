@@ -31,8 +31,8 @@ class Partnership < ApplicationRecord
 
   belongs_to :provider
   belongs_to :accredited_provider, class_name: "Provider"
-  has_many :partnership_academic_cycles, dependent: :destroy
-  has_many :academic_cycles, through: :partnership_academic_cycles
+  has_many :partnership_academic_years, dependent: :destroy
+  has_many :academic_years, through: :partnership_academic_years
 
   scope :ordered_by_partner_and_date, ->(viewing_provider) {
     joins(

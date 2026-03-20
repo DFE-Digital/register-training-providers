@@ -20,7 +20,7 @@ FactoryBot.define do
     code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
 
-    with_current_academic_cycle
+    with_current_academic_year
 
     trait :archived do
       archived_at { Time.zone.now }
@@ -118,14 +118,14 @@ FactoryBot.define do
       end
     end
 
-    trait :with_current_academic_cycle do
+    trait :with_current_academic_year do
       after(:create) do |provider|
-        if provider.academic_cycles.empty?
-          academic_cycle = create(:academic_cycle, :current)
+        if provider.academic_years.empty?
+          academic_year = create(:academic_year, :current)
 
-          ProviderAcademicCycle.find_or_create_by!(
+          ProviderAcademicYear.find_or_create_by!(
             provider:,
-            academic_cycle:
+            academic_year:
           )
         end
       end

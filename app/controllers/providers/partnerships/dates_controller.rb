@@ -70,11 +70,11 @@ module Providers
 
       def next_path(context)
         if context == :edit
-          provider_edit_partnership_academic_cycles_path(@partnership, provider_id: provider.id, goto: params[:goto])
+          provider_edit_partnership_academic_years_path(@partnership, provider_id: provider.id, goto: params[:goto])
         elsif params[:goto] == "confirm"
           provider_new_partnership_confirm_path(provider)
         else
-          provider_new_partnership_academic_cycles_path(provider)
+          provider_new_partnership_academic_years_path(provider)
         end
       end
 

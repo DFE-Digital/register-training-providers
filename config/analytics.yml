@@ -26,9 +26,9 @@
     - last_signed_in_at
     - system_admin
     - updated_at
-  :partnership_academic_cycles:
+  :partnership_academic_years:
     - id
-    - academic_cycle_id
+    - academic_year_id
     - created_at
     - discarded_at
     - partnership_id
@@ -92,15 +92,15 @@
     - provider_id
     - start_date
     - updated_at
-  :academic_cycles:
+  :academic_years:
     - id
     - created_at
     - duration
     - updated_at
-  :provider_academic_cycles:
+  :provider_academic_years:
     - id
     - provider_id
-    - academic_cycle_id
+    - academic_year_id
     - discarded_at
     - created_at
     - updated_at

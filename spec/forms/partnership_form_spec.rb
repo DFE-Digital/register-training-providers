@@ -3,12 +3,12 @@ require "rails_helper"
 RSpec.describe PartnershipForm, type: :model do
   let(:provider) { create(:provider) }
   let(:accredited_provider) { create(:provider, :accredited) }
-  let(:academic_cycle) { create(:academic_cycle) }
+  let(:academic_year) { create(:academic_year) }
   let(:valid_attributes) do
     {
       provider_id: provider.id,
       accredited_provider_id: accredited_provider.id,
-      academic_cycle_ids: [academic_cycle.id],
+      academic_year_ids: [academic_year.id],
       start_date_day: 1,
       start_date_month: 9,
       start_date_year: Date.current.year
@@ -27,11 +27,11 @@ RSpec.describe PartnershipForm, type: :model do
       expect(form.errors[:start_date]).to include("Enter date the partnership started")
     end
 
-    it "requires at least one academic_cycle_id" do
-      form = described_class.new(valid_attributes.merge(academic_cycle_ids: []))
+    it "requires at least one academic_year_id" do
+      form = described_class.new(valid_attributes.merge(academic_year_ids: []))
 
       expect(form).not_to be_valid
-      expect(form.errors[:academic_cycle_ids]).to be_present
+      expect(form.errors[:academic_year_ids]).to be_present
     end
   end
 
@@ -42,7 +42,7 @@ RSpec.describe PartnershipForm, type: :model do
 
       expect(attributes[:provider]).to eq(provider)
       expect(attributes[:accredited_provider]).to eq(accredited_provider)
-      expect(attributes[:academic_cycles]).to include(academic_cycle)
+      expect(attributes[:academic_years]).to include(academic_year)
       expect(attributes[:duration]).to be_a(Range)
     end
   end
