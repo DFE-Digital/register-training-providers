@@ -3,7 +3,6 @@
 # Table name: providers
 #
 #  id                    :uuid             not null, primary key
-#  academic_years_active :integer          default([]), not null, is an Array
 #  accreditation_status  :string           not null
 #  archived_at           :datetime
 #  code                  :citext           not null
@@ -21,16 +20,15 @@
 #
 # Indexes
 #
-#  index_providers_on_academic_years_active  (academic_years_active) USING gin
-#  index_providers_on_accreditation_status   (accreditation_status)
-#  index_providers_on_archived_at            (archived_at)
-#  index_providers_on_code                   (code) UNIQUE
-#  index_providers_on_discarded_at           (discarded_at)
-#  index_providers_on_legal_name             (legal_name)
-#  index_providers_on_provider_type          (provider_type)
-#  index_providers_on_searchable             (searchable) USING gin
-#  index_providers_on_ukprn                  (ukprn)
-#  index_providers_on_urn                    (urn)
+#  index_providers_on_accreditation_status  (accreditation_status)
+#  index_providers_on_archived_at           (archived_at)
+#  index_providers_on_code                  (code) UNIQUE
+#  index_providers_on_discarded_at          (discarded_at)
+#  index_providers_on_legal_name            (legal_name)
+#  index_providers_on_provider_type         (provider_type)
+#  index_providers_on_searchable            (searchable) USING gin
+#  index_providers_on_ukprn                 (ukprn)
+#  index_providers_on_urn                   (urn)
 #
 class Provider < ApplicationRecord
   self.implicit_order_column = :created_at
@@ -46,6 +44,9 @@ class Provider < ApplicationRecord
   has_many :accredited_provider_partnerships, class_name: "Partnership", dependent: :destroy
   has_many :accrediting_provider_partnerships, class_name: "Partnership", foreign_key: :accredited_provider_id,
                                                dependent: :destroy
+
+  has_many :provider_academic_cycles, dependent: :destroy
+  has_many :academic_cycles, through: :provider_academic_cycles
 
   audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
@@ -173,6 +174,6 @@ private
   end
 
   def set_default_academic_years_active
-    self.academic_years_active ||= [AcademicYearHelper.current_academic_year]
+    self.academic_cycles ||= [AcademicCycle.for_year(AcademicYearHelper.current_academic_year)]
   end
 end

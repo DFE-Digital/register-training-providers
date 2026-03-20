@@ -5,7 +5,9 @@ module Api
 
       scope = scope.where(updated_at: changed_since..) if changed_since.present?
 
-      scope = scope.where(academic_years_active: [academic_year])
+      scope = scope
+        .joins(:academic_cycles)
+        .where(academic_cycles: { id: AcademicCycle.for_year(academic_year) })
 
       providers = scope.order(:updated_at)
 
@@ -34,8 +36,9 @@ module Api
     end
 
     def academic_year
-      permitted_params[:academic_year].presence ||
-        AcademicYearHelper.current_academic_year
+      year = permitted_params[:academic_year].to_s[/\A2\d{3}\z/]
+
+      year ? year.to_i : AcademicYearHelper.current_academic_year
     end
   end
 end

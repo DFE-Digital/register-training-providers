@@ -197,8 +197,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
     t.index ["provider_id"], name: "index_partnerships_on_provider_id"
   end
 
+  create_table "provider_academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "academic_cycle_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "discarded_at"
+    t.uuid "provider_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["academic_cycle_id"], name: "index_provider_academic_cycles_on_academic_cycle_id"
+    t.index ["provider_id"], name: "index_provider_academic_cycles_on_provider_id"
+  end
+
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "academic_years_active", default: [], null: false, array: true
     t.string "accreditation_status", null: false
     t.datetime "archived_at", precision: nil
     t.citext "code", null: false
@@ -213,7 +222,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
     t.string "ukprn", limit: 8, null: false
     t.datetime "updated_at", null: false
     t.string "urn", limit: 6
-    t.index ["academic_years_active"], name: "index_providers_on_academic_years_active", using: :gin
     t.index ["accreditation_status"], name: "index_providers_on_accreditation_status"
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
@@ -392,6 +400,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
   add_foreign_key "partnership_academic_cycles", "partnerships"
   add_foreign_key "partnerships", "providers"
   add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
+  add_foreign_key "provider_academic_cycles", "academic_cycles"
+  add_foreign_key "provider_academic_cycles", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

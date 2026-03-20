@@ -3,7 +3,6 @@ FactoryBot.define do
     id { Faker::Internet.unique.uuid }
     provider_type { :hei }
     accreditation_status { :unaccredited }
-    academic_years_active { [AcademicYearHelper.current_academic_year] }
 
     legal_name do
       n = Faker::Number.number(digits: 4)
@@ -20,6 +19,8 @@ FactoryBot.define do
 
     code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
+
+    with_current_academic_cycle
 
     trait :archived do
       archived_at { Time.zone.now }
@@ -114,6 +115,19 @@ FactoryBot.define do
         }
 
         provider.save!
+      end
+    end
+
+    trait :with_current_academic_cycle do
+      after(:create) do |provider|
+        if provider.academic_cycles.empty?
+          academic_cycle = create(:academic_cycle, :current)
+
+          ProviderAcademicCycle.find_or_create_by!(
+            provider:,
+            academic_cycle:
+          )
+        end
       end
     end
   end
