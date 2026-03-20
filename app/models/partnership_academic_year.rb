@@ -2,7 +2,7 @@
 #
 # Table name: partnership_academic_years
 #
-#  id               :bigint           not null, primary key
+#  id               :uuid             not null, primary key
 #  discarded_at     :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
