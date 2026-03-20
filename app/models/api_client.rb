@@ -12,7 +12,6 @@
 # Indexes
 #
 #  index_api_clients_on_created_by_and_lower_name  (created_by_id, lower((name)::text))
-#  index_api_clients_on_created_by_id              (created_by_id)
 #  index_api_clients_on_discarded_at               (discarded_at)
 #
 # Foreign Keys

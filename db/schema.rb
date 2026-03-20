@@ -62,7 +62,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index "created_by_id, lower((name)::text)", name: "index_api_clients_on_created_by_and_lower_name"
-    t.index ["created_by_id"], name: "index_api_clients_on_created_by_id"
     t.index ["discarded_at"], name: "index_api_clients_on_discarded_at"
   end
 
