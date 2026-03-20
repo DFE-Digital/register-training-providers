@@ -391,7 +391,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
 
   add_foreign_key "accreditations", "providers"
   add_foreign_key "addresses", "providers"
-  add_foreign_key "api_clients", "users", column: "created_by_id"
+  add_foreign_key "api_clients", "users", column: "created_by_id", on_delete: :cascade
   add_foreign_key "authentication_tokens", "api_clients"
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
   add_foreign_key "authentication_tokens", "users", column: "revoked_by_id", on_delete: :nullify

@@ -16,7 +16,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (created_by_id => users.id)
+#  fk_rails_...  (created_by_id => users.id) ON DELETE => cascade
 #
 class ApiClient < ApplicationRecord
   include Discard::Model
