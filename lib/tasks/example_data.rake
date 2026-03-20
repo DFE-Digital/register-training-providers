@@ -15,7 +15,7 @@ namespace :example_data do
       persona.discard! if persona_attributes[:discarded?] && persona.kept?
     end
 
-    ["generate:academic_cycles",
+    ["generate:academic_years",
      "import:providers",
      "import:partnerships",
      "generate:contacts",].each do |task|
