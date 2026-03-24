@@ -7,7 +7,7 @@
 #  name          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  created_by_id :uuid
+#  created_by_id :uuid             not null
 #
 # Indexes
 #

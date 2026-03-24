@@ -57,7 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
 
   create_table "api_clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.uuid "created_by_id"
+    t.uuid "created_by_id", null: false
     t.datetime "discarded_at"
     t.string "name", null: false
     t.datetime "updated_at", null: false
