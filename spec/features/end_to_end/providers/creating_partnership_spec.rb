@@ -8,7 +8,7 @@ RSpec.describe "Creating partnership", type: :feature do
   context "when accredited provider adds unaccredited partner" do
     let(:accredited_provider) { create(:provider, :accredited) }
     let!(:unaccredited_partner) { create(:provider, :hei, :unaccredited, operating_name: "Test Training Partner") }
-    let!(:academic_cycle) { create(:academic_cycle) }
+    let!(:academic_year) { create(:academic_year) }
 
     scenario "successfully creates a partnership" do
       visit provider_partnerships_path(accredited_provider)
@@ -31,7 +31,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       expect(page).to have_content("Academic year")
 
-      check display_academic_year(academic_cycle)
+      check display_academic_year(academic_year)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -55,7 +55,7 @@ RSpec.describe "Creating partnership", type: :feature do
   context "when unaccredited provider adds accredited partner" do
     let(:unaccredited_provider) { create(:provider, :hei, :unaccredited) }
     let!(:accredited_partner) { create(:provider, :accredited, operating_name: "Accredited University") }
-    let!(:academic_cycle) { create(:academic_cycle) }
+    let!(:academic_year) { create(:academic_year) }
 
     scenario "successfully creates a partnership" do
       visit provider_partnerships_path(unaccredited_provider)
@@ -74,7 +74,7 @@ RSpec.describe "Creating partnership", type: :feature do
       fill_in_start_date
       click_button "Continue"
 
-      check display_academic_year(academic_cycle)
+      check display_academic_year(academic_year)
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -95,7 +95,7 @@ RSpec.describe "Creating partnership", type: :feature do
   context "with validation errors" do
     let(:provider) { create(:provider, :accredited) }
     let!(:partner) { create(:provider, :hei, :unaccredited) }
-    let!(:academic_cycle) { create(:academic_cycle) }
+    let!(:academic_year) { create(:academic_year) }
 
     scenario "shows error when no partner selected" do
       visit provider_new_partnership_find_path(provider)
@@ -166,7 +166,7 @@ private
     end
   end
 
-  def display_academic_year(academic_cycle)
-    "#{academic_cycle.duration.begin.year} to #{academic_cycle.duration.end.year}"
+  def display_academic_year(academic_year)
+    "#{academic_year.duration.begin.year} to #{academic_year.duration.end.year}"
   end
 end

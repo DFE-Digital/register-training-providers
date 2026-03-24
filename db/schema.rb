@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_19_161428) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
 
-  create_table "academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "academic_years", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.daterange "duration"
     t.datetime "updated_at", null: false
-    t.index ["duration"], name: "index_academic_cycles_on_duration"
+    t.index ["duration"], name: "index_academic_years_on_duration"
   end
 
   create_table "accreditations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -176,14 +176,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
     t.index ["provider_id"], name: "index_contacts_on_provider_id"
   end
 
-  create_table "partnership_academic_cycles", force: :cascade do |t|
-    t.uuid "academic_cycle_id", null: false
+  create_table "partnership_academic_years", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "academic_year_id", null: false
     t.datetime "created_at", null: false
     t.datetime "discarded_at"
     t.uuid "partnership_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["academic_cycle_id"], name: "index_partnership_academic_cycles_on_academic_cycle_id"
-    t.index ["partnership_id"], name: "index_partnership_academic_cycles_on_partnership_id"
+    t.index ["academic_year_id"], name: "index_partnership_academic_years_on_academic_year_id"
+    t.index ["partnership_id"], name: "index_partnership_academic_years_on_partnership_id"
   end
 
   create_table "partnerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -197,14 +197,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
     t.index ["provider_id"], name: "index_partnerships_on_provider_id"
   end
 
-  create_table "provider_academic_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "academic_cycle_id", null: false
+  create_table "provider_academic_years", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "academic_year_id", null: false
     t.datetime "created_at", null: false
     t.datetime "discarded_at"
     t.uuid "provider_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["academic_cycle_id"], name: "index_provider_academic_cycles_on_academic_cycle_id"
-    t.index ["provider_id"], name: "index_provider_academic_cycles_on_provider_id"
+    t.index ["academic_year_id"], name: "index_provider_academic_years_on_academic_year_id"
+    t.index ["provider_id"], name: "index_provider_academic_years_on_provider_id"
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -396,12 +396,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_091306) do
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
   add_foreign_key "authentication_tokens", "users", column: "revoked_by_id", on_delete: :nullify
   add_foreign_key "contacts", "providers"
-  add_foreign_key "partnership_academic_cycles", "academic_cycles"
-  add_foreign_key "partnership_academic_cycles", "partnerships"
+  add_foreign_key "partnership_academic_years", "academic_years"
+  add_foreign_key "partnership_academic_years", "partnerships"
   add_foreign_key "partnerships", "providers"
   add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
-  add_foreign_key "provider_academic_cycles", "academic_cycles"
-  add_foreign_key "provider_academic_cycles", "providers"
+  add_foreign_key "provider_academic_years", "academic_years"
+  add_foreign_key "provider_academic_years", "providers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

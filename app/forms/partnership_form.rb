@@ -7,7 +7,7 @@ class PartnershipForm
 
   has_date_components :start_date, :end_date
 
-  attr_accessor :academic_cycle_ids
+  attr_accessor :academic_year_ids
 
   attribute :provider_id, :string
   attribute :accredited_provider_id, :string
@@ -15,7 +15,7 @@ class PartnershipForm
   validates :accredited_provider_id, presence: true
   validates :provider_id, presence: true
   validates :start_date, presence: true
-  validate :academic_cycle_ids_must_not_be_empty
+  validate :academic_year_ids_must_not_be_empty
 
   def self.from_dates(dates)
     form = new
@@ -35,7 +35,7 @@ class PartnershipForm
     new(form.extract_date_components_from(dates_object).merge(
           provider_id: partnership.provider_id,
           accredited_provider_id: partnership.accredited_provider_id,
-          academic_cycle_ids: partnership.academic_cycle_ids
+          academic_year_ids: partnership.academic_year_ids
         ))
   end
 
@@ -54,7 +54,7 @@ class PartnershipForm
       duration:,
       provider:,
       accredited_provider:,
-      academic_cycles:
+      academic_years:
     }.compact
   end
 
@@ -66,8 +66,8 @@ class PartnershipForm
     Provider.find(accredited_provider_id)
   end
 
-  def academic_cycles
-    AcademicCycle.where(id: academic_cycle_ids)
+  def academic_years
+    AcademicYear.where(id: academic_year_ids)
   end
 
   def duration
@@ -76,9 +76,9 @@ class PartnershipForm
 
 private
 
-  def academic_cycle_ids_must_not_be_empty
-    return true unless academic_cycle_ids.empty?
+  def academic_year_ids_must_not_be_empty
+    return true unless academic_year_ids.empty?
 
-    errors.add(:academic_cycle_ids, :blank)
+    errors.add(:academic_year_ids, :blank)
   end
 end

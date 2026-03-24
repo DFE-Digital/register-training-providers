@@ -15,7 +15,7 @@ namespace :seed_data do
       end
     end
 
-    ["generate:academic_cycles",
+    ["generate:academic_years",
      "import:providers",
      "import:partnerships"].each do |task|
       Rake::Task[task].reenable
