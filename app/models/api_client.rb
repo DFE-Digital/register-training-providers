@@ -61,7 +61,7 @@ private
 
     existing_names = created_by.api_clients.kept.pluck(:name).map(&:downcase)
 
-    return true unless existing_names.include?(name)
+    return true unless existing_names.include?(name&.downcase)
 
     errors.add(:name, :uniqueness)
   end
