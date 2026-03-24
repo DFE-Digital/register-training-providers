@@ -66,7 +66,7 @@ RSpec.feature "api_client management" do
   def and_i_can_see_the_error_summary
     expect(page).to have_error_summary(
       "Enter client name",
-      "Enter expires at",
+      "Enter expiry date",
     )
   end
 

@@ -31,7 +31,7 @@ class ApiClientForm
   before_validation :convert_date_components
 
   validates :name, presence: true
-  validates_govuk_date :expires_at, presence: true, if: -> { id.blank? }
+  validates_govuk_date :expires_at, presence: true, if: -> { id.blank? }, human_name: "expiry date"
   validate :expires_at_within_one_year, if: -> { id.blank? }
   validate :name_is_unique
 
