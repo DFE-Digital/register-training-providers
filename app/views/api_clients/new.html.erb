@@ -1,0 +1,21 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: api_clients_path,
+      ) %>
+<% end %>
+
+<%= form_for @form do |form| %>
+  <% page_data(title: "Add API client", header: false, error: @form.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_fieldset legend: { text: "Client details" }, caption: { text: "Add API client" } do %>
+    <%= render partial: "fields", locals: { form: } %>
+    <%= form.govuk_submit %>
+  <% end %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", api_clients_path) %>
+</p>

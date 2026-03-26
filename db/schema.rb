@@ -57,10 +57,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_161428) do
 
   create_table "api_clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.uuid "created_by_id", null: false
     t.datetime "discarded_at"
     t.string "name", null: false
     t.datetime "updated_at", null: false
-    t.index "lower((name)::text)", name: "index_api_clients_on_lower_name", unique: true
+    t.index "created_by_id, lower((name)::text)", name: "index_api_clients_on_created_by_and_lower_name"
     t.index ["discarded_at"], name: "index_api_clients_on_discarded_at"
   end
 
@@ -390,6 +391,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_161428) do
 
   add_foreign_key "accreditations", "providers"
   add_foreign_key "addresses", "providers"
+  add_foreign_key "api_clients", "users", column: "created_by_id", on_delete: :cascade
   add_foreign_key "authentication_tokens", "api_clients"
   add_foreign_key "authentication_tokens", "users", column: "created_by_id"
   add_foreign_key "authentication_tokens", "users", column: "revoked_by_id", on_delete: :nullify

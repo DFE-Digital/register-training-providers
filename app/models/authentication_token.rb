@@ -34,7 +34,7 @@ class AuthenticationToken < ApplicationRecord
 
   validates :token_hash, presence: true, uniqueness: true
   validates :expires_at, presence: true
-  validate :expires_at_not_too_far_in_future
+  validate :expires_at_not_too_far_in_future, on: :create
 
   SECRET_KEY = Rails.application.key_generator.generate_key("api-token:v1", 32)
 
@@ -110,8 +110,9 @@ private
   def expires_at_not_too_far_in_future
     return if expires_at.blank?
 
-    if expires_at > 6.months.from_now.to_date
-      errors.add(:expires_at, "cannot be more than 6 months in the future")
+    if expires_at > 12.months.from_now.to_date || expires_at < Time.zone.today
+      errors.add(:expires_at,
+                 "must be between #{Time.zone.today.to_fs(:govuk)} and #{12.months.from_now.to_date.to_fs(:govuk)}")
     end
   end
 end
