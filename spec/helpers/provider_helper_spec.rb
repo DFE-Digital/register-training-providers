@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe ProviderHelper, type: :helper do
   describe "#provider_summary_cards" do
-    let(:provider) { build_stubbed(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000") }
+    let(:provider) { create(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000") }
     let(:providers) { [provider] }
 
     it "returns the expected not entered hash" do
@@ -144,7 +144,7 @@ RSpec.describe ProviderHelper, type: :helper do
   end
 
   describe "#provider_details_rows" do
-    let(:provider) { build_stubbed(:provider, legal_name: nil, urn: nil) }
+    let(:provider) { create(:provider, operating_name: "Test", legal_name: nil, urn: nil) }
 
     it "returns the expected rows with 'Not entered' where applicable" do
       expect(helper.provider_details_rows(provider)).to eq([
@@ -185,7 +185,7 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when all values are present" do
-      let(:provider) { build_stubbed(:provider, :scitt) }
+      let(:provider) { create(:provider, :scitt) }
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_details_rows(provider)).to eq([
