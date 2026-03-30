@@ -38,7 +38,7 @@ module Api
     def academic_year
       year = permitted_params[:academic_year].to_s[/\A2\d{3}\z/]
 
-      year ? year.to_i : AcademicYearHelper.current_academic_year
+      year ? year.to_i : AcademicYearCalculator.current_academic_year
     end
   end
 end

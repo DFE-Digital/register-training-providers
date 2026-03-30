@@ -1,7 +1,7 @@
 # spec/helpers/academic_year_helper_spec.rb
 require "rails_helper"
 
-RSpec.describe AcademicYearHelper do
+RSpec.describe AcademicYearCalculator do
   describe ".current_academic_year" do
     context "when month is August or later" do
       it "returns the current year" do

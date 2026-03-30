@@ -16,7 +16,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
 
     let(:params) do
       { changed_since: 1.day.ago.utc.iso8601,
-        academic_year: AcademicYearHelper.current_academic_year, }
+        academic_year: AcademicYearCalculator.current_academic_year, }
     end
 
     let(:headers) { { Authorization: token } }

@@ -5,7 +5,7 @@ class AddAcademicYearsActiveToProviders < ActiveRecord::Migration[8.1]
 
     Provider.reset_column_information
     Provider.find_each do |provider|
-      provider.update_column(:academic_years_active, [AcademicYearHelper.current_academic_year])
+      provider.update_column(:academic_years_active, [AcademicYearCalculator.current_academic_year])
     end
   end
 

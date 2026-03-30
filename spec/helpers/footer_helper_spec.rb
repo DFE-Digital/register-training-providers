@@ -1,4 +1,3 @@
-# spec/helpers/footer_helper_spec.rb
 require "rails_helper"
 
 RSpec.describe FooterHelper, type: :helper do
