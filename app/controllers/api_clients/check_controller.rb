@@ -70,7 +70,7 @@ private
   end
 
   def authorize_model
-    return authorize model if model.class == ApiClient
+    return authorize model if model.instance_of?(ApiClient)
 
     api_client = ApiClient.new
 
