@@ -1,8 +1,12 @@
 class AddCreatedByToApiClients < ActiveRecord::Migration[8.1]
-  def change
-    # rubocop:disable Rails/NotNullColumn
+  def up
+    ApiClient.destroy_all
+
     add_reference :api_clients, :created_by, type: :uuid, foreign_key: { to_table: :users, on_delete: :cascade },
                                              null: false
-    # rubocop:enable Rails/NotNullColumn
+  end
+
+  def down
+    remove_reference :api_clients, :created_by
   end
 end
