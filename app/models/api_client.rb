@@ -29,7 +29,12 @@ class ApiClient < ApplicationRecord
 
   validates :name, presence: true
 
-  validate :name_is_unique_to_creator
+  validates :name,
+            uniqueness: {
+              scope: :created_by_id,
+              case_sensitive: false,
+              conditions: -> { kept }
+            }
 
   before_discard do
     revoke_all_active_tokens!
@@ -52,17 +57,5 @@ class ApiClient < ApplicationRecord
   def self.sweep_all_tokens!
     discarded.find_each(&:revoke_all_active_tokens!)
     kept.find_each(&:expire_all_due_tokens!)
-  end
-
-private
-
-  def name_is_unique_to_creator
-    return true unless created_by.api_clients.any?
-
-    existing_names = created_by.api_clients.kept.pluck(:name).map(&:downcase)
-
-    return true unless existing_names.include?(name&.downcase)
-
-    errors.add(:name, :uniqueness)
   end
 end
