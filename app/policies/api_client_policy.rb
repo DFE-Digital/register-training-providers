@@ -16,6 +16,6 @@ class ApiClientPolicy < ApplicationPolicy
   end
 
   def create?
-    true # record.new_record?
+    record.new_record?
   end
 end

@@ -9,7 +9,7 @@
 <p class="govuk-hint govuk-!-font-size-16">Created by <%= api_client.current_authentication_token.created_by.name %> on <%= api_client.created_at.to_fs(:govuk_date_and_time) %></p>
 
 <div class="govuk-button-group">
-  <%= govuk_link_to("Revoke API client", revoke_path, class: "govuk-button") if api_client.current_authentication_token.active? %>
+  <%= govuk_button_link_to("Revoke API client", revoke_path) if api_client.current_authentication_token.active? %>
   <%= govuk_link_to("Delete API client", delete_path) %>
 </div>
 

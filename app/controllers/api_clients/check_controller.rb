@@ -52,7 +52,7 @@ private
   end
 
   def save
-    authorize model
+    authorize_model
 
     if model.valid?
       if method == :post
@@ -67,5 +67,13 @@ private
       # and let them trigger the validation again
       redirect_to back_path
     end
+  end
+
+  def authorize_model
+    return authorize model if model.class == ApiClient
+
+    api_client = ApiClient.new
+
+    authorize api_client
   end
 end

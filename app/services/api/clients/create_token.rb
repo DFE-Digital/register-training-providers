@@ -26,11 +26,12 @@ module Api
       end
 
       def find_api_client
-        api_client = created_by.api_clients.kept.where(name: client_name).first
+        api_client = created_by.api_clients.kept.find_by(name: client_name)
 
-        return api_client unless api_client.nil?
-
-        ApiClient.create!(name: client_name, created_by: created_by)
+        api_client || ApiClient.create!(
+          name: client_name,
+          created_by: created_by
+        )
       end
 
       def created_by

@@ -7,7 +7,7 @@ RSpec.feature "Api Client management" do
     when_i_click_on_the_the_api_clients_in_the_navigation_bar
     then_i_can_see_the_page_title_api_clients_with_the_count
     and_a_table_of_api_clients
-    and_the_table_has_header_for_name_and_email
+    and_the_table_has_header_for_name_expiry_and_status
   end
 
   def when_i_click_on_the_the_api_clients_in_the_navigation_bar
@@ -35,7 +35,7 @@ RSpec.feature "Api Client management" do
     expect(row_count).to eq(25)
   end
 
-  def and_the_table_has_header_for_name_and_email
+  def and_the_table_has_header_for_name_expiry_and_status
     expect(page).to have_selector(".govuk-table__header", text: "Client name")
     expect(page).to have_selector(".govuk-table__header", text: "Expires on")
     expect(page).to have_selector(".govuk-table__header", text: "Status")
