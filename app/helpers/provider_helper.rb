@@ -1,27 +1,64 @@
 module ProviderHelper
   # Base rows for displaying provider details in summary cards/lists.
   # Used by: provider index cards, provider show page, activity log.
-  def provider_summary_card_rows(provider)
-    [
+  def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false)
+    summary_card_rows = [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" }, value: { text: provider.operating_name } },
-      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) },
-      { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
-      { key: { text: "Unique reference number (URN)" }, value: optional_value(provider.urn) },
-      { key: { text: "Provider code" }, value: { text: provider.code } },
+      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) }
     ]
+
+    summary_card_rows += [{ key: { text: "UK provider reference number (UKPRN)" },
+                            value: { text: provider.ukprn } }] unless hide_ukprn
+    summary_card_rows += [{ key: { text: "Unique reference number (URN)" },
+                            value: optional_value(provider.urn) }] unless hide_urn
+    summary_card_rows += [{ key: { text: "Provider code" },
+                            value: { text: provider.code } }] unless hide_provider_code
+
+    summary_card_rows
   end
 
   # Summary cards for the providers index page.
   def provider_summary_cards(providers)
     providers.map do |provider|
-      tag = [" ", govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")] if provider.archived?
       path_options = params[:debug] == "true" ? { debug: "true" } : {}
 
+      archived_tag =
+        if provider.archived?
+          govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")
+        end
+
+      provider_meta =
+        if provider.code.present? || provider.ukprn.present? || provider.urn.present?
+          tag.p(class: "govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0") do
+            safe_join(
+              [
+                (safe_join([tag.b("Provider code:"), " #{provider.code}"]) if provider.code.present?),
+                (safe_join([tag.b(tag.abbr("UKPRN", title: "UK provider reference number")),
+                            ": #{provider.ukprn}"]) if provider.ukprn.present?),
+                (safe_join([tag.b(tag.abbr("URN", title: "unique reference number")),
+                            ": #{provider.urn}"]) if provider.urn.present?)
+              ].compact,
+              " "
+            )
+          end
+        end
+
+      title_parts = [
+        govuk_link_to(provider.operating_name, provider_path(provider, path_options)),
+        archived_tag,
+        provider_meta
+      ].compact
+
       {
-        title: safe_join([govuk_link_to(provider.operating_name, provider_path(provider, path_options)), tag]),
-        rows: provider_summary_card_rows(provider)
+        title: safe_join(title_parts, " "),
+        rows: provider_summary_card_rows(
+          provider,
+          hide_provider_code: true,
+          hide_ukprn: true,
+          hide_urn: true
+        )
       }
     end
   end
