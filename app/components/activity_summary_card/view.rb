@@ -6,6 +6,7 @@ module ActivitySummaryCard
     include ContactHelper
     include PartnershipHelper
     include SummaryHelper
+    include AcademicYearHelper
 
     attr_reader :audit, :show_title
 

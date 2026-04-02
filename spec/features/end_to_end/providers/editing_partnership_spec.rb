@@ -246,7 +246,7 @@ RSpec.describe "Editing partnership", type: :feature do
 private
 
   def fill_in_new_dates
-    current_year = AcademicYearHelper.current_academic_year
+    current_year = AcademicYearCalculator.current_academic_year
     within_fieldset("Partnership start date") do
       fill_in "Day", with: "15"
       fill_in "Month", with: "8"
@@ -255,7 +255,7 @@ private
   end
 
   def fill_in_different_dates
-    current_year = AcademicYearHelper.current_academic_year
+    current_year = AcademicYearCalculator.current_academic_year
     within_fieldset("Partnership start date") do
       fill_in "Day", with: "1"
       fill_in "Month", with: "9"

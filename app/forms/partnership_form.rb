@@ -67,7 +67,7 @@ class PartnershipForm
   end
 
   def academic_years
-    AcademicYear.where(id: academic_year_ids)
+    AcademicYear.where(id: academic_year_ids).order(duration: :desc)
   end
 
   def duration
