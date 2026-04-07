@@ -7,7 +7,7 @@ namespace :generate do
     existing_academic_years = AcademicYear.all.map { |ac| ac.duration.begin.year }
 
     (required_academic_years - existing_academic_years).each do |year|
-      AcademicYear.create({ duration: Date.new(year, 8, 1)...Date.new(year + 1, 7, 31) })
+      AcademicYear.create({ duration: Date.new(year, 8, 1)..Date.new(year + 1, 7, 31) })
     end
 
     if (required_academic_years - existing_academic_years).empty?
