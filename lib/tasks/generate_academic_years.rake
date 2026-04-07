@@ -3,7 +3,7 @@ require Rails.root.join("config/environment")
 namespace :generate do
   desc "Generate academic years"
   task academic_years: :environment do
-    required_academic_years = (2009..2030).to_a
+    required_academic_years = (2019..2030).to_a
     existing_academic_years = AcademicYear.all.map { |ac| ac.duration.begin.year }
 
     (required_academic_years - existing_academic_years).each do |year|
