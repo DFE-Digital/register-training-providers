@@ -3,10 +3,10 @@ class ChangeIndexOnApiClients < ActiveRecord::Migration[8.1]
     remove_index :api_clients, name: "index_api_clients_on_lower_name"
     remove_index :api_clients, :created_by_id
     add_index :api_clients,
-          "created_by_id, lower(name)",
-          unique: true,
-          where: "discarded_at IS NULL",
-          name: "index_api_clients_on_created_by_and_lower_name"
+              "created_by_id, lower(name)",
+              unique: true,
+              where: "discarded_at IS NULL",
+              name: "index_api_clients_on_created_by_and_lower_name"
   end
 
   def down
