@@ -14,7 +14,6 @@ RSpec.describe ProviderHelper, type: :helper do
       expect(link["href"]).to eq("/providers/#{provider.id}")
       expect(link.text).to eq(provider.operating_name)
 
-      # New: assert provider meta block
       meta = doc.at_css("p.govuk-hint")
       expect(meta).not_to be_nil
       expect(meta.inner_html).to include("Provider code:")
@@ -22,7 +21,6 @@ RSpec.describe ProviderHelper, type: :helper do
       expect(meta.inner_html).to include("URN")
       expect(meta.text).to include(provider.urn)
 
-      # Updated rows (codes removed)
       expect(result[:rows]).to match_array([
         { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
