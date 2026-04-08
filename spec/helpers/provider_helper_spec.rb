@@ -11,20 +11,46 @@ RSpec.describe ProviderHelper, type: :helper do
 
       doc = Nokogiri::HTML.fragment(title_html)
       link = doc.at_css("a")
-
       expect(link["href"]).to eq("/providers/#{provider.id}")
-
       expect(link.text).to eq(provider.operating_name)
+
+      meta = doc.at_css("p.govuk-hint")
+      expect(meta).not_to be_nil
+      expect(meta.inner_html).to include("Provider code:")
+      expect(meta.inner_html).to include("UKPRN")
+      expect(meta.inner_html).to include("URN")
+      expect(meta.text).to include(provider.urn)
 
       expect(result[:rows]).to match_array([
         { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
-        { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
-        { key: { text: "UK provider reference number (UKPRN)" }, value: { text: provider.ukprn } },
-        { key: { text: "Unique reference number (URN)" }, value: { text: provider.urn } },
-        { key: { text: "Provider code" }, value: { text: provider.code } },
+        { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } }
       ])
+    end
+
+    context "when provider has no identifiers" do
+      let(:provider) do
+        build_stubbed(:provider, code: nil, ukprn: nil, urn: nil)
+      end
+
+      it "does not render the provider meta block" do
+        result = helper.provider_summary_cards([provider]).first
+        doc = Nokogiri::HTML.fragment(result[:title])
+
+        expect(doc.at_css("p.govuk-hint")).to be_nil
+      end
+    end
+
+    context "when provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived) }
+
+      it "renders the archived tag in the title" do
+        result = helper.provider_summary_cards([provider]).first
+        doc = Nokogiri::HTML.fragment(result[:title])
+
+        expect(doc.text).to include("Archived")
+      end
     end
 
     context "when debug mode is enabled" do
