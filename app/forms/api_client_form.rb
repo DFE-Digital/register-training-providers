@@ -75,9 +75,7 @@ private
   end
 
   def name_is_unique
-    names = ApiClient.where(created_by_id:).kept.pluck(:name).map(&:downcase)
-
-    return true unless names.include? name&.downcase
+    return true unless ApiClient.where(created_by_id:).kept.exists?(["LOWER(name) = ?", name.downcase])
 
     errors.add(:name, :unique)
   end
