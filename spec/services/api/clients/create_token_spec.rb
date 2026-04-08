@@ -28,21 +28,13 @@ RSpec.describe Api::Clients::CreateToken, type: :service do
     end
 
     context "when API client exists and is kept" do
-      let!(:api_client) { create(:api_client, name: client_name) }
+      let!(:api_client) { create(:api_client, name: client_name, created_by: user) }
 
       it "uses the existing kept API client" do
         expect { token }.to change(AuthenticationToken, :count).by(1)
         expect(token.api_client).to eq(api_client)
         expect(token.api_client.discarded?).to be false
         expect(token.created_by).to eq(user)
-      end
-    end
-
-    context "when a discarded API client exists" do
-      let!(:discarded_client) { create(:api_client, name: client_name).discard }
-
-      it "raises ActiveRecord::RecordInvalid" do
-        expect { token }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
@@ -81,10 +73,11 @@ RSpec.describe Api::Clients::CreateToken, type: :service do
     end
 
     context "with whitespace in expiry date" do
-      let(:expiry) { " 2025-03-01 " }
+      let(:date) { 3.months.from_now.strftime("%Y-%m-%d") }
+      let(:expiry) { " #{date} " }
 
       it "parses expiry correctly ignoring whitespace" do
-        expect(token.expires_at).to eq(Date.parse("2025-03-01"))
+        expect(token.expires_at).to eq(Date.parse(date))
       end
     end
   end

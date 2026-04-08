@@ -69,6 +69,7 @@ module ApplicationHelper
       [
         { text: "Providers", href: providers_path, active_when: providers_path },
         { text: "Users", href: users_path, active_when: users_path },
+        { text: "API clients", href: api_clients_path, active_when: api_clients_path },
         { text: "Activity log", href: activity_path, active_when: activity_path },
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
