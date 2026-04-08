@@ -1,6 +1,5 @@
 class ApiClientsController < ApplicationController
   include Pagy::Backend
-  include GovukDateValidation
 
   def index
     current_user.clear_temporary(ApiClient, purpose: :check_your_answers)

@@ -4,14 +4,14 @@
 #
 #  id            :uuid             not null, primary key
 #  discarded_at  :datetime
-#  name          :string           not null
+#  name          :citext           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :uuid             not null
 #
 # Indexes
 #
-#  index_api_clients_on_created_by_and_lower_name  (created_by_id, lower((name)::text))
+#  index_api_clients_on_created_by_and_lower_name  (created_by_id, lower((name)::text)) UNIQUE WHERE (discarded_at IS NULL)
 #  index_api_clients_on_discarded_at               (discarded_at)
 #
 # Foreign Keys
@@ -32,7 +32,6 @@ class ApiClient < ApplicationRecord
   validates :name,
             uniqueness: {
               scope: :created_by_id,
-              case_sensitive: false,
               conditions: -> { kept }
             }
 

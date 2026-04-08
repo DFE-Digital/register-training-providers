@@ -8,7 +8,7 @@ class ApiClients::RevokesController < CheckController
     api_client = ApiClient.find(params[:api_client_id])
     authorize api_client
 
-    ApiClients::RevokeTokenService.call(api_client:)
+    Api::Clients::RevokeToken.call(api_client:)
     redirect_to(api_clients_path, flash: { success: "API client revoked" })
   end
 end
