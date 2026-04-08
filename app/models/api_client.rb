@@ -1,3 +1,4 @@
+# rubocop:disable Layout/LineLength
 # == Schema Information
 #
 # Table name: api_clients
@@ -18,6 +19,7 @@
 #
 #  fk_rails_...  (created_by_id => users.id) ON DELETE => cascade
 #
+# rubocop:enable Layout/LineLength
 class ApiClient < ApplicationRecord
   include Discard::Model
   include SaveAsTemporary
