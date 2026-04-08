@@ -5,7 +5,7 @@
 #
 #  id            :uuid             not null, primary key
 #  discarded_at  :datetime
-#  name          :citext           not null
+#  name          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :uuid             not null
@@ -33,6 +33,7 @@ class ApiClient < ApplicationRecord
 
   validates :name,
             uniqueness: {
+              case_sensitive: false,
               scope: :created_by_id,
               conditions: -> { kept }
             }
