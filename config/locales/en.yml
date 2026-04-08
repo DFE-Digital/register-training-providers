@@ -75,7 +75,7 @@ en:
           attributes:
             name:
               blank: Enter client name
-              unique: Client name must be unique
+              taken: Client name must be unique
             expires_at:
               blank: Enter expiry date
               out_of_range: "Expiry date must be between %{start} and %{end}"

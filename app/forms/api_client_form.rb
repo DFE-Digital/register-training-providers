@@ -77,6 +77,6 @@ private
   def name_is_unique
     return true unless ApiClient.where(created_by_id:).kept.exists?(["LOWER(name) = ?", name.downcase])
 
-    errors.add(:name, :unique)
+    errors.add(:name, :taken)
   end
 end
