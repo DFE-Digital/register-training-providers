@@ -163,7 +163,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       it "returns an array of navigation hashes" do
         expect(items).to be_an(Array)
-        expect(items.size).to eq(5)
+        expect(items.size).to eq(6)
       end
 
       it "includes the Providers link" do
@@ -179,6 +179,14 @@ RSpec.describe ApplicationHelper, type: :helper do
         expect(users).to include(
           href: users_path,
           active_when: users_path
+        )
+      end
+
+      it "includes the API clients link" do
+        api_clients = items.find { |i| i[:text] == "API clients" }
+        expect(api_clients).to include(
+          href: api_clients_path,
+          active_when: api_clients_path
         )
       end
 

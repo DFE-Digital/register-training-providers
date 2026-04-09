@@ -22,7 +22,16 @@ module Api
       attr_reader :client_name, :created_by_email, :expires_at
 
       def api_client
-        @api_client ||= ApiClient.kept.find_or_create_by!(name: client_name)
+        @api_client ||= find_api_client
+      end
+
+      def find_api_client
+        api_client = created_by.api_clients.kept.find_by(name: client_name)
+
+        api_client || ApiClient.create!(
+          name: client_name,
+          created_by: created_by
+        )
       end
 
       def created_by
