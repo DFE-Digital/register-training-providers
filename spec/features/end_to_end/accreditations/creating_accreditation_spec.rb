@@ -6,7 +6,7 @@ RSpec.describe "Creating accreditation", type: :feature do
   end
 
   context "with valid data" do
-    let(:provider) { create(:provider, :hei, :unaccredited) }
+    let(:provider) { create(:provider, :hei_without_accreditation) }
 
     scenario "HEI provider creates accreditation" do
       visit provider_accreditations_path(provider)

@@ -5,14 +5,14 @@ RSpec.describe ProvidersQuery do
   let(:search_term) { nil }
 
   describe "#call (filters only)" do
-    let!(:scitt)                { create(:provider, :scitt, :accredited) }
-    let!(:school)               { create(:provider, :school, :unaccredited) }
-    let!(:accredited_hei)       { create(:provider, :hei, :accredited) }
-    let!(:unaccredited_hei)     { create(:provider, :hei, :unaccredited) }
-    let!(:accredited_other)     { create(:provider, :other, :accredited) }
-    let!(:unaccredited_other)   { create(:provider, :other, :unaccredited) }
+    let!(:scitt)                { create(:provider, :scitt) }
+    let!(:school)               { create(:provider, :school) }
+    let!(:accredited_hei)       { create(:provider, :hei) }
+    let!(:unaccredited_hei)     { create(:provider, :hei_without_accreditation) }
+    let!(:accredited_other)     { create(:provider, :other) }
+    let!(:unaccredited_other)   { create(:provider, :other_without_accreditation) }
     let!(:archived_accredited_hei) do
-      create(:provider, :hei, :accredited, archived_at: 1.week.ago)
+      create(:provider, :hei, archived_at: 1.week.ago)
     end
 
     context "without filters" do
