@@ -1,12 +1,13 @@
 module ProviderHelper
   # Base rows for displaying provider details in summary cards/lists.
   # Used by: provider index cards, provider show page, activity log.
-  def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false)
+  def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false,
+                                 use_details_for_academic_years_row: false)
     summary_card_rows = [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" }, value: { text: provider.operating_name } },
-      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) }
+      { key: { text: "Legal name" }, value: optional_value(provider.legal_name) },
     ]
 
     summary_card_rows += [{ key: { text: "UK provider reference number (UKPRN)" },
@@ -15,6 +16,9 @@ module ProviderHelper
                             value: optional_value(provider.urn) }] unless hide_urn
     summary_card_rows += [{ key: { text: "Provider code" },
                             value: { text: provider.code } }] unless hide_provider_code
+
+    summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
+                                             use_details_for_academic_years_row)]
 
     summary_card_rows
   end
@@ -57,7 +61,8 @@ module ProviderHelper
           provider,
           hide_provider_code: true,
           hide_ukprn: true,
-          hide_urn: true
+          hide_urn: true,
+          use_details_for_academic_years_row: true
         )
       }
     end
@@ -110,7 +115,8 @@ module ProviderHelper
       "Legal name" => "legal name",
       "UK provider reference number (UKPRN)" => "UK provider reference number (UKPRN)",
       "Unique reference number (URN)" => "unique reference number (URN)",
-      "Provider code" => "provider code"
+      "Provider code" => "provider code",
+      "Academic years" => "academic years"
     }
 
     rows.each do |row|
