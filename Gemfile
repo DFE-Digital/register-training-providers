@@ -9,7 +9,7 @@ gem "pg", "~> 1.6"
 gem "pg_search"
 
 # for sending analytics data to the analytics platform
-gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.15.14"
+gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.15.15"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
