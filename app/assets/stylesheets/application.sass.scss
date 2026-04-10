@@ -39,7 +39,7 @@ $govuk-assets-path: "/";
   code {
     @include govuk-font($size: 19);
     font-family: monospace;
-    background-color: govuk-colour("light-grey");
+    background-color: govuk-colour("black", $variant: "tint-95");
   }
 
   pre {
