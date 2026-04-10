@@ -2,9 +2,6 @@ require "rails_helper"
 
 RSpec.describe AcademicYearHelper, type: :helper do
   describe "#academic_years_row" do
-    it "debug" do
-      p helper.class.included_modules
-    end
     let(:academic_years) { build_list(:academic_year, 2) }
 
     it "returns a hash with key and value" do

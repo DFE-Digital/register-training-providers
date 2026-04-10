@@ -53,8 +53,8 @@ RSpec.describe "Creating partnership", type: :feature do
   end
 
   context "when unaccredited provider adds accredited partner" do
-    let(:unaccredited_provider) { create(:provider, :hei, :unaccredited) }
-    let!(:accredited_partner) { create(:provider, :accredited, operating_name: "Accredited University") }
+    let(:unaccredited_provider) { create(:provider, :hei_without_accreditation) }
+    let!(:accredited_partner) { create(:provider, :hei, operating_name: "Accredited University") }
     let!(:academic_year) { create(:academic_year) }
 
     scenario "successfully creates a partnership" do

@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :provider do
     id { Faker::Internet.unique.uuid }
-    provider_type { :hei }
-    accreditation_status { :unaccredited }
+    hei_without_accreditation
 
     legal_name do
       n = Faker::Number.number(digits: 4)
@@ -42,10 +41,22 @@ FactoryBot.define do
 
     trait :hei do
       provider_type { :hei }
+      accredited
+    end
+
+    trait :hei_without_accreditation do
+      provider_type { :hei }
+      unaccredited
     end
 
     trait :other do
       provider_type { :other }
+      accredited
+    end
+
+    trait :other_without_accreditation do
+      provider_type { :other }
+      unaccredited
     end
 
     trait :unaccredited do

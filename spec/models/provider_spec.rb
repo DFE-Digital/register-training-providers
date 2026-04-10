@@ -150,7 +150,7 @@ RSpec.describe Provider, type: :model do
       end
 
       context "when non-school provider becomes accredited" do
-        let(:provider) { create(:provider, :hei) }
+        let(:provider) { create(:provider, :hei_without_accreditation) }
 
         it "changes status but not provider type" do
           expect(provider.provider_type).to eq("hei")

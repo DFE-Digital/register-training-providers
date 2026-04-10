@@ -14,7 +14,7 @@ module Api
       data = providers.map do |p|
         p.as_json(
           only: %i[
-            id operating_name provider_type code accreditation_status
+            id operating_name provider_type code accreditation_status ukprn urn
           ]
         ).merge("updated_at" => p.updated_at.utc.iso8601)
       end

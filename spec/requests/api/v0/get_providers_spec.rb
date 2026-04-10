@@ -25,21 +25,28 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
       academic_years = [create(:academic_year, :next), create(:academic_year, :previous)]
       create(:provider, :accredited, academic_years:)
       create(:provider, :accredited, updated_at: 3.days.ago)
-      latest_provider = create(:provider, :accredited)
+
+      latest_providers = [:school, :scitt, :hei, :hei_without_accreditation, :other, :other_without_accreditation].map do |trait|
+        create(:provider, trait)
+      end
 
       get("/api/#{version}/providers", headers:, params:)
 
       expect(response).to have_http_status(:ok)
 
-      expect(response.parsed_body[:data].count).to be(1)
-      expect(response.parsed_body[:data].first).to eq(
-        { "id" => latest_provider.id,
-          "operating_name" => latest_provider.operating_name,
-          "provider_type" => latest_provider.provider_type,
-          "code" => latest_provider.code,
-          "accreditation_status" => latest_provider.accreditation_status,
-          "updated_at" => latest_provider.updated_at.utc.iso8601, }
-      )
+      expect(response.parsed_body[:data].count).to be(latest_providers.count)
+      latest_providers.each_with_index do |latest_provider, index|
+        expect(response.parsed_body[:data][index]).to eq(
+          { "id" => latest_provider.id,
+            "operating_name" => latest_provider.operating_name,
+            "provider_type" => latest_provider.provider_type,
+            "code" => latest_provider.code,
+            "accreditation_status" => latest_provider.accreditation_status,
+            "ukprn" => latest_provider.ukprn,
+            "urn" => latest_provider.urn,
+            "updated_at" => latest_provider.updated_at.utc.iso8601, }
+        )
+      end
     end
   end
 end

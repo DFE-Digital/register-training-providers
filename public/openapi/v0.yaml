@@ -84,7 +84,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_2867eadd16151ae95824235f833b557d79784b942ccb5fb606bfcfbfa9e03c76
+        example: test_a48205de0776aee35373e13f6bd5ca66c3c2428e27d2562bcc6ea6be3bcad960
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -137,6 +137,11 @@ paths:
                           type: string
                         accreditation_status:
                           type: string
+                        ukprn:
+                          type: string
+                        urn:
+                          type: string
+                          nullable: true
                         updated_at:
                           type: string
                       required:
@@ -145,16 +150,61 @@ paths:
                       - provider_type
                       - code
                       - accreditation_status
+                      - ukprn
+                      - urn
                       - updated_at
                 required:
                 - data
               example:
                 data:
                 - id: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
-                  operating_name: Higher education institution (HEI) 7320
-                  provider_type: hei
-                  code: 8BN
+                  operating_name: School 7320
+                  provider_type: school
+                  code: 98W
+                  accreditation_status: unaccredited
+                  ukprn: '52849471'
+                  urn: '31673'
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 3172f5c2-8bd3-440c-807e-5d4c971e888c
+                  operating_name: School-centred initial teacher training (SCITT)
+                    1063
+                  provider_type: scitt
+                  code: 93W
                   accreditation_status: accredited
+                  ukprn: '69843359'
+                  urn: '625172'
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 06f04c46-bf0f-4161-8f29-a986bf4e548f
+                  operating_name: Higher education institution (HEI) 1668
+                  provider_type: hei
+                  code: 4LK
+                  accreditation_status: accredited
+                  ukprn: '98088407'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 2c0f6229-c3a5-4760-a960-de8d0fb16de6
+                  operating_name: Higher education institution (HEI) 7480
+                  provider_type: hei
+                  code: ETU
+                  accreditation_status: unaccredited
+                  ukprn: '12544338'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: bfe71f91-e0fe-40bd-affa-2839e412999a
+                  operating_name: Other 4570
+                  provider_type: other
+                  code: '917'
+                  accreditation_status: accredited
+                  ukprn: '56255493'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 7ca5c9b9-3427-49c4-9ba7-888b37b6fe9c
+                  operating_name: Other 6343
+                  provider_type: other
+                  code: WNO
+                  accreditation_status: unaccredited
+                  ukprn: '19092440'
+                  urn:
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
