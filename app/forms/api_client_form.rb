@@ -55,14 +55,11 @@ class ApiClientForm
 
       api_client.update!(name:)
     else
-      api_client = ApiClient.new(name: name, created_by: user)
-      ActiveRecord::Base.transaction do
-        api_client.save!
-        AuthenticationToken.create_with_random_token(api_client: api_client, expires_at: expires_at, created_by: user)
-      end
+      ApiClient.create!(name: name, created_by: user)
+      #ActiveRecord::Base.transaction do
+      #  api_client.save!
+      #end
     end
-
-    api_client
   end
 
 private
