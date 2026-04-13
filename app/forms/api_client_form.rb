@@ -56,9 +56,9 @@ class ApiClientForm
       api_client.update!(name:)
     else
       ApiClient.create!(name: name, created_by: user)
-      #ActiveRecord::Base.transaction do
+      # ActiveRecord::Base.transaction do
       #  api_client.save!
-      #end
+      # end
     end
   end
 

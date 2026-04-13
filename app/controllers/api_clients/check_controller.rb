@@ -18,7 +18,7 @@ private
   end
 
   def success_path(model, expires_at: nil)
-    method == :post ? api_client_confirmation_path(api_client_id: model.id, expires_at:) : api_clients_path
+    method == :post ? api_client_confirmation_path(api_client_id: model.id, expires_at: expires_at) : api_clients_path
   end
 
   def find_existing_record
