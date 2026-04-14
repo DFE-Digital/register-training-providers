@@ -48,7 +48,7 @@ RSpec.describe AcademicYear, type: :model do
     end
   end
 
-  describe "#last??" do
+  describe "#last?" do
     context "when it is the next academic_year" do
       it "is expected to be true" do
         Timecop.travel(AcademicYearCalculator.next_academic_year, 9, 1) do
