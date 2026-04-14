@@ -17,8 +17,8 @@ private
     @model ||= current_user.load_temporary(model_class, id: model_id, purpose: purpose)
   end
 
-  def success_path(model, expires_at: nil)
-    method == :post ? api_client_confirmation_path(api_client_id: model.id, expires_at: expires_at) : api_clients_path
+  def success_path(model)
+    method == :post ? api_client_confirmation_path(api_client_id: model.id) : api_clients_path
   end
 
   def find_existing_record
