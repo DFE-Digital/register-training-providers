@@ -1,6 +1,6 @@
 module AcademicYearCalculator
   def current_academic_year
-    Time.zone.now.month >= 8 ? Time.zone.now.year : Time.zone.now.year - 1
+    Time.zone.today.month >= 8 ? Time.zone.today.year : Time.zone.today.year - 1
   end
 
   def next_academic_year
