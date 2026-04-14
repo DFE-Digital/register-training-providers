@@ -57,7 +57,7 @@ private
     if model.valid?
       if method == :post
         api_client = model.save(user: current_user)
-        redirect_to success_path(api_client, expires_at: model.expires_at)
+        redirect_to success_path(api_client)
       else
         model.save!
         redirect_to success_path(model), flash: flash_message

@@ -19,7 +19,7 @@ RSpec.feature "api_client management" do
     and_i_am_taken_to("/api_clients/check/new")
     and_i_can_see_the_page_title_for_check_your_answers
     when_i_click_on("Save API client")
-    and_i_am_taken_to("/api_clients/#{saved_api_client.id}/confirmation?expires_at=#{start_year}-01-01")
+    and_i_am_taken_to("/api_clients/#{saved_api_client.id}/confirmation")
     and_i_can_see_the_token
 
     when_i_click_on("Back to API clients")

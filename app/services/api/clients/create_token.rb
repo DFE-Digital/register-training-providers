@@ -26,7 +26,7 @@ module Api
       end
 
       def find_api_client
-        api_client = created_by.api_clients.kept.find_by(name: client_name, created_by: created_by)
+        api_client = created_by.api_clients.kept.find_by(name: client_name)
 
         api_client || ApiClient.create!(
           name: client_name,
