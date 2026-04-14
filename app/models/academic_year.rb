@@ -32,8 +32,12 @@ class AcademicYear < ApplicationRecord
     duration.include?(Time.zone.today - 1.year)
   end
 
+  def self.start_date_for(year)
+    Date.new(year, 8, 1)
+  end
+
   def self.for_year(year)
-    start_date = Date.new(year, 8, 1)
+    start_date = start_date_for(year)
     where("duration @> ?::date", start_date).first
   end
 end

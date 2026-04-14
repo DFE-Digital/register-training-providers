@@ -80,4 +80,20 @@ RSpec.describe AcademicYear, type: :model do
       end
     end
   end
+
+  describe "#start_year and #end_year" do
+    it "returns the correct start and end years" do
+      ay = create(:academic_year, academic_year: 2025)
+
+      expect(ay.start_year).to eq(2025)
+      expect(ay.end_year).to eq(2026)
+    end
+  end
+
+  describe ".start_date_for" do
+    it "returns August 1 of the given year" do
+      expect(described_class.start_date_for(2025))
+        .to eq(Date.new(2025, 8, 1))
+    end
+  end
 end
