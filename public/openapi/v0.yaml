@@ -157,14 +157,6 @@ paths:
                 - data
               example:
                 data:
-                - id: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
-                  operating_name: School 7320
-                  provider_type: school
-                  code: 98W
-                  accreditation_status: unaccredited
-                  ukprn: '52849471'
-                  urn: '31673'
-                  updated_at: '2025-09-15T11:34:56Z'
                 - id: 3172f5c2-8bd3-440c-807e-5d4c971e888c
                   operating_name: School-centred initial teacher training (SCITT)
                     1063
@@ -173,6 +165,14 @@ paths:
                   accreditation_status: accredited
                   ukprn: '69843359'
                   urn: '625172'
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
+                  operating_name: School 7320
+                  provider_type: school
+                  code: 98W
+                  accreditation_status: unaccredited
+                  ukprn: '52849471'
+                  urn: '31673'
                   updated_at: '2025-09-15T11:34:56Z'
                 - id: 06f04c46-bf0f-4161-8f29-a986bf4e548f
                   operating_name: Higher education institution (HEI) 1668
