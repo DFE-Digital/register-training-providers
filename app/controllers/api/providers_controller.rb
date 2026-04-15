@@ -9,7 +9,7 @@ module Api
         .joins(:academic_years)
         .where(academic_years: { id: AcademicYear.for_year(academic_year) })
 
-      providers = scope.order(:updated_at)
+      providers = scope.order(:updated_at, :operating_name, :id)
 
       data = providers.map do |p|
         p.as_json(
