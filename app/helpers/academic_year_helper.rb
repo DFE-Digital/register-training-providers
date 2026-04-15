@@ -10,8 +10,10 @@ module AcademicYearHelper
     return content_tag(:p, "No academic years") if academic_years.blank?
 
     if use_details
-      first_group, remaining_group = academic_years.each_slice(3).to_a
+      first_group, *remaining_group = academic_years.each_slice(3).to_a
       primary = academic_years_bullet_list(first_group)
+
+      remaining_group = remaining_group.flatten
 
       if remaining_group.present?
         more = academic_years_bullet_list(remaining_group)
