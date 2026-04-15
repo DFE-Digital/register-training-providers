@@ -136,3 +136,8 @@ variable "enable_dfe_analytics_federated_auth" {
   description = "Create the resources in Google cloud for federated authentication and enable in application"
   default     = false
 }
+
+variable "gcp_table_deletion_protection" {
+  description = "Prevents deletion of the event table. Default: true"
+  default     = true
+}
