@@ -25,7 +25,8 @@ RSpec.describe ProviderHelper, type: :helper do
         { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
-        { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } }
+        { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
+        { key: { text: "Academic years" }, value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' } },
       ])
     end
 
@@ -207,6 +208,11 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: provider.code },
           actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
         },
+        {
+          key: { text: "Academic years" },
+          value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
+          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+        },
       ])
     end
 
@@ -247,6 +253,11 @@ RSpec.describe ProviderHelper, type: :helper do
             key: { text: "Provider code" },
             value: { text: provider.code },
             actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+          },
+          {
+            key: { text: "Academic years" },
+            value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
           },
         ])
       end

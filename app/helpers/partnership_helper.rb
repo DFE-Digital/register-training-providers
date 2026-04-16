@@ -45,7 +45,7 @@ module PartnershipHelper
     end
     rows << dates_row
 
-    years_row = academic_years_row(partnership.academic_years)
+    years_row = academic_years_row(partnership.academic_years, false)
     if change_paths[:academic_years].present?
       years_row[:actions] = [{ href: change_paths[:academic_years], visually_hidden_text: "academic years" }]
     end

@@ -84,7 +84,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_a48205de0776aee35373e13f6bd5ca66c3c2428e27d2562bcc6ea6be3bcad960
+        example: test_d5ca66c3c2428e27d2562bcc6ea6be3bcad9609fbfa9cb89e691676c8690fd9c
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -158,53 +158,53 @@ paths:
               example:
                 data:
                 - id: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
-                  operating_name: School 7320
+                  operating_name: Higher education institution (HEI) 7320
+                  provider_type: hei
+                  code: 8BN
+                  accreditation_status: unaccredited
+                  ukprn: '77336264'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: bc668b2e-9fa2-4bda-a2f4-97f95d391cf8
+                  operating_name: Higher education institution (HEI) 9494
+                  provider_type: hei
+                  code: 7LA
+                  accreditation_status: accredited
+                  ukprn: '80063525'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: e375bccb-26e8-4dba-a8bc-eca867da9e3b
+                  operating_name: Other 7598
+                  provider_type: other
+                  code: 95D
+                  accreditation_status: unaccredited
+                  ukprn: '69846690'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 3c677f94-76cd-4e07-967e-3a6e78f961eb
+                  operating_name: Other 9808
+                  provider_type: other
+                  code: 3IU
+                  accreditation_status: accredited
+                  ukprn: '17855396'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 44ea1b4b-e474-4334-930a-5a71eaa3547d
+                  operating_name: School 5025
                   provider_type: school
-                  code: 98W
+                  code: FA9
                   accreditation_status: unaccredited
-                  ukprn: '52849471'
-                  urn: '31673'
+                  ukprn: '24625549'
+                  urn: '543380'
                   updated_at: '2025-09-15T11:34:56Z'
-                - id: 3172f5c2-8bd3-440c-807e-5d4c971e888c
+                - id: 03bfb99e-9e20-4715-9401-f346354fc1e4
                   operating_name: School-centred initial teacher training (SCITT)
-                    1063
+                    7475
                   provider_type: scitt
-                  code: 93W
+                  code: PAZ
                   accreditation_status: accredited
-                  ukprn: '69843359'
-                  urn: '625172'
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 06f04c46-bf0f-4161-8f29-a986bf4e548f
-                  operating_name: Higher education institution (HEI) 1668
-                  provider_type: hei
-                  code: 4LK
-                  accreditation_status: accredited
-                  ukprn: '98088407'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 2c0f6229-c3a5-4760-a960-de8d0fb16de6
-                  operating_name: Higher education institution (HEI) 7480
-                  provider_type: hei
-                  code: ETU
-                  accreditation_status: unaccredited
-                  ukprn: '12544338'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: bfe71f91-e0fe-40bd-affa-2839e412999a
-                  operating_name: Other 4570
-                  provider_type: other
-                  code: '917'
-                  accreditation_status: accredited
-                  ukprn: '56255493'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 7ca5c9b9-3427-49c4-9ba7-888b37b6fe9c
-                  operating_name: Other 6343
-                  provider_type: other
-                  code: WNO
-                  accreditation_status: unaccredited
-                  ukprn: '19092440'
-                  urn:
+                  ukprn: '34400987'
+                  urn: '443670'
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token

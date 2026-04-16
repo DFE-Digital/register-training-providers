@@ -26,7 +26,14 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
       create(:provider, :accredited, academic_years:)
       create(:provider, :accredited, updated_at: 3.days.ago)
 
-      latest_providers = [:school, :scitt, :hei, :hei_without_accreditation, :other, :other_without_accreditation].map do |trait|
+      latest_providers = [
+        :hei_without_accreditation,
+        :hei,
+        :other_without_accreditation,
+        :other,
+        :school,
+        :scitt,
+      ].map do |trait|
         create(:provider, trait)
       end
 

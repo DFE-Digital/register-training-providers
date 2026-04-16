@@ -1,22 +1,41 @@
 module AcademicYearHelper
-  def academic_years_row(academic_years)
-    academic_years_html = tag.ul(class: "govuk-list govuk-list--bullet") do
-      academic_years.collect do |academic_year|
-        concat tag.li(display_academic_year(academic_year))
-      end
-    end
+  def academic_years_row(academic_years, use_details)
+    {
+      key: { text: "Academic years" },
+      value: { text: academic_years_html(academic_years, use_details) }
+    }
+  end
 
-    { key: { text: "Academic years" },
-      value: { text: academic_years_html } }
+  def academic_years_html(academic_years, use_details)
+    return content_tag(:p, "No academic years") if academic_years.blank?
+
+    if use_details
+      first_group, *remaining_group = academic_years.each_slice(3).to_a
+      primary = academic_years_bullet_list(first_group)
+
+      remaining_group = remaining_group.flatten
+
+      if remaining_group.present?
+        more = academic_years_bullet_list(remaining_group)
+        safe_join([primary, govuk_details(summary_text: "More academic years", text: more)])
+      else
+        primary
+      end
+    else
+      academic_years_bullet_list(academic_years)
+    end
+  end
+
+  def academic_years_bullet_list(items)
+    content_tag(:ul, class: "govuk-list govuk-list--bullet") do
+      items.map { |year| content_tag(:li, display_academic_year(year)) }.join.html_safe
+    end
   end
 
   def display_academic_year(academic_year)
-    academic_year_text = "#{academic_year.duration.begin.year} to #{academic_year.duration.end.year}"
-    [:current, :last, :next].each do |label|
-      academic_year_text += " - #{label}" if academic_year.send(:"#{label}?")
-    end
-
-    academic_year_text
+    base = "#{academic_year.duration.begin.year} to #{academic_year.duration.end.year}"
+    labels = %i[current last next].select { |l| academic_year.public_send("#{l}?") }
+    labels.empty? ? base : "#{base} - #{labels.join(' - ')}"
   end
 
   def academic_year_helper_text(academic_year)
