@@ -15,4 +15,6 @@ module "dfe_analytics" {
   gcp_key               = "bat-key"
   gcp_taxonomy_id       = "69524444121704657"
   gcp_policy_tag_id     = "6523652585511281766"
+
+  gcp_table_deletion_protection = var.gcp_table_deletion_protection
 }
