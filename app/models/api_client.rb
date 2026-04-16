@@ -1,25 +1,23 @@
-# rubocop:disable Layout/LineLength
 # == Schema Information
 #
 # Table name: api_clients
 #
 #  id            :uuid             not null, primary key
 #  discarded_at  :datetime
-#  name          :string           not null
+#  name          :citext           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :uuid             not null
 #
 # Indexes
 #
-#  index_api_clients_on_created_by_and_lower_name  (created_by_id, lower((name)::text)) UNIQUE WHERE (discarded_at IS NULL)
-#  index_api_clients_on_discarded_at               (discarded_at)
+#  index_api_clients_on_created_by_and_name  (created_by_id,name) UNIQUE WHERE (discarded_at IS NULL)
+#  index_api_clients_on_discarded_at         (discarded_at)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (created_by_id => users.id) ON DELETE => cascade
 #
-# rubocop:enable Layout/LineLength
 class ApiClient < ApplicationRecord
   include Discard::Model
   include SaveAsTemporary
@@ -33,7 +31,6 @@ class ApiClient < ApplicationRecord
 
   validates :name,
             uniqueness: {
-              case_sensitive: false,
               scope: :created_by_id,
               conditions: -> { kept }
             }
