@@ -96,8 +96,18 @@ RSpec.describe AcademicYearHelper, type: :helper do
   end
 
   describe "#display_academic_year" do
+    let(:start_year) { 2023 }
+    let(:end_year) { 2024 }
+
     let(:academic_year) do
-      build(:academic_year, academic_year: 2023)
+      instance_double(
+        "AcademicYear",
+        start_year: start_year,
+        end_year: end_year,
+        current?: false,
+        last?: false,
+        next?: false
+      )
     end
 
     it "formats year range correctly" do
@@ -122,13 +132,19 @@ RSpec.describe AcademicYearHelper, type: :helper do
   end
 
   describe "#academic_year_helper_text" do
+    let(:start_year) { 2023 }
+    let(:end_year) { 2024 }
+
     let(:academic_year) do
-      build(:academic_year, academic_year: 2023)
+      instance_double("AcademicYear", start_year:, end_year:,)
     end
 
-    it "formats helper text correctly" do
-      expect(helper.academic_year_helper_text(academic_year))
-        .to eq("Starts on 1 August 2023, ends on 31 July 2024")
+    it "returns the correctly formatted academic year text" do
+      result = helper.academic_year_helper_text(academic_year)
+
+      expect(result).to eq(
+        "Starts on 1 August #{start_year}, ends on 31 July #{end_year}"
+      )
     end
   end
 end

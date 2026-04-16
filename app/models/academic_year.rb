@@ -32,6 +32,14 @@ class AcademicYear < ApplicationRecord
     duration.include?(Time.zone.today - 1.year)
   end
 
+  def start_year
+    duration.begin.year
+  end
+
+  def end_year
+    duration.end.year
+  end
+
   def self.start_date_for(year)
     Date.new(year, 8, 1)
   end
