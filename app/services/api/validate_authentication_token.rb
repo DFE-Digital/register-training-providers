@@ -16,7 +16,7 @@ module Api
   private
 
     def api_client
-      @api_client ||= auth_token&.api_client
+      @api_client ||= auth_token.api_client
     end
   end
 end

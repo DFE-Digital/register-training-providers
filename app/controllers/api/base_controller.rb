@@ -17,7 +17,7 @@ module Api
     end
 
     def current_api_client
-      @current_api_client ||= auth_token&.api_client
+      @current_api_client ||= auth_token.api_client
     end
 
     def audit_user
