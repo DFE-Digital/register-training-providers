@@ -7,6 +7,7 @@ RSpec.describe "providers/index.html.erb", type: :view do
   let(:providers) { [provider_1, provider_2, provider_3] }
   let(:count) { providers.size }
   let(:pagy) { Pagy.new(count: count, page: 1) }
+  let(:academic_years) { build_stubbed_list(:academic_year, 3) }
 
   let(:pagination_component) { instance_double(PaginationDisplay::View) }
 
@@ -15,6 +16,7 @@ RSpec.describe "providers/index.html.erb", type: :view do
   before do
     assign(:records, providers)
     assign(:pagy, pagy)
+    assign(:academic_years, academic_years)
     allow(view).to receive(:page_data)
     def view.provider_filters
       {}
