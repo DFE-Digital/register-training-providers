@@ -55,6 +55,16 @@ class Provider < ApplicationRecord
   include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
+  scope :for_academic_years, ->(years) {
+    years = Array(years)
+    return none if years.empty?
+
+    where(
+      id: joins(:academic_years)
+            .merge(AcademicYear.for_specific_years(years))
+            .select(:id)
+    )
+  }
 
   validates :provider_type, presence: true, provider_type: true
 
