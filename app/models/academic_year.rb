@@ -44,8 +44,15 @@ class AcademicYear < ApplicationRecord
     Date.new(year, 8, 1)
   end
 
+  def self.covering_dates(dates)
+    dates = Array(dates)
+    return none if dates.blank?
+
+    where("duration @> ANY (ARRAY[?]::date[])", dates)
+  end
+
   def self.for_year(year)
     start_date = start_date_for(year)
-    where("duration @> ?::date", start_date).first
+    covering_dates(start_date).first
   end
 end

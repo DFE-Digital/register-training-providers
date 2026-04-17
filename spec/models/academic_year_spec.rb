@@ -96,4 +96,30 @@ RSpec.describe AcademicYear, type: :model do
         .to eq(Date.new(2025, 8, 1))
     end
   end
+
+  describe ".covering_dates" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+
+    it "returns academic years covering a given date" do
+      result = described_class.covering_dates(current_year.duration.begin,)
+
+      expect(result).to contain_exactly(current_year)
+    end
+
+    it "returns multiple academic years when multiple dates match" do
+      dates = [
+        current_year.duration.begin,
+        previous_year.duration.begin,
+      ]
+
+      result = described_class.covering_dates(dates)
+
+      expect(result).to contain_exactly(current_year, previous_year)
+    end
+
+    it "returns none when given empty input" do
+      expect(described_class.covering_dates([])).to be_empty
+    end
+  end
 end
