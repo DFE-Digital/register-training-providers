@@ -44,4 +44,10 @@ module AcademicYearHelper
   def academic_year_helper_text(academic_year)
     "Starts on 1 August #{academic_year.start_year}, ends on 31 July #{academic_year.end_year}"
   end
+
+  def academic_years_label(academic_years)
+    academic_years.index_by(&:start_year)
+      .transform_values { |academic_year| display_academic_year(academic_year) }
+      .stringify_keys
+  end
 end
