@@ -20,6 +20,12 @@ class AcademicYear < ApplicationRecord
   has_many :provider_academic_years, dependent: :destroy
   has_many :providers, through: :provider_academic_years
 
+  scope :for_specific_years, ->(years) {
+    dates = Array(years).map { |yr| start_date_for(yr) }
+
+    covering_dates(dates).order(duration: :desc)
+  }
+
   def current?
     duration.cover?(Time.zone.today)
   end

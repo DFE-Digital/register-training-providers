@@ -122,4 +122,32 @@ RSpec.describe AcademicYear, type: :model do
       expect(described_class.covering_dates([])).to be_empty
     end
   end
+
+  describe ".for_specific_years" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+    let!(:next_year) { create(:academic_year, :next) }
+
+    it "returns matching academic years for given years" do
+      result = described_class.for_specific_years([previous_year.start_year, next_year.start_year])
+
+      expect(result).to contain_exactly(previous_year, next_year)
+    end
+
+    it "orders results by duration descending" do
+      result = described_class.for_specific_years([previous_year.start_year, current_year.start_year, next_year.start_year])
+
+      expect(result).to eq([next_year, current_year, previous_year])
+    end
+
+    it "returns empty when no matches" do
+      expect(described_class.for_specific_years([AcademicYearCalculator.previous_academic_year - 1])).to be_empty
+    end
+
+    it "handles single year input" do
+      result = described_class.for_specific_years(current_year.start_year)
+
+      expect(result).to contain_exactly(current_year)
+    end
+  end
 end
