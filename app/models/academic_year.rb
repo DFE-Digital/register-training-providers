@@ -20,6 +20,16 @@ class AcademicYear < ApplicationRecord
   has_many :provider_academic_years, dependent: :destroy
   has_many :providers, through: :provider_academic_years
 
+  scope :next_and_older, -> {
+    cutoff_year = AcademicYearCalculator.next_academic_year + 1
+    cutoff_date = start_date_for(cutoff_year)
+
+    where(
+      "duration && daterange(NULL, ?, '[)')",
+      cutoff_date
+    ).order(duration: :desc)
+  }
+
   scope :for_specific_years, ->(years) {
     dates = Array(years).map { |yr| start_date_for(yr) }
 

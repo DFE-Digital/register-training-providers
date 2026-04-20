@@ -97,6 +97,28 @@ RSpec.describe AcademicYear, type: :model do
     end
   end
 
+  describe ".next_and_older" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+    let!(:next_year) { create(:academic_year, :next) }
+    let!(:far_future_year) { create(:academic_year, academic_year: AcademicYearCalculator.next_academic_year + 1) }
+
+    it "includes the next academic year (today + 1.year) and all older years" do
+      result = described_class.next_and_older.to_a
+      expect(result).to include(previous_year)
+      expect(result).to include(current_year)
+      expect(result).to include(next_year)
+      expect(result).not_to include(far_future_year)
+    end
+
+    it "orders by the implicit order column (duration: :desc)" do
+      ordered = described_class.next_and_older.pluck(:id)
+      expected = [next_year, current_year, previous_year].map(&:id)
+
+      expect(ordered).to eq(expected)
+    end
+  end
+
   describe ".covering_dates" do
     let!(:current_year) { create(:academic_year, :current) }
     let!(:previous_year) { create(:academic_year, :previous) }
