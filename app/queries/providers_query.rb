@@ -22,6 +22,7 @@ class ProvidersQuery
     scope = filter_by_provider_type(relation)
     scope = filter_by_accreditation_status(scope)
     scope = filter_by_archived(scope)
+    scope = filter_by_academic_years(scope)
     scope = filter_by_seed_data(scope)
 
     scope = scope.search(search_term) if search_term.present?
@@ -75,6 +76,13 @@ private
 
   def filter_by_archived(scope)
     Array(filters[:show_archived]).include?("show_archived_provider") ? scope : scope.where(archived_at: nil)
+  end
+
+  def filter_by_academic_years(scope)
+    academic_years = Array(filters[:show_academic_years]).map(&:to_i)
+    return scope if academic_years.empty?
+
+    scope.for_academic_years(academic_years)
   end
 
   def filter_by_seed_data(scope)
