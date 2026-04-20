@@ -17,6 +17,12 @@ RSpec.feature "Filter Training Providers" do
     then_the_list_of_providers_should_include_archived_providers
   end
 
+  scenario "User filters providers by academic year" do
+    given_i_am_on_the_provider_list_page
+    when_i_check_the_box_for_previous_academic_year
+    then_the_list_of_providers_should_only_previous_academic_year_providers
+  end
+
   scenario "User filters providers by seed data provider issues" do
     given_i_am_on_the_provider_list_page(debug: true)
     when_i_check_the_box_for_show_seed_data_with_issues_issues
@@ -53,8 +59,23 @@ RSpec.feature "Filter Training Providers" do
     )
   end
 
+  def then_the_list_of_providers_should_only_previous_academic_year_providers
+    expect(page).to have_title("Providers (3)")
+    expect(page).to have_css(".govuk-summary-card", count: previous_academic_year_providers.count)
+
+    previous_academic_year_providers.each do |provider|
+      expect(page).to have_selector("h2", text: provider.operating_name)
+    end
+  end
+
   def when_i_check_the_box_for_accredited
     check "Accredited"
+    click_on "Apply filters"
+  end
+
+  def when_i_check_the_box_for_previous_academic_year
+    academic_year_text = "#{previous_academic_year.start_year} to #{previous_academic_year.end_year} - last"
+    check academic_year_text
     click_on "Apply filters"
   end
 
@@ -84,11 +105,24 @@ RSpec.feature "Filter Training Providers" do
     expect(page).to have_title("Providers (#{Provider.count})")
   end
 
+  def previous_academic_year
+    @previous_academic_year ||= create(:academic_year, :previous)
+  end
+
+  def previous_academic_year_providers
+    @previous_academic_year_providers ||= [
+      create(:provider, :other, :accredited, academic_years: [previous_academic_year]),
+      create(:provider, :school, academic_years: [previous_academic_year]),
+      create(:provider, :scitt, :accredited, academic_years: [previous_academic_year])
+    ]
+  end
+
   def and_there_are_a_number_of_providers
     hei_providers
     create_list(:provider, 5, :other, :accredited)
     create_list(:provider, 5, :school)
     create_list(:provider, 5, :scitt, :accredited)
+    previous_academic_year_providers
     archived_providers
   end
 
