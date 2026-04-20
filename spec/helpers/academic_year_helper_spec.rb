@@ -23,7 +23,6 @@ RSpec.describe AcademicYearHelper, type: :helper do
     end
 
     it "includes each academic year formatted text" do
-      binding.break
       academic_years.each do |ay|
         expect(subject[:value][:text]).to include("#{ay.start_year} to #{ay.end_year}")
       end
