@@ -14,6 +14,8 @@ class ProvidersController < ApplicationController
 
     provider_query = ProvidersQuery.call(filters: provider_filters, search_term: keywords)
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
+
+    @academic_years = AcademicYear.next_and_older
   end
 
   def show
@@ -66,6 +68,7 @@ private
         provider_types: [],
         accreditation_statuses: [],
         show_archived: [],
+        show_academic_years: [],
         show_seed_data: []
       ).to_h.with_indifferent_access
 
