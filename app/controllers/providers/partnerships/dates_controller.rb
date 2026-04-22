@@ -3,7 +3,7 @@ module Providers
     class DatesController < ApplicationController
       include PartnershipJourneyController
 
-      DateValues = Struct.new(:start_date, :end_date, keyword_init: true)
+      DateValues = Struct.new(:start_date, :end_date)
 
       def new
         partnership_data = partnership_session.load_partnership
