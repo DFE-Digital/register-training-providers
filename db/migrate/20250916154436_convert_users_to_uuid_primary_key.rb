@@ -7,7 +7,7 @@ class ConvertUsersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     add_column :temporary_records, :created_by_uuid, :uuid
 
     # Populate the new UUID column with the corresponding user UUIDs
-    execute <<-SQL.squish
+    execute <<~SQL.squish
       UPDATE temporary_records
       SET created_by_uuid = users.uuid
       FROM users

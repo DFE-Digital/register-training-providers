@@ -7,7 +7,7 @@ class ConvertProvidersToUuidPrimaryKey < ActiveRecord::Migration[8.0]
     add_column :accreditations, :provider_uuid, :uuid
 
     # Populate the new UUID column with the corresponding provider UUIDs
-    execute <<-SQL.squish
+    execute <<~SQL.squish
       UPDATE accreditations
       SET provider_uuid = providers.uuid
       FROM providers

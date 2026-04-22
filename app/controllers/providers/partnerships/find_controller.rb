@@ -3,7 +3,7 @@ module Providers
     class FindController < ApplicationController
       include PartnershipJourneyController
 
-      PartnerOption = Struct.new(:name, :value, :hint, :search_text, keyword_init: true)
+      PartnerOption = Struct.new(:name, :value, :hint, :search_text)
 
       def new
         # Clear session for fresh start, keep data only when editing from confirm page
