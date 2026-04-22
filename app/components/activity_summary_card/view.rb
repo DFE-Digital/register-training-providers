@@ -7,6 +7,7 @@ module ActivitySummaryCard
     include PartnershipHelper
     include SummaryHelper
     include AcademicYearHelper
+    include ApiClientHelper
 
     attr_reader :audit, :show_title
 
@@ -36,7 +37,7 @@ module ActivitySummaryCard
         record.operating_name
       when "Accreditation", "Address", "Contact"
         audit.associated&.operating_name
-      when "User"
+      when "User", "ApiClient"
         record.name
       end
     end
@@ -55,6 +56,8 @@ module ActivitySummaryCard
         helpers.provider_accreditations_path(provider)
       when "User"
         helpers.user_path(audit.auditable)
+      when "ApiClient"
+        helpers.api_client_path(audit.auditable)
       end
     end
 
@@ -85,6 +88,8 @@ module ActivitySummaryCard
         partnership_rows(record)
       when "User"
         user_rows(record)
+      when "ApiClient"
+        api_client_rows(api_client: record)
       else
         []
       end
@@ -108,7 +113,7 @@ module ActivitySummaryCard
     def linkable?
       if provider.present?
         !provider.discarded?
-      elsif audit.auditable_type == "User"
+      elsif ["User", "ApiClient"].include? audit.auditable_type
         audit.auditable.present? && !audit.auditable.discarded?
       else
         false
