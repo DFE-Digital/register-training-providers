@@ -8,6 +8,7 @@ RSpec.feature "Api Client management" do
     then_i_can_see_the_page_title_api_clients_with_the_count
     and_a_table_of_api_clients
     and_the_table_has_header_for_name_expiry_and_status
+    and_i_should_see_pagination_controls
   end
 
   def when_i_click_on_the_the_api_clients_in_the_navigation_bar
@@ -32,12 +33,20 @@ RSpec.feature "Api Client management" do
 
   def and_a_table_of_api_clients
     row_count = all(".govuk-table__body .govuk-table__row").count
-    expect(row_count).to eq(25)
+    expect(row_count).to eq(15)
   end
 
   def and_the_table_has_header_for_name_expiry_and_status
     expect(page).to have_selector(".govuk-table__header", text: "Client name")
     expect(page).to have_selector(".govuk-table__header", text: "Expires on")
     expect(page).to have_selector(".govuk-table__header", text: "Status")
+  end
+
+  def and_i_should_see_pagination_controls
+    expect(page).to have_selector(".govuk-pagination")
+    expect(page).to have_selector(".govuk-pagination__item", count: 2)
+    expect(page).to have_link("Next", href: api_clients_path(page: 2))
+    expect(page).to have_link("2", href: api_clients_path(page: 2))
+    expect(page).to have_link("1", href: api_clients_path(page: 1))
   end
 end
