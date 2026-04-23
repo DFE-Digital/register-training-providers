@@ -4,7 +4,7 @@ class ApiClientsController < ApplicationController
   def index
     current_user.clear_temporary(ApiClient, purpose: :check_your_answers)
 
-    @pagy, @records = pagy(policy_scope(scoped_api_client))
+    @pagy, @records = pagy(policy_scope(scoped_api_client), limit: 15)
   end
 
   def show
