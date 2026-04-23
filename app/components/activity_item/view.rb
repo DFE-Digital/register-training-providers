@@ -6,7 +6,8 @@ module ActivityItem
       "Accreditation" => "Provider accreditation",
       "Contact" => "Provider contact",
       "Partnership" => "Provider partnership",
-      "User" => "User"
+      "User" => "User",
+      "ApiClient" => "API Client",
     }.freeze
 
     attr_reader :audit, :show_title

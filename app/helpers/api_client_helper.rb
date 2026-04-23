@@ -42,4 +42,14 @@ module ApiClientHelper
 
     { page_title:, page_header: }
   end
+
+  def api_client_rows(api_client:, editable: false)
+    [
+      { key: { text: "Client name" },
+        value: { text: api_client.name },
+        actions: editable ? [{ href: edit_api_client_path(api_client), visually_hidden_text: "client name" }] : [] },
+      { key: { text: "Expiry date" },
+        value: { text: api_client.expires_at.to_fs(:govuk) }, }
+    ]
+  end
 end

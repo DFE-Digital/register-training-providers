@@ -1,7 +1,7 @@
 class AuditsQuery
   include ServicePattern
 
-  SUPPORTED_AUDITABLE_TYPES = %w[Provider Address Accreditation Contact Partnership User].freeze
+  SUPPORTED_AUDITABLE_TYPES = %w[Provider Address Accreditation Contact Partnership User ApiClient].freeze
 
   attr_reader :provider
 

@@ -41,6 +41,8 @@ class ApiClient < ApplicationRecord
 
   delegate :expires_at, to: :current_authentication_token
 
+  audited
+
   def current_authentication_token
     authentication_tokens.first
   end
