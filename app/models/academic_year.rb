@@ -20,6 +20,22 @@ class AcademicYear < ApplicationRecord
   has_many :provider_academic_years, dependent: :destroy
   has_many :providers, through: :provider_academic_years
 
+  scope :next_and_older, -> {
+    cutoff_year = AcademicYearCalculator.next_academic_year + 1
+    cutoff_date = start_date_for(cutoff_year)
+
+    where(
+      "duration && daterange(NULL, ?, '[)')",
+      cutoff_date
+    ).order(duration: :desc)
+  }
+
+  scope :for_specific_years, ->(years) {
+    dates = Array(years).map { |yr| start_date_for(yr) }
+
+    covering_dates(dates).order(duration: :desc)
+  }
+
   def current?
     duration.cover?(Time.zone.today)
   end
@@ -32,8 +48,27 @@ class AcademicYear < ApplicationRecord
     duration.include?(Time.zone.today - 1.year)
   end
 
+  def start_year
+    duration.begin.year
+  end
+
+  def end_year
+    duration.end.year
+  end
+
+  def self.start_date_for(year)
+    Date.new(year, 8, 1)
+  end
+
+  def self.covering_dates(dates)
+    dates = Array(dates)
+    return none if dates.blank?
+
+    where("duration @> ANY (ARRAY[?]::date[])", dates)
+  end
+
   def self.for_year(year)
-    start_date = Date.new(year, 8, 1)
-    where("duration @> ?::date", start_date).first
+    start_date = start_date_for(year)
+    covering_dates(start_date).first
   end
 end

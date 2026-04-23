@@ -198,4 +198,27 @@ RSpec.describe ProvidersQuery do
       expect(results).to contain_exactly(scitt_accredited)
     end
   end
+
+  describe "academic year filtering" do
+    let(:current_academic_year) { build(:academic_year, :current) }
+    let(:next_academic_year) { build(:academic_year, :next) }
+    let(:previous_academic_year) { build(:academic_year, :previous) }
+
+    let!(:current_provider) { create(:provider) }
+    let!(:multi_academic_years_provider) do
+      create(:provider, academic_years: [current_academic_year,
+                                         next_academic_year,
+                                         previous_academic_year])
+    end
+    let!(:other_provider) do
+      create(:provider, academic_years: [next_academic_year,
+                                         previous_academic_year])
+    end
+
+    let(:filters) { { show_academic_years: [AcademicYearCalculator.current_academic_year] } }
+
+    it "filters providers by academic years" do
+      expect(results).to contain_exactly(current_provider, multi_academic_years_provider)
+    end
+  end
 end

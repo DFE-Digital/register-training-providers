@@ -242,6 +242,64 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  describe ".for_academic_years" do
+    let!(:current_year)  { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+    let!(:next_year)     { create(:academic_year, :next) }
+
+    let!(:provider_current_only) do
+      create(:provider, academic_years: [current_year])
+    end
+
+    let!(:provider_multiple_years) do
+      create(:provider, academic_years: [current_year, previous_year])
+    end
+
+    let!(:provider_other_year) do
+      create(:provider, academic_years: [next_year])
+    end
+
+    it "returns providers that match ANY of the given academic years" do
+      result = described_class.for_academic_years([current_year.start_year])
+
+      expect(result).to contain_exactly(
+        provider_current_only,
+        provider_multiple_years
+      )
+    end
+
+    it "returns providers matching multiple years" do
+      result = described_class.for_academic_years([
+        current_year.start_year,
+        previous_year.start_year
+      ])
+
+      expect(result).to contain_exactly(
+        provider_current_only,
+        provider_multiple_years
+      )
+    end
+
+    it "does not include providers that do not match any given years" do
+      result = described_class.for_academic_years([current_year.start_year])
+
+      expect(result).not_to include(provider_other_year)
+    end
+
+    it "does not return duplicates when a provider matches multiple years" do
+      result = described_class.for_academic_years([
+        current_year.start_year,
+        previous_year.start_year
+      ])
+
+      expect(result.where(id: provider_multiple_years.id).count).to eq(1)
+    end
+
+    it "returns none when years are empty" do
+      expect(described_class.for_academic_years([])).to be_empty
+    end
+  end
+
   describe ".search" do
     let!(:provider_alpha) { create(:provider, operating_name: "Alpha Teaching Trust", urn: "123456", ukprn: "78901234") }
     let!(:provider_bravo) { create(:provider, operating_name: "Bravo Academy", urn: "654321", ukprn: "43210987") }

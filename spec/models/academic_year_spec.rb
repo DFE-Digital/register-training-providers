@@ -48,7 +48,7 @@ RSpec.describe AcademicYear, type: :model do
     end
   end
 
-  describe "#last??" do
+  describe "#last?" do
     context "when it is the next academic_year" do
       it "is expected to be true" do
         Timecop.travel(AcademicYearCalculator.next_academic_year, 9, 1) do
@@ -78,6 +78,98 @@ RSpec.describe AcademicYear, type: :model do
       it "returns nil" do
         expect(described_class.for_year(2023)).to be_nil
       end
+    end
+  end
+
+  describe "#start_year and #end_year" do
+    it "returns the correct start and end years" do
+      ay = create(:academic_year, academic_year: 2025)
+
+      expect(ay.start_year).to eq(2025)
+      expect(ay.end_year).to eq(2026)
+    end
+  end
+
+  describe ".start_date_for" do
+    it "returns August 1 of the given year" do
+      expect(described_class.start_date_for(2025))
+        .to eq(Date.new(2025, 8, 1))
+    end
+  end
+
+  describe ".next_and_older" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+    let!(:next_year) { create(:academic_year, :next) }
+    let!(:far_future_year) { create(:academic_year, academic_year: AcademicYearCalculator.next_academic_year + 1) }
+
+    it "includes the next academic year (today + 1.year) and all older years" do
+      result = described_class.next_and_older.to_a
+      expect(result).to include(previous_year)
+      expect(result).to include(current_year)
+      expect(result).to include(next_year)
+      expect(result).not_to include(far_future_year)
+    end
+
+    it "orders by the implicit order column (duration: :desc)" do
+      ordered = described_class.next_and_older.pluck(:id)
+      expected = [next_year, current_year, previous_year].map(&:id)
+
+      expect(ordered).to eq(expected)
+    end
+  end
+
+  describe ".covering_dates" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+
+    it "returns academic years covering a given date" do
+      result = described_class.covering_dates(current_year.duration.begin,)
+
+      expect(result).to contain_exactly(current_year)
+    end
+
+    it "returns multiple academic years when multiple dates match" do
+      dates = [
+        current_year.duration.begin,
+        previous_year.duration.begin,
+      ]
+
+      result = described_class.covering_dates(dates)
+
+      expect(result).to contain_exactly(current_year, previous_year)
+    end
+
+    it "returns none when given empty input" do
+      expect(described_class.covering_dates([])).to be_empty
+    end
+  end
+
+  describe ".for_specific_years" do
+    let!(:current_year) { create(:academic_year, :current) }
+    let!(:previous_year) { create(:academic_year, :previous) }
+    let!(:next_year) { create(:academic_year, :next) }
+
+    it "returns matching academic years for given years" do
+      result = described_class.for_specific_years([previous_year.start_year, next_year.start_year])
+
+      expect(result).to contain_exactly(previous_year, next_year)
+    end
+
+    it "orders results by duration descending" do
+      result = described_class.for_specific_years([previous_year.start_year, current_year.start_year, next_year.start_year])
+
+      expect(result).to eq([next_year, current_year, previous_year])
+    end
+
+    it "returns empty when no matches" do
+      expect(described_class.for_specific_years([AcademicYearCalculator.previous_academic_year - 1])).to be_empty
+    end
+
+    it "handles single year input" do
+      result = described_class.for_specific_years(current_year.start_year)
+
+      expect(result).to contain_exactly(current_year)
     end
   end
 end
