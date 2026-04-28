@@ -3,6 +3,8 @@
 # Table name: users
 #
 #  id                :uuid             not null, primary key
+#  active            :boolean          default(TRUE), not null
+#  api_user          :boolean          default(FALSE), not null
 #  dfe_sign_in_uid   :string
 #  discarded_at      :datetime
 #  email             :string           not null

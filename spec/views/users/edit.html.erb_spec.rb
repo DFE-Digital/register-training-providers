@@ -34,6 +34,8 @@ RSpec.describe "users/edit.html.erb", type: :view do
     expect(rendered).to have_selector("input[name='user[first_name]']")
     expect(rendered).to have_selector("input[name='user[last_name]']")
     expect(rendered).to have_selector("input[name='user[email]']")
+    expect(rendered).to have_selector("input[name='user[api_user]']")
+    expect(rendered).to have_selector("input[name='user[active]']")
   end
 
   it "renders the cancel link" do

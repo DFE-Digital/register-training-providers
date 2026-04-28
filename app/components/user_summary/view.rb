@@ -17,13 +17,24 @@ module UserSummary
       [
         { key: { text: "First name" },
           value: { text: @user.first_name },
-          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "first name" }] : [] },
+          actions: fully_editable? ? [{ href: edit_user_path(user), visually_hidden_text: "first name" }] : [] },
         { key: { text: "Last name" },
           value: { text: @user.last_name },
-          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "last name" }] : [] },
+          actions: fully_editable? ? [{ href: edit_user_path(user), visually_hidden_text: "last name" }] : [] },
         { key: { text: "Email address" },
           value: { text: @user.email },
-          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "email address" }] : [] },
+          actions: fully_editable? ? [{ href: edit_user_path(user), visually_hidden_text: "email address" }] : [] },
+        { key: { text: "Is the account an API user" },
+          value: { text: @user.api_user? ? "Yes" : "No" },
+          actions: if editable
+                     [{ href: edit_user_path(user),
+                        visually_hidden_text: "is the account an api user?" }]
+                   else
+                     []
+                   end },
+        { key: { text: "Is the account active?" },
+          value: { text: @user.active? ? "Yes" : "No" },
+          actions: editable ? [{ href: edit_user_path(user), visually_hidden_text: "is the account active?" }] : [] },
       ]
     end
 
@@ -37,6 +48,10 @@ module UserSummary
 
     def use_breadcrumbs?
       back_path == root_path
+    end
+
+    def fully_editable?
+      editable && user.last_signed_in_at.nil?
     end
   end
 end

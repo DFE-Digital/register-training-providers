@@ -7,17 +7,28 @@ module SummaryHelper
     { text: "Not entered", classes: "govuk-hint" }
   end
 
+  def boolean_value(value)
+    value ? "Yes" : "No"
+  end
+
   def user_rows(user, change_path = nil)
     rows = [
       { key: { text: "First name" }, value: { text: user.first_name } },
       { key: { text: "Last name" }, value: { text: user.last_name } },
       { key: { text: "Email address" }, value: { text: user.email } },
+      { key: { text: "Is the account an API user?" }, value: { text: boolean_value(user.api_user) } },
     ]
 
+    rows << { key: { text: "Is the account active?" }, value: { text: boolean_value(user.active) } } if user.persisted?
+
     if change_path
-      rows[0][:actions] = [{ href: change_path, visually_hidden_text: "first name" }]
-      rows[1][:actions] = [{ href: change_path, visually_hidden_text: "last name" }]
-      rows[2][:actions] = [{ href: change_path, visually_hidden_text: "email address" }]
+      if user.last_signed_in_at.nil?
+        rows[0][:actions] = [{ href: change_path, visually_hidden_text: "first name" }]
+        rows[1][:actions] = [{ href: change_path, visually_hidden_text: "last name" }]
+        rows[2][:actions] = [{ href: change_path, visually_hidden_text: "email address" }]
+      end
+      rows[3][:actions] = [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+      rows[4][:actions] = [{ href: change_path, visually_hidden_text: "is the account active" }] if user.persisted?
     end
 
     rows

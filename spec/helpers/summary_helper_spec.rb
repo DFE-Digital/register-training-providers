@@ -26,27 +26,102 @@ RSpec.describe SummaryHelper, type: :helper do
   end
 
   describe "#user_rows" do
-    let(:user) { build_stubbed(:user) }
+    let(:user) { build_stubbed(:user, last_signed_in_at:) }
+    let(:last_signed_in_at) { nil }
     let(:change_path) { "/users/#{user.id}/edit" }
 
-    it "returns the expected rows" do
-      expect(helper.user_rows(user, change_path)).to eq([
-        {
-          key: { text: "First name" },
-          value: { text: user.first_name },
-          actions: [{ href: change_path, visually_hidden_text: "first name" }]
-        },
-        {
-          key: { text: "Last name" },
-          value: { text: user.last_name },
-          actions: [{ href: change_path, visually_hidden_text: "last name" }]
-        },
-        {
-          key: { text: "Email address" },
-          value: { text: user.email },
-          actions: [{ href: change_path, visually_hidden_text: "email address" }]
-        }
-      ])
+    context "for a new user" do
+      before { allow(user).to receive(:persisted?).and_return(false) }
+
+      let(:change_path) { "/users/new?goto=confirm" }
+
+      it "returns the expected rows" do
+        expect(helper.user_rows(user, change_path)).to eq([
+          {
+            key: { text: "First name" },
+            value: { text: user.first_name },
+            actions: [{ href: change_path, visually_hidden_text: "first name" }]
+          },
+          {
+            key: { text: "Last name" },
+            value: { text: user.last_name },
+            actions: [{ href: change_path, visually_hidden_text: "last name" }]
+          },
+          {
+            key: { text: "Email address" },
+            value: { text: user.email },
+            actions: [{ href: change_path, visually_hidden_text: "email address" }]
+          },
+          {
+            key: { text: "Is the account an API user?" },
+            value: { text: "No" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+          }
+        ])
+      end
+    end
+
+    context "for a user that hasn't signed in" do
+      it "returns the expected rows" do
+        expect(helper.user_rows(user, change_path)).to eq([
+          {
+            key: { text: "First name" },
+            value: { text: user.first_name },
+            actions: [{ href: change_path, visually_hidden_text: "first name" }]
+          },
+          {
+            key: { text: "Last name" },
+            value: { text: user.last_name },
+            actions: [{ href: change_path, visually_hidden_text: "last name" }]
+          },
+          {
+            key: { text: "Email address" },
+            value: { text: user.email },
+            actions: [{ href: change_path, visually_hidden_text: "email address" }]
+          },
+          {
+            key: { text: "Is the account an API user?" },
+            value: { text: "No" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+          },
+          {
+            key: { text: "Is the account active?" },
+            value: { text: "Yes" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account active" }]
+          }
+        ])
+      end
+    end
+
+    context "for a user that has signed in" do
+      let(:last_signed_in_at) { Time.zone.now }
+
+      it "returns the expected rows" do
+        expect(helper.user_rows(user, change_path)).to eq([
+          {
+            key: { text: "First name" },
+            value: { text: user.first_name }
+          },
+          {
+            key: { text: "Last name" },
+            value: { text: user.last_name }
+          },
+          {
+            key: { text: "Email address" },
+            value: { text: user.email }
+          },
+          {
+            key: { text: "Is the account an API user?" },
+            value: { text: "No" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+          },
+          {
+            key: { text: "Is the account active?" },
+            value: { text: "Yes" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account active" }]
+          }
+        ])
+      end
     end
   end
 end
