@@ -200,6 +200,8 @@ en:
           add: "Partnership added"
           update: "Partnership updated"
           deleted: "Partnership deleted"
+        academic_years:
+          update: "Academic years updated"
       address:
         add: "Address added"
         update: "Address updated"
