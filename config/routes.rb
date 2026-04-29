@@ -3,7 +3,11 @@ Rails.application.routes.draw do
   extend ApiDocsRoutes
 
   def checkable(model, module_prefix: nil)
-    if module_prefix
+    if model == :academic_years
+      scope module: module_prefix do
+        resource :check, only: %i[show update], path: "/check", controller: "#{model}/check"
+      end
+    elsif module_prefix
       # Handle nested modules like providers/addresses
       member do
         scope module: module_prefix do
@@ -121,6 +125,12 @@ Rails.application.routes.draw do
       resource :delete, only: [:show, :destroy], module: "providers/contacts"
     end
     resources :partnerships, only: [:index], controller: "providers/partnerships"
+    resource :academic_years,
+             only: [:edit, :update],
+             controller: "providers/academic_years",
+             path: "academic-years" do
+               checkable(:academic_years, module_prefix: :providers)
+             end
 
     # === Addresses ===
 
