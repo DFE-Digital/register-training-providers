@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "users/index.html.erb", type: :view do
-  let(:user_1) { build_stubbed(:user, first_name: "Alice") }
-  let(:user_2) { build_stubbed(:user, first_name: "Bob") }
+  let(:user_1) { build_stubbed(:user, first_name: "Alice", active: true, api_user: true) }
+  let(:user_2) { build_stubbed(:user, first_name: "Bob", active: false, api_user: false) }
   let(:users) { [user_1, user_2] }
   let(:count) { users.size }
   let(:pagy) { Pagy.new(count: count, page: 1) }
@@ -28,6 +28,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   it "renders the table headers" do
     expect(rendered).to have_selector("th", text: "Name")
     expect(rendered).to have_selector("th", text: "Email")
+    expect(rendered).to have_selector("th", text: "Status")
   end
 
   it "renders each user in the table" do
@@ -35,6 +36,10 @@ RSpec.describe "users/index.html.erb", type: :view do
       expect(rendered).to have_link(user.name, href: user_path(user))
       expect(rendered).to have_selector("td", text: user.email)
     end
+
+    expect(rendered).to have_selector("strong", text: "Active")
+    expect(rendered).to have_selector("strong", text: "Not active")
+    expect(rendered).to have_selector("strong", text: "API user")
   end
 
   it "does not renders the pagination component" do
