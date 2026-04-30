@@ -160,7 +160,7 @@ module Providers
       def academic_years(context)
         start_date = partnership_start_date(context)
         end_date = partnership_end_date(context)
-        AcademicYear.where("duration && daterange(?, ?)", start_date, end_date).order(duration: :desc)
+        AcademicYear.where("duration && daterange(?, ?)", start_date, end_date).ordered_by_duration
       end
     end
   end

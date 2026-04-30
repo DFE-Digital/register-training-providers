@@ -27,14 +27,16 @@ class AcademicYear < ApplicationRecord
     where(
       "duration && daterange(NULL, ?, '[)')",
       cutoff_date
-    ).order(duration: :desc)
+    ).ordered_by_duration
   }
 
   scope :for_specific_years, ->(years) {
     dates = Array(years).map { |yr| start_date_for(yr) }
 
-    covering_dates(dates).order(duration: :desc)
+    covering_dates(dates).ordered_by_duration
   }
+
+  scope :ordered_by_duration, ->(direction = :desc) { order(duration: direction) }
 
   def current?
     duration.cover?(Time.zone.today)
