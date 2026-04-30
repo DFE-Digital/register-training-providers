@@ -116,13 +116,16 @@ module ProviderHelper
       "UK provider reference number (UKPRN)" => "UK provider reference number (UKPRN)",
       "Unique reference number (URN)" => "unique reference number (URN)",
       "Provider code" => "provider code",
-      "Academic years" => "academic years"
     }
 
     rows.each do |row|
       key_text = row[:key][:text]
       if editable_fields.key?(key_text)
         row[:actions] = [{ href: edit_provider_path(provider), visually_hidden_text: editable_fields[key_text] }]
+      end
+
+      if key_text == "Academic years"
+        row[:actions] = [{ href: edit_provider_academic_years_path(provider), visually_hidden_text: "academic years" }]
       end
     end
 
