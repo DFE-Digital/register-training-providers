@@ -1,0 +1,30 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path
+      ) %>
+<% end %>
+
+<%= form_for @form, url: provider_academic_years_path, method: :patch do |form| %>
+  <% page_data(title: "Academic years", subtitle: "Add provider", header: false, error: @form&.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_check_boxes_fieldset :academic_year_ids,
+                                      legend: { text: "Academic years", size: "l" },
+                                      caption: { text: "Add provider", size: "l" },
+                                      hint: { text: "Select all that apply" } do %>
+    <% @academic_years.each do |academic_year| %>
+      <%= form.govuk_check_box :academic_year_ids, academic_year.id,
+                               label: { text: display_academic_year(academic_year) },
+                               hint: { text: academic_year_helper_text(academic_year) },
+                               checked: @form.academic_year_ids&.include?(academic_year.id) %>
+    <% end %>
+  <% end %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", providers_path) %>
+</p>
