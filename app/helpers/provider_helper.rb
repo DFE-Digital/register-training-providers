@@ -17,7 +17,7 @@ module ProviderHelper
     summary_card_rows += [{ key: { text: "Provider code" },
                             value: { text: provider.code } }] unless hide_provider_code
 
-    summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
+    summary_card_rows += [academic_years_row(provider.academic_years.ordered_by_duration,
                                              use_details_for_academic_years_row)]
 
     summary_card_rows
