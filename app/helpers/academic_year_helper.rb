@@ -27,7 +27,13 @@ module AcademicYearHelper
   end
 
   def academic_years_bullet_list(items)
-    content_tag(:ul, class: "govuk-list govuk-list--bullet") do
+    list_class = if items.one?
+                   "govuk-list"
+                 else
+                   "govuk-list govuk-list--bullet"
+                 end
+
+    content_tag(:ul, class: list_class) do
       items.map { |year| content_tag(:li, display_academic_year(year)) }.join.html_safe
     end
   end
