@@ -1,0 +1,13 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: edit_provider_academic_years_path(provider, goto: "confirm")) %>
+<% end %>
+
+<% page_data(title: "Check your answers", subtitle: @provider.operating_name.to_s, caption: @provider.operating_name.to_s) %>
+
+<%= govuk_summary_list(rows: [academic_years_row(@form.academic_years, false).merge(actions: [{ href: edit_provider_academic_years_path(provider, goto: "confirm"), visually_hidden_text: "academic years" }])]) %>
+
+<%= govuk_button_to("Save academic years", provider_academic_years_check_path(@provider), method: :patch) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
