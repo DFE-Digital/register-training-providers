@@ -240,4 +240,10 @@ RSpec.describe User, type: :model do
       expect(new_user.name).to eq "Alicia Wonder"
     end
   end
+
+  describe "#active?" do
+    it "is true by default" do
+      expect(user.active?).to be true
+    end
+  end
 end
