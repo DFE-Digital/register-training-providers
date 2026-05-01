@@ -3,6 +3,18 @@
   <%= form.govuk_text_field :last_name, width: "two-thirds", label: { size: "s", text: "Last name" } %>
   <%= form.govuk_text_field :email, width: "full", label: { size: "s", text: "Email address" },
                                     hint: { text: "Email address must be a valid Department for Education address, like name@education.gov.uk" } %>
+<% else %>
+  <%= govuk_summary_list(
+        rows:
+        [
+          { key: { text: "First name" },
+            value: { text: @user.first_name } },
+          { key: { text: "Last name" },
+            value: { text: @user.last_name } },
+          { key: { text: "Email address" },
+            value: { text: @user.email } }
+        ]
+      ) %>
 <% end %>
 <%= form.govuk_radio_buttons_fieldset(:api_user, inline: true, legend: { size: "s", text: "Is the account an API user?", tag: "h2" }) do %>
   <%= form.govuk_radio_button(

@@ -1,8 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "users/edit.html.erb", type: :view do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, last_signed_in_at:) }
   let(:goto) { nil }
+  let(:last_signed_in_at) { nil }
 
   before do
     assign(:user, user)
@@ -77,6 +78,28 @@ RSpec.describe "users/edit.html.erb", type: :view do
         "Enter last name",
         "Enter email address"
       )
+    end
+  end
+
+  context "when a user has signed in" do
+    let(:last_signed_in_at) { Time.zone.now }
+
+    it "renders the form with the editable fields" do
+      expect(rendered).to have_selector("form")
+      expect(rendered).not_to have_selector("input[name='user[first_name]']")
+      expect(rendered).not_to have_selector("input[name='user[last_name]']")
+      expect(rendered).not_to have_selector("input[name='user[email]']")
+      expect(rendered).to have_selector("input[name='user[api_user]']")
+      expect(rendered).to have_selector("input[name='user[active]']")
+    end
+
+    it "renders the uneditable fields" do
+      expect(rendered).to have_selector("dt", text: "First name")
+      expect(rendered).to have_selector("dd", text: user.first_name)
+      expect(rendered).to have_selector("dt", text: "Last name")
+      expect(rendered).to have_selector("dd", text: user.last_name)
+      expect(rendered).to have_selector("dt", text: "Email address")
+      expect(rendered).to have_selector("dd", text: user.email)
     end
   end
 end
