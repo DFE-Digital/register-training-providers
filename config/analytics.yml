@@ -26,6 +26,8 @@
     - last_signed_in_at
     - system_admin
     - updated_at
+    - active
+    - api_user
   :partnership_academic_years:
     - id
     - academic_year_id

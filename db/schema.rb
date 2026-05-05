@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_13_093523) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_23_105759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -376,6 +376,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_093523) do
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.boolean "api_user", default: false, null: false
     t.datetime "created_at", null: false
     t.string "dfe_sign_in_uid"
     t.datetime "discarded_at"

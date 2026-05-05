@@ -21,7 +21,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = scoped_user.new(params.expect(user: [:first_name, :last_name, :email]))
+    @user = scoped_user.new(params.expect(user: user_params))
     if @user.valid?
       @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to new_user_confirm_path
@@ -33,7 +33,7 @@ class UsersController < ApplicationController
   def update
     @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
 
-    @user.assign_attributes(params.expect(user: [:first_name, :last_name, :email]))
+    @user.assign_attributes(params.expect(user: user_params))
 
     if @user.valid?
       @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
@@ -51,5 +51,12 @@ private
 
   def scoped_user
     @scoped_user || policy_scope(User)
+  end
+
+  def user_params
+    return [:first_name, :last_name, :email, :api_user] unless @user
+    return [:first_name, :last_name, :email, :api_user, :active] if @user.last_signed_in_at.nil?
+
+    [:api_user, :active]
   end
 end

@@ -1,4 +1,48 @@
-<%= form.govuk_text_field :first_name, width: "two-thirds", label: { size: "s", text: "First name" } %>
-<%= form.govuk_text_field :last_name, width: "two-thirds", label: { size: "s", text: "Last name" } %>
-<%= form.govuk_text_field :email, width: "full", label: { size: "s", text: "Email address" },
-                                  hint: { text: "Email address must be a valid Department for Education address, like name@education.gov.uk" } %>
+<% if @user.last_signed_in_at.nil? %>
+  <%= form.govuk_text_field :first_name, width: "two-thirds", label: { size: "s", text: "First name" } %>
+  <%= form.govuk_text_field :last_name, width: "two-thirds", label: { size: "s", text: "Last name" } %>
+  <%= form.govuk_text_field :email, width: "full", label: { size: "s", text: "Email address" },
+                                    hint: { text: "Email address must be a valid Department for Education address, like name@education.gov.uk" } %>
+<% else %>
+  <%= govuk_summary_list(
+        rows:
+        [
+          { key: { text: "First name" },
+            value: { text: @user.first_name } },
+          { key: { text: "Last name" },
+            value: { text: @user.last_name } },
+          { key: { text: "Email address" },
+            value: { text: @user.email } }
+        ]
+      ) %>
+<% end %>
+<%= form.govuk_radio_buttons_fieldset(:api_user, inline: true, legend: { size: "s", text: "Is the account an API user?", tag: "h2" }) do %>
+  <%= form.govuk_radio_button(
+        :api_user,
+        true,
+        label: { text: "Yes" },
+        value: @user.api_user?
+      ) %>
+  <%= form.govuk_radio_button(
+        :api_user,
+        false,
+        label: { text: "No" },
+        value: !@user.api_user?
+      ) %>
+<% end %>
+<% if @user.persisted? %>
+  <%= form.govuk_radio_buttons_fieldset(:active, inline: true, legend: { size: "s", text: "Is the account active?", tag: "h2" }) do %>
+    <%= form.govuk_radio_button(
+          :active,
+          true,
+          label: { text: "Yes" },
+          value: @user.active?
+        ) %>
+    <%= form.govuk_radio_button(
+          :active,
+          false,
+          label: { text: "No" },
+          value: !@user.active?
+        ) %>
+  <% end %>
+<% end %>
