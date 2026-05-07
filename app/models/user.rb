@@ -37,6 +37,8 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true, uniqueness: true
+  validates :api_user, inclusion: [true, false]
+  validates :active, inclusion: [true, false]
 
   validate do |record|
     DfEEmailFormatValidator.new(record).validate if email.present?

@@ -20,6 +20,8 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_presence_of(:first_name).with_message("Enter first name") }
     it { is_expected.to validate_presence_of(:last_name).with_message("Enter last name") }
     it { is_expected.to validate_presence_of(:email).with_message("Enter email address") }
+    it { is_expected.to validate_presence_of(:api_user).with_message("Select if the account is an API user") }
+    it { is_expected.to validate_presence_of(:active).with_message("Select if the account is active") }
 
     context "when email is unique" do
       it "is valid with a unique email" do

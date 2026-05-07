@@ -5,6 +5,9 @@ FactoryBot.define do
 
     email { "#{first_name}.#{last_name}+test@education.gov.uk" }
 
+    api_user { false }
+    active { true }
+
     trait :discarded do
       discarded_at { Time.zone.now }
     end
