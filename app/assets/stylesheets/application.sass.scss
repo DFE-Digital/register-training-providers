@@ -63,3 +63,9 @@ $govuk-assets-path: "/";
     margin-left: auto;
   }
 }
+
+.app-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}

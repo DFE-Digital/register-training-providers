@@ -62,6 +62,10 @@ en:
             email:
               blank: "Enter email address"
               taken: "Email address already in use"
+            api_user:
+              inclusion: "Select if the account is an API user"
+            active:
+              inclusion: "Select if the account is active"
         accreditation:
           attributes:
             number:

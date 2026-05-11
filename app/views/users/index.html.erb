@@ -7,6 +7,7 @@
         head.with_row do |row|
           row.with_cell(text: "Name")
           row.with_cell(text: "Email address")
+          row.with_cell(text: "Status")
         end
       end
       table.with_body do |body|
@@ -14,6 +15,7 @@
           body.with_row do |row|
             row.with_cell(text: govuk_link_to(user.name, href: user_path(user)))
             row.with_cell(text: user.email)
+            row.with_cell(text: tag.div(status_tags(user), class: "app-tag-list"))
           end
         end
       end
