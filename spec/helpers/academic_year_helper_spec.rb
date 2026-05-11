@@ -35,6 +35,17 @@ RSpec.describe AcademicYearHelper, type: :helper do
         .to include("No academic years")
     end
 
+    it "renders a single list without a bullet list when 1 item only" do
+      years = [
+        create(:academic_year, :current),
+      ]
+
+      html = helper.academic_years_html(years, true)
+
+      expect(html.scan("<ul").size).to eq(1)
+      expect(html).not_to include("More academic years")
+    end
+
     it "renders a single list when 3 or fewer items" do
       years = [
         create(:academic_year, :current),
