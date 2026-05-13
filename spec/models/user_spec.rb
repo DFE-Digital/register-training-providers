@@ -249,7 +249,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "#api_clients" do
+  describe "#discard!" do
     let(:api_client) { create(:api_client, :with_authentication_token, created_by: user) }
 
     it "discards the users api_clients when the user is discarded" do
