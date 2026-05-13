@@ -10,6 +10,7 @@ namespace :example_data do
       persona.first_name = persona_attributes[:first_name]
       persona.last_name = persona_attributes[:last_name]
       persona.system_admin = persona_attributes[:system_admin?]
+      persona.api_user = persona_attributes[:api_user?]
       persona.save!
 
       persona.discard! if persona_attributes[:discarded?] && persona.kept?
