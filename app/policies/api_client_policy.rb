@@ -1,4 +1,14 @@
 class ApiClientPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      if user.api_user?
+        scope.where(created_by: user).kept
+      else
+        scope.kept
+      end
+    end
+  end
+
   def show?
     record.kept?
   end
