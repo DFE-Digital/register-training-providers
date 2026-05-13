@@ -248,4 +248,20 @@ RSpec.describe User, type: :model do
       expect(user.active?).to be true
     end
   end
+
+  describe "#api_clients" do
+    let(:api_client) { create(:api_client, :with_authentication_token, created_by: user) }
+
+    it "discards the users api_clients when the user is discarded" do
+      expect {
+        user.discard!
+      }.to change { api_client.reload.discarded? }.from(false).to(true)
+    end
+
+    it "revokes the token for the users api_client" do
+      expect {
+        user.discard!
+      }.to change { api_client.authentication_tokens.first.reload.status }.from("active").to("revoked")
+    end
+  end
 end

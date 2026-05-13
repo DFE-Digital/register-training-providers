@@ -46,6 +46,10 @@ class User < ApplicationRecord
 
   scope :order_by_first_then_last_name, -> { order(:first_name, :last_name) }
 
+  before_discard do
+    discard_all_api_clients!
+  end
+
   def name
     first_name_to_use = first_name_was || first_name
     last_name_to_use = last_name_was || last_name
@@ -80,5 +84,9 @@ private
 
   def sanitise_email
     self.email = email.gsub(/\s+/, "").downcase unless email.nil?
+  end
+
+  def discard_all_api_clients!
+    api_clients.kept.find_each(&:discard!)
   end
 end
