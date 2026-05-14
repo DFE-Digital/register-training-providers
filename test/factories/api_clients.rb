@@ -8,5 +8,9 @@ FactoryBot.define do
         create(:authentication_token, api_client:)
       end
     end
+
+    trait :discarded do
+      discarded_at { Time.zone.now }
+    end
   end
 end
