@@ -46,6 +46,8 @@ class User < ApplicationRecord
 
   scope :order_by_first_then_last_name, -> { order(:first_name, :last_name) }
 
+  after_save :revoke_all_active_tokens_for_api_clients!, unless: :active?
+
   def name
     first_name_to_use = first_name_was || first_name
     last_name_to_use = last_name_was || last_name
@@ -80,5 +82,9 @@ private
 
   def sanitise_email
     self.email = email.gsub(/\s+/, "").downcase unless email.nil?
+  end
+
+  def revoke_all_active_tokens_for_api_clients!
+    api_clients.kept.find_each(&:revoke_all_active_tokens!)
   end
 end
