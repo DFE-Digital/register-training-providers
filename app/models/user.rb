@@ -46,10 +46,8 @@ class User < ApplicationRecord
 
   scope :order_by_first_then_last_name, -> { order(:first_name, :last_name) }
 
-  before_discard do
-    discard_all_api_clients!
-  end
-  
+  before_discard :discard_all_api_clients!
+
   after_save :revoke_all_active_tokens_for_api_clients!, unless: :active?
 
   def name
@@ -91,7 +89,7 @@ private
   def discard_all_api_clients!
     api_clients.kept.find_each(&:discard!)
   end
-  
+
   def revoke_all_active_tokens_for_api_clients!
     api_clients.kept.find_each(&:revoke_all_active_tokens!)
   end
