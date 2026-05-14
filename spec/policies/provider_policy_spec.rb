@@ -43,4 +43,25 @@ RSpec.describe ProviderPolicy do
       expect(subject).not_to permit(build(:user), provider)
     end
   end
+
+  describe ".policy_scope" do
+    let(:user) { create(:user, api_user:) }
+    let(:provider) { create(:provider) }
+
+    context "for an api user" do
+      let(:api_user) { true }
+
+      it "returns kept api clients created by the user" do
+        expect(Pundit.policy_scope(user, Provider)).to eq []
+      end
+    end
+
+    context "for a support user" do
+      let(:api_user) { false }
+
+      it "returns all kept api clients" do
+        expect(Pundit.policy_scope(user, Provider)).to contain_exactly provider
+      end
+    end
+  end
 end
