@@ -247,6 +247,22 @@ RSpec.describe User, type: :model do
     it "is true by default" do
       expect(user.active?).to be true
     end
+
+    context "user has api clients" do
+      let(:api_client) { create(:api_client, :with_authentication_token, created_by: user) }
+
+      it "revokes all active tokens for api clients when set to false" do
+        expect {
+          user.update!(active: false)
+        }.to change { api_client.authentication_tokens.first.reload.status }.from("active").to("revoked")
+      end
+
+      it "does not revoke active tokens for other attribute changes" do
+        expect {
+          user.update!(first_name: "Jeff")
+        }.not_to change { api_client.authentication_tokens.first.reload.status }.from("active")
+      end
+    end
   end
 
   describe "#discard!" do

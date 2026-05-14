@@ -49,6 +49,8 @@ class User < ApplicationRecord
   before_discard do
     discard_all_api_clients!
   end
+  
+  after_save :revoke_all_active_tokens_for_api_clients!, unless: :active?
 
   def name
     first_name_to_use = first_name_was || first_name
@@ -88,5 +90,9 @@ private
 
   def discard_all_api_clients!
     api_clients.kept.find_each(&:discard!)
+  end
+  
+  def revoke_all_active_tokens_for_api_clients!
+    api_clients.kept.find_each(&:revoke_all_active_tokens!)
   end
 end
