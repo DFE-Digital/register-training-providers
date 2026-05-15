@@ -51,7 +51,7 @@ RSpec.describe ProviderPolicy do
     context "for an api user" do
       let(:api_user) { true }
 
-      it "returns kept api clients created by the user" do
+      it "does not return any providers" do
         expect(Pundit.policy_scope(user, Provider)).to eq []
       end
     end
@@ -59,7 +59,7 @@ RSpec.describe ProviderPolicy do
     context "for a support user" do
       let(:api_user) { false }
 
-      it "returns all kept api clients" do
+      it "returns all kept providers" do
         expect(Pundit.policy_scope(user, Provider)).to contain_exactly provider
       end
     end
