@@ -46,7 +46,7 @@ RSpec.describe UserPolicy do
     context "for an api user" do
       let(:api_user) { true }
 
-      it "returns kept api clients created by the user" do
+      it "returns no users" do
         expect(Pundit.policy_scope(user, User)).to eq []
       end
     end
