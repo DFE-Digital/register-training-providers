@@ -54,7 +54,7 @@ RSpec.describe UserPolicy do
     context "for a support user" do
       let(:api_user) { false }
 
-      it "returns all kept api clients" do
+      it "returns all kept users" do
         expect(Pundit.policy_scope(user, User)).to contain_exactly user, other_user
       end
     end
