@@ -3,7 +3,7 @@ class LandingPageController < ApplicationController
 
   def start
     if authenticated?
-      redirect_to providers_path
+      redirect_to landing_page_path
     end
   end
 end

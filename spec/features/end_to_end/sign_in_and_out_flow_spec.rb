@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Sign in and_out flow" do
-  scenario do
+  scenario "for a support user" do
     given_i_am_on_the_start_page
     and_i_am_not_signed_in
     and_there_is_no_sign_out_link
@@ -9,11 +9,31 @@ RSpec.feature "Sign in and_out flow" do
     and_i_have_a_dfe_sign_in_account
     and_i_sign_in_via_dfe_sign_in
 
-    and_i_am_redirect_to_provider_page
+    and_i_am_redirected_to_provider_page
     and_i_click_on("Users")
     and_i_go_to_the_users_page
     and_i_click_on("Register of training providers")
     and_i_am_taken_to("/providers")
+
+    when_i_click_on("Sign out")
+    then_i_logout_via_sso
+    and_i_am_taken_to("/")
+    and_i_am_not_signed_in
+  end
+
+  scenario "for an api user" do
+    given_i_am_on_the_start_page
+    and_i_am_not_signed_in
+    and_there_is_no_sign_out_link
+    and_i_am_registered_as_an_api_user
+    and_i_have_a_dfe_sign_in_account_and_am_an_api_user
+    and_i_sign_in_via_dfe_sign_in
+
+    and_i_am_redirected_to_api_clients_page
+    and_i_click_on("Your account")
+    and_i_go_to_the_account_page
+    and_i_click_on("Register of training providers")
+    and_i_am_taken_to("/api_clients")
 
     when_i_click_on("Sign out")
     then_i_logout_via_sso
@@ -31,6 +51,10 @@ RSpec.feature "Sign in and_out flow" do
 
   def and_i_go_to_the_users_page
     expect(page).to have_current_path("/users")
+  end
+
+  def and_i_go_to_the_account_page
+    expect(page).to have_current_path("/account")
   end
 
   def then_i_logout_via_sso
@@ -53,8 +77,12 @@ RSpec.feature "Sign in and_out flow" do
     and_there_is_no_sign_out_link
   end
 
-  def and_i_am_redirect_to_provider_page
+  def and_i_am_redirected_to_provider_page
     expect(page).to have_current_path("/providers")
+  end
+
+  def and_i_am_redirected_to_api_clients_page
+    expect(page).to have_current_path("/api_clients")
   end
 
   def and_there_is_no_sign_out_link

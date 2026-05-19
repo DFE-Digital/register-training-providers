@@ -22,6 +22,6 @@ class SessionsController < ApplicationController
 private
 
   def login_redirect_path
-    session.delete(:requested_path) || providers_path
+    session.delete(:requested_path) || landing_page_path
   end
 end
