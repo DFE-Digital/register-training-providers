@@ -31,7 +31,7 @@
           service_name: t("service.name"),
           service_url: root_path,
           current_path: request.path,
-          navigation_items: navigation_items(signed_in: @current_user.present?)
+          navigation_items: navigation_items(user: @current_user)
         ) %>
 
     <div class="govuk-width-container">

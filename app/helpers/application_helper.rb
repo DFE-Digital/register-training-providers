@@ -64,8 +64,20 @@ module ApplicationHelper
     "Last signed in at #{user.last_signed_in_at.to_fs(:govuk_date_and_time)}"
   end
 
-  def navigation_items(signed_in:)
-    if signed_in
+  def navigation_items(user: nil)
+    return signed_in_navigation_items(user:) if user
+
+    []
+  end
+
+  def signed_in_navigation_items(user:)
+    if user.api_user?
+      [
+        { text: "API clients", href: api_clients_path, active_when: api_clients_path },
+        { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
+        { text: "Sign out", href: sign_out_path },
+      ]
+    else
       [
         { text: "Providers", href: providers_path, active_when: providers_path },
         { text: "Users", href: users_path, active_when: users_path },
@@ -74,8 +86,6 @@ module ApplicationHelper
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
       ]
-    else
-      []
     end
   end
 end

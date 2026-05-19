@@ -51,4 +51,10 @@ private
     # This changes the session to force cookie renewal
     session[:last_seen_at] = Time.current
   end
+
+  def landing_page_path
+    return api_clients_path if current_user.api_user?
+
+    providers_path
+  end
 end

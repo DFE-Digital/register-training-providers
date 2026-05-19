@@ -1,13 +1,22 @@
 module AuthenticationHelper
-  def given_i_am_authenticated(user: nil)
-    @current_user = user if user.present?
-    user_exists_in_dfe_sign_in(user: current_user)
+  def given_i_am_authenticated(user: nil, api_user: false)
+    if api_user
+      @current_api_user = user if user.present?
+      user_exists_in_dfe_sign_in(user: current_api_user)
+    else
+      @current_user = user if user.present?
+      user_exists_in_dfe_sign_in(user: current_user)
+    end
 
     and_i_visit_the_sign_in_page
   end
 
   def given_i_am_an_authenticated_user
     given_i_am_authenticated
+  end
+
+  def given_i_am_an_authenticated_api_user
+    given_i_am_authenticated(api_user: true)
   end
 
   def and_i_visit_the_sign_in_page
@@ -19,11 +28,23 @@ module AuthenticationHelper
     user_exists_in_dfe_sign_in(user: @current_user)
   end
 
+  def and_i_have_a_dfe_sign_in_account_and_am_an_api_user
+    user_exists_in_dfe_sign_in(user: @current_api_user)
+  end
+
   def current_user
     @current_user ||= create(:user)
   end
 
+  def current_api_user
+    @current_api_user ||= create(:user, api_user: true)
+  end
+
   def and_i_am_registered_as_a_user
     current_user
+  end
+
+  def and_i_am_registered_as_an_api_user
+    current_api_user
   end
 end
