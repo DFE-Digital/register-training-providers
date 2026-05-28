@@ -54,7 +54,7 @@ gem "audited"
 gem "rails_semantic_logger"
 
 # Soft deletes for ActiveRecord done right.
-gem "discard", "~> 1.4"
+gem "discard", "~> 2.0"
 
 # UK postcode parsing and validation
 gem "uk_postcode"
