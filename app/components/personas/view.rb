@@ -14,8 +14,10 @@ module Personas
         { text: "Soft deleted", colour: "grey" }
       elsif persona.api_user?
         { text: "API user", colour: "yellow" }
-      elsif persona.persisted?
+      elsif persona.active?
         { text: "Active", colour: "teal" }
+      elsif persona.persisted?
+        { text: "Inactive", colour: "grey" }
       else
         { text: "Non existence", colour: "red" }
       end.merge(classes: "govuk-tag__heading")

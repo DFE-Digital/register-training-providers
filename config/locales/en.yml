@@ -54,7 +54,7 @@ en:
     show:
       heading: Your account is not authorised
       body: You are seeing this page because you have signed into Register of training providers but your account is not authorised to view this page.
-      contact_us_html: If you think your account should be authroised, email %{link}.
+      contact_us_html: If you think your account should be authorised, email %{link}.
   activerecord:
     errors:
       models:
