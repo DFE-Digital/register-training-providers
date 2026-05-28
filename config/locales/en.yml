@@ -50,6 +50,11 @@ en:
                 <p class="govuk-body">Make sure you've spelt the training partner name correctly.</p>
                 <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
                 <p class="govuk-body">You may need to add the training partner first.</p>
+  unauthoriseds:
+    show:
+      heading: Your account is not authorised
+      body: You are seeing this page because you have signed into Register of training providers but your account is not authorised to view this page.
+      contact_us_html: If you think your account should be authroised, email %{link}.
   activerecord:
     errors:
       models:

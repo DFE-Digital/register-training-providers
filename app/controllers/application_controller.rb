@@ -6,7 +6,9 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate
 
-  helper_method :current_user, :authenticated?, :provider
+  before_action :check_user_is_active
+
+  helper_method :current_user, :authenticated?, :provider, :active_user?
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -34,6 +36,10 @@ private
     current_user.present?
   end
 
+  def inactive_user?
+    authenticated? && !current_user&.active?
+  end
+
   def save_requested_path
     session[:requested_path] = request.fullpath
   end
@@ -45,6 +51,10 @@ private
 
   def authenticate
     save_requested_path_and_redirect unless authenticated?
+  end
+
+  def check_user_is_active
+    redirect_to unauthorised_path if inactive_user?
   end
 
   def touch_session
