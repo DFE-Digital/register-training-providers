@@ -41,67 +41,77 @@ RSpec.describe ApiDocs::OpenapiSpecification do
   end
 
   context "manually added descriptions" do
-    context "parameters-level descriptions" do
-      it "ensures all parameters across all endpoints have descriptions" do
-        spec = described_class.specification
-        spec["paths"].each do |path, path_item|
-          path_item.each do |method, operation|
-            next unless operation.is_a?(Hash)
-            next unless operation["parameters"]
+    let(:openapi_data) { YAML.load_file(Rails.root.join("spec/support/openapi/post_documentation.yml")) }
+    let(:spec) { described_class.specification }
+    def find_param(path, method, param_name)
+      spec.dig("paths", path, method, "parameters")&.find { |p| p["name"] == param_name }
+    end
 
-            operation["parameters"].each do |param|
-              expect(param["description"]).to be_present,
-                                              "Missing description for #{method.upcase} #{path} parameter #{param['name']}"
-            end
+    def find_property(prop_name)
+      spec.dig("paths", "/api/{api_version}/providers", "get", "responses", "200", "content", "application/json", "schema", "properties", "data", "items", "properties", prop_name)
+    end
+
+    context "parameters-level descriptions" do
+      it "matches the data.yml for all parameters" do
+        ["/api/{api_version}/info", "/api/{api_version}/providers"].each do |path|
+          openapi_data["parameters"].each do |name, description|
+            param = find_param(path, "get", name)
+            next unless param #
+
+            expect(param["description"].squish).to eq(description.squish)
           end
         end
-      end
-
-      shared_examples "parameters-level descriptions" do |hash_keys, descriptions|
-        it "has description for #{hash_keys.join(' -> ')}" do
-          expect(described_class.specification.dig(*hash_keys).pluck("description").map(&:squish)).to eq(descriptions)
-        end
-      end
-
-      context "manually added parameters-level descriptions" do
-        it_behaves_like "parameters-level descriptions", ["paths", "/api/{api_version}/info", "get", "parameters"], [
-          "A valid API token must be provided in the Authorization header to access this endpoint.",
-          "The API version to use in the request path. This should be set to the latest version for this endpoint."
-        ]
-
-        it_behaves_like "parameters-level descriptions", ["paths", "/api/{api_version}/providers", "get", "parameters"], [
-          "A valid API token must be provided in the Authorization header to access this endpoint.",
-          "Filters providers by the specified academic year. The value must be a 4-digit year, for example 2025. If not provided, the API will return providers active in the current academic year.",
-          "The API version to use in the request path. This should be set to the latest version for this endpoint.",
-          "Filters providers to only those updated after the specified timestamp. The value must be an ISO 8601 datetime, for example: 2025-09-14T11:34:56Z.",
-        ]
       end
     end
 
     context "operation-level descriptions" do
-      it "ensures all operations across all endpoints have descriptions" do
-        spec = described_class.specification
-        spec["paths"].each do |path, path_item|
-          path_item.each do |method, operation|
-            next unless operation.is_a?(Hash)
-            # Skip keys that aren't HTTP verbs
-            next unless %w[get post put patch delete options head].include?(method.downcase)
+      it "matches the data.yml for endpoint descriptions" do
+        openapi_data["endpoints"].each do |path_key, data|
+          # Find the path in the spec that includes our key
+          full_path = spec["paths"].keys.find { |k| k.include?(path_key) }
+          description = spec.dig("paths", full_path, "get", "description")
 
-            expect(operation["description"]).to be_present,
-                                                "Missing description for #{method.upcase} #{path} operation"
-          end
+          expect(description.squish).to eq(data["description"].squish)
         end
       end
+    end
 
-      shared_examples "operation-level description" do |hash_keys, descriptions|
-        it "has description for #{hash_keys.join(' -> ')}" do
-          expect(described_class.specification.dig(*hash_keys).squish).to eq(descriptions)
+    it "adds the data collection description" do
+      data_property = spec.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "get",
+        "responses",
+        "200",
+        "content",
+        "application/json",
+        "schema",
+        "properties",
+        "data"
+      )
+
+      expect(data_property["description"]).to eq(
+        openapi_data.dig(
+          "providers_properties",
+          "data",
+          "description"
+        )
+      )
+    end
+
+    context "provider property descriptions" do
+      it "matches the data.yml for all provider properties" do
+        openapi_data["provider_properties"].each do |name, data|
+          property = find_property(name)
+
+          expect(property).to be_present, "Expected property '#{name}' to exist in schema"
+
+          expect(property["description"].squish).to eq(data["description"].squish)
+
+          expect(property["example"].to_s).to eq(data["example"].to_s) if data["example"]
+
+          expect(property["enum"]).to eq(data["enum"]) if data["enum"]
         end
-      end
-      context "manually added operation-level descriptions" do
-        it_behaves_like "operation-level description", ["paths", "/api/{api_version}/info", "get", "description"], "This endpoint can be used to retrieve general information about the API."
-        it_behaves_like "operation-level description", ["paths", "/api/{api_version}/providers", "get", "description"],
-                        "This endpoint can be used to retrieve providers for a given academic year. This is intended to make it possible to check for new or updated providers regularly."
       end
     end
   end

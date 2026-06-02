@@ -33,7 +33,7 @@ if generate_openapi
                                            end
     end
 
-    config.after(:suite) do
+    at_exit do
       puts "\nGenerated API docs:"
       Dir["public/openapi/*.yaml"].each { |file| puts " - #{file}" }
     end
