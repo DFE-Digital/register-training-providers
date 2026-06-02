@@ -43,6 +43,6 @@ PERSONAS = [
     api_user?: true },
 ].freeze
 
-NON_EXISTING_PERSONA = { first_name: "Tyler", last_name: "Durden", email: "test5@education.gov.uk" }.freeze
+NON_EXISTING_PERSONA = { first_name: "Tyler", last_name: "Durden", email: "test7@education.gov.uk" }.freeze
 
 PERSONA_EMAILS = PERSONAS.pluck(:email)
