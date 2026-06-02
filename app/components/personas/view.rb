@@ -10,7 +10,7 @@ module Personas
     end
 
     def tag_args
-      { text: tag_text, colour: tag_colour, classes: "govuk-tag__heading"}
+      { text: tag_text, colour: tag_colour, classes: "govuk-tag__heading" }
     end
 
     def tag_text
