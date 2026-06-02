@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate
+  skip_before_action :check_user_is_active
 
   def callback
     DfESignInUser.begin_session!(session, request.env["omniauth.auth"])
