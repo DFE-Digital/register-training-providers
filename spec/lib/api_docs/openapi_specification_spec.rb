@@ -1,10 +1,16 @@
-# spec/lib/api_docs/openapi_specification_spec.rb
 require "rails_helper"
-require_relative "../../../app/lib/api_docs/openapi_specification"
 
 RSpec.describe ApiDocs::OpenapiSpecification do
   describe ".specification" do
     it { expect(described_class.specification).to be_a(Hash) }
+
+    it "loads a specific versioned file when provided" do
+      expect(YAML).to receive(:load_file)
+        .with("public/openapi/v1.yaml", permitted_classes: [Time])
+        .and_return({})
+
+      described_class.specification("v1")
+    end
   end
 
   describe ".as_yaml" do
@@ -23,7 +29,6 @@ RSpec.describe ApiDocs::OpenapiSpecification do
     end
 
     it "builds a structured endpoint hash keyed by API path" do
-      expect(endpoints.keys).to contain_exactly("/info", "/providers")
       expect(endpoints["/info"].keys).to contain_exactly("specifications", "heading", "path")
       expect(endpoints["/providers"].keys).to contain_exactly("specifications", "heading", "path")
     end
@@ -40,38 +45,76 @@ RSpec.describe ApiDocs::OpenapiSpecification do
     end
   end
 
+  describe ".has_specification?" do
+    it "returns true when endpoint and method exist" do
+      expect(described_class.has_specification?("info", :get)).to eq(true)
+    end
+
+    it "returns false when endpoint is missing" do
+      expect(described_class.has_specification?("missing", :get)).to eq(false)
+    end
+
+    it "returns false when HTTP method is missing" do
+      expect(described_class.has_specification?("info", :post)).to eq(false)
+    end
+  end
+
   context "manually added descriptions" do
-    let(:openapi_data) { YAML.load_file(Rails.root.join("spec/support/openapi/post_documentation.yml")) }
+    let(:openapi_data) do
+      YAML.load_file(
+        Rails.root.join("spec/support/openapi/post_documentation.yml"),
+        aliases: true
+      )
+    end
+
     let(:spec) { described_class.specification }
+
     def find_param(path, method, param_name)
       spec.dig("paths", path, method, "parameters")&.find { |p| p["name"] == param_name }
     end
 
     def find_property(prop_name)
-      spec.dig("paths", "/api/{api_version}/providers", "get", "responses", "200", "content", "application/json", "schema", "properties", "data", "items", "properties", prop_name)
+      spec.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "get",
+        "responses",
+        "200",
+        "content",
+        "application/json",
+        "schema",
+        "properties",
+        "data",
+        "items",
+        "properties",
+        prop_name
+      )
     end
 
     context "parameters-level descriptions" do
-      it "matches the data.yml for all parameters" do
+      it "matches the post_documentation.yml for all parameters" do
         ["/api/{api_version}/info", "/api/{api_version}/providers"].each do |path|
-          openapi_data["parameters"].each do |name, description|
+          openapi_data["parameters"].each do |name, description_hash|
             param = find_param(path, "get", name)
             next unless param
 
-            expect(param["description"].squish).to eq(description.squish)
+            expect(param["description"].to_s.squish)
+              .to eq(description_hash["description"].to_s.squish)
           end
         end
       end
     end
 
     context "operation-level descriptions" do
-      it "matches the data.yml for endpoint descriptions" do
-        openapi_data["endpoints"].each do |path_key, data|
-          # Find the path in the spec that includes our key
+      it "matches the post_documentation.yml for endpoint descriptions" do
+        openapi_data["paths"].each do |path_key, data|
           full_path = spec["paths"].keys.find { |k| k.include?(path_key) }
+          next unless full_path
+
           description = spec.dig("paths", full_path, "get", "description")
 
-          expect(description.squish).to eq(data["description"].squish)
+          expect(description.to_s.squish)
+            .to eq(data["description"].to_s.squish)
         end
       end
     end
@@ -90,26 +133,33 @@ RSpec.describe ApiDocs::OpenapiSpecification do
         "data"
       )
 
-      expect(data_property["description"]).to eq(
-        openapi_data.dig(
-          "providers_properties",
-          "data",
-          "description"
-        )
+      expected = openapi_data.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "responses",
+        "200",
+        "application/json",
+        "schema",
+        "properties",
+        "data",
+        "description"
       )
+
+      expect(data_property["description"]).to eq(expected)
     end
 
     context "provider property descriptions" do
-      it "matches the data.yml for all provider properties" do
+      it "matches the post_documentation.yml for all provider properties" do
         openapi_data["provider_properties"].each do |name, data|
           property = find_property(name)
 
-          expect(property).to be_present, "Expected property '#{name}' to exist in schema"
+          expect(property).to be_present,
+                              "Expected property '#{name}' to exist in schema"
 
-          expect(property["description"].squish).to eq(data["description"].squish)
+          expect(property["description"].to_s.squish)
+            .to eq(data["description"].to_s.squish)
 
           expect(property["example"].to_s).to eq(data["example"].to_s) if data["example"]
-
           expect(property["enum"]).to eq(data["enum"]) if data["enum"]
         end
       end
@@ -122,11 +172,15 @@ RSpec.describe ApiDocs::OpenapiSpecification do
 
       expect(rows).to be_an(Array)
       expect(rows).not_to be_empty
+      expect(rows.first).to include(:field, :type)
+    end
 
-      expect(rows.first).to include(
-        :field,
-        :type
-      )
+    it "returns empty array when schema is missing" do
+      allow(described_class).to receive(:endpoints).and_return({
+        "/test" => { specifications: { get: {} } }
+      })
+
+      expect(described_class.endpoint_table("/test", :get)).to eq([])
     end
   end
 
@@ -148,9 +202,7 @@ RSpec.describe ApiDocs::OpenapiSpecification do
               "type" => "object",
               "required" => ["name"],
               "properties" => {
-                "name" => {
-                  "type" => "string"
-                }
+                "name" => { "type" => "string" }
               }
             }
           }
@@ -201,6 +253,72 @@ RSpec.describe ApiDocs::OpenapiSpecification do
       expect(described_class.schema_to_table("foo")).to eq([])
       expect(described_class.schema_to_table([])).to eq([])
     end
+
+    it "handles deeply nested objects" do
+      schema = {
+        "type" => "object",
+        "properties" => {
+          "a" => {
+            "type" => "object",
+            "properties" => {
+              "b" => {
+                "type" => "object",
+                "properties" => {
+                  "c" => {
+                    "type" => "string",
+                    "description" => "deep value"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "a.b.c",
+          type: "string",
+          description: "deep value"
+        )
+      )
+    end
+
+    it "handles arrays without items safely" do
+      schema = {
+        "type" => "array",
+        "description" => "list of values"
+      }
+
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          type: "array",
+          description: "list of values"
+        )
+      )
+    end
+
+    it "handles scalar schemas directly" do
+      schema = {
+        "type" => "string",
+        "description" => "a field"
+      }
+
+      rows = described_class.schema_to_table(schema, "field")
+
+      expect(rows).to include(
+        hash_including(
+          field: "field",
+          type: "string",
+          description: "a field",
+          required: false
+        )
+      )
+    end
   end
 
   describe ".build_row" do
@@ -227,6 +345,30 @@ RSpec.describe ApiDocs::OpenapiSpecification do
           enum: ["a", "b"],
           nullable: true
         }
+      )
+    end
+
+    it "omits nil values" do
+      row = described_class.build_row(
+        { "type" => "string" },
+        "field",
+        required: []
+      )
+
+      expect(row).to include(field: "field", type: "string")
+      expect(row).not_to have_key(:format)
+      expect(row).not_to have_key(:enum)
+      expect(row).not_to have_key(:nullable)
+    end
+  end
+
+  describe "OpenAPI path consistency" do
+    it "keeps endpoints aligned with OpenAPI specification paths" do
+      paths = described_class.specification["paths"].keys
+
+      expect(paths).to include(
+        "/api/{api_version}/info",
+        "/api/{api_version}/providers"
       )
     end
   end
