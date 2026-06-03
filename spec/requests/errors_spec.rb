@@ -12,7 +12,7 @@ RSpec.describe "Error Pages", type: :request do
   describe "GET /422" do
     it "renders the 422 error page" do
       get "/422"
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Sorry, there’s a problem with the service")
     end
   end
