@@ -57,4 +57,104 @@ RSpec.describe ApiDocsHelper, type: :helper do
       end
     end
   end
+
+  describe "#schema_description" do
+    subject(:result) { helper.schema_description(description, row_data) }
+
+    let(:description) { "A provider type." }
+    let(:row_data) { {} }
+
+    it "returns the description text" do
+      expect(result[:text].to_s).to include("A provider type.")
+    end
+
+    context "when enum values are present" do
+      let(:row_data) do
+        {
+          enum: %w[hei school scitt]
+        }
+      end
+
+      it "includes the possible values heading" do
+        expect(result[:text].to_s).to include("Possible values:")
+      end
+
+      it "includes each enum value" do
+        expect(result[:text].to_s).to include("hei")
+        expect(result[:text].to_s).to include("school")
+        expect(result[:text].to_s).to include("scitt")
+      end
+    end
+
+    context "when a format is present" do
+      let(:row_data) do
+        {
+          format: "date-time"
+        }
+      end
+
+      it "includes the format description" do
+        expect(result[:text].to_s)
+          .to include("This field will be in the format date-time.")
+      end
+    end
+
+    context "when the field is nullable" do
+      let(:row_data) do
+        {
+          nullable: true
+        }
+      end
+
+      it "includes the nullable description" do
+        expect(result[:text].to_s)
+          .to include("This field can also be null.")
+      end
+    end
+
+    context "when enum, format and nullable are all present" do
+      let(:row_data) do
+        {
+          enum: %w[accredited unaccredited],
+          format: "date-time",
+          nullable: true
+        }
+      end
+
+      it "includes all supplementary information" do
+        text = result[:text].to_s
+
+        expect(text).to include("Possible values:")
+        expect(text).to include("accredited")
+        expect(text).to include("unaccredited")
+        expect(text).to include("This field will be in the format date-time.")
+        expect(text).to include("This field can also be null.")
+      end
+    end
+
+    context "when enum is empty" do
+      let(:row_data) do
+        {
+          enum: []
+        }
+      end
+
+      it "does not include possible values" do
+        expect(result[:text].to_s).not_to include("Possible values:")
+      end
+    end
+
+    context "when nullable is false" do
+      let(:row_data) do
+        {
+          nullable: false
+        }
+      end
+
+      it "does not include the nullable message" do
+        expect(result[:text].to_s)
+          .not_to include("This field can also be null.")
+      end
+    end
+  end
 end

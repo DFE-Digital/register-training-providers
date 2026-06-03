@@ -1,7 +1,7 @@
 generate_openapi = ENV.fetch("OPENAPI", nil) == "1"
 
 module OpenApiPostProcess
-  extend self
+module_function
 
   def deep_merge!(target, source)
     return target unless target && source
@@ -64,7 +64,7 @@ if generate_openapi
     spec.fetch("paths", {}).each do |route, path_data|
       path_patch = path_overrides[route]
 
-      path_data.each do |_verb, op|
+      path_data.each_value do |op|
         next unless op.is_a?(Hash)
 
         OpenApiPostProcess.apply_parameter_overrides!(op, param_overrides)
