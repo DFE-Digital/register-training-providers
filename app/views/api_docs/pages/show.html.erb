@@ -18,6 +18,7 @@
       <li><a class="govuk-link" href="#authentication">Authentication</a></li>
       <li><a class="govuk-link" href="#query-parameters">Query parameters</a></li>
       <li><a class="govuk-link" href="#possible-responses">Possible response</a></li>
+      <li><a class="govuk-link" href="#schema">Schema</a></li>
     </ul>
 
     <% if @endpoint.summary.present? %>
@@ -66,7 +67,8 @@
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
+
     <h2 class="govuk-heading-l" id="possible-responses">Possible responses</h2>
       <% ["200", "401"].each do |http_code|
          if @endpoint.response(http_code).present? %>
@@ -78,5 +80,51 @@
           <% end %>
         <% end %>
       <% end %>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h2 class="govuk-heading-l" id="schema">Schema</h2>
+    <% if @endpoint.schema.present? %>
+
+      <%= govuk_table do |table|
+            table.with_head do |head|
+              head.with_row do |row|
+                ["Field", "Type", "Required", "Description", "Example"].each do |heading|
+                  options = { text: heading }
+                  options[:width] = "one-quarter" if heading == "Example"
+
+                  row.with_cell(**options)
+                end
+              end
+            end
+
+            fields = [:field,
+                      :type,
+                      :required,
+                      :description,
+                      :example]
+            table.with_body do |body|
+              @endpoint.schema.each do |row_data|
+                body.with_row do |row|
+                  fields.each_with_index do |field, index|
+                    value = row_data[field]
+                    options = if field == :description
+                                schema_description(value, row_data)
+                              else
+                                { text: value.to_s }
+                              end
+                    if index == 4 && value.present?
+                      options[:html_attributes] = { class: "app-table-example" }
+                    end
+
+                    row.with_cell(**options)
+                  end
+                end
+              end
+            end
+          end %>
+    <% end %>
   </div>
 </div>
