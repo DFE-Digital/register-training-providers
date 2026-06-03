@@ -56,7 +56,7 @@ RSpec.describe ApiDocs::OpenapiSpecification do
         ["/api/{api_version}/info", "/api/{api_version}/providers"].each do |path|
           openapi_data["parameters"].each do |name, description|
             param = find_param(path, "get", name)
-            next unless param #
+            next unless param
 
             expect(param["description"].squish).to eq(description.squish)
           end
@@ -113,6 +113,121 @@ RSpec.describe ApiDocs::OpenapiSpecification do
           expect(property["enum"]).to eq(data["enum"]) if data["enum"]
         end
       end
+    end
+  end
+
+  describe ".endpoint_table" do
+    it "returns a flattened schema table for providers" do
+      rows = described_class.endpoint_table("/providers", :get)
+
+      expect(rows).to be_an(Array)
+      expect(rows).not_to be_empty
+
+      expect(rows.first).to include(
+        :field,
+        :type
+      )
+    end
+  end
+
+  describe ".schema_to_table" do
+    let(:schema) do
+      {
+        "type" => "object",
+        "required" => ["id"],
+        "properties" => {
+          "id" => {
+            "type" => "string",
+            "description" => "Provider identifier",
+            "example" => "123"
+          },
+          "providers" => {
+            "type" => "array",
+            "description" => "List of providers",
+            "items" => {
+              "type" => "object",
+              "required" => ["name"],
+              "properties" => {
+                "name" => {
+                  "type" => "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it "flattens object properties" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "id",
+          type: "string",
+          required: true,
+          description: "Provider identifier",
+          example: "123"
+        )
+      )
+    end
+
+    it "includes array rows" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "providers",
+          type: "array",
+          description: "List of providers"
+        )
+      )
+    end
+
+    it "flattens nested array items" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "providers[].name",
+          type: "string",
+          required: true
+        )
+      )
+    end
+
+    it "returns an empty array for invalid schemas" do
+      expect(described_class.schema_to_table(nil)).to eq([])
+      expect(described_class.schema_to_table("foo")).to eq([])
+      expect(described_class.schema_to_table([])).to eq([])
+    end
+  end
+
+  describe ".build_row" do
+    it "includes format, enum and nullable when present" do
+      row = described_class.build_row(
+        {
+          "type" => "string",
+          "format" => "date-time",
+          "enum" => ["a", "b"],
+          "nullable" => true,
+          "description" => "A field"
+        },
+        "updated_at",
+        required: ["updated_at"]
+      )
+
+      expect(row).to eq(
+        {
+          field: "updated_at",
+          type: "string",
+          format: "date-time",
+          required: true,
+          description: "A field",
+          enum: ["a", "b"],
+          nullable: true
+        }
+      )
     end
   end
 end
