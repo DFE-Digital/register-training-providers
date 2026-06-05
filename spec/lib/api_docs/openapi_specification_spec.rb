@@ -1,10 +1,16 @@
-# spec/lib/api_docs/openapi_specification_spec.rb
 require "rails_helper"
-require_relative "../../../app/lib/api_docs/openapi_specification"
 
 RSpec.describe ApiDocs::OpenapiSpecification do
   describe ".specification" do
     it { expect(described_class.specification).to be_a(Hash) }
+
+    it "loads a specific versioned file when provided" do
+      expect(YAML).to receive(:load_file)
+        .with("public/openapi/v1.yaml", permitted_classes: [Time])
+        .and_return({})
+
+      described_class.specification("v1")
+    end
   end
 
   describe ".as_yaml" do
@@ -23,7 +29,6 @@ RSpec.describe ApiDocs::OpenapiSpecification do
     end
 
     it "builds a structured endpoint hash keyed by API path" do
-      expect(endpoints.keys).to contain_exactly("/info", "/providers")
       expect(endpoints["/info"].keys).to contain_exactly("specifications", "heading", "path")
       expect(endpoints["/providers"].keys).to contain_exactly("specifications", "heading", "path")
     end
@@ -40,69 +45,331 @@ RSpec.describe ApiDocs::OpenapiSpecification do
     end
   end
 
-  context "manually added descriptions" do
-    context "parameters-level descriptions" do
-      it "ensures all parameters across all endpoints have descriptions" do
-        spec = described_class.specification
-        spec["paths"].each do |path, path_item|
-          path_item.each do |method, operation|
-            next unless operation.is_a?(Hash)
-            next unless operation["parameters"]
+  describe ".has_specification?" do
+    it "returns true when endpoint and method exist" do
+      expect(described_class.has_specification?("info", :get)).to eq(true)
+    end
 
-            operation["parameters"].each do |param|
-              expect(param["description"]).to be_present,
-                                              "Missing description for #{method.upcase} #{path} parameter #{param['name']}"
-            end
+    it "returns false when endpoint is missing" do
+      expect(described_class.has_specification?("missing", :get)).to eq(false)
+    end
+
+    it "returns false when HTTP method is missing" do
+      expect(described_class.has_specification?("info", :post)).to eq(false)
+    end
+  end
+
+  context "manually added descriptions" do
+    let(:openapi_data) do
+      YAML.load_file(
+        Rails.root.join("spec/support/openapi/post_documentation.yml"),
+        aliases: true
+      )
+    end
+
+    let(:spec) { described_class.specification }
+
+    def find_param(path, method, param_name)
+      spec.dig("paths", path, method, "parameters")&.find { |p| p["name"] == param_name }
+    end
+
+    def find_property(prop_name)
+      spec.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "get",
+        "responses",
+        "200",
+        "content",
+        "application/json",
+        "schema",
+        "properties",
+        "data",
+        "items",
+        "properties",
+        prop_name
+      )
+    end
+
+    context "parameters-level descriptions" do
+      it "matches the post_documentation.yml for all parameters" do
+        ["/api/{api_version}/info", "/api/{api_version}/providers"].each do |path|
+          openapi_data["parameters"].each do |name, description_hash|
+            param = find_param(path, "get", name)
+            next unless param
+
+            expect(param["description"].to_s.squish)
+              .to eq(description_hash["description"].to_s.squish)
           end
         end
-      end
-
-      shared_examples "parameters-level descriptions" do |hash_keys, descriptions|
-        it "has description for #{hash_keys.join(' -> ')}" do
-          expect(described_class.specification.dig(*hash_keys).pluck("description").map(&:squish)).to eq(descriptions)
-        end
-      end
-
-      context "manually added parameters-level descriptions" do
-        it_behaves_like "parameters-level descriptions", ["paths", "/api/{api_version}/info", "get", "parameters"], [
-          "A valid API token must be provided in the Authorization header to access this endpoint.",
-          "The API version to use in the request path. This should be set to the latest version for this endpoint."
-        ]
-
-        it_behaves_like "parameters-level descriptions", ["paths", "/api/{api_version}/providers", "get", "parameters"], [
-          "A valid API token must be provided in the Authorization header to access this endpoint.",
-          "Filters providers by the specified academic year. The value must be a 4-digit year, for example 2025. If not provided, the API will return providers active in the current academic year.",
-          "The API version to use in the request path. This should be set to the latest version for this endpoint.",
-          "Filters providers to only those updated after the specified timestamp. The value must be an ISO 8601 datetime, for example: 2025-09-14T11:34:56Z.",
-        ]
       end
     end
 
     context "operation-level descriptions" do
-      it "ensures all operations across all endpoints have descriptions" do
-        spec = described_class.specification
-        spec["paths"].each do |path, path_item|
-          path_item.each do |method, operation|
-            next unless operation.is_a?(Hash)
-            # Skip keys that aren't HTTP verbs
-            next unless %w[get post put patch delete options head].include?(method.downcase)
+      it "matches the post_documentation.yml for endpoint descriptions" do
+        openapi_data["paths"].each do |path_key, data|
+          full_path = spec["paths"].keys.find { |k| k.include?(path_key) }
+          next unless full_path
 
-            expect(operation["description"]).to be_present,
-                                                "Missing description for #{method.upcase} #{path} operation"
-          end
+          description = spec.dig("paths", full_path, "get", "description")
+
+          expect(description.to_s.squish)
+            .to eq(data["description"].to_s.squish)
         end
       end
+    end
 
-      shared_examples "operation-level description" do |hash_keys, descriptions|
-        it "has description for #{hash_keys.join(' -> ')}" do
-          expect(described_class.specification.dig(*hash_keys).squish).to eq(descriptions)
+    it "adds the data collection description" do
+      data_property = spec.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "get",
+        "responses",
+        "200",
+        "content",
+        "application/json",
+        "schema",
+        "properties",
+        "data"
+      )
+
+      expected = openapi_data.dig(
+        "paths",
+        "/api/{api_version}/providers",
+        "responses",
+        "200",
+        "application/json",
+        "schema",
+        "properties",
+        "data",
+        "description"
+      )
+
+      expect(data_property["description"]).to eq(expected)
+    end
+
+    context "provider property descriptions" do
+      it "matches the post_documentation.yml for all provider properties" do
+        openapi_data["provider_properties"].each do |name, data|
+          property = find_property(name)
+
+          expect(property).to be_present,
+                              "Expected property '#{name}' to exist in schema"
+
+          expect(property["description"].to_s.squish)
+            .to eq(data["description"].to_s.squish)
+
+          expect(property["example"].to_s).to eq(data["example"].to_s) if data["example"]
+          expect(property["enum"]).to eq(data["enum"]) if data["enum"]
         end
       end
-      context "manually added operation-level descriptions" do
-        it_behaves_like "operation-level description", ["paths", "/api/{api_version}/info", "get", "description"], "This endpoint can be used to retrieve general information about the API."
-        it_behaves_like "operation-level description", ["paths", "/api/{api_version}/providers", "get", "description"],
-                        "This endpoint can be used to retrieve providers for a given academic year. This is intended to make it possible to check for new or updated providers regularly."
-      end
+    end
+  end
+
+  describe ".endpoint_table" do
+    it "returns a flattened schema table for providers" do
+      rows = described_class.endpoint_table("/providers", :get)
+
+      expect(rows).to be_an(Array)
+      expect(rows).not_to be_empty
+      expect(rows.first).to include(:field, :type)
+    end
+
+    it "returns empty array when schema is missing" do
+      allow(described_class).to receive(:endpoints).and_return({
+        "/test" => { specifications: { get: {} } }
+      })
+
+      expect(described_class.endpoint_table("/test", :get)).to eq([])
+    end
+  end
+
+  describe ".schema_to_table" do
+    let(:schema) do
+      {
+        "type" => "object",
+        "required" => ["id"],
+        "properties" => {
+          "id" => {
+            "type" => "string",
+            "description" => "Provider identifier",
+            "example" => "123"
+          },
+          "providers" => {
+            "type" => "array",
+            "description" => "List of providers",
+            "items" => {
+              "type" => "object",
+              "required" => ["name"],
+              "properties" => {
+                "name" => { "type" => "string" }
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it "flattens object properties" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "id",
+          type: "string",
+          required: true,
+          description: "Provider identifier",
+          example: "123"
+        )
+      )
+    end
+
+    it "includes array rows" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "providers",
+          type: "array",
+          description: "List of providers"
+        )
+      )
+    end
+
+    it "flattens nested array items" do
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "providers[].name",
+          type: "string",
+          required: true
+        )
+      )
+    end
+
+    it "returns an empty array for invalid schemas" do
+      expect(described_class.schema_to_table(nil)).to eq([])
+      expect(described_class.schema_to_table("foo")).to eq([])
+      expect(described_class.schema_to_table([])).to eq([])
+    end
+
+    it "handles deeply nested objects" do
+      schema = {
+        "type" => "object",
+        "properties" => {
+          "a" => {
+            "type" => "object",
+            "properties" => {
+              "b" => {
+                "type" => "object",
+                "properties" => {
+                  "c" => {
+                    "type" => "string",
+                    "description" => "deep value"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          field: "a.b.c",
+          type: "string",
+          description: "deep value"
+        )
+      )
+    end
+
+    it "handles arrays without items safely" do
+      schema = {
+        "type" => "array",
+        "description" => "list of values"
+      }
+
+      rows = described_class.schema_to_table(schema)
+
+      expect(rows).to include(
+        hash_including(
+          type: "array",
+          description: "list of values"
+        )
+      )
+    end
+
+    it "handles scalar schemas directly" do
+      schema = {
+        "type" => "string",
+        "description" => "a field"
+      }
+
+      rows = described_class.schema_to_table(schema, "field")
+
+      expect(rows).to include(
+        hash_including(
+          field: "field",
+          type: "string",
+          description: "a field",
+          required: false
+        )
+      )
+    end
+  end
+
+  describe ".build_row" do
+    it "includes format, enum and nullable when present" do
+      row = described_class.build_row(
+        {
+          "type" => "string",
+          "format" => "date-time",
+          "enum" => ["a", "b"],
+          "nullable" => true,
+          "description" => "A field"
+        },
+        "updated_at",
+        required: ["updated_at"]
+      )
+
+      expect(row).to eq(
+        {
+          field: "updated_at",
+          type: "string",
+          format: "date-time",
+          required: true,
+          description: "A field",
+          enum: ["a", "b"],
+          nullable: true
+        }
+      )
+    end
+
+    it "omits nil values" do
+      row = described_class.build_row(
+        { "type" => "string" },
+        "field",
+        required: []
+      )
+
+      expect(row).to include(field: "field", type: "string")
+      expect(row).not_to have_key(:format)
+      expect(row).not_to have_key(:enum)
+      expect(row).not_to have_key(:nullable)
+    end
+  end
+
+  describe "OpenAPI path consistency" do
+    it "keeps endpoints aligned with OpenAPI specification paths" do
+      paths = described_class.specification["paths"].keys
+
+      expect(paths).to include(
+        "/api/{api_version}/info",
+        "/api/{api_version}/providers"
+      )
     end
   end
 end

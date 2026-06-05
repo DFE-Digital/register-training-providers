@@ -1,32 +1,40 @@
 module ApiDocs
   class ApiDocPresenter
-    def initialize(spec:, method:)
-      @spec = spec
+    def initialize(doc:, method:)
+      @doc = doc
       @method = method.to_sym
     end
 
+    def spec
+      @spec ||= OpenapiSpecification.endpoints[doc_path]
+    end
+
+    def schema
+      @schema ||= OpenapiSpecification.endpoint_table(doc_path, method)
+    end
+
     def heading
-      @spec[:heading]
+      @heading ||= spec[:heading]
     end
 
     def summary
-      method_spec[:summary]
+      @summary ||= method_spec[:summary]
     end
 
     def path
-      @spec[:path]
+      @path ||= spec[:path]
     end
 
     def http_method
-      @method.to_s.upcase
+      @http_method ||= method.to_s.upcase
     end
 
     def parameters
-      Array(method_spec[:parameters])
+      @parameters ||= Array(method_spec[:parameters])
     end
 
     def parameter_rows
-      parameters.map do |param|
+      @parameter_rows ||= parameters.map do |param|
         [
           param[:name].to_s,
           param[:in].to_s,
@@ -39,7 +47,7 @@ module ApiDocs
     end
 
     def responses
-      method_spec[:responses] || {}
+      @responses ||= method_spec[:responses] || {}
     end
 
     def response(status)
@@ -64,8 +72,14 @@ module ApiDocs
 
   private
 
+    attr_reader :doc, :method
+
     def method_spec
-      @spec.fetch(:specifications).fetch(@method)
+      @method_spec ||= spec.fetch(:specifications).fetch(@method)
+    end
+
+    def doc_path
+      @doc_path ||= "/#{doc}"
     end
   end
 end

@@ -8,8 +8,6 @@ paths:
   "/api/{api_version}/info":
     get:
       summary: Provides general information about the API
-      description: This endpoint can be used to retrieve general information about
-        the API.
       tags:
       - Info
       parameters:
@@ -27,8 +25,9 @@ paths:
         schema:
           type: string
         example: v0
-        description: The API version to use in the request path. This should be set
-          to the latest version for this endpoint.
+        description: |
+          The API version to use in the request path.
+          This should be set to the latest version for this endpoint.
       responses:
         '200':
           description: returns the requested and latest API version and status
@@ -39,13 +38,19 @@ paths:
                 properties:
                   status:
                     type: string
+                    description: The status of the request.
+                    example: ok
                   version:
                     type: object
                     properties:
                       requested:
                         type: string
+                        description: The requested API version.
+                        example: v0
                       latest:
                         type: string
+                        description: The latest available API version.
+                        example: v0
                     required:
                     - requested
                     - latest
@@ -70,12 +75,11 @@ paths:
                 - error
               example:
                 error: Unauthorized
+      description: This endpoint can be used to retrieve general information about
+        the API.
   "/api/{api_version}/providers":
     get:
       summary: Get many providers
-      description: |
-        This endpoint can be used to retrieve providers for a given academic year.
-        This is intended to make it possible to check for new or updated providers regularly.
       tags:
       - providers
       parameters:
@@ -94,17 +98,19 @@ paths:
           type: integer
         example: 2025
         description: |
-          Filters providers by the specified academic year. The value
-          must be a 4-digit year, for example 2025. If not provided, the API will
-          return providers active in the current academic year.
+          Filters providers by the specified academic year.
+          The value must be a 4-digit year, for example 2025.
+
+          If not provided, the API will return providers active in the current academic year.
       - name: api_version
         in: path
         required: true
         schema:
           type: string
         example: v0
-        description: The API version to use in the request path. This should be set
-          to the latest version for this endpoint.
+        description: |
+          The API version to use in the request path.
+          This should be set to the latest version for this endpoint.
       - name: changed_since
         in: query
         required: false
@@ -129,21 +135,50 @@ paths:
                       properties:
                         id:
                           type: string
+                          description: The unique UUID identifier for the training
+                            provider.
+                          example: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
                         operating_name:
                           type: string
+                          description: The primary business or operating name of the
+                            training provider.
+                          example: Bobby Jacob University
                         provider_type:
                           type: string
+                          description: The classification of the provider.
+                          enum:
+                          - hei
+                          - scitt
+                          - school
+                          - other
+                          example: hei
                         code:
                           type: string
+                          description: The unique 3-character identifier code for
+                            the provider.
+                          example: 1BJ
                         accreditation_status:
                           type: string
+                          description: The current accreditation status of the provider.
+                          enum:
+                          - accredited
+                          - unaccredited
+                          example: accredited
                         ukprn:
                           type: string
+                          description: The 8-digit UK Provider Reference Number.
+                          example: '77336264'
                         urn:
                           type: string
                           nullable: true
+                          description: The 6-digit Unique Reference Number for schools.
+                          example: '543380'
                         updated_at:
                           type: string
+                          description: The ISO 8601 timestamp of when the provider
+                            record was last modified.
+                          format: date-time
+                          example: '2025-09-15T11:34:56Z'
                       required:
                       - id
                       - operating_name
@@ -153,6 +188,8 @@ paths:
                       - ukprn
                       - urn
                       - updated_at
+                    description: An array of training provider objects matching the
+                      specified filters.
                 required:
                 - data
               example:
@@ -219,3 +256,6 @@ paths:
                 - error
               example:
                 error: Unauthorized
+      description: |
+        This endpoint can be used to retrieve providers for a given academic year.
+        This is intended to make it possible to check for new or updated providers regularly.

@@ -9,4 +9,30 @@ module ApiDocsHelper
       doc:
     )
   end
+
+  def schema_description(value, row_data)
+    descriptions = [value.to_s]
+    if row_data[:enum].present?
+      descriptions << "<br>".html_safe
+      descriptions << "<br>".html_safe
+      descriptions << "Possible values:"
+      descriptions << content_tag(:ul, class: "govuk-list govuk-list--bullet") do
+        row_data[:enum].map { |enum| content_tag(:li, enum) }.join.html_safe
+      end
+    end
+
+    if row_data[:format].present?
+      descriptions << "<br>".html_safe
+      descriptions << "<br>".html_safe
+      descriptions << "This field will be in the format #{row_data[:format]}."
+    end
+
+    if row_data[:nullable] == true
+      descriptions << "<br>".html_safe
+      descriptions << "<br>".html_safe
+      descriptions << "This field can also be null."
+    end
+
+    { text: safe_join(descriptions) }
+  end
 end

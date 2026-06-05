@@ -5,10 +5,8 @@ module ApiDocs
     end
 
     def show
-      doc = params[:doc]
-
       @endpoint = ApiDocs::ApiDocPresenter.new(
-        spec: @spec = ApiDocs::OpenapiSpecification.endpoints["/#{doc}"],
+        doc: params[:doc],
         method: params[:method]
       )
     end

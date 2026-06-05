@@ -37,6 +37,14 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
         create(:provider, trait)
       end
 
+      latest_providers.sort_by! do |provider|
+        [
+          provider.updated_at,
+          provider.operating_name,
+          provider.id,
+        ]
+      end
+
       get("/api/#{version}/providers", headers:, params:)
 
       expect(response).to have_http_status(:ok)

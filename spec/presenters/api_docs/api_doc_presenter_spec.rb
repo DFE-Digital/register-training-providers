@@ -1,48 +1,89 @@
 require "rails_helper"
 
 RSpec.describe ApiDocs::ApiDocPresenter do
-  subject(:presenter) { described_class.new(spec:, method:) }
+  subject(:presenter) { described_class.new(doc:, method:) }
 
+  let(:doc) { "providers" }
   let(:method) { :get }
 
-  let(:spec) do
-    {
-      heading: "Providers",
-      path: "/providers",
-      specifications: {
-        get: {
-          summary: "Returns a list of providers",
-          parameters: [
-            {
-              name: :updated_since,
-              in: :query,
-              required: false,
-              schema: { type: :string },
-              description: "Filter by update timestamp",
-              example: "2025-09-14T11:34:56Z"
-            }
-          ],
-          responses: {
-            "200" => {
-              description: "Successful response",
-              content: {
-                "application/json" => {
-                  example: { data: [{ id: 1 }] }
+  before do
+    allow(ApiDocs::OpenapiSpecification).to receive(:endpoints).and_return(
+      {
+        "/providers" => {
+          heading: "Providers",
+          path: "/providers",
+          specifications: {
+            get: {
+              summary: "Returns a list of providers",
+              parameters: [
+                {
+                  name: :updated_since,
+                  in: :query,
+                  required: false,
+                  schema: { type: :string },
+                  description: "Filter by update timestamp",
+                  example: "2025-09-14T11:34:56Z"
                 }
-              }
-            },
-            "401" => {
-              description: "Unauthorised",
-              content: {
-                "application/json" => {
-                  example: { error: "Invalid token" }
+              ],
+              responses: {
+                "200" => {
+                  description: "Successful response",
+                  content: {
+                    "application/json" => {
+                      example: { data: [{ id: 1 }] }
+                    }
+                  }
+                },
+                "401" => {
+                  description: "Unauthorised",
+                  content: {
+                    "application/json" => {
+                      example: { error: "Invalid token" }
+                    }
+                  }
                 }
               }
             }
           }
         }
       }
-    }
+    )
+
+    allow(ApiDocs::OpenapiSpecification).to receive(:endpoint_table)
+      .with("/providers", :get)
+      .and_return(
+        [
+          {
+            field: "data[].id",
+            type: "string",
+            required: true,
+            description: "Provider ID",
+            example: "123"
+          }
+        ]
+      )
+  end
+
+  describe "#spec" do
+    it "returns the endpoint specification" do
+      expect(presenter.spec[:heading]).to eq("Providers")
+    end
+  end
+
+  describe "#schema" do
+    it "returns the endpoint schema table" do
+      expect(presenter.schema).to eq(
+        [
+          {
+            field: "data[].id",
+            type: "string",
+            required: true,
+            description: "Provider ID",
+            example: "123"
+          }
+        ]
+      )
+    end
   end
 
   describe "#heading" do
