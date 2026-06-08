@@ -7,7 +7,10 @@
 #  archived_at           :datetime
 #  code                  :citext           not null
 #  discarded_at          :datetime
+#  first_active_at       :date
+#  inactive_periods      :jsonb            not null
 #  legal_name            :string
+#  onboarded_at          :date
 #  operating_name        :string           not null
 #  provider_type         :string           not null
 #  searchable            :tsvector
@@ -24,7 +27,9 @@
 #  index_providers_on_archived_at           (archived_at)
 #  index_providers_on_code                  (code) UNIQUE
 #  index_providers_on_discarded_at          (discarded_at)
+#  index_providers_on_first_active_at       (first_active_at)
 #  index_providers_on_legal_name            (legal_name)
+#  index_providers_on_onboarded_at          (onboarded_at)
 #  index_providers_on_provider_type         (provider_type)
 #  index_providers_on_searchable            (searchable) USING gin
 #  index_providers_on_ukprn                 (ukprn)
