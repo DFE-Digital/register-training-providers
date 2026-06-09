@@ -21,7 +21,7 @@ on:
           - true
           - false
       docker-image-tag:
-        description: "Docker image tag to deploy (optional)"
+        description: "Docker image tag to deploy"
         required: true
         type: string
   push:
