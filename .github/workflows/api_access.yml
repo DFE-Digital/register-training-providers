@@ -10,6 +10,8 @@ on:
         type: choice
         default: staging
         options:
+          - review
+          - qa
           - staging
           - production
       enable_api_access:
