@@ -15,6 +15,9 @@
     - ukprn
     - updated_at
     - urn
+    - onboarded_at
+    - first_active_at
+    - inactive_periods
   :users:
     - id
     - created_at

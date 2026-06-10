@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_23_105759) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_08_113531) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -213,7 +213,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_23_105759) do
     t.citext "code", null: false
     t.datetime "created_at", null: false
     t.datetime "discarded_at"
+    t.date "first_active_at"
+    t.jsonb "inactive_periods", default: [], null: false
     t.string "legal_name"
+    t.date "onboarded_at"
     t.string "operating_name", null: false
     t.string "provider_type", null: false
     t.tsvector "searchable"
@@ -226,7 +229,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_23_105759) do
     t.index ["archived_at"], name: "index_providers_on_archived_at"
     t.index ["code"], name: "index_providers_on_code", unique: true
     t.index ["discarded_at"], name: "index_providers_on_discarded_at"
+    t.index ["first_active_at"], name: "index_providers_on_first_active_at"
     t.index ["legal_name"], name: "index_providers_on_legal_name"
+    t.index ["onboarded_at"], name: "index_providers_on_onboarded_at"
     t.index ["provider_type"], name: "index_providers_on_provider_type"
     t.index ["searchable"], name: "index_providers_on_searchable", using: :gin
     t.index ["ukprn"], name: "index_providers_on_ukprn"

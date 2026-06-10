@@ -16,6 +16,9 @@ FactoryBot.define do
       end
     end
 
+    onboarded_at { Date.current }
+    first_active_at { Date.current }
+
     code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
 
