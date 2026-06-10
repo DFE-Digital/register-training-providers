@@ -4,6 +4,9 @@ require "rails_helper"
 RSpec.describe DataImporter::ProviderService do
   subject(:call_importer) { described_class.call(row) }
 
+  let!(:prior_academic_year) do
+    create(:academic_year, academic_year: AcademicYearCalculator.previous_academic_year - 2)
+  end
   let(:base_row) do
     {
       "provider__code" => "W1P",
@@ -13,7 +16,7 @@ RSpec.describe DataImporter::ProviderService do
       "provider__accreditation_status" => "accredited",
       "provider__ukprn" => "12345678",
       "provider__urn" => "876543",
-
+      "provider__academic_years_active" => "#{AcademicYearCalculator.current_academic_year},#{AcademicYearCalculator.previous_academic_year}, #{AcademicYearCalculator.previous_academic_year - 2}",
       "accreditation__number" => "1001",
       "accreditation__start_date" => "2024-01-01",
       "accreditation__end_date" => "#{AcademicYearCalculator.next_academic_year}-08-01",
@@ -61,7 +64,16 @@ RSpec.describe DataImporter::ProviderService do
           operating_name: "Operating Name",
           provider_type: "hei",
           ukprn: "12345678",
-          urn: "876543"
+          urn: "876543",
+          onboarded_at: Date.new(AcademicYearCalculator.previous_academic_year - 2, 8, 1),
+          first_active_at: Date.new(AcademicYearCalculator.previous_academic_year - 2, 8, 1),
+          inactive_periods: [
+            {
+              "end_date" => "#{AcademicYearCalculator.previous_academic_year}-07-31",
+              "reason_for_inactive" => "None given",
+              "start_date" => "#{AcademicYearCalculator.previous_academic_year - 1}-08-02"
+            }
+          ],
         )
 
         expect(accreditation).to have_attributes(
