@@ -33,7 +33,6 @@ env:
   TERRAFORM_BASE: terraform/application
   HEALTHCHECK_CMD: "healthcheck"
   TOOL_VERSIONS_FILE: .tool-versions
-  FEATURE_FLAG_API: ${{ inputs.enable_api_access }}
 
 jobs:
   set_api_access:
@@ -47,6 +46,10 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Setup API access feature flag
+        run: |
+          api_access = ${{ inputs.enable_api_access }}
+          File.write(ENV["GITHUB_ENV"], "FEATURE_FLAG_API=#{api_access}", mode: "a")
       - name: Deploy app to ${{ inputs.environment }}
         id: api_access
         uses: DFE-Digital/github-actions/deploy-to-aks@master
