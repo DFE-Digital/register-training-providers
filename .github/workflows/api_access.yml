@@ -8,7 +8,7 @@ on:
         description: "Enable or disable API access"
         required: true
         type: choice
-        default: staging
+        default: review
         options:
           - review
           - qa
@@ -24,16 +24,10 @@ on:
         description: "Docker image tag to deploy"
         required: true
         type: string
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-    types: [opened, reopened, synchronize, labeled]
-  merge_group:
-    branches:
-      - main
+      pull-request-number:
+        description: "Pull request number (required for review environment)"
+        required: false
+        type: string
 
 env:
   TERRAFORM_BASE: terraform/application
