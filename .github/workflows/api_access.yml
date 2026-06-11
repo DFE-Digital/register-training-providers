@@ -42,216 +42,31 @@ env:
   FEATURE_API_FLAG: ${{ inputs.enable_api_access }}
 
 jobs:
-  build:
-    name: Build
-    if: ${{ github.event_name != 'workflow_dispatch' }}
-    env:
-      DOCKER_REPOSITORY: ghcr.io/dfe-digital/register-training-providers
-    outputs:
-      docker-image-tag: ${{ steps.build-image.outputs.tag }}
-    permissions:
-      packages: write
-      pull-requests: write
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-        name: Checkout
-
-      - name: Build and push docker image
-        id: build-image
-        uses: DFE-Digital/github-actions/build-docker-image@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          context: .
-          docker-repository: ${{ env.DOCKER_REPOSITORY }}
-          max-cache: true
-          reuse-cache: true
-          snyk-token: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Set up Node.js
-        if: matrix.check.needs_node
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
-          cache: "yarn"
-
-      - name: Install Node.js dependencies
-        if: matrix.check.needs_node
-        run: yarn install --frozen-lockfile
-
-      - name: Run ${{ matrix.check.name }}
-        run: ${{ matrix.check.commands }}
-
-      - name: Verify tool versions
-        if: ${{ matrix.check.verify_version }}
-        run: bin/tool_versions_checker
-
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
-      CI: true
-
-    steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y \
-            build-essential \
-            git \
-            libpq-dev \
-            libyaml-dev \
-            node-gyp \
-            pkg-config \
-            python-is-python3 \
-            google-chrome-stable
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: ${{ env.TOOL_VERSIONS_FILE }}
-          cache: "yarn"
-
-      - name: Install Node.js dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Prepare database and assets
-        run: |
-          bin/rails db:prepare
-          bin/rails assets:precompile
-
-      - name: Run database consistency check
-        run: bin/db_consistency_check
-
-      - name: Run test suite
-        run: bundle exec rspec
-
-      - name: Upload test failure screenshots
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: test-failure-screenshots
-          path: tmp/screenshots/
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: Verify openapi
-        if: always()
-        run: bin/verify_openapi
-
-  deploy:
-    name: Deploy environments
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+  set_api_access:
+    name: Set API access
     environment:
-      name: ${{ matrix.environment }}
-      url: ${{ steps.deploy_app.outputs.environment_url }}
-    needs: [build, test]
+      name: ${{ inputs.environment }}
+      url: ${{ steps.set_api_access.outputs.environment_url }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       pull-requests: write
-    strategy:
-      max-parallel: 1
-      matrix:
-        environment: [qa, staging, production]
 
     steps:
-      - name: Deploy app to ${{ matrix.environment }}
-        id: deploy_app
+      - name: Deploy app to ${{ inputs.environment }}
+        id: api_access
         uses: DFE-Digital/github-actions/deploy-to-aks@master
         with:
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          environment: ${{ matrix.environment }}
-          sha: ${{ needs.build.outputs.docker-image-tag }}
+          environment: ${{ inputs.environment }}
+          pr-number: ${{ inputs.pull-request-number }}
+          sha: ${{ inputs.docker-image-tag }}
           terraform-base: ${{ env.TERRAFORM_BASE }}
           healthcheck: ${{ env.HEALTHCHECK_CMD }}
           teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-          db-seed: ${{ matrix.environment == 'qa' && 'true' || 'false'}}
+          db-seed: ${{ contains(fromJson('["review", "qa"]'), inputs.environment) && 'true' || 'false' }}
           gcp-wip: ${{ vars.GCP_WIP }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
-
-  deploy_domains_infra:
-    name: Deploy Domains Infrastructure
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    concurrency: deploy_domains_infra
-    needs: [deploy]
-    environment:
-      name: production
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Deploy Domains Infrastructure
-        uses: DFE-Digital/github-actions/deploy-domains-infra@master
-        with:
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID  }}
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID   }}
-          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
-          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-
-  deploy_domains_env:
-    name: Deploy Domains to ${{ matrix.domain_environment }} environment
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    concurrency: deploy_domains_${{ matrix.domain_environment }}
-    needs: [deploy_domains_infra]
-    strategy:
-      max-parallel: 1
-      matrix:
-        domain_environment: [qa, staging, production]
-    environment:
-      name: production
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Deploy Domains Environment
-        uses: DFE-Digital/github-actions/deploy-domains-env@master
-        with:
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID  }}
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID   }}
-          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
-          environment: ${{ matrix.domain_environment }}
-          healthcheck: healthcheck
-          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
