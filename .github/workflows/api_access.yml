@@ -33,7 +33,7 @@ env:
   TERRAFORM_BASE: terraform/application
   HEALTHCHECK_CMD: "healthcheck"
   TOOL_VERSIONS_FILE: .tool-versions
-  FEATURE_API_FLAG: ${{ inputs.enable_api_access }}
+  FEATURE_FLAG_API: ${{ inputs.enable_api_access }}
 
 jobs:
   set_api_access:
