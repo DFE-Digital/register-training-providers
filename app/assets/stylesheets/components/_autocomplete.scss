@@ -1,7 +1,7 @@
 @use "../govuk" as *;
 
 // Base accessible-autocomplete styles
-@import "accessible-autocomplete/dist/autocomplete.css";
+@import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
 
 // DfE GOV.UK Design System overrides
 // Source: dfe-autocomplete gem (https://github.com/DFE-Digital/dfe-autocomplete)
