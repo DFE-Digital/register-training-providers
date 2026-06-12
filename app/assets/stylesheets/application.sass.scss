@@ -1,18 +1,15 @@
-$govuk-global-styles: true;
-$govuk-new-link-styles: true;
-$govuk-assets-path: "/";
+@use "govuk" as *;
 
-@import "govuk-frontend/dist/govuk";
-@import "secondary_navigation";
+@use "secondary_navigation";
 
-@import "filters";
-@import "filters-layout";
+@use "filters";
+@use "filters-layout";
 
-@import "search";
+@use "search";
 
-@import "components/autocomplete";
+@use "components/autocomplete";
 
-@import "components/start_page_banner";
+@use "components/start_page_banner";
 
 .govuk-tag__heading {
   position: relative;

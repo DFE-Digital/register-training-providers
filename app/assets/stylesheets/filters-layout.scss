@@ -1,3 +1,5 @@
+@use "govuk" as *;
+
 .app-filter-layout {
   @include govuk-clearfix;
 }
