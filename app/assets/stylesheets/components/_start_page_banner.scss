@@ -1,7 +1,8 @@
-@import "../inverted";
+@use "../govuk" as *;
+@use "../inverted" as *;
 
 .app-phase-banner__env--development .govuk-tag {
-  background: govuk-colour("black", $variant: "tint-25");
+  background-color: govuk-colour("black", $variant: "tint-25");
   color: govuk-colour("white");
 }
 
