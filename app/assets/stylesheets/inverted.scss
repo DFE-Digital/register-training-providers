@@ -21,7 +21,10 @@ $app-button-inverted-shadow-colour: govuk-shade(
   $app-button-inverted-foreground-colour,
   30%
 );
-$app-button-inverted-hover-background-colour: govuk-colour("blue", $variant: "tint-80");
+$app-button-inverted-hover-background-colour: govuk-colour(
+  "blue",
+  $variant: "tint-80"
+);
 
 .app-button--inverted,
 .app-button--inverted:link,
