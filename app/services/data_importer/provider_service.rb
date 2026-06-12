@@ -33,7 +33,19 @@ module DataImporter
       provider.accreditation_status = raw_provider["accreditation_status"]
       provider.ukprn             = parsed_ukprn
       provider.urn               = raw_provider["urn"]
-      provider.academic_years = parse_academic_years.map { |year| AcademicYear.for_year(year) }
+      provider.academic_years = academic_years
+
+      provider.onboarded_at = lifecycle[:onboarded_at]
+      provider.first_active_at = lifecycle[:first_active_at]
+      provider.inactive_periods = lifecycle[:inactive_periods]
+    end
+
+    def academic_years
+      @academic_years ||= parse_academic_years.map { |year| AcademicYear.for_year(year) }
+    end
+
+    def lifecycle
+      @lifecycle ||= ProviderLifecycleCalculator.call(academic_years)
     end
 
     def provider_type
