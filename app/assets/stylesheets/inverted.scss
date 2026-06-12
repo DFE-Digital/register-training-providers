@@ -21,10 +21,7 @@ $app-button-inverted-shadow-colour: govuk-shade(
   $app-button-inverted-foreground-colour,
   30%
 );
-$app-button-inverted-hover-background-colour: govuk-tint(
-  $app-button-inverted-foreground-colour,
-  90%
-);
+$app-button-inverted-hover-background-colour: govuk-colour("blue", $variant: "tint-80");
 
 .app-button--inverted,
 .app-button--inverted:link,
@@ -61,7 +58,7 @@ $app-button-inverted-hover-background-colour: govuk-tint(
 
 .app-link--inverted:focus,
 .app-link--inverted:hover:focus {
-  color: $govuk-text-colour;
+  color: govuk-colour("black");
 }
 
 .app-link--inverted:hover {

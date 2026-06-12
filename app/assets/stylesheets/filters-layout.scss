@@ -15,7 +15,7 @@
 }
 
 .app-filter-layout__filter:focus {
-  outline: $govuk-focus-width solid $govuk-focus-colour;
+  outline: 3px solid govuk-colour("yellow");
   outline-offset: 0;
 
   @include govuk-media-query(desktop) {
