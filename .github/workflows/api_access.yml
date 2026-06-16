@@ -105,9 +105,9 @@ jobs:
         shell: bash
         run: |
           if [ "${{ inputs.environment }}" == "review"]
-            environment= ${{ inputs.pull-request-number }}
+            environment=${{ inputs.pull-request-number }}
           else
-            environment= ${{ inputs.environment }}
+            environment=${{ inputs.environment }}
           fi
 
           while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ environment }} | grep -q Terminating
