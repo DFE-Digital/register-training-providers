@@ -208,6 +208,8 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: provider.code },
           actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
         },
+        { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+        { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
         {
           key: { text: "Academic years" },
           value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
@@ -254,6 +256,8 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.code },
             actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
           },
+          { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+          { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
           {
             key: { text: "Academic years" },
             value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
