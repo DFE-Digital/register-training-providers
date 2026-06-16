@@ -46,24 +46,58 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Setup API access feature flag
-        run: |
-          api_access = ${{ inputs.enable_api_access }}
-          File.write(ENV["GITHUB_ENV"], "FEATURE_FLAG_API=#{api_access}", mode: "a")
-      - name: Deploy app to ${{ inputs.environment }}
-        id: api_access
-        uses: DFE-Digital/github-actions/deploy-to-aks@master
+      - uses: azure/login@v3
         with:
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          environment: ${{ inputs.environment }}
-          pr-number: ${{ inputs.pull-request-number }}
-          sha: ${{ inputs.docker-image-tag }}
-          terraform-base: ${{ env.TERRAFORM_BASE }}
-          healthcheck: ${{ env.HEALTHCHECK_CMD }}
-          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-          db-seed: ${{ contains(fromJson('["review", "qa"]'), inputs.environment) && 'true' || 'false' }}
-          gcp-wip: ${{ vars.GCP_WIP }}
-          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Install kubectl
+        uses: DFE-Digital/github-actions/set-kubectl@master
+
+      - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Set environment variables
+        run: |
+          source global_config/${{ inputs.environment }}.sh
+          tf_vars_file=${{ env.TF_VARS_PATH }}/${{ inputs.environment }}.tfvars.json
+          echo "NAMESPACE=$(jq -r '.namespace' ${tf_vars_file})" >> $GITHUB_ENV
+
+      - name: Set up cluster environment variables
+        shell: bash
+        run: |
+          case ${{ env.CLUSTER }} in
+            test)
+              echo "cluster_rg=s189t01-tsc-ts-rg" >> $GITHUB_ENV
+              echo "cluster_name=s189t01-tsc-test-aks" >> $GITHUB_ENV
+              ;;
+            platform-test)
+              echo "cluster_rg=s189t01-tsc-pt-rg" >> $GITHUB_ENV
+              echo "cluster_name=s189t01-tsc-platform-test-aks" >> $GITHUB_ENV
+              ;;
+            production)
+              echo "cluster_rg=s189p01-tsc-pd-rg" >> $GITHUB_ENV
+              echo "cluster_name=s189p01-tsc-production-aks" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "unknown cluster"
+              ;;
+          esac
+
+      - name: K8 setup
+        shell: bash
+        run: |
+          az aks get-credentials --overwrite-existing -g ${{ env.cluster_rg }} -n ${{ env.cluster_name }}
+          kubelogin convert-kubeconfig -l $AAD_LOGIN_METHOD
+      - name: Set API feature flag
+        shell: bash
+        run: |
+          if [ "${{ inputs.environment }}" == "review"]
+            kubectl -n bat-${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
+          else
+            kubectl -n bat-${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
+          fi
