@@ -144,5 +144,18 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_inactive_period do
+      after(:create) do |provider|
+        if provider.inactive_periods.empty?
+          previous_academic_year = create(:academic_year, :previous)
+
+          provider.inactive_periods << { start_date: previous_academic_year.duration.begin,
+                                         end_date: previous_academic_year.duration.end,
+                                         reason_for_inactive: "None given" }
+          provider.save!
+        end
+      end
+    end
   end
 end

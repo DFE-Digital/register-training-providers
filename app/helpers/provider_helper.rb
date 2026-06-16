@@ -20,6 +20,9 @@ module ProviderHelper
     summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
                                              use_details_for_academic_years_row)]
 
+    summary_card_rows += [{ key: { text: "Inactive periods" },
+                            value: { text: inactive_periods_html(provider.inactive_periods) } }]
+
     summary_card_rows
   end
 
@@ -127,5 +130,30 @@ module ProviderHelper
     end
 
     rows
+  end
+
+  def inactive_periods_html(inactive_periods)
+    return content_tag(:p, "No inactive periods") if inactive_periods.empty?
+
+    content_tag(:ul, class: "govuk-list govuk-list") do
+      inactive_periods.map { |period|
+        content_tag(:li, govuk_summary_list(rows: display_inactive_period(period)))
+      }.join.html_safe
+    end
+  end
+
+  def display_inactive_period(period)
+    [
+      { key: { text: "Starts on" },
+        value: { text: display_date(period["start_date"]) } },
+      { key: { text: "Ends on" },
+        value: { text: display_date(period["end_date"]) } },
+    ]
+  end
+
+  def display_date(date)
+    return "Not entered" if date.blank?
+
+    date.to_date.to_fs(:govuk)
   end
 end
