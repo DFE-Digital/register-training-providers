@@ -101,3 +101,17 @@ jobs:
           else
             kubectl -n bat-${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           fi
+      - name: Monitor restart
+        shell: bash
+        run: |
+          while kubectl -n bat-${{ env.NAMESPACE }} get pods | grep register-training-providers-production | grep -q Terminating
+          do
+            echo "Restarting"
+            sleep 5s
+          done
+
+          if ${{ inputs.enable_api_access }}
+            "API access enabled"
+          else
+            "API access disabled"
+          fi
