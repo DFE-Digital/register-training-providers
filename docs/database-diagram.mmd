@@ -1,0 +1,197 @@
+erDiagram
+	direction TB
+	AcademicYear {
+		daterange duration
+	}
+	Accreditation {
+		datetime discarded_at
+		date end_date
+		string number
+		uuid provider_id FK
+		date start_date
+	}
+	"ActiveRecord::SessionStore::Session" {
+		text data
+		string session_id
+	}
+	Address {
+		string address_line_1
+		string address_line_2
+		string address_line_3
+		string county
+		datetime discarded_at
+		decimal latitude
+		decimal longitude
+		string postcode
+		uuid provider_id FK
+		string town_or_city
+		string uprn
+	}
+	ApiClient {
+		uuid created_by_id FK
+		datetime discarded_at
+		citext name
+	}
+	"Audited::Audit" {
+		string action
+		uuid associated_id FK
+		string associated_type
+		uuid auditable_id FK
+		string auditable_type
+		jsonb audited_changes
+		string comment
+		string remote_address
+		string request_uuid
+		uuid user_id FK
+		string user_type
+		string username
+		integer version
+	}
+	AuthenticationToken {
+		uuid api_client_id FK
+		uuid created_by_id FK
+		date expires_at
+		datetime last_used_at
+		date revoked_at
+		uuid revoked_by_id FK
+		string status
+		string token_hash
+	}
+	"Blazer::Audit" {
+		string data_source
+		integer query_id FK
+		text statement
+		integer user_id FK
+	}
+	"Blazer::Check" {
+		string check_type
+		uuid creator_id FK
+		text emails
+		datetime last_run_at
+		text message
+		integer query_id FK
+		string schedule
+		text slack_channels
+		string state
+	}
+	"Blazer::Dashboard" {
+		uuid creator_id FK
+		string name
+	}
+	"Blazer::DashboardQuery" {
+		integer dashboard_id FK
+		integer position
+		integer query_id FK
+	}
+	"Blazer::Query" {
+		uuid creator_id FK
+		string data_source
+		text description
+		string name
+		text statement
+		string status
+	}
+	Contact {
+		datetime discarded_at
+		string email
+		string first_name
+		string last_name
+		uuid provider_id FK
+		string telephone_number
+	}
+	Partnership {
+		uuid accredited_provider_id FK
+		datetime discarded_at
+		daterange duration
+		uuid provider_id FK
+	}
+	PartnershipAcademicYear {
+		uuid academic_year_id FK
+		datetime discarded_at
+		uuid partnership_id FK
+	}
+	Provider {
+		string accreditation_status
+		datetime archived_at
+		citext code
+		datetime discarded_at
+		date first_active_at
+		jsonb inactive_periods
+		string legal_name
+		date onboarded_at
+		string operating_name
+		string provider_type
+		tsvector searchable
+		jsonb seed_data_notes
+		boolean seed_data_with_issues
+		string ukprn
+		string urn
+	}
+	ProviderAcademicYear {
+		uuid academic_year_id FK
+		datetime discarded_at
+		uuid provider_id FK
+	}
+	TemporaryRecord {
+		uuid created_by FK
+		jsonb data
+		datetime expires_at
+		string purpose
+		string record_type
+	}
+	User {
+		boolean active
+		boolean api_user
+		string dfe_sign_in_uid
+		datetime discarded_at
+		string email
+		string first_name
+		string last_name
+		datetime last_signed_in_at
+		boolean system_admin
+	}
+	Auditable o|--}o "Audited::Audit" : ""
+	Accreditation o|--}o "Audited::Audit" : ""
+	Address o|--}o "Audited::Audit" : ""
+	ApiClient o|--}o "Audited::Audit" : ""
+	Contact o|--}o "Audited::Audit" : ""
+	Partnership o|--}o "Audited::Audit" : ""
+	PartnershipAcademicYear o|--}o "Audited::Audit" : ""
+	Provider o|--}o "Audited::Audit" : ""
+	ProviderAcademicYear o|--}o "Audited::Audit" : ""
+	User o|--}o "Audited::Audit" : ""
+	Associated o|--}o "Audited::Audit" : ""
+	"SolidQueue::RecurringTask" o|--}o "SolidQueue::RecurringExecution" : ""
+	"SolidQueue::Process" ||--}o "SolidQueue::ClaimedExecution" : ""
+	"SolidQueue::Process" o|--}o "SolidQueue::Process" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::RecurringExecution" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::FailedExecution" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::ScheduledExecution" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::BlockedExecution" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::ReadyExecution" : ""
+	"SolidQueue::Job" o|--|o "SolidQueue::ClaimedExecution" : ""
+	"SolidQueue::BlockedExecution" o|--|o "SolidQueue::Semaphore" : ""
+	User o|--}o "Blazer::Query" : ""
+	"Blazer::Query" ||--}o "Blazer::Check" : ""
+	"Blazer::Query" ||--}o "Blazer::DashboardQuery" : ""
+	"Blazer::Query" o|..}o "Blazer::Dashboard" : ""
+	"Blazer::Query" o|--}o "Blazer::Audit" : ""
+	"Blazer::Dashboard" ||--}o "Blazer::DashboardQuery" : ""
+	User o|--}o "Blazer::Dashboard" : ""
+	User o|--}o "Blazer::Check" : ""
+	User o|--}o "Blazer::Audit" : ""
+	User ||--}o TemporaryRecord : ""
+	Provider ||--}o ProviderAcademicYear : ""
+	AcademicYear ||--}o ProviderAcademicYear : ""
+	Provider o|--}o TemporaryRecord : ""
+	Provider ||--}o Accreditation : ""
+	Provider ||--}o Address : ""
+	Provider ||--}o Contact : ""
+	Provider ||--}o Partnership : ""
+	Provider o|..}o AcademicYear : ""
+	User ||--}o ApiClient : ""
+	User ||--}o AuthenticationToken : ""
+	Partnership ||--}o PartnershipAcademicYear : ""
+	AcademicYear ||--}o PartnershipAcademicYear : ""
+	Partnership o|..}o AcademicYear : ""
+	ApiClient ||--}o AuthenticationToken : ""
