@@ -105,12 +105,12 @@ jobs:
         shell: bash
         run: |
           if [ "${{ inputs.environment }}" == "review"]
-            environment=${{ inputs.pull-request-number }}
+            deploy_environment=${{ inputs.pull-request-number }}
           else
-            environment=${{ inputs.environment }}
+            deploy_environment=${{ inputs.environment }}
           fi
 
-          while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ environment }} | grep -q Terminating
+          while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ deploy_environment }} | grep -q Terminating
           do
             echo "Restarting"
             sleep 5s
