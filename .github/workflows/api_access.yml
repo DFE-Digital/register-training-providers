@@ -105,16 +105,18 @@ jobs:
         shell: bash
         run: |
           if [ "${{ inputs.environment }}" == "review"]
-            deploy_environment=${{ inputs.pull-request-number }}
+            while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ inputs.pull-request-number }} | grep -q Terminating
+            do
+              echo "Restarting"
+              sleep 5s
+            done
           else
-            deploy_environment=${{ inputs.environment }}
+            while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ inputs.environment }} | grep -q Terminating
+            do
+              echo "Restarting"
+              sleep 5s
+            done
           fi
-
-          while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ deploy_environment }} | grep -q Terminating
-          do
-            echo "Restarting"
-            sleep 5s
-          done
 
           if ${{ inputs.enable_api_access }}
             "API access enabled"
