@@ -2,7 +2,7 @@ module ProviderHelper
   # Base rows for displaying provider details in summary cards/lists.
   # Used by: provider index cards, provider show page, activity log.
   def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false,
-                                 use_details_for_academic_years_row: false)
+                                 use_details_for_academic_years_row: false, hide_inactive_periods: false)
     summary_card_rows = [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
@@ -21,7 +21,7 @@ module ProviderHelper
                                              use_details_for_academic_years_row)]
 
     summary_card_rows += [{ key: { text: "Inactive periods" },
-                            value: { text: inactive_periods_html(provider.inactive_periods) } }]
+                            value: { text: inactive_periods_html(provider.inactive_periods) } }] unless hide_inactive_periods
 
     summary_card_rows
   end
@@ -65,7 +65,8 @@ module ProviderHelper
           hide_provider_code: true,
           hide_ukprn: true,
           hide_urn: true,
-          use_details_for_academic_years_row: true
+          use_details_for_academic_years_row: true,
+          hide_inactive_periods: true
         )
       }
     end
