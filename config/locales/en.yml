@@ -124,6 +124,10 @@ en:
               blank: "Please select an address"
         provider:
           attributes:
+            onboarded_at_date_choice:
+              blank: "Select when the provider was onboarded"
+            onboarded_at_date:
+              blank: "Enter the onboarding date"
             accreditation_status:
               invalid_provider_type: "School cannot be accredited"
               blank: "Select if the provider is accredited"
