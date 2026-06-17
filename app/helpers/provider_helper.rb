@@ -88,6 +88,15 @@ module ProviderHelper
   def provider_rows(provider, change_path, change_provider_type_path: nil, change_provider_details_path: nil)
     provider_details_change_path = change_provider_details_path || change_path
 
+    onboarded_at_row = [{
+      key: { text: "Onboarded at" },
+      value: { text: provider.onboarded_at.to_fs(:govuk) },
+    }]
+
+    firat_active_at_row = [{
+      key: { text: "First active at" },
+      value: { text: provider.first_active_at.to_fs(:govuk) },
+    }]
     provider_type_row = if change_provider_type_path
                           [{
                             key: { text: "Provider type" },
@@ -99,6 +108,8 @@ module ProviderHelper
                         end
 
     [
+      *onboarded_at_row,
+      *firat_active_at_row,
       *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },
