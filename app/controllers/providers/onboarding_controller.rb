@@ -3,11 +3,11 @@ class Providers::OnboardingController < CheckController
 
   def new
     onboarding_data = provider_session.load_onboarding
-    @form = Providers::IsTheProviderAccredited.new(onboarding_data || {})
+    @form = Providers::OnboardingForm.new(onboarding_data || {})
   end
 
   def create
-    @form = Providers::IsTheProviderAccredited.new(accreditation_status_params)
+    @form = Providers::OnboardingForm.new(onboarding_params)
 
     if @form.valid?
       provider_session.store_onboarding(@form.attributes)
@@ -40,7 +40,8 @@ private
     @address_session ||= AddressJourney::SessionManager.new(session, context: :setup)
   end
 
-  def accreditation_status_params
-    params.expect(provider: [:accreditation_status])
+  def onboarding_params
+    params.expect(provider: [*Providers::OnboardingForm::PARAM_CONVERSION.keys])
+      .transform_keys { |k| Providers::OnboardingForm::PARAM_CONVERSION.fetch(k, k) }
   end
 end

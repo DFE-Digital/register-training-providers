@@ -2,24 +2,23 @@ class Providers::TypeController < CheckController
   helper_method :back_path
 
   def new
-    onboarding_data = provider_session.load_onboarding
+    is_the_provider_accredited_data = provider_session.load_is_provider_accredited
 
-    if onboarding_data.nil?
-      redirect_to new_provider_onboarding_path
+    if is_the_provider_accredited_data.nil?
+      redirect_to new_provider_is_provider_accredited_path
       return
     end
 
-    # Validate the onboarding data
-    onboarding_form = Providers::IsTheProviderAccredited.new(onboarding_data)
-    if onboarding_form.invalid?
-      redirect_to new_provider_onboarding_path
+    is_the_provider_accredited_form = Providers::IsTheProviderAccredited.new(is_the_provider_accredited_data)
+    if is_the_provider_accredited_form.invalid?
+      redirect_to new_provider_is_provider_accredited_path
       return
     end
 
     provider_type_data = provider_session.load_provider_type
     @form = Providers::ProviderType.new(provider_type_data || {})
 
-    @form.assign_attributes(onboarding_data)
+    @form.assign_attributes(is_the_provider_accredited_data)
 
     render :new
   end

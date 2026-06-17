@@ -9,14 +9,14 @@ class Providers::FirstBecomeActiveController < CheckController
       return
     end
 
-    onboarding_form = Providers::Onboarding.new(onboarding_data)
+    onboarding_form = Providers::OnboardingForm.new(onboarding_data)
     if onboarding_form.invalid?
       redirect_to new_provider_onboarding_path
       return
     end
 
     first_become_active_data = provider_session.load_first_become_active
-    @form = Providers::FirstBecomeActive.new(first_become_active_data || {})
+    @form = Providers::FirstBecomeActiveForm.new(first_become_active_data || {})
 
     @form.assign_attributes({ onboarded_at: onboarding_form.onboarded_at })
 
@@ -24,7 +24,7 @@ class Providers::FirstBecomeActiveController < CheckController
   end
 
   def create
-    @form = Providers::FirstBecomeActive.new(first_become_active_params)
+    @form = Providers::FirstBecomeActiveForm.new(first_become_active_params)
 
     if @form.valid?
       provider_session.store_first_become_active(@form.attributes)
@@ -58,7 +58,7 @@ private
   end
 
   def first_become_active_params
-    params.expect(provider: [*Providers::FirstBecomeActive::PARAM_CONVERSION.keys])
-      .transform_keys { |k| Providers::FirstBecomeActive::PARAM_CONVERSION.fetch(k, k) }
+    params.expect(provider: [*Providers::FirstBecomeActiveForm::PARAM_CONVERSION.keys])
+      .transform_keys { |k| Providers::FirstBecomeActiveForm::PARAM_CONVERSION.fetch(k, k) }
   end
 end

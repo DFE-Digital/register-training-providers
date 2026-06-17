@@ -79,6 +79,11 @@ Rails.application.routes.draw do
   scope path: "/providers/new", as: :new_provider, module: :providers do
     get "", to: "onboarding#new", as: :onboarding
     post "", to: "onboarding#create"
+    get "first-become-active", to: "first_become_active#new", as: :first_become_active
+    post "first-become-active", to: "first_become_active#create"
+
+    get "is-the-provider-accredited", to: "is_the_provider_accredited#new", as: :is_the_provider_accredited
+    post "is-the-provider-accredited", to: "is_the_provider_accredited#create"
 
     get "type", to: "type#new", as: :type
     post "type", to: "type#create"

@@ -93,7 +93,7 @@ module ProviderHelper
       value: { text: provider.onboarded_at.to_fs(:govuk) },
     }]
 
-    firat_active_at_row = [{
+    first_active_at_row = [{
       key: { text: "First active at" },
       value: { text: provider.first_active_at.to_fs(:govuk) },
     }]
@@ -109,7 +109,7 @@ module ProviderHelper
 
     [
       *onboarded_at_row,
-      *firat_active_at_row,
+      *first_active_at_row,
       *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },

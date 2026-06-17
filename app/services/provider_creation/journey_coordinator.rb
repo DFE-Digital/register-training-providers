@@ -21,6 +21,10 @@ module ProviderCreation
 
       case @current_step
       when :onboarding
+        new_provider_first_become_active_path
+      when :first_become_active
+        new_provider_is_the_provider_accredited_path
+      when :is_the_provider_accredited
         new_provider_type_path
       when :type
         new_provider_details_path
@@ -59,8 +63,12 @@ module ProviderCreation
       case @current_step
       when :onboarding
         providers_path
-      when :type
+      when :first_become_active
         new_provider_onboarding_path
+      when :is_the_provider_accredited
+        new_provider_first_become_active_path
+      when :type
+        new_provider_is_the_provider_accredited_path
       when :details
         new_provider_type_path
       when :accreditation
