@@ -1,4 +1,4 @@
-## 7. Academic year vs academic cycle
+## 8. Academic year vs academic cycle
 
 **Date:** 2026-03-19
 

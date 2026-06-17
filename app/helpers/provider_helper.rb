@@ -2,7 +2,8 @@ module ProviderHelper
   # Base rows for displaying provider details in summary cards/lists.
   # Used by: provider index cards, provider show page, activity log.
   def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false,
-                                 use_details_for_academic_years_row: false, hide_inactive_periods: false)
+                                 use_details_for_academic_years_row: false, hide_onboarded_at: false,
+                                 hide_first_active_at: false, hide_inactive_periods: false)
     summary_card_rows = [
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
@@ -16,7 +17,14 @@ module ProviderHelper
                             value: optional_value(provider.urn) }] unless hide_urn
     summary_card_rows += [{ key: { text: "Provider code" },
                             value: { text: provider.code } }] unless hide_provider_code
-
+    summary_card_rows += [{ key: { text: "Onboard at" },
+                            value: {
+                              text: provider.onboarded_at.to_fs(:govuk)
+                            } }] unless hide_onboarded_at
+    summary_card_rows += [{ key: { text: "First active at" },
+                            value: {
+                              text: provider.first_active_at.to_fs(:govuk)
+                            } }] unless hide_first_active_at
     summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
                                              use_details_for_academic_years_row)]
 
@@ -67,6 +75,8 @@ module ProviderHelper
           hide_urn: true,
           use_details_for_academic_years_row: true,
           hide_inactive_periods: true
+          hide_onboarded_at: true,
+          hide_first_active_at: true
         )
       }
     end
