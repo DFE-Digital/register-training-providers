@@ -31,6 +31,14 @@ module ProviderCreation
       data[:onboarding]
     end
 
+    def store_first_become_active(attributes)
+      data[:first_become_active] = attributes
+    end
+
+    def load_first_become_active
+      data[:first_become_active]
+    end
+
     def store_provider_type(attributes)
       data[:provider_type] = attributes
     end
