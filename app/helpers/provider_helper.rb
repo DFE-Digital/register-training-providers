@@ -28,8 +28,10 @@ module ProviderHelper
     summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
                                              use_details_for_academic_years_row)]
 
-    summary_card_rows += [{ key: { text: "Inactive periods" },
-                            value: { text: inactive_periods_html(provider.inactive_periods) } }] unless hide_inactive_periods
+    unless hide_inactive_periods
+      summary_card_rows += [{ key: { text: "Inactive periods" },
+                              value: { text: inactive_periods_html(provider.inactive_periods) } }]
+    end
 
     summary_card_rows
   end
