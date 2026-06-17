@@ -39,6 +39,14 @@ module ProviderCreation
       data[:first_become_active]
     end
 
+    def store_is_provider_accredited(attributes)
+      data[:is_provider_accredited] = attributes
+    end
+
+    def load_is_provider_accredited
+      data[:is_provider_accredited]
+    end
+
     def store_provider_type(attributes)
       data[:provider_type] = attributes
     end
