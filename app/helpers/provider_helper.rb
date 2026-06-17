@@ -74,7 +74,7 @@ module ProviderHelper
           hide_ukprn: true,
           hide_urn: true,
           use_details_for_academic_years_row: true,
-          hide_inactive_periods: true
+          hide_inactive_periods: true,
           hide_onboarded_at: true,
           hide_first_active_at: true
         )
