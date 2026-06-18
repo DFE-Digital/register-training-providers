@@ -89,7 +89,7 @@ module ProviderHelper
     provider_details_change_path = change_provider_details_path || change_path
 
     onboarded_at_row = [{
-      key: { text: "Onboarded at" },
+      key: { text: "Onboard at" },
       value: { text: provider.onboarded_at.to_fs(:govuk) },
     }]
 

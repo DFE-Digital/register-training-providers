@@ -101,6 +101,8 @@ RSpec.describe ProviderHelper, type: :helper do
 
     it "returns the expected rows and with 'Not entered' where applicable" do
       expect(helper.provider_rows(provider, change_path, change_provider_type_path:)).to eq([
+        { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+        { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
         {
           key: { text: "Operating name" },
           value: { text: provider.operating_name },
@@ -135,6 +137,8 @@ RSpec.describe ProviderHelper, type: :helper do
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_rows(provider, change_path, change_provider_type_path:)).to eq([
+          { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+          { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
