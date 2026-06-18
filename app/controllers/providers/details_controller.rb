@@ -36,10 +36,9 @@ class Providers::DetailsController < CheckController
       @provider = Provider.new
       provider_attributes = provider_type_data.merge({ onboarded_at: onboarding_form.onboarded_at,
                                                        first_active_at: first_become_active_form.first_active_at })
+      @provider.assign_attributes(provider_attributes)
 
     end
-
-    @provider.assign_attributes(provider_attributes)
 
     render :new
   end

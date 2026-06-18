@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Add Provider" do
-  shared_examples "adding a provider with accreditation status" do |accreditation_status|
+  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active|
     let(:address_line_1) { Faker::Address.street_address }
     let(:address_line_2) { Faker::Address.secondary_address }
     let(:town_or_city) { Faker::Address.city }
@@ -12,9 +12,12 @@ RSpec.feature "Add Provider" do
       allow(Addresses::GeocodeService).to receive(:call).and_return({ latitude: 51.503396, longitude: -0.127764 })
     end
 
-    scenario "User can add a new provider with accreditation status: #{accreditation_status}" do
+    scenario "User can add a new provider with accreditation status:
+      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
+      and_i_fill_out_the_onboarding_details(onboarded_at)
+      and_i_fill_out_the_first_become_active_details(first_become_active)
       and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
       and_i_am_on_the_check_answers_page
       then_the_address_should_be_displayed_on_check_answers
@@ -27,6 +30,68 @@ RSpec.feature "Add Provider" do
     def when_i_navigate_to_the_add_provider_page
       visit providers_path
       click_on("Add provider")
+    end
+
+    def and_i_fill_out_the_onboarding_details(option)
+      and_i_am_taken_to("/providers/new")
+
+      and_i_can_see_the_title("When did the provider onboard? - Add provider - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      and_i_can_see_the_error_summary("Select when the provider was onboarded")
+      and_i_can_see_the_title("Error: When did the provider onboard? - Add provider - Register of training providers - GOV.UK")
+
+      case option
+      when String
+        choose(option)
+        click_on("Continue")
+      when Time, ActiveSupport::TimeWithZone
+        choose("Another day")
+
+        click_on("Continue")
+
+        and_i_can_see_the_error_summary("Enter onboarded date")
+        and_i_can_see_the_title("Error: When did the provider onboard? - Add provider - Register of training providers - GOV.UK")
+
+        fill_in "Day", with: option.day
+        fill_in "Month", with: option.month
+        fill_in "Year", with: option.year
+
+        click_on("Continue")
+      end
+    end
+
+    def and_i_fill_out_the_first_become_active_details(option)
+      and_i_am_taken_to("/providers/new/first-become-active")
+
+      and_i_can_see_the_title("When did the provider first become active? - Add provider - Register of training providers - GOV.UK")
+      and_i_do_not_see_error_summary
+
+      and_i_click_on("Continue")
+
+      and_i_can_see_the_error_summary("Select when the provider was first become active")
+      and_i_can_see_the_title("Error: When did the provider first become active? - Add provider - Register of training providers - GOV.UK")
+
+      case option
+      when String
+        choose(option)
+        click_on("Continue")
+      when Time, ActiveSupport::TimeWithZone
+        choose("Another day")
+
+        click_on("Continue")
+
+        and_i_can_see_the_error_summary("Enter first active date")
+        and_i_can_see_the_title("Error: When did the provider first become active? - Add provider - Register of training providers - GOV.UK")
+
+        fill_in "Day", with: option.day
+        fill_in "Month", with: option.month
+        fill_in "Year", with: option.year
+
+        click_on("Continue")
+      end
     end
 
     def and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
@@ -170,7 +235,7 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_answer_the_accreditation_question(select_if_the_provider_is_accredited:)
-      and_i_am_taken_to("/providers/new")
+      and_i_am_taken_to("/providers/new/is-the-provider-accredited")
 
       and_i_can_see_the_title("Is the provider accredited? - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
@@ -247,6 +312,7 @@ RSpec.feature "Add Provider" do
     end
   end
 
-  include_examples "adding a provider with accreditation status", :accredited
-  include_examples "adding a provider with accreditation status", :unaccredited
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date"
+  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date"
+  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago
 end
