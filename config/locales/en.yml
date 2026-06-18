@@ -127,7 +127,7 @@ en:
             onboarded_at_date_choice:
               blank: "Select when the provider was onboarded"
             onboarded_at_date:
-              blank: "Enter the onboarding date"
+              blank: "Enter onboarded date"
             first_active_at_date_choice:
               blank: "Select when the provider was first become active"
             first_active_at_date:
