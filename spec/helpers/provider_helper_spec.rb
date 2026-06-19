@@ -215,6 +215,10 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
           actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
         },
+        {
+          key: { text: "Inactive periods" },
+          value: { text: "<p>No inactive periods</p>" }
+        },
       ])
     end
 
@@ -262,6 +266,70 @@ RSpec.describe ProviderHelper, type: :helper do
             key: { text: "Academic years" },
             value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
             actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+          },
+          {
+            key: { text: "Inactive periods" },
+            value: { text: "<p>No inactive periods</p>" }
+          },
+        ])
+      end
+    end
+
+    context "when the provider has inactive periods" do
+      let(:onboard_date) { 3.years.ago }
+      let(:provider) { create(:provider, :scitt, :with_inactive_period, onboarded_at: onboard_date, first_active_at: onboard_date) }
+
+      it "returns the expected rows without 'Not entered'" do
+        expect(helper.provider_details_rows(provider)).to eq([
+          {
+            key: { text: "Provider type" },
+            value: { text: provider.provider_type_label },
+          },
+          {
+            key: { text: "Accreditation status" },
+            value: { text: provider.accreditation_status_label },
+          },
+          {
+            key: { text: "Operating name" },
+            value: { text: provider.operating_name },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
+          },
+          {
+            key: { text: "Legal name" },
+            value: { text: provider.legal_name },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
+          },
+          {
+            key: { text: "UK provider reference number (UKPRN)" },
+            value: { text: provider.ukprn },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "UK provider reference number (UKPRN)" }],
+          },
+          {
+            key: { text: "Unique reference number (URN)" },
+            value: { text: provider.urn },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
+          },
+          {
+            key: { text: "Provider code" },
+            value: { text: provider.code },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+          },
+          {
+            key: { text: "Onboard at" },
+            value: { text: onboard_date.to_date.to_fs(:govuk) }
+          },
+          {
+            key: { text: "First active at" },
+            value: { text: onboard_date.to_date.to_fs(:govuk) }
+          },
+          {
+            key: { text: "Academic years" },
+            value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
+            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+          },
+          {
+            key: { text: "Inactive periods" },
+            value: { text: "<ul class=\"govuk-list govuk-list\"><li><dl class=\"govuk-summary-list\"><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Starts on</dt><dd class=\"govuk-summary-list__value\">1 August 2024</dd></div><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Ends on</dt><dd class=\"govuk-summary-list__value\">1 August 2025</dd></div></dl></li></ul>" }
           },
         ])
       end
