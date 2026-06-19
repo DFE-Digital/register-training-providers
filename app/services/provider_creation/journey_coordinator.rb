@@ -15,7 +15,7 @@ module ProviderCreation
     def next_path
       # If we're in a change flow (from check page with goto=confirm),
       # redirect back to check page after successful submission
-      if @from_check && [:type, :details, :accreditation].include?(@current_step)
+      if @from_check && [:onboarding, :first_become_active, :type, :details, :accreditation].include?(@current_step)
         return new_provider_confirm_path
       end
 

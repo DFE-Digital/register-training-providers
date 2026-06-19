@@ -158,12 +158,75 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   context "Change flow (from Check page with goto=confirm)" do
+    scenario "Change onboarded date - back unwinds to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on onboarded date
+      click_on("Change onboarded date")
+      then_i_should_be_on_the_onboarding_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Back should go to check, not onboarding
+      when_i_click_the_back_link
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change onboarded date - continue returns to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on onboarded date
+      click_on("Change onboarded date")
+      then_i_should_be_on_the_onboarding_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Change selection and continue should return to check
+      choose "Yesterday"
+      when_i_click_on("Continue")
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change first active date - back unwinds to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on first active date
+      click_on("Change first active date")
+      then_i_should_be_on_the_first_become_active_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Back should go to check, not onboarding
+      when_i_click_the_back_link
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change first active date - continue returns to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on first active date
+      click_on("Change first active date")
+      then_i_should_be_on_the_first_become_active_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Change selection and continue should return to check
+      choose("Another day")
+      option = 1.month.ago
+
+      fill_in "Day", with: option.day
+      fill_in "Month", with: option.month
+      fill_in "Year", with: option.year
+      when_i_click_on("Continue")
+      then_i_should_be_on_the_check_page
+    end
+
     scenario "Change provider type - back unwinds to check page" do
       given_i_am_an_authenticated_user
       and_i_have_completed_provider_creation_to_check_page
 
       # Click change on provider type
-      click_on("Change", match: :first) # Use click_on directly to support options
+      click_on("Change provider type")
       then_i_should_be_on_the_type_page
       expect(page.current_url).to include("goto=confirm")
 
@@ -177,7 +240,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       and_i_have_completed_provider_creation_to_check_page
 
       # Click change on provider type
-      click_on("Change", match: :first)
+      click_on("Change provider type")
       then_i_should_be_on_the_type_page
       expect(page.current_url).to include("goto=confirm")
 
@@ -346,8 +409,16 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     expect(page).to have_current_path("/providers/new/first-become-active", ignore_query: true)
   end
 
+  def then_i_should_be_on_the_first_become_active_page
+    expect(page).to have_current_path("/providers/new/first-become-active", ignore_query: true)
+  end
+
   def then_i_should_be_on_the_is_the_provider_accredited_page
     expect(page).to have_current_path("/providers/new/is-the-provider-accredited", ignore_query: true)
+  end
+
+  def then_i_should_be_on_the_onboarding_page
+    expect(page).to have_current_path("/providers/new", ignore_query: true)
   end
 
   def then_i_should_be_on_the_type_page

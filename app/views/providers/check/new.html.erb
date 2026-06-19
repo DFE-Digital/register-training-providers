@@ -4,8 +4,11 @@
 
 <% page_data(title: "Check your answers", subtitle: "Add provider", caption: "Add provider") %>
 
-<%= govuk_summary_list(rows: provider_rows(model, change_path, change_provider_type_path:, change_provider_details_path:)) %>
-
+<%= govuk_summary_list(rows: provider_rows(model, change_path,
+                                           change_provider_type_path:,
+                                           change_provider_details_path:,
+                                           change_provider_onboarding_path:,
+                                           change_provider_first_become_active_path:)) %>
 <% if accreditation_form&.valid? %>
   <h2 class="govuk-heading-m">Accreditation</h2>
   <%= govuk_summary_list(rows: accreditation_form_rows(accreditation_form)) %>

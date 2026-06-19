@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<%= form_for @form, url: new_provider_first_become_active_path do |form| %>
+<%= form_for @form, url: new_provider_first_become_active_path(goto: params[:goto]) do |form| %>
   <% page_data(title: "When did the provider first become active?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>

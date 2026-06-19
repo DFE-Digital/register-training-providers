@@ -12,6 +12,21 @@ class Providers::OnboardingController < CheckController
     if @form.valid?
       provider_session.store_onboarding(@form.attributes)
 
+      if from_check?
+        provider = provider_session.load_provider
+
+        provider_attributes = { onboarded_at: @form.onboarded_at }
+
+        provider.assign_attributes(provider_attributes)
+
+        provider_session.store_provider(
+          provider.attributes.slice(
+            "provider_type", "accreditation_status", "operating_name",
+            "legal_name", "ukprn", "urn", "code", "onboarded_at", "first_active_at"
+          )
+        )
+      end
+
       redirect_to journey_coordinator(:onboarding, nil).next_path
     else
       render :new
@@ -19,6 +34,10 @@ class Providers::OnboardingController < CheckController
   end
 
 private
+
+  def from_check?
+    params[:goto] == "confirm"
+  end
 
   def back_path
     journey_coordinator(:onboarding, nil).back_path
@@ -28,7 +47,8 @@ private
     ProviderCreation::JourneyCoordinator.new(
       current_step: current_step,
       session_manager: provider_session,
-      provider: provider
+      provider: provider,
+      from_check: from_check?
     )
   end
 

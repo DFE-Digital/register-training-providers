@@ -29,6 +29,20 @@ class Providers::FirstBecomeActiveController < CheckController
     if @form.valid?
       provider_session.store_first_become_active(@form.attributes)
 
+      if from_check?
+        provider = provider_session.load_provider
+        provider_attributes = { first_active_at: @form.first_active_at }
+
+        provider.assign_attributes(provider_attributes)
+
+        provider_session.store_provider(
+          provider.attributes.slice(
+            "provider_type", "accreditation_status", "operating_name",
+            "legal_name", "ukprn", "urn", "code", "onboarded_at", "first_active_at"
+          )
+        )
+      end
+
       redirect_to journey_coordinator(:first_become_active, nil).next_path
     else
       render :new
@@ -45,8 +59,13 @@ private
     ProviderCreation::JourneyCoordinator.new(
       current_step: current_step,
       session_manager: provider_session,
-      provider: provider
+      provider: provider,
+      from_check: from_check?
     )
+  end
+
+  def from_check?
+    params[:goto] == "confirm"
   end
 
   def provider_session

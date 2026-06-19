@@ -1,6 +1,6 @@
 class Providers::CheckController < CheckController
   helper_method :change_provider_type_path, :accreditation_form, :change_provider_details_path, :address_form,
-                :change_address_path
+                :change_address_path, :change_provider_onboarding_path, :change_provider_first_become_active_path
 
 private
 
@@ -10,6 +10,18 @@ private
                else
                  provider_session.load_provider || Provider.new
                end
+  end
+
+  def change_provider_onboarding_path
+    if model_id.nil?
+      new_provider_onboarding_path(goto: "confirm")
+    end
+  end
+
+  def change_provider_first_become_active_path
+    if model_id.nil?
+      new_provider_first_become_active_path(goto: "confirm")
+    end
   end
 
   def change_provider_type_path
