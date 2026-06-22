@@ -46,6 +46,7 @@ jobs:
       pull-requests: write
 
     steps:
+      - uses: actions/checkout@v6
       - uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
