@@ -33,6 +33,7 @@ env:
   TERRAFORM_BASE: terraform/application
   HEALTHCHECK_CMD: "healthcheck"
   TOOL_VERSIONS_FILE: .tool-versions
+  TF_VARS_PATH: terraform/application/config
 
 jobs:
   set_api_access:
