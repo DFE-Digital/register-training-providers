@@ -99,7 +99,7 @@ jobs:
       - name: Set API feature flag
         shell: bash
         run: |
-          if [ "${{ inputs.environment }}" == "review"]
+          if [ "${{ inputs.environment }}" == "review" ]
             kubectl -n ${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           else
             kubectl -n ${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
@@ -107,7 +107,7 @@ jobs:
       - name: Monitor restart
         shell: bash
         run: |
-          if [ "${{ inputs.environment }}" == "review"]
+          if [ "${{ inputs.environment }}" == "review" ]
             while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ inputs.pull-request-number }} | grep -q Terminating
             do
               echo "Restarting"
