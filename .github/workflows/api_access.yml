@@ -99,30 +99,31 @@ jobs:
       - name: Set API feature flag
         shell: bash
         run: |
-          if [ "${{ inputs.environment }}" == "review" ]
-            kubectl -n ${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
+          if [ "${{ inputs.environment }}" == "review" ]; then
+            kubectl -n "${{ env.NAMESPACE }}" set env deployment/register-training-providers-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           else
-            kubectl -n ${{ env.NAMESPACE }} set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
+            kubectl -n "${{ env.NAMESPACE }}" set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           fi
+
       - name: Monitor restart
         shell: bash
         run: |
-          if [ "${{ inputs.environment }}" == "review" ]
-            while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ inputs.pull-request-number }} | grep -q Terminating
+          if [ "${{ inputs.environment }}" == "review" ]; then
+            while kubectl -n "${{ env.NAMESPACE }}" get pods | grep register-training-providers-${{ inputs.pull-request-number }} | grep -q Terminating
             do
               echo "Restarting"
               sleep 5s
             done
           else
-            while kubectl -n ${{ env.NAMESPACE }} get pods | grep register-training-providers-${{ inputs.environment }} | grep -q Terminating
+            while kubectl -n "${{ env.NAMESPACE }}" get pods | grep register-training-providers-${{ inputs.environment }} | grep -q Terminating
             do
               echo "Restarting"
               sleep 5s
             done
           fi
 
-          if ${{ inputs.enable_api_access }}
-            "API access enabled"
+          if [ "${{ inputs.enable_api_access }}" == "true" ]; then
+            echo "API access enabled"
           else
-            "API access disabled"
+            echo "API access disabled"
           fi
