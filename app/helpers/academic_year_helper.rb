@@ -1,9 +1,15 @@
 module AcademicYearHelper
-  def academic_years_row(academic_years, use_details)
+  def academic_years_row(academic_years, use_details, active)
     {
-      key: { text: "Academic years" },
+      key: { text: academic_years_row_key_text(active) },
       value: { text: academic_years_html(academic_years, use_details) }
     }
+  end
+
+  def academic_years_row_key_text(active)
+    return "Active academic years" if active
+
+    "Academic years"
   end
 
   def academic_years_html(academic_years, use_details)

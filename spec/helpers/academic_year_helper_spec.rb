@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe AcademicYearHelper, type: :helper do
   describe "#academic_years_row" do
-    subject { helper.academic_years_row(academic_years, false) }
+    subject { helper.academic_years_row(academic_years, false, active) }
+    let(:active) { false }
 
     let(:academic_years) do
       [
@@ -11,9 +12,22 @@ RSpec.describe AcademicYearHelper, type: :helper do
       ]
     end
 
-    it "returns a hash with key and value" do
-      expect(subject).to include(:key, :value)
-      expect(subject[:key][:text]).to eq("Academic years")
+    context "displaying active academic years" do
+      let(:active) { true }
+
+      it "returns a hash with key and value" do
+        expect(subject).to include(:key, :value)
+        expect(subject[:key][:text]).to eq("Active academic years")
+      end
+    end
+
+    context "displaying academic years" do
+      let(:active) { false }
+
+      it "returns a hash with key and value" do
+        expect(subject).to include(:key, :value)
+        expect(subject[:key][:text]).to eq("Academic years")
+      end
     end
 
     it "renders a GOV.UK bullet list" do

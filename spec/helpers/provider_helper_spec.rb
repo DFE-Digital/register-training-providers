@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ProviderHelper, type: :helper do
+  let(:current_academic_year) { AcademicYearCalculator.current_academic_year }
   describe "#provider_summary_cards" do
     let(:provider) { create(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000") }
     let(:providers) { [provider] }
@@ -26,7 +27,7 @@ RSpec.describe ProviderHelper, type: :helper do
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
         { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
-        { key: { text: "Academic years" }, value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' } },
+        { key: { text: "Active academic years" }, value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" } },
       ])
     end
 
@@ -211,9 +212,8 @@ RSpec.describe ProviderHelper, type: :helper do
         { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
         { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
         {
-          key: { text: "Academic years" },
-          value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
-          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+          key: { text: "Active academic years" },
+          value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
         },
         {
           key: { text: "Inactive periods" },
@@ -263,9 +263,8 @@ RSpec.describe ProviderHelper, type: :helper do
           { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
           { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
           {
-            key: { text: "Academic years" },
-            value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
-            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+            key: { text: "Active academic years" },
+            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
           },
           {
             key: { text: "Inactive periods" },
@@ -323,9 +322,8 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: onboard_date.to_date.to_fs(:govuk) }
           },
           {
-            key: { text: "Academic years" },
-            value: { text: '<ul class="govuk-list govuk-list--bullet"><li>2025 to 2026 - current</li></ul>' },
-            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "academic years" }],
+            key: { text: "Active academic years" },
+            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
           },
           {
             key: { text: "Inactive periods" },
