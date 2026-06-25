@@ -129,7 +129,7 @@ en:
             onboarded_at_date:
               blank: "Enter onboarded date"
             first_active_at_date_choice:
-              blank: "Select when the provider was first become active"
+              blank: "Select when the provider first became active"
             first_active_at_date:
               blank: "Enter first active date"
             accreditation_status:

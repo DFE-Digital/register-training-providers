@@ -71,7 +71,7 @@ RSpec.feature "Add Provider" do
 
       and_i_click_on("Continue")
 
-      and_i_can_see_the_error_summary("Select when the provider was first become active")
+      and_i_can_see_the_error_summary("Select when the provider first became active")
       and_i_can_see_the_title("Error: When did the provider first become active? - Add provider - Register of training providers - GOV.UK")
 
       case option
