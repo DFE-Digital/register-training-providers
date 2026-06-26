@@ -35,7 +35,7 @@
                    } %>
 
         <%= render "selected_filter_list",
-                   title: "Academic year",
+                   title: "Active academic year",
                    values: provider_filters[:show_academic_years],
                    labels: academic_years_label(@academic_years),
                    remove_path: ->(academic_year) {
@@ -79,7 +79,7 @@
           <% end %>
         <% end %>
 
-        <%= f.govuk_check_boxes_fieldset :show_academic_years, small: true, legend: { text: "Academic year", size: "s" } do %>
+        <%= f.govuk_check_boxes_fieldset :show_academic_years, small: true, legend: { text: "Active academic year", size: "s" } do %>
           <% @academic_years.each do |academic_year| %>
             <%= f.govuk_check_box :show_academic_years, academic_year.start_year, label: { text: display_academic_year(academic_year) }, checked: filter_checked?(:show_academic_years, academic_year.start_year) %>
           <% end %>
