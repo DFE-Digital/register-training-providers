@@ -151,7 +151,7 @@ FactoryBot.define do
           previous_academic_year = create(:academic_year, :previous)
 
           provider.inactive_periods << { start_date: previous_academic_year.duration.begin,
-                                         end_date: previous_academic_year.duration.end,
+                                         end_date: previous_academic_year.duration.end - 1.day,
                                          reason_for_inactive: "None given" }
           provider.save!
         end

@@ -152,7 +152,7 @@ class Provider < ApplicationRecord
   end
 
   def active_academic_years
-academic_years = AcademicYear.where("lower(duration) >= ? AND upper(duration) <= ?", onboarded_at, Date.current)
+    academic_years = AcademicYear.where("lower(duration) >= ? AND lower(duration) < ?", first_active_at, Date.current)
 
     inactive_periods.each do |period|
       academic_years = if period["end_date"].nil?

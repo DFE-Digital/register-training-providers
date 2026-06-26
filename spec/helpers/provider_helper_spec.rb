@@ -2,8 +2,10 @@ require "rails_helper"
 
 RSpec.describe ProviderHelper, type: :helper do
   let(:current_academic_year) { AcademicYearCalculator.current_academic_year }
+  let(:onboarded_at) { 1.year.ago }
+
   describe "#provider_summary_cards" do
-    let(:provider) { create(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000") }
+    let(:provider) { create(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000", onboarded_at: onboarded_at, first_active_at: onboarded_at) }
     let(:providers) { [provider] }
 
     it "returns the expected not entered hash" do
@@ -27,7 +29,7 @@ RSpec.describe ProviderHelper, type: :helper do
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
         { key: { text: "Legal name" }, value: { text: "Not entered", classes: "govuk-hint" } },
-        { key: { text: "Active academic years" }, value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" } },
+        { key: { text: "Active academic years" }, value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year} to #{current_academic_year + 1} - current</li></ul>" } },
       ])
     end
 
@@ -45,7 +47,7 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when provider is archived" do
-      let(:provider) { build_stubbed(:provider, :archived) }
+      let(:provider) { build_stubbed(:provider, :archived, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
 
       it "renders the archived tag in the title" do
         result = helper.provider_summary_cards([provider]).first
@@ -56,7 +58,7 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when debug mode is enabled" do
-      let(:provider) { build_stubbed(:provider) }
+      let(:provider) { build_stubbed(:provider, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
       let(:providers) { [provider] }
 
       before do
@@ -172,7 +174,7 @@ RSpec.describe ProviderHelper, type: :helper do
   end
 
   describe "#provider_details_rows" do
-    let(:provider) { create(:provider, operating_name: "Test", legal_name: nil, urn: nil) }
+    let(:provider) { create(:provider, operating_name: "Test", legal_name: nil, urn: nil, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
 
     it "returns the expected rows with 'Not entered' where applicable" do
       expect(helper.provider_details_rows(provider)).to eq([
@@ -209,11 +211,11 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: provider.code },
           actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
         },
-        { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
-        { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+        { key: { text: "Onboard at" }, value: { text: onboarded_at.to_date.to_fs(:govuk) } },
+        { key: { text: "First active at" }, value: { text: onboarded_at.to_date.to_fs(:govuk) } },
         {
           key: { text: "Active academic years" },
-          value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
+          value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year} to #{current_academic_year + 1} - current</li></ul>" },
         },
         {
           key: { text: "Inactive periods" },
@@ -223,7 +225,7 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when all values are present" do
-      let(:provider) { create(:provider, :scitt) }
+      let(:provider) { create(:provider, :scitt, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_details_rows(provider)).to eq([
@@ -260,11 +262,11 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.code },
             actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
           },
-          { key: { text: "Onboard at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
-          { key: { text: "First active at" }, value: { text: Time.zone.today.to_fs(:govuk) } },
+          { key: { text: "Onboard at" }, value: { text: onboarded_at.to_date.to_fs(:govuk) } },
+          { key: { text: "First active at" }, value: { text: onboarded_at.to_date.to_fs(:govuk) } },
           {
             key: { text: "Active academic years" },
-            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
+            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year} to #{current_academic_year + 1} - current</li></ul>" },
           },
           {
             key: { text: "Inactive periods" },
@@ -275,8 +277,7 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when the provider has inactive periods" do
-      let(:onboard_date) { 3.years.ago }
-      let(:provider) { create(:provider, :scitt, :with_inactive_period, onboarded_at: onboard_date, first_active_at: onboard_date) }
+      let(:provider) { create(:provider, :scitt, :with_inactive_period, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_details_rows(provider)).to eq([
@@ -315,19 +316,19 @@ RSpec.describe ProviderHelper, type: :helper do
           },
           {
             key: { text: "Onboard at" },
-            value: { text: onboard_date.to_date.to_fs(:govuk) }
+            value: { text: onboarded_at.to_date.to_fs(:govuk) }
           },
           {
             key: { text: "First active at" },
-            value: { text: onboard_date.to_date.to_fs(:govuk) }
+            value: { text: onboarded_at.to_date.to_fs(:govuk) }
           },
           {
             key: { text: "Active academic years" },
-            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year + 1} to #{current_academic_year + 2} - next</li></ul>" },
+            value: { text: "<ul class=\"govuk-list govuk-list--bullet\"><li>#{current_academic_year} to #{current_academic_year + 1} - current</li></ul>" },
           },
           {
             key: { text: "Inactive periods" },
-            value: { text: "<ul class=\"govuk-list govuk-list\"><li><dl class=\"govuk-summary-list\"><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Starts on</dt><dd class=\"govuk-summary-list__value\">1 August 2024</dd></div><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Ends on</dt><dd class=\"govuk-summary-list__value\">1 August 2025</dd></div></dl></li></ul>" }
+            value: { text: "<ul class=\"govuk-list govuk-list\"><li><dl class=\"govuk-summary-list\"><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Starts on</dt><dd class=\"govuk-summary-list__value\">1 August #{current_academic_year - 1}</dd></div><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Ends on</dt><dd class=\"govuk-summary-list__value\">31 July #{current_academic_year}</dd></div></dl></li></ul>" }
           },
         ])
       end

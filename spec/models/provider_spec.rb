@@ -355,10 +355,10 @@ RSpec.describe Provider, type: :model do
   end
 
   describe ".active_academic_years" do
-    let(:provider) { create(:provider, :with_inactive_period) }
+    let(:provider) { create(:provider, :with_inactive_period, first_active_at: 2.years.ago) }
 
     it "returns all active academic years for the provider" do
-      active_academic_years = AcademicYear.where("lower(duration) > ?", provider.inactive_periods.first["end_date"])
+      active_academic_years = AcademicYear.where("lower(duration) > ? AND lower(duration) < ?", provider.inactive_periods.first["end_date"], Time.zone.today)
       expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
     end
   end
