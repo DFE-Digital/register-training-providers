@@ -1,5 +1,7 @@
-  <%= form.hidden_field :accreditation_status %>
-  <%= form.hidden_field :provider_type %>
+<%= form.hidden_field :accreditation_status %>
+<%= form.hidden_field :provider_type %>
+<%= form.hidden_field :onboarded_at %>
+<%= form.hidden_field :first_active_at %>
 
 <%= form.govuk_text_field :operating_name, width: "full", label: { size: "s", text: " Operating name" },
                                            hint: { text: "The name the provider uses in public facing activities" } %>

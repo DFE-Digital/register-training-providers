@@ -34,6 +34,17 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     scenario "Unaccredited provider - back buttons go to previous step in journey" do
       given_i_am_an_authenticated_user
       when_i_start_creating_a_provider
+
+      # Now on onboarding page
+      then_i_should_be_on_the_onboarding_page
+      and_i_answer_the_onboarding_question_as("Today")
+
+      # Now on first become active
+      then_i_should_be_on_the_first_become_active_page
+      and_i_answer_the_first_become_active_question_as("Same as onboarded at date,")
+
+      # Now on is the provider accredited page
+      then_i_should_be_on_the_is_the_provider_accredited_page
       and_i_answer_the_accreditation_question_as("No")
 
       # Now on Type page - select type but don't continue yet to test back button
@@ -49,7 +60,14 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
       # Test back to onboarding
       when_i_click_the_back_link
+      then_i_should_be_on_the_is_the_provider_accredited_page
+
+      when_i_click_the_back_link
+      then_i_should_be_on_the_first_become_active_page
+      when_i_click_the_back_link
       then_i_should_be_on_the_onboarding_page
+      and_i_answer_the_onboarding_question_as("Today")
+      and_i_answer_the_first_become_active_question_as("Same as onboarded at date,")
       and_my_accreditation_answer_should_be_selected("No")
 
       # Go forward through journey again
@@ -86,6 +104,8 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     scenario "Accredited provider - back from address goes to accreditation" do
       given_i_am_an_authenticated_user
       when_i_start_creating_a_provider
+      and_i_answer_the_onboarding_question_as("Today")
+      and_i_answer_the_first_become_active_question_as("Same as onboarded at date,")
       and_i_answer_the_accreditation_question_as("Yes")
       and_i_select_provider_type(:scitt)
       and_i_fill_in_provider_details
@@ -138,12 +158,75 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   context "Change flow (from Check page with goto=confirm)" do
+    scenario "Change onboarded date - back unwinds to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on onboarded date
+      click_on("Change onboarded date")
+      then_i_should_be_on_the_onboarding_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Back should go to check, not onboarding
+      when_i_click_the_back_link
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change onboarded date - continue returns to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on onboarded date
+      click_on("Change onboarded date")
+      then_i_should_be_on_the_onboarding_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Change selection and continue should return to check
+      choose "Yesterday"
+      when_i_click_on("Continue")
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change first active date - back unwinds to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on first active date
+      click_on("Change first active date")
+      then_i_should_be_on_the_first_become_active_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Back should go to check, not onboarding
+      when_i_click_the_back_link
+      then_i_should_be_on_the_check_page
+    end
+
+    scenario "Change first active date - continue returns to check page" do
+      given_i_am_an_authenticated_user
+      and_i_have_completed_provider_creation_to_check_page
+
+      # Click change on first active date
+      click_on("Change first active date")
+      then_i_should_be_on_the_first_become_active_page
+      expect(page.current_url).to include("goto=confirm")
+
+      # Change selection and continue should return to check
+      choose("Another day")
+      option = 1.month.ago
+
+      fill_in "Day", with: option.day
+      fill_in "Month", with: option.month
+      fill_in "Year", with: option.year
+      when_i_click_on("Continue")
+      then_i_should_be_on_the_check_page
+    end
+
     scenario "Change provider type - back unwinds to check page" do
       given_i_am_an_authenticated_user
       and_i_have_completed_provider_creation_to_check_page
 
       # Click change on provider type
-      click_on("Change", match: :first) # Use click_on directly to support options
+      click_on("Change provider type")
       then_i_should_be_on_the_type_page
       expect(page.current_url).to include("goto=confirm")
 
@@ -157,7 +240,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       and_i_have_completed_provider_creation_to_check_page
 
       # Click change on provider type
-      click_on("Change", match: :first)
+      click_on("Change provider type")
       then_i_should_be_on_the_type_page
       expect(page.current_url).to include("goto=confirm")
 
@@ -256,6 +339,16 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     click_on("Add provider")
   end
 
+  def and_i_answer_the_onboarding_question_as(option)
+    choose(option)
+    click_on("Continue")
+  end
+
+  def and_i_answer_the_first_become_active_question_as(option)
+    choose(option)
+    click_on("Continue")
+  end
+
   def and_i_answer_the_accreditation_question_as(answer)
     @accreditation_answer = answer
     @accreditation_status = answer == "Yes" ? "accredited" : "unaccredited"
@@ -306,6 +399,22 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
   def when_i_click_the_back_link
     click_on("Back")
+  end
+
+  def then_i_should_be_on_the_onboarding_page
+    expect(page).to have_current_path("/providers/new", ignore_query: true)
+  end
+
+  def then_i_should_be_on_the_first_become_active_page
+    expect(page).to have_current_path("/providers/new/first-become-active", ignore_query: true)
+  end
+
+  def then_i_should_be_on_the_first_become_active_page
+    expect(page).to have_current_path("/providers/new/first-become-active", ignore_query: true)
+  end
+
+  def then_i_should_be_on_the_is_the_provider_accredited_page
+    expect(page).to have_current_path("/providers/new/is-the-provider-accredited", ignore_query: true)
   end
 
   def then_i_should_be_on_the_onboarding_page
@@ -366,6 +475,8 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
   # Helpers for address search/select flow
   def and_i_complete_provider_details_as_unaccredited
+    and_i_answer_the_onboarding_question_as("Today")
+    and_i_answer_the_first_become_active_question_as("Same as onboarded at date,")
     and_i_answer_the_accreditation_question_as("No")
     and_i_select_provider_type(:hei)
     and_i_fill_in_provider_details

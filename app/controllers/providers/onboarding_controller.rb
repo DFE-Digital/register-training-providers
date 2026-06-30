@@ -3,14 +3,29 @@ class Providers::OnboardingController < CheckController
 
   def new
     onboarding_data = provider_session.load_onboarding
-    @form = Providers::IsTheProviderAccredited.new(onboarding_data || {})
+    @form = Providers::OnboardingForm.new(onboarding_data || {})
   end
 
   def create
-    @form = Providers::IsTheProviderAccredited.new(accreditation_status_params)
+    @form = Providers::OnboardingForm.new(onboarding_params)
 
     if @form.valid?
       provider_session.store_onboarding(@form.attributes)
+
+      if from_check?
+        provider = provider_session.load_provider
+
+        provider_attributes = { onboarded_at: @form.onboarded_at }
+
+        provider.assign_attributes(provider_attributes)
+
+        provider_session.store_provider(
+          provider.attributes.slice(
+            "provider_type", "accreditation_status", "operating_name",
+            "legal_name", "ukprn", "urn", "code", "onboarded_at", "first_active_at"
+          )
+        )
+      end
 
       redirect_to journey_coordinator(:onboarding, nil).next_path
     else
@@ -20,6 +35,10 @@ class Providers::OnboardingController < CheckController
 
 private
 
+  def from_check?
+    params[:goto] == "confirm"
+  end
+
   def back_path
     journey_coordinator(:onboarding, nil).back_path
   end
@@ -28,7 +47,8 @@ private
     ProviderCreation::JourneyCoordinator.new(
       current_step: current_step,
       session_manager: provider_session,
-      provider: provider
+      provider: provider,
+      from_check: from_check?
     )
   end
 
@@ -40,7 +60,8 @@ private
     @address_session ||= AddressJourney::SessionManager.new(session, context: :setup)
   end
 
-  def accreditation_status_params
-    params.expect(provider: [:accreditation_status])
+  def onboarding_params
+    params.expect(provider: [*Providers::OnboardingForm::PARAM_CONVERSION.keys])
+      .transform_keys { |k| Providers::OnboardingForm::PARAM_CONVERSION.fetch(k, k) }
   end
 end

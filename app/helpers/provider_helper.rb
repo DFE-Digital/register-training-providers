@@ -85,8 +85,33 @@ module ProviderHelper
   end
 
   # Rows for form check-your-answers pages with configurable change paths.
-  def provider_rows(provider, change_path, change_provider_type_path: nil, change_provider_details_path: nil)
+  def provider_rows(provider, change_path,
+                    change_provider_type_path: nil,
+                    change_provider_details_path: nil,
+                    change_provider_onboarding_path: nil,
+                    change_provider_first_become_active_path: nil)
     provider_details_change_path = change_provider_details_path || change_path
+
+    onboarded_at_row = if change_provider_onboarding_path
+                         [{
+                           key: { text: "Onboard at" },
+                           value: { text: provider.onboarded_at.to_fs(:govuk) },
+                           actions: [{ href: change_provider_onboarding_path, visually_hidden_text: "onboarded date" }]
+                         }]
+                       else
+                         []
+                       end
+
+    first_active_at_row = if change_provider_first_become_active_path
+                            [{
+                              key: { text: "First active at" },
+                              value: { text: provider.first_active_at.to_fs(:govuk) },
+                              actions: [{ href: change_provider_first_become_active_path,
+                                          visually_hidden_text: "first active date" }]
+                            }]
+                          else
+                            []
+                          end
 
     provider_type_row = if change_provider_type_path
                           [{
@@ -99,6 +124,8 @@ module ProviderHelper
                         end
 
     [
+      *onboarded_at_row,
+      *first_active_at_row,
       *provider_type_row,
       { key: { text: "Operating name" },
         value: { text: provider.operating_name },

@@ -131,14 +131,27 @@ RSpec.describe ProviderHelper, type: :helper do
 
     context "when all values are present" do
       let(:provider) { build_stubbed(:provider, :scitt) }
-      let(:change_provider_type_path) { "/providers/type/edit" }
+      let(:change_provider_type_path) { "/providers/new/type" }
+      let(:change_provider_onboarding_path) { "/providers/new" }
+      let(:change_provider_first_become_active_path) { "/providers/new/first-become-active" }
 
       it "returns the expected rows without 'Not entered'" do
-        expect(helper.provider_rows(provider, change_path, change_provider_type_path:)).to eq([
+        expect(helper.provider_rows(provider, change_path, change_provider_type_path:, change_provider_onboarding_path:, change_provider_first_become_active_path:)).to eq([
+          {
+            key: { text: "Onboard at" },
+            value: { text: Time.zone.today.to_fs(:govuk) },
+            actions: [{ href: change_provider_onboarding_path, visually_hidden_text: "onboarded date" }]
+          },
+          {
+            key: { text: "First active at" },
+            value: { text: Time.zone.today.to_fs(:govuk) },
+            actions: [{ href: change_provider_first_become_active_path, visually_hidden_text: "first active date" }]
+          },
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
             actions: [{ href: change_provider_type_path, visually_hidden_text: "provider type" }]
+
           },
           {
             key: { text: "Operating name" },

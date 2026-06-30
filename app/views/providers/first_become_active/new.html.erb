@@ -1,0 +1,27 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: new_provider_first_become_active_path(goto: params[:goto]) do |form| %>
+  <% page_data(title: "When did the provider first become active?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.hidden_field :onboarded_at %>
+
+  <%= form.govuk_radio_buttons_fieldset(:first_active_at_date_choice, legend: { text: "When did the provider first become active?" }, caption: { text: "Add provider" }) do %>
+    <%= form.govuk_radio_button :first_active_at_date_choice, :same, label: { text: "Same as onboarded at date, #{@form.onboarded_at.to_fs(:govuk)}" }, link_errors: true %>
+    <%= form.govuk_radio_button :first_active_at_date_choice, :other, label: { text: "Another day" } do %>
+      <%= form.govuk_date_field :first_active_at_date, legend: { text: "On what date?", size: "s" }, hint: { text: "For example, 3 12 2020" } %>
+      <% end %>
+  <% end %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", providers_path) %>
+</p>

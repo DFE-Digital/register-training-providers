@@ -5,19 +5,20 @@
       ) %>
 <% end %>
 
-<%= form_for @form, url: new_provider_onboarding_path do |form| %>
-  <% page_data(title: "Is the provider accredited?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
+<%= form_for @form, url: new_provider_onboarding_path(goto: params[:goto]) do |form| %>
+  <% page_data(title: "When did the provider onboard?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
-  <%= form.govuk_fieldset legend: { text: "Is the provider accredited?" }, caption: { text: "Add provider" } do %>
-
-    <%= form.govuk_collection_radio_buttons(:accreditation_status, form.object.accreditation_status_options_for_radios,
-                                            :key,
-                                            :value, legend: nil) %>
-
-    <%= form.govuk_submit %>
+  <%= form.govuk_radio_buttons_fieldset(:onboarded_at_date_choice, legend: { text: "When did the provider onboard?" }, caption: { text: "Add provider" }) do %>
+    <%= form.govuk_radio_button :onboarded_at_date_choice, :today, label: { text: "Today" }, link_errors: true %>
+    <%= form.govuk_radio_button :onboarded_at_date_choice, :yesterday, label: { text: "Yesterday" } %>
+    <%= form.govuk_radio_button :onboarded_at_date_choice, :other, label: { text: "Another day" } do %>
+      <%= form.govuk_date_field :onboarded_at_date, legend: { text: "On what date?", size: "s" }, hint: { text: "For example, 3 12 2020" } %>
+      <% end %>
   <% end %>
+  <%= form.govuk_submit %>
+
 <% end %>
 
 <p class="govuk-body">
