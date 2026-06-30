@@ -6,7 +6,7 @@ If the API needs to be quickly disabled/enabled do the following
 
 ### Find DOCKER_IMAGE_TAG
 
-- Go to the `Build and deploy`
+- Go to the `Build and deploy` workflow
 - Find the most recent deploy to `main`
 - Select the `Deploy environments (production)` job
 - search for the `DOCKER_IMAGE_TAG` and copy it
