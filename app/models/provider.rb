@@ -151,6 +151,23 @@ class Provider < ApplicationRecord
     accrediting_provider_partnerships.or(accredited_provider_partnerships)
   end
 
+  def active_academic_years
+    academic_years = AcademicYear.where("lower(duration) >= ? AND lower(duration) < ?", first_active_at, Date.current)
+
+    inactive_periods.each do |period|
+      academic_years = if period["end_date"].nil?
+                         academic_years.where.not("duration @> ?::date", period["start_date"]).where.not(
+                           "upper(duration) >= ?", period["start_date"]
+                         )
+                       else
+                         academic_years.where.not("duration @> ANY (ARRAY[?]::date[])",
+                                                  [period["start_date"], period["end_date"]])
+                       end
+    end
+
+    academic_years
+  end
+
 private
 
   def update_searchable

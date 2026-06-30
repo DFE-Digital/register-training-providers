@@ -25,8 +25,8 @@ module ProviderHelper
                             value: {
                               text: provider.first_active_at.to_fs(:govuk)
                             } }] unless hide_first_active_at
-    summary_card_rows += [academic_years_row(provider.academic_years.order(duration: :desc),
-                                             use_details_for_academic_years_row)]
+    summary_card_rows += [academic_years_row(provider.active_academic_years.order(duration: :desc),
+                                             use_details_for_academic_years_row, true)]
 
     unless hide_inactive_periods
       summary_card_rows += [{ key: { text: "Inactive periods" },
@@ -159,7 +159,6 @@ module ProviderHelper
       "UK provider reference number (UKPRN)" => "UK provider reference number (UKPRN)",
       "Unique reference number (URN)" => "unique reference number (URN)",
       "Provider code" => "provider code",
-      "Academic years" => "academic years"
     }
 
     rows.each do |row|
