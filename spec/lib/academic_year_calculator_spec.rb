@@ -42,4 +42,11 @@ RSpec.describe AcademicYearCalculator do
         .to eq(described_class.current_academic_year - 1)
     end
   end
+
+  describe ".academic_year_for" do
+    it "returns the correct academic year" do
+      expect(described_class.academic_year_for(build_academic_year_date(2099)))
+        .to eq(2099)
+    end
+  end
 end

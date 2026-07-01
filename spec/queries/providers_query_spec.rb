@@ -200,25 +200,29 @@ RSpec.describe ProvidersQuery do
   end
 
   describe "academic year filtering" do
-    let(:current_academic_year) { build(:academic_year, :current) }
-    let(:next_academic_year) { build(:academic_year, :next) }
-    let(:previous_academic_year) { build(:academic_year, :previous) }
-
-    let!(:current_provider) { create(:provider) }
-    let!(:multi_academic_years_provider) do
-      create(:provider, academic_years: [current_academic_year,
-                                         next_academic_year,
-                                         previous_academic_year])
-    end
-    let!(:other_provider) do
-      create(:provider, academic_years: [next_academic_year,
-                                         previous_academic_year])
+    let!(:current_provider) do
+      first_active_at = build_academic_year_date(current_academic_year)
+      create(:provider, first_active_at:)
     end
 
-    let(:filters) { { show_academic_years: [AcademicYearCalculator.current_academic_year] } }
+    let!(:provider_multiple_years) do
+      first_active_at = build_academic_year_date(previous_academic_year)
+
+      create(:provider, first_active_at:)
+    end
+
+    let!(:inactive_provider) do
+      first_active_at = build_academic_year_date(current_academic_year)
+      inactive_period = { start_date: first_active_at + 1.day,
+                          end_date: nil,
+                          reason_for_inactive: "None given" }
+      create(:provider, first_active_at: first_active_at, inactive_periods: [inactive_period])
+    end
+
+    let(:filters) { { show_academic_years: [current_academic_year] } }
 
     it "filters providers by academic years" do
-      expect(results).to contain_exactly(current_provider, multi_academic_years_provider)
+      expect(results).to contain_exactly(current_provider, provider_multiple_years)
     end
   end
 end

@@ -60,16 +60,28 @@ class Provider < ApplicationRecord
   include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
-  scope :for_academic_years, ->(years) {
+  scope :for_active_academic_years, ->(years) {
     years = Array(years)
     return none if years.empty?
 
-    where(
-      id: joins(:academic_years)
-            .merge(AcademicYear.for_specific_years(years))
-            .select(:id)
-    )
+    where(id: all.select { |p|
+      years.any? { |y| p.active_in_academic_year?(AcademicYear.for_year(y)) }
+    }.map(&:id))
   }
+
+  def active_in_academic_year?(academic_year)
+    ay_start = academic_year.duration.begin
+    ay_end = academic_year.duration.end
+
+    return false if first_active_at.nil?
+    return false if first_active_at > ay_end
+
+    inactive_periods.none? do |period|
+      inactive_start = Date.parse(period["start_date"])
+      inactive_end   = period["end_date"].present? ? Date.parse(period["end_date"]) : Date.current
+      (inactive_start <= ay_end) && (inactive_end >= ay_start)
+    end
+  end
 
   validates :provider_type, presence: true, provider_type: true
 
@@ -152,7 +164,7 @@ class Provider < ApplicationRecord
   end
 
   def active_academic_years
-    academic_years = AcademicYear.where("lower(duration) >= ? AND lower(duration) < ?", first_active_at, Date.current)
+    academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
 
     inactive_periods.each do |period|
       academic_years = if period["end_date"].nil?
