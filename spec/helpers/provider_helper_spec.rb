@@ -1,8 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ProviderHelper, type: :helper do
-  let(:current_academic_year) { AcademicYearCalculator.current_academic_year }
-  let(:onboarded_at) { 1.year.ago }
+  let(:onboarded_at) { build_academic_year_date(current_academic_year) }
 
   describe "#provider_summary_cards" do
     let(:provider) { create(:provider, legal_name: nil, operating_name: "School of learning", urn: "50000", onboarded_at: onboarded_at, first_active_at: onboarded_at) }
