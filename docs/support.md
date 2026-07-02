@@ -6,7 +6,7 @@ If the API needs to be quickly disabled/enabled do the following
 
 ### Run the workflow
 
-- Go to the Set API Access workflow
+- Go to the [Set API Access workflow](https://github.com/DFE-Digital/register-training-providers/actions/workflows/api_access.yml)
 - Click `Run workflow`
 - Choose the environment where the API needs to be disabled/enabled
 - Set the API flag setting
