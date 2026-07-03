@@ -16,7 +16,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_92db1241b8721bddb4540fdbb4b1a56d4bbb54a006bd6086b133ff0ced37eb12
+        example: test_fbeaab741142c00560093790fcd4915db92e981d3af02539f40b9f211240a67f
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: api_version
@@ -88,7 +88,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_d5ca66c3c2428e27d2562bcc6ea6be3bcad9609fbfa9cb89e691676c8690fd9c
+        example: test_df5ab508cf35c37cab549abe2b6e7a2a038fffdc95c082f2d9d686ff12595b38
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -194,54 +194,54 @@ paths:
                 - data
               example:
                 data:
-                - id: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
-                  operating_name: Higher education institution (HEI) 7320
+                - id: 95dd46ae-13dd-415b-a455-c483ed5b4207
+                  operating_name: Higher education institution (HEI) 4670
                   provider_type: hei
-                  code: 8BN
-                  accreditation_status: unaccredited
-                  ukprn: '77336264'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: bc668b2e-9fa2-4bda-a2f4-97f95d391cf8
-                  operating_name: Higher education institution (HEI) 9494
-                  provider_type: hei
-                  code: 7LA
-                  accreditation_status: accredited
-                  ukprn: '80063525'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: e375bccb-26e8-4dba-a8bc-eca867da9e3b
-                  operating_name: Other 7598
-                  provider_type: other
-                  code: 95D
-                  accreditation_status: unaccredited
-                  ukprn: '69846690'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 3c677f94-76cd-4e07-967e-3a6e78f961eb
-                  operating_name: Other 9808
-                  provider_type: other
-                  code: 3IU
-                  accreditation_status: accredited
-                  ukprn: '17855396'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 44ea1b4b-e474-4334-930a-5a71eaa3547d
-                  operating_name: School 5025
-                  provider_type: school
-                  code: FA9
-                  accreditation_status: unaccredited
-                  ukprn: '24625549'
-                  urn: '543380'
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 03bfb99e-9e20-4715-9401-f346354fc1e4
-                  operating_name: School-centred initial teacher training (SCITT)
-                    7475
-                  provider_type: scitt
                   code: PAZ
-                  accreditation_status: accredited
+                  accreditation_status: unaccredited
                   ukprn: '34400987'
-                  urn: '443670'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 86706852-0380-42a1-8f14-14c7a9f88a24
+                  operating_name: Higher education institution (HEI) 6324
+                  provider_type: hei
+                  code: CF4
+                  accreditation_status: accredited
+                  ukprn: '86333156'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 9940af05-26ed-4eb8-aaef-1790be85e4e2
+                  operating_name: Other 6735
+                  provider_type: other
+                  code: CUL
+                  accreditation_status: accredited
+                  ukprn: '36993214'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 8e4176b3-276e-4377-9204-6d8156ae1060
+                  operating_name: Other 7909
+                  provider_type: other
+                  code: LJR
+                  accreditation_status: unaccredited
+                  ukprn: '86079186'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: f1721197-8f12-4032-a6b3-36506c9a2e11
+                  operating_name: School 3007
+                  provider_type: school
+                  code: STP
+                  accreditation_status: unaccredited
+                  ukprn: '37063040'
+                  urn: '382400'
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: 7794a071-fa2c-44eb-8b11-f5e9d5f77d89
+                  operating_name: School-centred initial teacher training (SCITT)
+                    9569
+                  provider_type: scitt
+                  code: C8G
+                  accreditation_status: accredited
+                  ukprn: '34438349'
+                  urn: '773630'
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
