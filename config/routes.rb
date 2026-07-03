@@ -117,7 +117,6 @@ Rails.application.routes.draw do
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers
-    get "activity", to: "providers/activity#index", as: :activity
     resources :accreditations, only: [:index], controller: "accreditations"
     resources :contacts, only: [:index, :new, :create, :edit, :update], controller: "providers/contacts" do
       checkable(:contacts, module_prefix: :providers)
