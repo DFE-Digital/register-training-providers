@@ -2,8 +2,9 @@ require "rails_helper"
 
 RSpec.describe "`GET /providers` endpoint", type: :request do
   version = "v0"
+  url = "/api/#{version}/providers"
 
-  it_behaves_like "a register API endpoint", "/api/#{version}/providers"
+  it_behaves_like "a secured register API endpoint", url
 
   openapi = {
     summary: "Get many providers",
@@ -45,7 +46,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
         ]
       end
 
-      get("/api/#{version}/providers", headers:, params:)
+      get(url, headers:, params:)
 
       expect(response).to have_http_status(:ok)
 
