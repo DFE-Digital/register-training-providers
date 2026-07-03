@@ -73,8 +73,6 @@ Rails.application.routes.draw do
 
   resource :account, only: [:show]
 
-  get "/activity", to: "activity#index", as: :activity
-
   # Provider creation wizard
   scope path: "/providers/new", as: :new_provider, module: :providers do
     get "", to: "onboarding#new", as: :onboarding
