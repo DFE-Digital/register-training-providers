@@ -1,6 +1,6 @@
 module ProviderHelper
   # Base rows for displaying provider details in summary cards/lists.
-  # Used by: provider index cards, provider show page, activity log.
+  # Used by: provider index cards, provider show page.
   def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false,
                                  use_details_for_academic_years_row: false, hide_onboarded_at: false,
                                  hide_first_active_at: false, hide_inactive_periods: false)
