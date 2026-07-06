@@ -16,6 +16,8 @@ class ProvidersController < ApplicationController
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
 
     @academic_years = AcademicYear.next_and_older
+
+    authorize provider_query
   end
 
   def show
