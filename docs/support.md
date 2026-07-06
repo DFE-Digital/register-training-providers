@@ -10,6 +10,8 @@ If the API needs to be quickly disabled/enabled do the following
 - Click `Run workflow`
 - Choose the environment where the API needs to be disabled/enabled
 - Set the API flag setting
+- For review environments also set the PR number so the process runs on the correct review app
 - Go to [https://register-of-training-providers.education.gov.uk/sha](https://register-of-training-providers.education.gov.uk/sha) and copy the SHA
 - Add the SHA to the Docker Image tag field
 - Click `Run workflow`
+- When the workflow has completed, you should see the message `API access enabled` or `API access disabled` depending on the option selected
