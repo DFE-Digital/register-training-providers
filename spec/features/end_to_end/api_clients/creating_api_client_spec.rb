@@ -29,6 +29,13 @@ RSpec.feature "api_client management" do
     and_i_am_redirected_to_the_index_page_when_trying_to_revisit_the_confirmation_page
   end
 
+  scenario "viewing someone else's api_client confirmation" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_new_api_client_created_by_someone_else
+    when_i_visit("/api_clients/#{someone_else_api_client.id}/confirmation")
+    then_i_am_taken_shown_the_forbidden_page
+  end
+
   def and_i_can_see_the_page_title_api_clients_without_the_count
     expect(page).to have_title("API clients - Register of training providers - GOV.UK")
   end
@@ -43,6 +50,14 @@ RSpec.feature "api_client management" do
 
   def api_client
     @api_client ||= build(:api_client)
+  end
+
+  def and_there_is_a_new_api_client_created_by_someone_else
+    api_client.save
+  end
+
+  def someone_else_api_client
+    api_client
   end
 
   def saved_api_client
@@ -92,5 +107,16 @@ RSpec.feature "api_client management" do
 
   def start_year
     Date.current.year + 1
+  end
+
+  def then_i_am_taken_shown_the_forbidden_page
+    expect(page).to have_current_path("/api_clients/#{someone_else_api_client.id}/confirmation")
+    expect(page.status_code).to eq(403)
+    expect(page).to have_content("You do not have permission to perform this action")
+    expect(page).to have_title("You do not have permission to perform this action")
+  end
+
+  def when_i_visit(path)
+    visit path
   end
 end

@@ -19,6 +19,20 @@ RSpec.describe ApiClientPolicy do
     end
   end
 
+  permissions :confirm? do
+    it "permits access if the api_client is kept and created by the user" do
+      expect(subject).to permit(api_user, api_user_client)
+    end
+
+    it "denies access if the api_client is kept but created by another user" do
+      expect(subject).not_to permit(api_user, api_client)
+    end
+
+    it "denies access if the api_client is discarded" do
+      expect(subject).not_to permit(api_user, discarded_api_client)
+    end
+  end
+
   describe ".policy_scope" do
     context "for an api user" do
       it "returns kept api clients created by the user" do

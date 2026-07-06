@@ -9,6 +9,10 @@ class ApiClientPolicy < ApplicationPolicy
     end
   end
 
+  def confirm?
+    record.kept? && record.created_by == user
+  end
+
   def show?
     record.kept?
   end
