@@ -3,7 +3,10 @@ class SessionsController < ApplicationController
   skip_before_action :check_user_is_active
 
   def callback
+    requested_path = session[:requested_path]
     reset_session
+
+    session[:requested_path] = requested_path if requested_path.present?
 
     DfESignInUser.begin_session!(session, request.env["omniauth.auth"])
 

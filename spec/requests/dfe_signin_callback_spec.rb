@@ -26,5 +26,17 @@ RSpec.describe "DfE Signin callback", type: :request do
       expect(authenticated_session_cookie).not_to eq(original_session_cookie)
       expect(session["dfe_sign_in_user"]).to be_present
     end
+
+    it "preserves the requested path when resetting the session during login" do
+      requested_path = "/providers/requested_path"
+
+      get requested_path
+
+      expect(session[:requested_path]).to eq(requested_path)
+
+      get "/auth/dfe/callback"
+
+      expect(response).to redirect_to(requested_path)
+    end
   end
 end
