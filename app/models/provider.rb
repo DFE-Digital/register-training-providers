@@ -164,23 +164,37 @@ class Provider < ApplicationRecord
   end
 
   def active_academic_years
-    academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+    @active_academic_years ||= begin
+      academic_years = operational_academic_years
 
-    inactive_periods.each do |period|
-      academic_years = if period["end_date"].nil?
-                         academic_years.where.not("duration @> ?::date", period["start_date"]).where.not(
-                           "upper(duration) >= ?", period["start_date"]
-                         )
-                       else
-                         academic_years.where.not("duration @> ANY (ARRAY[?]::date[])",
-                                                  [period["start_date"], period["end_date"]])
-                       end
+      inactive_periods.each do |period|
+        academic_years =
+          if period["end_date"].nil?
+            academic_years
+              .where.not("duration @> ?::date", period["start_date"])
+              .where.not("upper(duration) >= ?", period["start_date"])
+          else
+            academic_years.where.not(
+              "duration @> ANY (ARRAY[?]::date[])",
+              [period["start_date"], period["end_date"]]
+            )
+          end
+      end
+
+      academic_years
     end
-
-    academic_years
   end
 
 private
+
+  def operational_academic_years
+    @operational_academic_years = if first_active_at < Time.zone.today
+                                    AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at,
+                                                       Time.zone.today)
+                                  else
+                                    AcademicYear.none
+                                  end
+  end
 
   def update_searchable
     ts_vector_value = [
