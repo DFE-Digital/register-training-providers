@@ -109,11 +109,15 @@ RSpec.feature "Filter Training Providers" do
     @previous_academic_year ||= create(:academic_year, :previous)
   end
 
+  def previous_academic_year_first_active_at
+    build_academic_year_date(AcademicYearCalculator.previous_academic_year)
+  end
+
   def previous_academic_year_providers
     @previous_academic_year_providers ||= [
-      create(:provider, :other, :accredited, academic_years: [previous_academic_year]),
-      create(:provider, :school, academic_years: [previous_academic_year]),
-      create(:provider, :scitt, :accredited, academic_years: [previous_academic_year])
+      create(:provider, :other, :accredited, academic_years: [previous_academic_year], first_active_at: previous_academic_year_first_active_at),
+      create(:provider, :school, academic_years: [previous_academic_year], first_active_at: previous_academic_year_first_active_at),
+      create(:provider, :scitt, :accredited, academic_years: [previous_academic_year], first_active_at: previous_academic_year_first_active_at)
     ]
   end
 

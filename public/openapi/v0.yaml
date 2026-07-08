@@ -88,7 +88,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_df5ab508cf35c37cab549abe2b6e7a2a038fffdc95c082f2d9d686ff12595b38
+        example: test_10f697511912efc58705f64cd7df5ab508cf35c37cab549abe2b6e7a2a038fff
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -194,54 +194,54 @@ paths:
                 - data
               example:
                 data:
-                - id: 95dd46ae-13dd-415b-a455-c483ed5b4207
-                  operating_name: Higher education institution (HEI) 4670
+                - id: 37a744e0-40e1-4be1-bac6-f844e3035716
+                  operating_name: Higher education institution (HEI) 2462
+                  provider_type: hei
+                  code: VFJ
+                  accreditation_status: unaccredited
+                  ukprn: '44564753'
+                  urn:
+                  updated_at: '2025-09-15T11:34:56Z'
+                - id: e455c483-ed5b-4207-becd-af1e735898c0
+                  operating_name: Higher education institution (HEI) 7709
                   provider_type: hei
                   code: PAZ
-                  accreditation_status: unaccredited
+                  accreditation_status: accredited
                   ukprn: '34400987'
                   urn:
                   updated_at: '2025-09-15T11:34:56Z'
-                - id: 86706852-0380-42a1-8f14-14c7a9f88a24
-                  operating_name: Higher education institution (HEI) 6324
-                  provider_type: hei
-                  code: CF4
+                - id: 2b791634-cceb-489d-aecd-f508a675ff4e
+                  operating_name: Other 1996
+                  provider_type: other
+                  code: RGQ
                   accreditation_status: accredited
-                  ukprn: '86333156'
+                  ukprn: '89186965'
                   urn:
                   updated_at: '2025-09-15T11:34:56Z'
-                - id: 9940af05-26ed-4eb8-aaef-1790be85e4e2
-                  operating_name: Other 6735
+                - id: f5a66d76-1313-4bed-92d0-3d57a4939658
+                  operating_name: Other 3576
                   provider_type: other
-                  code: CUL
-                  accreditation_status: accredited
-                  ukprn: '36993214'
-                  urn:
-                  updated_at: '2025-09-15T11:34:56Z'
-                - id: 8e4176b3-276e-4377-9204-6d8156ae1060
-                  operating_name: Other 7909
-                  provider_type: other
-                  code: LJR
+                  code: 9T7
                   accreditation_status: unaccredited
-                  ukprn: '86079186'
+                  ukprn: '66322726'
                   urn:
                   updated_at: '2025-09-15T11:34:56Z'
-                - id: f1721197-8f12-4032-a6b3-36506c9a2e11
-                  operating_name: School 3007
+                - id: 42adfd01-d4db-4601-8ba8-08251aaa21a1
+                  operating_name: School 3699
                   provider_type: school
-                  code: STP
+                  code: YP8
                   accreditation_status: unaccredited
-                  ukprn: '37063040'
-                  urn: '382400'
+                  ukprn: '10792824'
+                  urn: '421472'
                   updated_at: '2025-09-15T11:34:56Z'
-                - id: 7794a071-fa2c-44eb-8b11-f5e9d5f77d89
+                - id: 10bdc5c7-009b-45cf-bc95-5ce192250b1a
                   operating_name: School-centred initial teacher training (SCITT)
-                    9569
+                    6932
                   provider_type: scitt
-                  code: C8G
+                  code: ALV
                   accreditation_status: accredited
-                  ukprn: '34438349'
-                  urn: '773630'
+                  ukprn: '95696736'
+                  urn: '806304'
                   updated_at: '2025-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token

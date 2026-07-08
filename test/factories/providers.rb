@@ -22,8 +22,6 @@ FactoryBot.define do
     code { Faker::Alphanumeric.unique.alphanumeric(number: 3).upcase }
     ukprn { Faker::Number.unique.number(digits: 8).to_s }
 
-    with_current_academic_year
-
     trait :archived do
       archived_at { Time.zone.now }
     end
@@ -132,19 +130,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_current_academic_year do
-      after(:create) do |provider|
-        if provider.academic_years.empty?
-          academic_year = create(:academic_year, :current)
-
-          ProviderAcademicYear.find_or_create_by!(
-            provider:,
-            academic_year:
-          )
-        end
-      end
-    end
-
     trait :with_inactive_period do
       after(:create) do |provider|
         if provider.inactive_periods.empty?
@@ -155,6 +140,29 @@ FactoryBot.define do
                                          reason_for_inactive: "None given" }
           provider.save!
         end
+      end
+    end
+
+    after(:create) do |provider|
+      if provider.first_active_at.present?
+        academic_year = create(:academic_year,
+                               academic_year: AcademicYearCalculator.academic_year_for(provider.first_active_at))
+        ProviderAcademicYear.find_or_create_by!(
+          provider:,
+          academic_year:
+        )
+
+        provider.onboarded_at = academic_year.duration.begin if provider.onboarded_at.blank?
+
+      else
+        academic_year = create(:academic_year, :current)
+        ProviderAcademicYear.find_or_create_by!(
+          provider:,
+          academic_year:
+        )
+
+        provider.onboarded_at = academic_year.duration.begin if provider.onboarded_at.blank?
+        provider.first_active_at = academic_year.duration.begin
       end
     end
   end

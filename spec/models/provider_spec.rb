@@ -242,25 +242,27 @@ RSpec.describe Provider, type: :model do
     end
   end
 
-  describe ".for_academic_years" do
-    let!(:current_year)  { create(:academic_year, :current) }
-    let!(:previous_year) { create(:academic_year, :previous) }
-    let!(:next_year)     { create(:academic_year, :next) }
-
+  describe ".for_active_academic_years" do
     let!(:provider_current_only) do
-      create(:provider, academic_years: [current_year])
+      create(:provider)
     end
 
     let!(:provider_multiple_years) do
-      create(:provider, academic_years: [current_year, previous_year])
+      first_active_at = build_academic_year_date(previous_academic_year)
+
+      create(:provider, first_active_at:)
     end
 
-    let!(:provider_other_year) do
-      create(:provider, academic_years: [next_year])
+    let!(:inactive_provider) do
+      first_active_at = build_academic_year_date(current_academic_year)
+      inactive_period = { start_date: first_active_at + 1.day,
+                          end_date: nil,
+                          reason_for_inactive: "None given" }
+      create(:provider, first_active_at: first_active_at, inactive_periods: [inactive_period])
     end
 
     it "returns providers that match ANY of the given academic years" do
-      result = described_class.for_academic_years([current_year.start_year])
+      result = described_class.for_active_academic_years([current_academic_year])
 
       expect(result).to contain_exactly(
         provider_current_only,
@@ -269,9 +271,9 @@ RSpec.describe Provider, type: :model do
     end
 
     it "returns providers matching multiple years" do
-      result = described_class.for_academic_years([
-        current_year.start_year,
-        previous_year.start_year
+      result = described_class.for_active_academic_years([
+        current_academic_year,
+        previous_academic_year
       ])
 
       expect(result).to contain_exactly(
@@ -280,23 +282,23 @@ RSpec.describe Provider, type: :model do
       )
     end
 
-    it "does not include providers that do not match any given years" do
-      result = described_class.for_academic_years([current_year.start_year])
+    it "does not include inactive providers that do not match any given years" do
+      result = described_class.for_active_academic_years([current_academic_year])
 
-      expect(result).not_to include(provider_other_year)
+      expect(result).not_to include(inactive_provider)
     end
 
     it "does not return duplicates when a provider matches multiple years" do
-      result = described_class.for_academic_years([
-        current_year.start_year,
-        previous_year.start_year
+      result = described_class.for_active_academic_years([
+        current_academic_year,
+        previous_academic_year
       ])
 
       expect(result.where(id: provider_multiple_years.id).count).to eq(1)
     end
 
     it "returns none when years are empty" do
-      expect(described_class.for_academic_years([])).to be_empty
+      expect(described_class.for_active_academic_years([])).to be_empty
     end
   end
 
@@ -355,11 +357,83 @@ RSpec.describe Provider, type: :model do
   end
 
   describe ".active_academic_years" do
-    let(:provider) { create(:provider, :with_inactive_period, first_active_at: 2.years.ago) }
+    let(:first_active_at) { build_academic_year_date(current_academic_year - 2) }
+
+    let(:provider) { create(:provider, :with_inactive_period, first_active_at:) }
 
     it "returns all active academic years for the provider" do
-      active_academic_years = AcademicYear.where("lower(duration) > ? AND lower(duration) < ?", provider.inactive_periods.first["end_date"], Time.zone.today)
+      inactive = provider.inactive_periods.first
+      inactive_range = Date.parse(inactive["start_date"])..Date.parse(inactive["end_date"])
+      active_academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+        .where.not("duration && daterange(?, ?, '[]')", inactive_range.begin, inactive_range.end)
+
       expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
+    end
+
+    context "when provider has no inactive periods" do
+      let(:provider) { create(:provider, first_active_at:) }
+
+      it "returns all academic years from first_active_at to today" do
+        active_academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+
+        expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
+      end
+    end
+
+    context "when provider has an inactive period with no end date" do
+      let(:provider) { create(:provider, :with_inactive_period, first_active_at:) }
+
+      it "excludes academic years that overlap with the inactive period" do
+        inactive = provider.inactive_periods.first
+        inactive_range = Date.parse(inactive["start_date"])..Date.parse(inactive["end_date"])
+        active_academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+          .where.not("duration && daterange(?, ?, '[]')", inactive_range.begin, inactive_range.end)
+
+        expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
+      end
+    end
+
+    context "when provider has an inactive period that starts after today" do
+      let(:provider) { create(:provider, :with_inactive_period, first_active_at:) }
+
+      before do
+        provider.inactive_periods.first["start_date"] = (Time.zone.today + 1.year).to_s
+        provider.inactive_periods.first["end_date"] = (Time.zone.today + 2.years).to_s
+        provider.save!
+      end
+
+      it "does not exclude any academic years" do
+        active_academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+
+        expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
+      end
+    end
+
+    context "when provider has an inactive period that starts and ends on the same day" do
+      let(:provider) { create(:provider, :with_inactive_period, first_active_at:) }
+
+      before do
+        provider.inactive_periods.first["start_date"] = (Time.zone.today - 1.day).to_s
+        provider.inactive_periods.first["end_date"] = (Time.zone.today - 1.day).to_s
+        provider.save!
+      end
+
+      it "excludes academic years that overlap with the inactive period" do
+        inactive = provider.inactive_periods.first
+        inactive_range = Date.parse(inactive["start_date"])..Date.parse(inactive["end_date"])
+        active_academic_years = AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at, Time.zone.today)
+          .where.not("duration && daterange(?, ?, '[]')", inactive_range.begin, inactive_range.end)
+
+        expect(provider.active_academic_years.pluck(:id)).to match(active_academic_years.pluck(:id))
+      end
+    end
+
+    context "when provider has first_active_at after today" do
+      let(:provider) { create(:provider, first_active_at: Time.zone.today + 1.year) }
+
+      it "returns no active academic years" do
+        expect(provider.active_academic_years).to be_empty
+      end
     end
   end
 end
