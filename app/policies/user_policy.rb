@@ -14,14 +14,14 @@ class UserPolicy < ApplicationPolicy
   end
 
   def edit?
-    record.kept? && user != record
+    record.kept? && user != record && !user.api_user
   end
 
   def update?
-    record.kept? && user != record
+    record.kept? && user != record && !user.api_user
   end
 
   def create?
-    record.new_record?
+    record.new_record? && !user.api_user
   end
 end

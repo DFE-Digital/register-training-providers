@@ -1,31 +1,27 @@
 class ProviderPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.api_user?
-        scope.none
-      else
-        scope.kept
-      end
+      scope.kept
     end
   end
 
   def index?
-    true
+    !user.api_user
   end
 
   def show?
-    record.kept?
+    record.kept? && !user.api_user
   end
 
   def edit?
-    record.kept? && record.not_archived?
+    record.kept? && record.not_archived?  && !user.api_user
   end
 
   def update?
-    record.kept? && record.not_archived?
+    record.kept? && record.not_archived?  && !user.api_user
   end
 
   def create?
-    record.new_record?
+    record.new_record? && !user.api_user
   end
 end
