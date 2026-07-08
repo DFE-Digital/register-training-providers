@@ -3,7 +3,8 @@ module ApiClients
     before_action :redirect_if_current_active_token
 
     def show
-      authorize api_client
+      authorize api_client, :confirm?
+
       @token = Api::Clients::CreateToken.call(client_name: api_client.name, created_by_email: current_user.email,
                                               expires_at: api_client_form.expires_at.to_s).token
     end
