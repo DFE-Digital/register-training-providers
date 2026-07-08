@@ -100,7 +100,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ inputs.environment }}" == "review" ]; then
-            kubectl -n "${{ env.NAMESPACE }}" set env deployment/register-training-providers-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
+            kubectl -n "${{ env.NAMESPACE }}" set env deployment/register-training-providers-pr-${{ inputs.pull-request-number }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           else
             kubectl -n "${{ env.NAMESPACE }}" set env deployment/register-training-providers-${{ inputs.environment }} FEATURE_FLAG_API=${{ inputs.enable_api_access }}
           fi
@@ -109,7 +109,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ inputs.environment }}" == "review" ]; then
-            while kubectl -n "${{ env.NAMESPACE }}" get pods | grep register-training-providers-${{ inputs.pull-request-number }} | grep -q Terminating
+            while kubectl -n "${{ env.NAMESPACE }}" get pods | grep register-training-providers-pr-${{ inputs.pull-request-number }} | grep -q Terminating
             do
               echo "Restarting"
               sleep 5s
