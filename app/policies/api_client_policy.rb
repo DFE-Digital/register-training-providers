@@ -14,22 +14,28 @@ class ApiClientPolicy < ApplicationPolicy
   end
 
   def show?
-    record.kept?
+    record.kept? && user_can_access_record?
   end
 
   def edit?
-    record.kept?
+    record.kept? && user_can_access_record?
   end
 
   def update?
-    record.kept?
+    record.kept? && user_can_access_record?
   end
 
   def destroy?
-    record.kept?
+    record.kept? && user_can_access_record?
   end
 
   def create?
     record.new_record?
+  end
+
+private
+
+  def user_can_access_record?
+    !user.api_user? || record.created_by == user
   end
 end

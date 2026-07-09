@@ -24,4 +24,12 @@ class ProviderPolicy < ApplicationPolicy
   def create?
     record.new_record? && !user.api_user
   end
+
+  def destroy?
+    record.kept? && !user.api_user
+  end
+
+  def restore?
+    record.kept? && record.archived? && !user.api_user
+  end
 end

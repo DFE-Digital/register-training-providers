@@ -15,7 +15,7 @@ RSpec.describe UserPolicy do
     end
   end
 
-  permissions :edit?, :update? do
+  permissions :edit?, :update?, :destroy? do
     it "permits access if the user is kept" do
       user = create(:user)
       expect(subject).to permit(build(:user), user)
