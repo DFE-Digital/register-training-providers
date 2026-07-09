@@ -29,6 +29,12 @@ RSpec.feature "User management" do
     and_the_user_to_delete_is_deleted
   end
 
+  scenario "API user should not be able to delete user" do
+    given_i_am_an_authenticated_api_user
+    and_i_navigate_directly_to_the_user_delete_page
+    then_i_am_taken_shown_the_forbidden_page
+  end
+
   def and_the_user_to_delete_is_deleted
     expect(user_to_delete.reload).to be_discarded
   end
@@ -69,5 +75,16 @@ RSpec.feature "User management" do
 
   def and_i_can_see_the_page_title_for_view_user
     expect(page).to have_title("View user - Register of training providers - GOV.UK")
+  end
+
+  def and_i_navigate_directly_to_the_user_delete_page
+    visit "users/#{user_to_delete.id}/delete"
+  end
+
+  def then_i_am_taken_shown_the_forbidden_page
+    expect(page).to have_current_path("/users/#{user_to_delete.id}/delete")
+    expect(page.status_code).to eq(403)
+    expect(page).to have_content("You do not have permission to perform this action")
+    expect(page).to have_title("You do not have permission to perform this action")
   end
 end

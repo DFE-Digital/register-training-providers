@@ -15,7 +15,7 @@ RSpec.describe ProviderPolicy do
     end
   end
 
-  permissions :edit?, :update? do
+  permissions :edit?, :update?, :destroy? do
     it "permits access if the provider is kept and not archived" do
       provider = create(:provider)
       expect(subject).to permit(build(:user), provider)
@@ -25,9 +25,23 @@ RSpec.describe ProviderPolicy do
       provider = create(:provider, :discarded)
       expect(subject).not_to permit(build(:user), provider)
     end
+  end
 
+  permissions :edit?, :update? do
     it "denies access if the provider is archived" do
       provider = create(:provider, :archived)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+  end
+
+  permissions :restore? do
+    it "allows access if the provider is archived" do
+      provider = create(:provider, :archived)
+      expect(subject).to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider isn't archived" do
+      provider = create(:provider)
       expect(subject).not_to permit(build(:user), provider)
     end
   end
