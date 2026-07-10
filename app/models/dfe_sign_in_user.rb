@@ -77,18 +77,27 @@ private
   end
 
   def user_by_email
-    return if email.blank?
+    return log_dfe_identity_failure("missing_email") if email.blank?
 
-    user = User.kept.find_by(
-      "LOWER(email) = ?",
-      email&.downcase,
+    user = User.find_by("LOWER(email) = ?", email.downcase)
+
+    return log_dfe_identity_failure("unknown_user") unless user
+    return log_dfe_identity_failure("discarded_user",
+                                    user_id: user.id) unless user.kept?
+    return log_dfe_identity_failure("mismatch",
+                                    user_id: user.id,
+                                    existing_dfe_sign_in_uid: user.dfe_sign_in_uid,) if user.dfe_sign_in_uid.present?
+
+    user
+  end
+
+  def log_dfe_identity_failure(event, extra = {})
+    Rails.logger.warn(
+      event: "dfe_sign_in_identity_#{event}",
+      message: "Refusing email fallback",
+      attempted_dfe_sign_in_uid: dfe_sign_in_uid, **extra,
     )
-
-    return unless user
-
-    if user.dfe_sign_in_uid.blank?
-      user
-    end
+    nil
   end
 
   def signed_in_from_dfe?
