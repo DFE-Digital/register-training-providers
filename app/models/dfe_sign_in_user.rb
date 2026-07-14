@@ -79,10 +79,16 @@ private
   def user_by_email
     return if email.blank?
 
-    User.kept.find_by(
+    user = User.kept.find_by(
       "LOWER(email) = ?",
       email&.downcase,
     )
+
+    return unless user
+
+    if user.dfe_sign_in_uid.blank?
+      user
+    end
   end
 
   def signed_in_from_dfe?

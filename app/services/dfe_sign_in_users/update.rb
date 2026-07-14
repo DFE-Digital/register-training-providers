@@ -12,8 +12,9 @@ module DfESignInUsers
       attributes = {
         last_signed_in_at: Time.zone.now,
         email: sign_in_user.email,
-        dfe_sign_in_uid: sign_in_user.dfe_sign_in_uid,
       }
+
+      attributes[:dfe_sign_in_uid] = sign_in_user.dfe_sign_in_uid if user.dfe_sign_in_uid.blank?
 
       attributes[:first_name] = sign_in_user.first_name if sign_in_user.first_name.present?
       attributes[:last_name] = sign_in_user.last_name if sign_in_user.last_name.present?
