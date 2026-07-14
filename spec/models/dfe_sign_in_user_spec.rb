@@ -74,15 +74,15 @@ describe DfESignInUser do
   end
 
   describe "#user" do
-    context "when the user has a matching dfe sign in uid" do
-      it "finds the user by dfe sign in uid" do
+    context "when the dfe sign in uid matches" do
+      it "returns the user by dfe sign in uid" do
         user = create(:user, dfe_sign_in_uid: "dfe-123")
 
         sign_in_user = described_class.new(
           email: user.email,
           dfe_sign_in_uid: "dfe-123",
-          first_name: "Test",
-          last_name: "User",
+          first_name: user.first_name,
+          last_name: user.last_name,
         )
 
         expect(sign_in_user.user).to eq(user)
@@ -90,7 +90,7 @@ describe DfESignInUser do
     end
 
     context "when the user has no dfe sign in uid" do
-      it "finds the user by email to allow first time linking" do
+      it "returns the user by email for first time linking" do
         user = create(
           :user,
           email: "test@education.gov.uk",
@@ -100,27 +100,100 @@ describe DfESignInUser do
         sign_in_user = described_class.new(
           email: user.email,
           dfe_sign_in_uid: "dfe-123",
-          first_name: "Test",
-          last_name: "User",
+          first_name: user.first_name,
+          last_name: user.last_name,
         )
 
         expect(sign_in_user.user).to eq(user)
       end
     end
 
+    context "when the email is missing" do
+      it "logs a warning and does not fallback by email" do
+        sign_in_user = described_class.new(
+          email: nil,
+          dfe_sign_in_uid: "dfe-123",
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        expect(Rails.logger).to receive(:warn).with(
+          event: "dfe_sign_in_identity_missing_email",
+          message: "Refusing email fallback",
+          attempted_dfe_sign_in_uid: "dfe-123",
+        )
+
+        expect(sign_in_user.user).to be_nil
+      end
+    end
+
+    context "when no user exists for the email" do
+      it "logs a warning and does not return a user" do
+        sign_in_user = described_class.new(
+          email: "missing@education.gov.uk",
+          dfe_sign_in_uid: "dfe-123",
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        expect(Rails.logger).to receive(:warn).with(
+          event: "dfe_sign_in_identity_unknown_user",
+          message: "Refusing email fallback",
+          attempted_dfe_sign_in_uid: "dfe-123",
+        )
+
+        expect(sign_in_user.user).to be_nil
+      end
+    end
+
+    context "when the email matches a discarded user" do
+      it "logs a warning and does not return the user" do
+        user = create(
+          :user,
+          :discarded,
+          email: "test@education.gov.uk",
+          dfe_sign_in_uid: nil,
+        )
+
+        sign_in_user = described_class.new(
+          email: user.email,
+          dfe_sign_in_uid: "dfe-123",
+          first_name: user.first_name,
+          last_name: user.last_name
+        )
+
+        expect(Rails.logger).to receive(:warn).with(
+          event: "dfe_sign_in_identity_discarded_user",
+          message: "Refusing email fallback",
+          attempted_dfe_sign_in_uid: "dfe-123",
+          user_id: user.id,
+        )
+
+        expect(sign_in_user.user).to be_nil
+      end
+    end
+
     context "when the email matches but the user is already linked to another dfe account" do
       it "logs a warning and does not return the user by email fallback" do
-        create(
+        user = create(
           :user,
           email: "test@education.gov.uk",
           dfe_sign_in_uid: "existing-dfe-123",
         )
 
         sign_in_user = described_class.new(
-          email: "test@education.gov.uk",
+          email: user.email,
           dfe_sign_in_uid: "different-dfe-456",
-          first_name: "Test",
-          last_name: "User",
+          first_name: user.first_name,
+          last_name: user.last_name
+        )
+
+        expect(Rails.logger).to receive(:warn).with(
+          event: "dfe_sign_in_identity_mismatch",
+          message: "Refusing email fallback",
+          user_id: user.id,
+          attempted_dfe_sign_in_uid: "different-dfe-456",
+          existing_dfe_sign_in_uid: "existing-dfe-123",
         )
 
         expect(sign_in_user.user).to be_nil

@@ -13,7 +13,16 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  rescue_from Pundit::NotAuthorizedError do
+  rescue_from Pundit::NotAuthorizedError do |exception|
+    Rails.logger.warn(
+      event: "authorization_denied",
+      user_id: current_user&.id,
+      controller: controller_name,
+      action: action_name,
+      path: request.path,
+      policy: exception.policy.class.name,
+      query: exception.query,
+    )
     render "errors/forbidden", status: :forbidden, formats: [:html]
   end
 

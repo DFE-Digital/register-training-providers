@@ -13,14 +13,14 @@ module Env
     if boolean_method?(method)
       return interpret_bool(val) unless val.nil?
 
-      logger.warn("[Env.#{method}] ENV['#{key}'] is missing")
+      logger.info("[Env.#{method}] ENV['#{key}'] is missing")
       return fallback.nil? ? false : fallback
     end
 
     if ENV.key?(key)
       val
     else
-      logger.warn("[Env.#{method}] ENV['#{key}'] is missing")
+      logger.info("[Env.#{method}] ENV['#{key}'] is missing")
       fallback
     end
   end

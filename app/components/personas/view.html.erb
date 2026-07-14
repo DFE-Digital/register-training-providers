@@ -4,6 +4,7 @@
   <%= hidden_field_tag "email", persona.email %>
   <%= hidden_field_tag "first_name", persona.first_name %>
   <%= hidden_field_tag "last_name", persona.last_name %>
+  <%= hidden_field_tag("uid", persona.dfe_sign_in_uid) if persona.dfe_sign_in_uid.present? %>
   <%= f.submit "Sign in as #{persona.name}", class: "govuk-button govuk-!-margin-bottom-8" %>
 <% end %>
 

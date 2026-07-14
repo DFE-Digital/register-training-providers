@@ -15,6 +15,16 @@ RSpec.feature "Forbidden access" do
     and_i_click_on("Register of training providers")
     and_i_am_taken_to("/api_clients")
 
+    expect(Rails.logger).to receive(:warn).with(
+      event: "authorization_denied",
+      user_id: current_api_user.id,
+      controller: "providers",
+      action: "index",
+      path: "/providers",
+      policy: "ProviderPolicy",
+      query: "index?",
+    )
+
     when_i_visit("/providers")
     then_i_am_taken_shown_the_forbidden_page
     when_i_click_on("Sign out")
