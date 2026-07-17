@@ -16,7 +16,8 @@ This project depends on:
 
 ### asdf
 
-This project uses `asdf`, refer to [.tool-versions](.tool-versions) for the actual versions in use. Use the following to install the required tools:
+This project uses `asdf`, refer to [.tool-versions](.tool-versions) for the actual versions in use.
+Use the following to install the required tools:
 
 ```sh
 # The first time
