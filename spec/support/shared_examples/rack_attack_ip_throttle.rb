@@ -7,27 +7,31 @@ RSpec.shared_examples "Rack::Attack IP throttle", rack_attack: true, openapi: fa
   end
 
   it "blocks requests after IP limit" do
-    limit.times do
-      get(path, headers:)
-      expect(response).to have_http_status(:unauthorized)
-    end
+    Timecop.freeze(Time.zone.now) do
+      limit.times do
+        get(path, headers:)
+        expect(response).to have_http_status(:unauthorized)
+      end
 
-    get(path, headers:)
-    expect(response).to have_http_status(:too_many_requests)
+      get(path, headers:)
+      expect(response).to have_http_status(:too_many_requests)
+    end
   end
 
   it "resets after period" do
-    limit.times do
-      get(path, headers:)
-      expect(response).to have_http_status(:unauthorized)
-    end
+    Timecop.freeze(Time.zone.now) do
+      limit.times do
+        get(path, headers:)
+        expect(response).to have_http_status(:unauthorized)
+      end
 
-    get(path, headers:)
-    expect(response).to have_http_status(:too_many_requests)
-
-    Timecop.freeze(Time.zone.now + period + 1.second) do
       get(path, headers:)
-      expect(response).to have_http_status(:unauthorized)
+      expect(response).to have_http_status(:too_many_requests)
+
+      Timecop.freeze(Time.zone.now + period + 1.second) do
+        get(path, headers:)
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end
