@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.warn(
       event: "authorization_denied",
       user_id: current_user&.id,
-      controller: controller_name,
+      controller: self.class.name,
       action: action_name,
       path: request.path,
       policy: exception.policy.class.name,
