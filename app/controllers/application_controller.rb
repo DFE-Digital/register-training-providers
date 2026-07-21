@@ -26,6 +26,18 @@ class ApplicationController < ActionController::Base
     render "errors/forbidden", status: :forbidden, formats: [:html]
   end
 
+  rescue_from ActionController::TooManyRequests do |_exception|
+    Rails.logger.warn(
+      event: "too_many_requests",
+      user_id: current_user&.id,
+      controller: self.class.name,
+      action: action_name,
+      path: request.path,
+    )
+
+    render "errors/too_many_requests", status: :too_many_requests, formats: [:html]
+  end
+
 private
 
   # dfe and otp objects can both be instantiated as `.begin_session!` will always create
