@@ -12,7 +12,7 @@ RSpec.feature "User management" do
         and_i_click_on(user_to_delete.name)
         and_i_am_taken_to("/users/#{user_to_delete.id}")
 
-        and_i_click_on("Delete user2")
+        and_i_click_on("Delete")
         and_i_am_taken_to("/users/#{user_to_delete.id}/delete")
 
         when_i_click_on("Delete user")
