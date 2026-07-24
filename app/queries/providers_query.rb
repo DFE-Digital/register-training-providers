@@ -10,7 +10,7 @@ class ProvidersQuery
 
   attr_reader :relation, :filters, :search_term
 
-  def initialize(relation = Provider.all, filters: {}, search_term: nil)
+  def initialize(relation = Provider.kept.all, filters: {}, search_term: nil)
     @relation = relation
     @filters  = filters
     @search_term = search_term

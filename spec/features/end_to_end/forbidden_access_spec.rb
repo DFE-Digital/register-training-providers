@@ -18,7 +18,7 @@ RSpec.feature "Forbidden access" do
     expect(Rails.logger).to receive(:warn).with(
       event: "authorization_denied",
       user_id: current_api_user.id,
-      controller: "providers",
+      controller: "ProvidersController",
       action: "index",
       path: "/providers",
       policy: "ProviderPolicy",

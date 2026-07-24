@@ -9,4 +9,5 @@ module NavigationHelper
 
   alias_method :and_i_click_on, :when_i_click_on
   alias_method :and_i_am_taken_to, :then_i_am_taken_to
+  alias_method :and_i_am_still_on, :then_i_am_taken_to
 end
