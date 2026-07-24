@@ -19,10 +19,13 @@ class CheckController < ApplicationController
 
 private
 
+  def post_save
+  end
+
   def save
     authorize model
     if model.save
-
+      post_save
       redirect_to success_path, flash: flash_message
     else
       # NOTE: if it failed there is something really wrong send them back to the form
