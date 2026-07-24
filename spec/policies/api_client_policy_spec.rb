@@ -4,13 +4,19 @@ RSpec.describe ApiClientPolicy do
   subject { described_class }
   let(:user) { create(:user) }
   let(:api_user) { create(:user, api_user: true) }
+  let(:second_api_user) { create(:user, api_user: true) }
   let(:api_client) { create(:api_client, created_by: user) }
   let(:api_user_client) { create(:api_client, created_by: api_user) }
   let(:discarded_api_client) { create(:api_client, :discarded, created_by: user) }
 
   permissions :show?, :edit?, :update? do
-    it "permits access if the api_client is kept" do
+    it "permits access if the api_client is kept for a standard user" do
       expect(subject).to permit(user, api_client)
+      expect(subject).to permit(user, api_user_client)
+    end
+
+    it "permits access if the api_client is kept for was created by an api user" do
+      expect(subject).not_to permit(api_user, api_client)
       expect(subject).to permit(user, api_user_client)
     end
 

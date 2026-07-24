@@ -8,6 +8,13 @@ RSpec.feature "Delete Provider" do
     and_i_should_see_a_success_message
   end
 
+  scenario "API user can delete a provider" do
+    given_i_am_an_authenticated_api_user
+    and_there_is_a_provider
+    when_i_navigate_directly_to_the_delete_provider_page_for_a_specific_provider
+    then_i_am_taken_shown_the_forbidden_page
+  end
+
   def and_i_should_see_a_success_message
     expect(page).to have_notification_banner("Success", "Provider deleted")
   end
@@ -34,6 +41,10 @@ RSpec.feature "Delete Provider" do
     and_i_click_on "Delete provider"
   end
 
+  def when_i_navigate_directly_to_the_delete_provider_page_for_a_specific_provider
+    visit "/providers/#{provider.id}/delete"
+  end
+
   def and_i_confirm_archiving_the_provider
     and_i_am_taken_to("/providers/#{provider.id}/delete")
     and_i_click_on "Delete provider"
@@ -49,6 +60,13 @@ RSpec.feature "Delete Provider" do
 
   def and_i_do_not_see_link(operating_name)
     expect(page).not_to have_link(operating_name)
+  end
+
+  def then_i_am_taken_shown_the_forbidden_page
+    expect(page).to have_current_path("/providers/#{provider.id}/delete")
+    expect(page.status_code).to eq(403)
+    expect(page).to have_content("You do not have permission to perform this action")
+    expect(page).to have_title("You do not have permission to perform this action")
   end
 
   alias_method :and_i_check, :check

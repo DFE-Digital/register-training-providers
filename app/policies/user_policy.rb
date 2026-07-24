@@ -9,19 +9,27 @@ class UserPolicy < ApplicationPolicy
     end
   end
 
+  def index?
+    !user.api_user?
+  end
+
   def show?
-    record.kept?
+    record.kept? && !user.api_user
   end
 
   def edit?
-    record.kept? && user != record && !user.api_user
+    record.kept? && user != record && !user.api_user && !record.system_admin?
   end
 
   def update?
-    record.kept? && user != record && !user.api_user
+    record.kept? && user != record && !user.api_user && !record.system_admin?
   end
 
   def create?
     record.new_record? && !user.api_user
+  end
+
+  def destroy?
+    record.kept? && user != record && !user.api_user && !record.system_admin?
   end
 end
