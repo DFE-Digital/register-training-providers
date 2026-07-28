@@ -38,6 +38,20 @@ class ApplicationController < ActionController::Base
     render "errors/too_many_requests", status: :too_many_requests, formats: [:html]
   end
 
+  rescue_from MinimumActiveUsersError do
+    Rails.logger.warn(
+      event: "minimum_active_users_violation",
+      user_id: current_user&.id,
+      remaining_active_users: User.kept.where(active: true).count,
+      total_users: User.count,
+      controller: controller_name,
+      action: action_name,
+      path: request.path
+    )
+
+    render "errors/conflict", status: :conflict, formats: [:html]
+  end
+
 private
 
   # dfe and otp objects can both be instantiated as `.begin_session!` will always create
