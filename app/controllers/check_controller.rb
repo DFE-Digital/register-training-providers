@@ -3,10 +3,12 @@ class CheckController < ApplicationController
 
   def show
     redirect_to back_path if model.invalid?
+    authorize model
   end
 
   def new
     redirect_to back_path if model.invalid?
+    authorize model
   end
 
   def create

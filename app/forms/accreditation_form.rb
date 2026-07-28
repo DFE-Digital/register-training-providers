@@ -32,6 +32,16 @@ class AccreditationForm
         ))
   end
 
+  def new_record?
+    true
+  end
+
+  def provider
+    return Provider.new if provider_id.blank?
+
+    Provider.find(provider_id)
+  end
+
   before_validation :convert_date_components
 
   validates :number, presence: true, accreditation_number: true

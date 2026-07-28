@@ -3,6 +3,8 @@ module Providers
     class SelectController < ApplicationController
       include AddressJourneyController
 
+      skip_after_action :verify_pundit_authorization
+
       def new
         import_seed_if_needed
 

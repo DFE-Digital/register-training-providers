@@ -3,6 +3,8 @@ module Providers
     class FindController < ApplicationController
       include AddressJourneyController
 
+      skip_after_action :verify_pundit_authorization
+
       def new
         # Clear session when starting a fresh journey (no goto param means not navigating within existing journey)
         address_session.clear! if params[:goto].blank?

@@ -38,5 +38,9 @@ module Providers
     def first_active_at
       resolve_date_from_choice(:first_active_at_date)
     end
+
+    def new_record?
+      true
+    end
   end
 end

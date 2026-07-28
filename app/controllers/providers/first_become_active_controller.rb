@@ -20,11 +20,13 @@ class Providers::FirstBecomeActiveController < CheckController
 
     @form.assign_attributes({ onboarded_at: onboarding_form.onboarded_at })
 
+    authorize @form
     render :new
   end
 
   def create
     @form = Providers::FirstBecomeActiveForm.new(first_become_active_params)
+    authorize @form
 
     if @form.valid?
       provider_session.store_first_become_active(@form.attributes)

@@ -33,6 +33,10 @@ module Providers
       accreditation_status == AccreditationStatusEnum::ACCREDITED
     end
 
+    def new_record?
+      true
+    end
+
   private
 
     def provider_types

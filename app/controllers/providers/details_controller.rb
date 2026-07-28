@@ -40,11 +40,15 @@ class Providers::DetailsController < CheckController
 
     end
 
+    authorize @provider
+
     render :new
   end
 
   def create
     @provider = provider_session.load_provider || Provider.new
+
+    authorize @provider
 
     @provider.assign_attributes(create_new_provider_params)
 

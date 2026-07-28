@@ -34,6 +34,7 @@ class ProvidersController < ApplicationController
 
   def update
     @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
+    authorize @provider
 
     @provider.assign_attributes(params.expect(provider: [:provider_type,
                                                          :accreditation_status,

@@ -35,6 +35,8 @@ class Providers::AccreditationController < CheckController
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
 
+    authorize @form
+
     render :new
   end
 
@@ -45,6 +47,8 @@ class Providers::AccreditationController < CheckController
     provider = provider_session.load_provider
     @form.provider_id = provider&.id
     @form.provider_type = provider&.provider_type
+
+    authorize @form
 
     if @form.valid?
       provider_session.store_accreditation(@form.attributes)

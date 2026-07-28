@@ -18,6 +18,9 @@ module Providers
           partner_id: partnership_data&.dig(:partner_id),
           provider_accredited: provider.accredited?
         )
+
+        authorize provider, :show?
+
         @partners = load_eligible_partners
 
         setup_view_data
@@ -30,6 +33,7 @@ module Providers
         )
 
         if @form.valid?
+
           partnership_session.store_partnership(
             partner_id: params.dig(:find, :partner_id),
             training_partner_search: provider.accredited?,
@@ -38,9 +42,12 @@ module Providers
           redirect_to dates_path
         else
           @partners = load_eligible_partners
+
           setup_view_data
           render :new
         end
+
+        authorize provider, :update?
       end
 
     private

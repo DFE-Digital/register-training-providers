@@ -14,6 +14,7 @@ module Providers
         .where("(seed_data_notes->'saved_as'->>'address_id') IS NULL")
 
         @pagy, @providers = pagy(provider_query, limit: 50)
+        skip_authorization
       end
 
     private

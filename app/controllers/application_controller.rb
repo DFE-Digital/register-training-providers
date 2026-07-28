@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
     render "errors/forbidden", status: :forbidden, formats: [:html]
   end
 
+  after_action :verify_pundit_authorization
+
 private
 
   # dfe and otp objects can both be instantiated as `.begin_session!` will always create
@@ -79,5 +81,9 @@ private
     return api_clients_path if current_user.api_user?
 
     providers_path
+  end
+
+  def verify_pundit_authorization
+    verify_authorized
   end
 end
