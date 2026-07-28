@@ -8,4 +8,12 @@ class Users::CheckController < CheckController
       )
     end
   end
+
+  def pre_save
+    if model.changes["active"] == [true, false]
+
+      User.ensure_minimum_active_users!(users_id_to_exclude: model.id)
+
+    end
+  end
 end

@@ -7,6 +7,9 @@ class Users::DeletesController < CheckController
 
   def destroy
     @user = User.find(params[:user_id])
+
+    User.ensure_minimum_active_users!(users_id_to_exclude: @user.id)
+
     @user.discard!
     redirect_to(users_path, flash: { success: "User deleted" })
   end
