@@ -3,8 +3,6 @@ module Providers
     class SelectController < ApplicationController
       include AddressJourneyController
 
-      skip_after_action :verify_pundit_authorization
-
       def new
         import_seed_if_needed
 
@@ -20,12 +18,16 @@ module Providers
         # Pre-select the radio button if returning to this page with a stored address
         @form = prepare_select_form
 
+        authorize provider, :update?
+
         setup_view_data(search_data)
       end
 
       def create
         # Validate the SelectForm first
         @form = ::Addresses::SelectForm.new(selected_address_index: params.dig(:select, :selected_address_index))
+
+        authorize provider, :update?
 
         unless @form.valid?
           render_select_form

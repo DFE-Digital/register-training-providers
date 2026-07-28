@@ -9,7 +9,7 @@ module Providers
         partnership_data = partnership_session.load_partnership
         @form = build_form_from_session(partnership_data)
 
-        authorize provider, :show?
+        authorize provider, :update?
         setup_view_data(:new)
       end
 

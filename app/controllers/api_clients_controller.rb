@@ -5,7 +5,7 @@ class ApiClientsController < ApplicationController
     current_user.clear_temporary(ApiClient, purpose: :check_your_answers)
 
     @pagy, @records = pagy(policy_scope(scoped_api_client), limit: 15)
-    skip_authorization
+    skip_authorization # All users can access this but records will be scoped depending on user type
   end
 
   def show
@@ -35,7 +35,6 @@ class ApiClientsController < ApplicationController
       @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to new_api_client_confirm_path
     else
-      skip_authorization
       render :new
     end
   end

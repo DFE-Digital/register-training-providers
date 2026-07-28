@@ -33,7 +33,7 @@ class AccreditationForm
   end
 
   def new_record?
-    true
+    id.blank?
   end
 
   def provider

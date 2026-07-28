@@ -31,16 +31,14 @@ module Providers
         @form = ::AddressForm.new(address_data)
         @form.provider_id = provider.id
 
-        if @form.invalid?
-          skip_authorization
+        authorize @form
 
+        if @form.invalid?
           query_params = { goto: "confirm", skip_finder: "true" }
           query_params[:debug] = true if imported_data_context?
           redirect_to provider_new_address_path(provider, query_params)
           return
         end
-
-        authorize @form
 
         setup_view_data(:new)
       end

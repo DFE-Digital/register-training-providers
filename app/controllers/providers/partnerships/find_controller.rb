@@ -19,7 +19,7 @@ module Providers
           provider_accredited: provider.accredited?
         )
 
-        authorize provider, :show?
+        authorize provider, :update?
 
         @partners = load_eligible_partners
 
