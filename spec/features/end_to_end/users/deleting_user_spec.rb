@@ -1,32 +1,74 @@
 require "rails_helper"
 
 RSpec.feature "User management" do
-  scenario "deleting users" do
-    given_i_am_an_authenticated_user
-    and_i_have_a_user_to_delete
-    and_i_am_on_the_user_support_listing_page
-    and_i_can_see_the_page_title_users_with_the_count(count: 2)
+  context "when deleting a user leaves the minimum required number of users" do
+    scenario "allows deletion" do
+      given_i_am_an_authenticated_user
+      and_i_have_additional_users(number_of_users: 3)
+      and_i_have_a_user_to_delete
+      and_i_am_on_the_user_support_listing_page
+      and_i_can_see_the_page_title_users_with_the_count(count: 5)
 
-    and_i_click_on(current_user.name)
-    and_i_cannot_find("Delete user")
+      and_i_click_on(current_user.name)
+      and_i_cannot_find("Delete user")
 
-    and_i_click_on("Back")
-    and_i_click_on(user_to_delete.name)
-    and_i_am_taken_to("/users/#{user_to_delete.id}")
+      and_i_click_on("Back")
+      and_i_click_on(user_to_delete.name)
+      and_i_am_taken_to("/users/#{user_to_delete.id}")
 
-    and_i_can_see_the_page_title_for_view_user
-    and_i_click_on("Delete user")
-    and_i_am_taken_to("/users/#{user_to_delete.id}/delete")
+      and_i_can_see_the_page_title_for_view_user
+      and_i_click_on("Delete user")
+      and_i_am_taken_to("/users/#{user_to_delete.id}/delete")
 
-    and_i_can_see_the_page_title_for_confirm_you_want_to_delete_user
-    and_i_can_see_the_warning_text
-    when_i_click_on("Delete user")
-    then_i_see_the_success_message
-    and_i_am_taken_to("/users")
+      and_i_can_see_the_page_title_for_confirm_you_want_to_delete_user
+      and_i_can_see_the_warning_text
+      when_i_click_on("Delete user")
+      then_i_see_the_success_message
+      and_i_am_taken_to("/users")
 
-    and_i_can_see_the_page_title_users_with_the_count(count: 1)
-    and_i_cannot_find(user_to_delete.name)
-    and_the_user_to_delete_is_deleted
+      and_i_can_see_the_page_title_users_with_the_count(count: 4)
+      and_i_cannot_find(user_to_delete.name)
+      and_the_user_to_delete_is_deleted
+    end
+  end
+
+  context "when deleting a user would go below the minimum required number of users" do
+    scenario "prevents deletion" do
+      given_i_am_an_authenticated_user
+      and_i_have_additional_users(number_of_users: 2)
+      and_i_have_a_user_to_delete
+      and_i_am_on_the_user_support_listing_page
+      and_i_can_see_the_page_title_users_with_the_count(count: 4)
+
+      and_i_click_on(user_to_delete.name)
+      and_i_am_taken_to("/users/#{user_to_delete.id}")
+
+      and_i_can_see_the_page_title_for_view_user
+      and_i_click_on("Delete user")
+      and_i_am_taken_to("/users/#{user_to_delete.id}/delete")
+
+      and_i_can_see_the_page_title_for_confirm_you_want_to_delete_user
+      and_i_can_see_the_warning_text
+
+      expect(Rails.logger).to receive(:warn).with(
+        event: "minimum_active_users_violation",
+        user_id: current_user.id,
+        remaining_active_users: 4,
+        total_users: 4,
+        action: "destroy",
+        controller: "deletes",
+        path: "/users/#{user_to_delete.id}/delete",
+      )
+
+      when_i_click_on("Delete user")
+
+      and_i_can_see_the_page_title_for_you_cannot_complete_this_action
+      and_i_am_still_on("/users/#{user_to_delete.id}/delete")
+    end
+  end
+
+  def and_i_can_see_the_page_title_for_you_cannot_complete_this_action
+    expect(page).to have_title("Sorry, you cannot complete this action - Register of training providers - GOV.UK")
   end
 
   def and_the_user_to_delete_is_deleted
@@ -48,6 +90,10 @@ RSpec.feature "User management" do
 
   def user_to_delete
     @user_to_delete ||= create(:user)
+  end
+
+  def and_i_have_additional_users(number_of_users:)
+    create_list(:user, number_of_users)
   end
 
   def and_i_can_see_the_warning_text
