@@ -50,6 +50,10 @@ class User < ApplicationRecord
 
   after_save :revoke_all_active_tokens_for_api_clients!, unless: :active?
 
+  def self.ensure_minimum_active_users!(users_id_to_exclude:)
+    raise MinimumActiveUsersError if User.kept.where(active: true).where.not(id: users_id_to_exclude).count < 4
+  end
+
   def name
     first_name_to_use = first_name_was || first_name
     last_name_to_use = last_name_was || last_name
