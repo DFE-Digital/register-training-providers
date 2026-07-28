@@ -6,6 +6,7 @@ class ApiClientsController < ApplicationController
 
     @pagy, @records = pagy(policy_scope(scoped_api_client), limit: 15)
     skip_authorization # All users can access this but records will be scoped depending on user type
+    verify_policy_scoped
   end
 
   def show
