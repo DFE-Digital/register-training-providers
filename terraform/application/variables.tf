@@ -130,7 +130,7 @@ variable "job_name" {
   default     = "migrations"
 }
 
-variable "postgres_version" { default = 16 }
+variable "postgres_version" { default = 17 }
 
 variable "enable_dfe_analytics_federated_auth" {
   description = "Create the resources in Google cloud for federated authentication and enable in application"
