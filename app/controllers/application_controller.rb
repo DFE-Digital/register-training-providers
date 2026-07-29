@@ -17,13 +17,25 @@ class ApplicationController < ActionController::Base
     Rails.logger.warn(
       event: "authorization_denied",
       user_id: current_user&.id,
-      controller: controller_name,
+      controller: self.class.name,
       action: action_name,
       path: request.path,
       policy: exception.policy.class.name,
       query: exception.query,
     )
     render "errors/forbidden", status: :forbidden, formats: [:html]
+  end
+
+  rescue_from ActionController::TooManyRequests do |_exception|
+    Rails.logger.warn(
+      event: "too_many_requests",
+      user_id: current_user&.id,
+      controller: self.class.name,
+      action: action_name,
+      path: request.path,
+    )
+
+    render "errors/too_many_requests", status: :too_many_requests, formats: [:html]
   end
 
 private

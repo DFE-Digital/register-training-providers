@@ -186,12 +186,13 @@ jobs:
       - name: Run test suite
         run: bundle exec rspec
 
-      - name: Upload test failure screenshots
+      - name: Upload test failure artifacts
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: test-failure-screenshots
-          path: tmp/screenshots/
+          path: |
+            tmp/screenshots/
+            tmp/db_dumps/
           if-no-files-found: ignore
           retention-days: 7
 
