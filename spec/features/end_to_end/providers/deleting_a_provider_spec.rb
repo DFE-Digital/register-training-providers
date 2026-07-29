@@ -3,7 +3,7 @@ RSpec.feature "Delete Provider" do
     given_i_am_an_authenticated_user
     and_there_is_a_provider
     when_i_navigate_to_the_delete_provider_page_for_a_specific_provider
-    and_i_confirm_archiving_the_provider
+    and_i_confirm_deleting_the_provider
     then_i_should_be_redirected_to_the_providers_page
     and_i_should_see_a_success_message
   end
@@ -34,7 +34,7 @@ RSpec.feature "Delete Provider" do
     and_i_click_on "Delete provider"
   end
 
-  def and_i_confirm_archiving_the_provider
+  def and_i_confirm_deleting_the_provider
     and_i_am_taken_to("/providers/#{provider.id}/delete")
     and_i_click_on "Delete provider"
   end
