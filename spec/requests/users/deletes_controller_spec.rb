@@ -2,10 +2,13 @@ RSpec.describe "User deletion rate limit", type: :request do
   include DfESignInUserHelper
 
   let(:user) { create(:user) }
+  let(:additional_users) { create_list :user, 3 }
   let(:users_to_delete) { create_list :user, 3 }
   let(:user_fails_to_be_deleted) { create(:user) }
 
   before do
+    additional_users
+
     user_exists_in_dfe_sign_in(user:)
     get "/auth/dfe/callback"
   end

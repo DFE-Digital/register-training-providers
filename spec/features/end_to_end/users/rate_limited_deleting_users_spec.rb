@@ -4,8 +4,10 @@ RSpec.feature "User management" do
   scenario "rate limited of a user deleting users" do
     given_i_am_an_authenticated_user
     and_i_have_users_to_delete
+    and_i_have_additional_users(number_of_users: 3)
+
     and_i_am_on_the_user_support_listing_page
-    and_i_can_see_the_page_title_users_with_the_count(count: 5)
+    and_i_can_see_the_page_title_users_with_the_count(count: 8)
 
     Timecop.freeze(Time.zone.now) do
       users_to_delete.each do |user_to_delete|
@@ -19,7 +21,7 @@ RSpec.feature "User management" do
         then_i_see_the_success_message
         and_i_am_taken_to("/users")
       end
-      and_i_can_see_the_page_title_users_with_the_count(count: 2)
+      and_i_can_see_the_page_title_users_with_the_count(count: 5)
 
       and_i_click_on(user_fails_to_be_deleted.name)
       and_i_am_taken_to("/users/#{user_fails_to_be_deleted.id}")
@@ -39,6 +41,10 @@ RSpec.feature "User management" do
       and_i_can_see_the_page_title_for_not_able_to_complete_this_action
       and_i_am_still_on("/users/#{user_fails_to_be_deleted.id}/delete")
     end
+  end
+
+  def and_i_have_additional_users(number_of_users:)
+    create_list(:user, number_of_users)
   end
 
   def and_the_user_to_delete_is_deleted
