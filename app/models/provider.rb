@@ -20,6 +20,7 @@
 #  urn                   :string(6)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
+#  rotp_id               :string
 #
 # Indexes
 #
@@ -31,6 +32,7 @@
 #  index_providers_on_legal_name            (legal_name)
 #  index_providers_on_onboarded_at          (onboarded_at)
 #  index_providers_on_provider_type         (provider_type)
+#  index_providers_on_rotp_id               (rotp_id) UNIQUE
 #  index_providers_on_searchable            (searchable) USING gin
 #  index_providers_on_ukprn                 (ukprn)
 #  index_providers_on_urn                   (urn)
