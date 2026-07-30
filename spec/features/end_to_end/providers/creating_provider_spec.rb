@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Add Provider" do
-  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active|
+  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active, living_docs|
     let(:address_line_1) { Faker::Address.street_address }
     let(:address_line_2) { Faker::Address.secondary_address }
     let(:town_or_city) { Faker::Address.city }
@@ -13,7 +13,7 @@ RSpec.feature "Add Provider" do
     end
 
     scenario "User can add a new provider with accreditation status:
-      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}", living_docs do
+      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
       and_i_fill_out_the_onboarding_details(onboarded_at)
@@ -45,10 +45,10 @@ RSpec.feature "Add Provider" do
 
       case option
       when String
-        choose(option)
+        and_i_choose(option)
         click_on("Continue")
       when Time, ActiveSupport::TimeWithZone
-        choose("Another day")
+        and_i_choose("Another day")
 
         click_on("Continue")
 
@@ -76,10 +76,10 @@ RSpec.feature "Add Provider" do
 
       case option
       when String
-        choose(option)
+        and_i_choose(option)
         click_on("Continue")
       when Time, ActiveSupport::TimeWithZone
-        choose("Another day")
+        and_i_choose("Another day")
 
         click_on("Continue")
 
@@ -250,7 +250,9 @@ RSpec.feature "Add Provider" do
       and_i_click_on("Continue")
     end
 
-    alias_method :and_i_choose, :choose
+    def and_i_choose(option)
+      find(:radio_button, option, visible: :all).choose
+    end
 
     def and_i_can_see_the_error_summary(*messages)
       expect(page).to have_error_summary(*messages)
