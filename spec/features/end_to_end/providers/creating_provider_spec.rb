@@ -13,7 +13,7 @@ RSpec.feature "Add Provider" do
     end
 
     scenario "User can add a new provider with accreditation status:
-      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}" do
+      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}", living_docs do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
       and_i_fill_out_the_onboarding_details(onboarded_at)
@@ -319,7 +319,7 @@ RSpec.feature "Add Provider" do
     end
   end
 
-  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :living_docs
+  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date", nil
+  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago, nil
 end
