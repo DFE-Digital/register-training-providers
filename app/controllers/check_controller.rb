@@ -2,13 +2,13 @@ class CheckController < ApplicationController
   helper_method :rows, :save_path, :back_path, :cancel_path, :method, :model, :change_path
 
   def show
-    redirect_to back_path if model.invalid?
     authorize model
+    redirect_to back_path if model.invalid?
   end
 
   def new
-    redirect_to back_path if model.invalid?
     authorize model
+    redirect_to back_path if model.invalid?
   end
 
   def create

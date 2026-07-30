@@ -25,7 +25,7 @@ module Providers
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
 
-        authorize @form
+        authorize provider, :update?
 
         setup_view_data(:new)
       end
@@ -41,7 +41,7 @@ module Providers
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
 
-        authorize @form
+        authorize provider, :update?
 
         setup_view_data(:edit)
       end
@@ -69,6 +69,7 @@ module Providers
 
       def update
         # Update only available in manage context
+        authorize provider, :update?
         redirect_to provider_addresses_path(provider) if setup_context?
 
         @address = provider.addresses.kept.find(params[:id])
@@ -76,8 +77,6 @@ module Providers
 
         @form = ::AddressForm.new(address_params)
         @form.provider_id = provider.id
-
-        authorize @form
 
         if @form.valid?
           coordinates = ::Addresses::GeocodeService.call(postcode: @form.postcode)
