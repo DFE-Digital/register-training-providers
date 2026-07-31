@@ -1,0 +1,133 @@
+{
+  "metadata": {
+    "title": "User can add a new provider with accreditation status:\n      accredited, onboarded_at: Today, first_become_active: Same as onboarded at date",
+    "file_path": "./spec/features/end_to_end/providers/creating_provider_spec.rb",
+    "line_number": 16,
+    "timestamp": "2026-07-31T15:06:00Z",
+    "status": "passed"
+  },
+  "media": {
+    "video_file": "User_can_add_a_new_provider_with_accreditation_status________accredited__onboarded_at__Today__first_become_active__Same_as_onboarded_at_date.webm",
+    "total_screenshots": 19,
+    "screenshots": [
+      {
+        "step_number": 1,
+        "label": "Initial State / Page Load",
+        "file_name": "step_001_initial.png",
+        "relative_path": "steps/step_001_initial.png"
+      },
+      {
+        "step_number": 2,
+        "label": "Action Step",
+        "file_name": "step_002_action.png",
+        "relative_path": "steps/step_002_action.png"
+      },
+      {
+        "step_number": 3,
+        "label": "Action Step",
+        "file_name": "step_003_action.png",
+        "relative_path": "steps/step_003_action.png"
+      },
+      {
+        "step_number": 4,
+        "label": "Action Step",
+        "file_name": "step_004_action.png",
+        "relative_path": "steps/step_004_action.png"
+      },
+      {
+        "step_number": 5,
+        "label": "Action Step",
+        "file_name": "step_005_action.png",
+        "relative_path": "steps/step_005_action.png"
+      },
+      {
+        "step_number": 6,
+        "label": "Action Step",
+        "file_name": "step_006_action.png",
+        "relative_path": "steps/step_006_action.png"
+      },
+      {
+        "step_number": 7,
+        "label": "Action Step",
+        "file_name": "step_007_action.png",
+        "relative_path": "steps/step_007_action.png"
+      },
+      {
+        "step_number": 8,
+        "label": "Action Step",
+        "file_name": "step_008_action.png",
+        "relative_path": "steps/step_008_action.png"
+      },
+      {
+        "step_number": 9,
+        "label": "Action Step",
+        "file_name": "step_009_action.png",
+        "relative_path": "steps/step_009_action.png"
+      },
+      {
+        "step_number": 10,
+        "label": "Action Step",
+        "file_name": "step_010_action.png",
+        "relative_path": "steps/step_010_action.png"
+      },
+      {
+        "step_number": 11,
+        "label": "Action Step",
+        "file_name": "step_011_action.png",
+        "relative_path": "steps/step_011_action.png"
+      },
+      {
+        "step_number": 12,
+        "label": "Action Step",
+        "file_name": "step_012_action.png",
+        "relative_path": "steps/step_012_action.png"
+      },
+      {
+        "step_number": 13,
+        "label": "Action Step",
+        "file_name": "step_013_action.png",
+        "relative_path": "steps/step_013_action.png"
+      },
+      {
+        "step_number": 14,
+        "label": "Action Step",
+        "file_name": "step_014_action.png",
+        "relative_path": "steps/step_014_action.png"
+      },
+      {
+        "step_number": 15,
+        "label": "Action Step",
+        "file_name": "step_015_action.png",
+        "relative_path": "steps/step_015_action.png"
+      },
+      {
+        "step_number": 16,
+        "label": "Action Step",
+        "file_name": "step_016_action.png",
+        "relative_path": "steps/step_016_action.png"
+      },
+      {
+        "step_number": 17,
+        "label": "Action Step",
+        "file_name": "step_017_action.png",
+        "relative_path": "steps/step_017_action.png"
+      },
+      {
+        "step_number": 18,
+        "label": "Action Step",
+        "file_name": "step_018_action.png",
+        "relative_path": "steps/step_018_action.png"
+      },
+      {
+        "step_number": 19,
+        "label": "Final Test State",
+        "file_name": "step_019_final_state.png",
+        "relative_path": "steps/step_019_final_state.png"
+      }
+    ]
+  },
+  "code": {
+    "language": "ruby",
+    "snippet": "    scenario \"User can add a new provider with accreditation status:\n      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}\", living_docs do\n      given_i_am_an_authenticated_user\n      when_i_navigate_to_the_add_provider_page\n      and_i_fill_out_the_onboarding_details(onboarded_at)\n      and_i_fill_out_the_first_become_active_details(first_become_active)\n      and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)\n      and_i_am_on_the_check_answers_page\n      then_the_address_should_be_displayed_on_check_answers\n      when_i_save_the_provider\n      then_i_should_be_redirected_to_the_provider_list_page\n      and_i_should_see_a_success_message\n      and_the_address_should_be_saved_to_the_provider\n    end\n"
+  }
+}

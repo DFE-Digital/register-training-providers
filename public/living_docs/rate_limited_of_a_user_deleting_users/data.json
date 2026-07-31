@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "title": "rate limited of a user deleting users",
+    "file_path": "./spec/features/end_to_end/users/rate_limited_deleting_users_spec.rb",
+    "line_number": 4,
+    "timestamp": "2026-07-31T15:06:15Z",
+    "status": "passed"
+  },
+  "media": {
+    "video_file": "rate_limited_of_a_user_deleting_users.webm",
+    "total_screenshots": 15,
+    "screenshots": [
+      {
+        "step_number": 1,
+        "label": "Initial State / Page Load",
+        "file_name": "step_001_initial.png",
+        "relative_path": "steps/step_001_initial.png"
+      },
+      {
+        "step_number": 2,
+        "label": "Action Step",
+        "file_name": "step_002_action.png",
+        "relative_path": "steps/step_002_action.png"
+      },
+      {
+        "step_number": 3,
+        "label": "Action Step",
+        "file_name": "step_003_action.png",
+        "relative_path": "steps/step_003_action.png"
+      },
+      {
+        "step_number": 4,
+        "label": "Action Step",
+        "file_name": "step_004_action.png",
+        "relative_path": "steps/step_004_action.png"
+      },
+      {
+        "step_number": 5,
+        "label": "Action Step",
+        "file_name": "step_005_action.png",
+        "relative_path": "steps/step_005_action.png"
+      },
+      {
+        "step_number": 6,
+        "label": "Action Step",
+        "file_name": "step_006_action.png",
+        "relative_path": "steps/step_006_action.png"
+      },
+      {
+        "step_number": 7,
+        "label": "Action Step",
+        "file_name": "step_007_action.png",
+        "relative_path": "steps/step_007_action.png"
+      },
+      {
+        "step_number": 8,
+        "label": "Action Step",
+        "file_name": "step_008_action.png",
+        "relative_path": "steps/step_008_action.png"
+      },
+      {
+        "step_number": 9,
+        "label": "Action Step",
+        "file_name": "step_009_action.png",
+        "relative_path": "steps/step_009_action.png"
+      },
+      {
+        "step_number": 10,
+        "label": "Action Step",
+        "file_name": "step_010_action.png",
+        "relative_path": "steps/step_010_action.png"
+      },
+      {
+        "step_number": 11,
+        "label": "Action Step",
+        "file_name": "step_011_action.png",
+        "relative_path": "steps/step_011_action.png"
+      },
+      {
+        "step_number": 12,
+        "label": "Action Step",
+        "file_name": "step_012_action.png",
+        "relative_path": "steps/step_012_action.png"
+      },
+      {
+        "step_number": 13,
+        "label": "Action Step",
+        "file_name": "step_013_action.png",
+        "relative_path": "steps/step_013_action.png"
+      },
+      {
+        "step_number": 14,
+        "label": "Action Step",
+        "file_name": "step_014_action.png",
+        "relative_path": "steps/step_014_action.png"
+      },
+      {
+        "step_number": 15,
+        "label": "Final Test State",
+        "file_name": "step_015_final_state.png",
+        "relative_path": "steps/step_015_final_state.png"
+      }
+    ]
+  },
+  "code": {
+    "language": "ruby",
+    "snippet": "  scenario \"rate limited of a user deleting users\", :living_docs do\n    given_i_am_an_authenticated_user\n    and_i_have_users_to_delete\n    and_i_am_on_the_user_support_listing_page\n    and_i_can_see_the_page_title_users_with_the_count(count: 5)\n\n    Timecop.freeze(Time.zone.now) do\n      users_to_delete.each do |user_to_delete|\n        and_i_click_on(user_to_delete.name)\n        and_i_am_taken_to(\"/users/#{user_to_delete.id}\")\n\n        and_i_click_on(\"Delete\")\n        and_i_am_taken_to(\"/users/#{user_to_delete.id}/delete\")\n\n        when_i_click_on(\"Delete user\")\n        then_i_see_the_success_message\n        and_i_am_taken_to(\"/users\")\n      end\n      and_i_can_see_the_page_title_users_with_the_count(count: 2)\n\n      and_i_click_on(user_fails_to_be_deleted.name)\n      and_i_am_taken_to(\"/users/#{user_fails_to_be_deleted.id}\")\n\n      and_i_click_on(\"Delete user\")\n      and_i_am_taken_to(\"/users/#{user_fails_to_be_deleted.id}/delete\")\n\n      expect(Rails.logger).to receive(:warn).with(\n        event: \"too_many_requests\",\n        user_id: current_user.id,\n        controller: \"Users::DeletesController\",\n        action: \"destroy\",\n        path: \"/users/#{user_fails_to_be_deleted.id}/delete\",\n      )\n\n      when_i_click_on(\"Delete user\")\n      and_i_can_see_the_page_title_for_not_able_to_complete_this_action\n      and_i_am_still_on(\"/users/#{user_fails_to_be_deleted.id}/delete\")\n    end\n  end\n"
+  }
+}
