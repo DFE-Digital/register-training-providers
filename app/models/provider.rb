@@ -188,7 +188,7 @@ class Provider < ApplicationRecord
 private
 
   def operational_academic_years
-    @operational_academic_years = if first_active_at < Time.zone.today
+    @operational_academic_years = if first_active_at <= Time.zone.today
                                     AcademicYear.where("duration && daterange(?, ?, '[]')", first_active_at,
                                                        Time.zone.today)
                                   else
