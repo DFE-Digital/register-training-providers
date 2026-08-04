@@ -96,7 +96,7 @@ paths:
         required: false
         schema:
           type: integer
-        example: 2025
+        example: 2026
         description: |
           Filters providers by the specified academic year.
           The value must be a 4-digit year, for example 2025.
@@ -116,7 +116,7 @@ paths:
         required: false
         schema:
           type: string
-        example: '2025-09-14T11:34:56Z'
+        example: '2026-09-14T11:34:56Z'
         description: |
           Filters providers to only those updated after the specified timestamp.
           The value must be an ISO 8601 datetime, for example: 2025-09-14T11:34:56Z.
@@ -202,7 +202,7 @@ paths:
                   accreditation_status: unaccredited
                   ukprn: '44564753'
                   urn:
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
                 - id: e455c483-ed5b-4207-becd-af1e735898c0
                   operating_name: Higher education institution (HEI) 7709
                   provider_type: hei
@@ -210,7 +210,7 @@ paths:
                   accreditation_status: accredited
                   ukprn: '34400987'
                   urn:
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
                 - id: 2b791634-cceb-489d-aecd-f508a675ff4e
                   operating_name: Other 1996
                   provider_type: other
@@ -218,7 +218,7 @@ paths:
                   accreditation_status: accredited
                   ukprn: '89186965'
                   urn:
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
                 - id: f5a66d76-1313-4bed-92d0-3d57a4939658
                   operating_name: Other 3576
                   provider_type: other
@@ -226,7 +226,7 @@ paths:
                   accreditation_status: unaccredited
                   ukprn: '66322726'
                   urn:
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
                 - id: 42adfd01-d4db-4601-8ba8-08251aaa21a1
                   operating_name: School 3699
                   provider_type: school
@@ -234,7 +234,7 @@ paths:
                   accreditation_status: unaccredited
                   ukprn: '10792824'
                   urn: '421472'
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
                 - id: 10bdc5c7-009b-45cf-bc95-5ce192250b1a
                   operating_name: School-centred initial teacher training (SCITT)
                     6932
@@ -243,7 +243,7 @@ paths:
                   accreditation_status: accredited
                   ukprn: '95696736'
                   urn: '806304'
-                  updated_at: '2025-09-15T11:34:56Z'
+                  updated_at: '2026-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
           content:
