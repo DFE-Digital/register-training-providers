@@ -5,7 +5,8 @@ class UsersController < ApplicationController
     current_user.clear_temporary(User, purpose: :check_your_answers)
 
     @pagy, @records = pagy(policy_scope(scoped_user.order_by_first_then_last_name))
-    authorize @records
+    skip_authorization
+    verify_policy_scoped
   end
 
   def show
