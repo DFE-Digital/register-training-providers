@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.warn(
       event: "authorization_denied",
       user_id: current_user&.id,
-      controller: controller_name,
+      controller: self.class.name,
       action: action_name,
       path: request.path,
       policy: exception.policy.class.name,
@@ -27,6 +27,32 @@ class ApplicationController < ActionController::Base
   end
 
   after_action :verify_pundit_authorization
+
+  rescue_from ActionController::TooManyRequests do |_exception|
+    Rails.logger.warn(
+      event: "too_many_requests",
+      user_id: current_user&.id,
+      controller: self.class.name,
+      action: action_name,
+      path: request.path,
+    )
+
+    render "errors/too_many_requests", status: :too_many_requests, formats: [:html]
+  end
+
+  rescue_from MinimumActiveUsersError do
+    Rails.logger.warn(
+      event: "minimum_active_users_violation",
+      user_id: current_user&.id,
+      remaining_active_users: User.kept.where(active: true).count,
+      total_users: User.count,
+      controller: controller_name,
+      action: action_name,
+      path: request.path
+    )
+
+    render "errors/conflict", status: :conflict, formats: [:html]
+  end
 
 private
 

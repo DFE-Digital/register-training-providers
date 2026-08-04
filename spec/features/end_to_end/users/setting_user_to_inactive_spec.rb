@@ -1,56 +1,98 @@
 require "rails_helper"
 
 RSpec.feature "User management" do
-  scenario "editing users" do
-    given_i_am_an_authenticated_user
-    and_i_have_a_user_to_set_to_inactive
-    and_i_am_on_the_user_support_listing_page
-    and_i_can_see_the_page_title_users_with_the_count(count: 2)
+  context "when updating user as inactive leaves the minimum required number of users" do
+    scenario "prevent setting user as inactive" do
+      given_i_am_an_authenticated_user
+      and_i_have_additional_users(number_of_users: 3)
 
-    and_i_click_on(user_to_deactivate.name)
-    and_i_can_see_the_page_title_for_view_user
-    and_i_click_on("Change is the account active?")
-    and_i_am_taken_to("/users/#{user_to_deactivate.id}/edit")
+      and_i_have_a_user_to_set_to_inactive
+      and_i_am_on_the_user_support_listing_page
+      and_i_can_see_the_page_title_users_with_the_count(count: 5)
 
-    and_i_can_see_the_page_title_for_personal_details
-    and_i_do_not_see_error_summary
+      and_i_click_on(user_to_deactivate.name)
+      and_i_can_see_the_page_title_for_view_user
+      and_i_click_on("Change is the account active?")
+      and_i_am_taken_to("/users/#{user_to_deactivate.id}/edit")
 
-    and_i_set_the_user_to_inactive
+      and_i_can_see_the_page_title_for_personal_details
+      and_i_do_not_see_error_summary
 
-    and_i_click_on("Continue")
+      and_i_set_the_user_to_inactive
 
-    and_i_am_taken_to("/users/#{user_to_deactivate.id}/check")
+      and_i_click_on("Continue")
 
-    and_i_can_see_the_page_title_for_check_your_answers
+      and_i_am_taken_to("/users/#{user_to_deactivate.id}/check")
 
-    expect(Rails.logger).to receive(:warn).with(
-      event: "user_deactivated",
-      user_id: current_user.id,
-      deactivate_user_id: user_to_deactivate.id,
-    )
+      and_i_can_see_the_page_title_for_check_your_answers
 
-    when_i_click_on("Save user")
+      expect(Rails.logger).to receive(:warn).with(
+        event: "user_deactivated",
+        user_id: current_user.id,
+        deactivate_user_id: user_to_deactivate.id,
+      )
 
-    then_i_see_the_success_message
-    and_i_am_taken_to("/users")
+      when_i_click_on("Save user")
 
-    and_i_can_see_the_page_title_users_with_the_count(count: 2)
+      then_i_see_the_success_message
+      and_i_am_taken_to("/users")
+
+      and_i_can_see_the_page_title_users_with_the_count(count: 5)
+    end
+  end
+
+  context "when updating user as inactive would go below the minimum required number of users" do
+    scenario "prevent setting user as inactive" do
+      given_i_am_an_authenticated_user
+      and_i_have_additional_users(number_of_users: 2)
+
+      and_i_have_a_user_to_set_to_inactive
+      and_i_am_on_the_user_support_listing_page
+      and_i_can_see_the_page_title_users_with_the_count(count: 4)
+
+      and_i_click_on(user_to_deactivate.name)
+      and_i_can_see_the_page_title_for_view_user
+      and_i_click_on("Change is the account active?")
+      and_i_am_taken_to("/users/#{user_to_deactivate.id}/edit")
+
+      and_i_can_see_the_page_title_for_personal_details
+      and_i_do_not_see_error_summary
+
+      and_i_set_the_user_to_inactive
+
+      and_i_click_on("Continue")
+
+      and_i_am_taken_to("/users/#{user_to_deactivate.id}/check")
+
+      and_i_can_see_the_page_title_for_check_your_answers
+
+      expect(Rails.logger).to receive(:warn).with(
+        event: "minimum_active_users_violation",
+        user_id: current_user.id,
+        remaining_active_users: 4,
+        total_users: 4,
+        action: "update",
+        controller: "check",
+        path: "/users/#{user_to_deactivate.id}/check",
+      )
+
+      when_i_click_on("Save user")
+
+      and_i_can_see_the_page_title_for_you_cannot_complete_this_action
+      and_i_am_still_on("/users/#{user_to_deactivate.id}/check")
+    end
+  end
+
+  def and_i_can_see_the_page_title_for_you_cannot_complete_this_action
+    expect(page).to have_title("Sorry, you cannot complete this action - Register of training providers - GOV.UK")
+  end
+
+  def and_i_have_additional_users(number_of_users:)
+    create_list(:user, number_of_users)
   end
 
   def and_i_set_the_user_to_inactive
     page.choose("No", name: "user[active]")
-  end
-
-  def and_the_user_to_deactivate_is_edited
-    expect(user_to_deactivate.reload.first_name).to eq(new_first_name)
-  end
-
-  def new_first_name
-    "Nouveau"
-  end
-
-  def old_first_name
-    "Vieux"
   end
 
   def and_i_see_my_changes(link)
@@ -71,7 +113,7 @@ RSpec.feature "User management" do
   end
 
   def user_to_deactivate
-    @user_to_deactivate ||= create(:user, first_name: old_first_name)
+    @user_to_deactivate ||= create(:user)
   end
 
   def old_user_to_deactivate_name

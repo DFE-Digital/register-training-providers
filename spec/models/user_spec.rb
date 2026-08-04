@@ -243,6 +243,58 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".ensure_minimum_active_users!" do
+    context "when excluding the user would leave at least 4 kept active users" do
+      let!(:users) { create_list(:user, 5, active: true) }
+
+      it "does not raise an error" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: users.first.id
+          )
+        }.not_to raise_error
+      end
+    end
+
+    context "when excluding the user would leave fewer than 4 kept active users" do
+      let!(:users) { create_list(:user, 4, active: true) }
+
+      it "raises MinimumActiveUsersError" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: users.first.id
+          )
+        }.to raise_error(MinimumActiveUsersError)
+      end
+    end
+
+    context "when there are inactive users" do
+      let!(:active_users) { create_list(:user, 4, active: true) }
+      let!(:inactive_user) { create(:user, active: false) }
+
+      it "does not count inactive users" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: active_users.first.id
+          )
+        }.to raise_error(MinimumActiveUsersError)
+      end
+    end
+
+    context "when there are discarded active users" do
+      let!(:active_users) { create_list(:user, 4, active: true) }
+      let!(:discarded_user) { create(:user, active: true, discarded_at: Time.current) }
+
+      it "does not count discarded users" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: active_users.first.id
+          )
+        }.to raise_error(MinimumActiveUsersError)
+      end
+    end
+  end
+
   describe "#active?" do
     it "is true by default" do
       expect(user.active?).to be true

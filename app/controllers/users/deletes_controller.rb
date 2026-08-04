@@ -1,4 +1,6 @@
 class Users::DeletesController < CheckController
+  rate_limit to: 3, within: 3.minutes, only: :destroy, by: -> { current_user.id }
+
   def show
     @user = User.find(params[:user_id])
     authorize @user
@@ -7,6 +9,9 @@ class Users::DeletesController < CheckController
   def destroy
     @user = User.find(params[:user_id])
     authorize @user
+
+    User.ensure_minimum_active_users!(users_id_to_exclude: @user.id)
+
     @user.discard!
     redirect_to(users_path, flash: { success: "User deleted" })
   end

@@ -24,8 +24,12 @@ private
   def post_save
   end
 
+  def pre_save
+  end
+
   def save
     authorize model
+    pre_save
     if model.save
       post_save
       redirect_to success_path, flash: flash_message
