@@ -16,7 +16,6 @@ class ProvidersController < ApplicationController
     provider_query = ProvidersQuery.call(filters: provider_filters, search_term: keywords)
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
 
-
     @academic_years = AcademicYear.next_and_older
   end
 
