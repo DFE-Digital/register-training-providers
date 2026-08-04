@@ -52,7 +52,7 @@ module Providers
         @form.manual_entry = true if @form.respond_to?(:manual_entry=)
         @form.provider_creation_mode = setup_context?
 
-        authorize @form
+        authorize provider, :update?
 
         if @form.valid?
           coordinates = ::Addresses::GeocodeService.call(postcode: @form.postcode)
