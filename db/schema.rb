@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_09_134154) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_092141) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -219,6 +219,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_134154) do
     t.date "onboarded_at"
     t.string "operating_name", null: false
     t.string "provider_type", null: false
+    t.string "rotp_id"
     t.tsvector "searchable"
     t.jsonb "seed_data_notes", default: {}, null: false
     t.boolean "seed_data_with_issues", default: false, null: false
@@ -233,6 +234,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_134154) do
     t.index ["legal_name"], name: "index_providers_on_legal_name"
     t.index ["onboarded_at"], name: "index_providers_on_onboarded_at"
     t.index ["provider_type"], name: "index_providers_on_provider_type"
+    t.index ["rotp_id"], name: "index_providers_on_rotp_id", unique: true
     t.index ["searchable"], name: "index_providers_on_searchable", using: :gin
     t.index ["ukprn"], name: "index_providers_on_ukprn"
     t.index ["urn"], name: "index_providers_on_urn"

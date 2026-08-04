@@ -2,6 +2,7 @@
 :shared:
   :providers:
     - id
+    - rotp_id
     - accreditation_status
     - archived_at
     - code
