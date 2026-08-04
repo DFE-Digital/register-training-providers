@@ -3,6 +3,12 @@ module AcademicYearSpecHelper
     Faker::Date.between(from: build_academic_year_start_date(year), to: build_academic_year_end_date(year))
   end
 
+  def build_capped_current_academic_year_date
+    year = current_academic_year
+
+    Faker::Date.between(from: build_academic_year_start_date(year), to: Time.zone.now)
+  end
+
   def build_academic_year_start_date(year)
     Date.new(year, 8, 1)
   end
