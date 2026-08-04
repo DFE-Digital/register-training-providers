@@ -6,6 +6,8 @@ module Providers
       def new
         partnership_data = partnership_session.load_partnership
 
+        authorize provider, :show?
+
         # Keep previous selections only when coming from confirm page to change them
         # Otherwise start fresh (dates may have changed, invalidating previous selections)
         previous_ids = params[:goto] == "confirm" ? partnership_data&.dig(:academic_year_ids) : nil
@@ -33,6 +35,8 @@ module Providers
         )
 
         partnership_attributes = partnership_session.load_partnership
+
+        authorize provider, :update?
 
         unless partnership_attributes
           redirect_to provider_new_partnership_find_path(provider)

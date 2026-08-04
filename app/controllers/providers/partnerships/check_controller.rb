@@ -34,6 +34,8 @@ module Providers
         end
 
         setup_view_data(:new)
+
+        authorize provider, :update?
       end
 
       def create

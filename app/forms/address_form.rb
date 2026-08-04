@@ -90,6 +90,12 @@ class AddressForm
     manual_entry
   end
 
+  def provider
+    return Provider.new if provider_id.blank?
+
+    Provider.find(provider_id)
+  end
+
 private
 
   def normalize_postcode

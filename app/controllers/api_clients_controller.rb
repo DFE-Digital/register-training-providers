@@ -5,6 +5,8 @@ class ApiClientsController < ApplicationController
     current_user.clear_temporary(ApiClient, purpose: :check_your_answers)
 
     @pagy, @records = pagy(policy_scope(scoped_api_client), limit: 15)
+    skip_authorization # All users can access this but records will be scoped depending on user type
+    verify_policy_scoped
   end
 
   def show
@@ -15,6 +17,8 @@ class ApiClientsController < ApplicationController
   def new
     current_user.clear_temporary(ApiClientForm, purpose: :check_your_answers) if params[:goto] != "confirm"
     @form = current_user.load_temporary(ApiClientForm, purpose: :check_your_answers, reset: false)
+
+    authorize @form
   end
 
   def edit
@@ -25,6 +29,8 @@ class ApiClientsController < ApplicationController
 
   def create
     @form = ApiClientForm.new(api_client_params.merge(created_by_id: current_user.id))
+
+    authorize @form
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)

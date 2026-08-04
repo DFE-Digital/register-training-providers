@@ -10,6 +10,8 @@ class Providers::ContactsController < ApplicationController
 
     @form = current_user.load_temporary(ContactForm, purpose: :create_contact)
     @form.assign_attributes(provider_id: provider.id) if @form.provider_id.blank?
+
+    authorize @form
     render :new
   end
 
@@ -39,6 +41,8 @@ class Providers::ContactsController < ApplicationController
 
   def create
     @form = ContactForm.new(contact_form_params)
+
+    authorize @form
 
     if @form.valid?
       @form.save_as_temporary!(created_by: current_user, purpose: :create_contact)

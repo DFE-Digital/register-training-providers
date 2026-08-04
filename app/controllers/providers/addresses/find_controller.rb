@@ -18,6 +18,8 @@ module Providers
                   ::Addresses::FindForm.new
                 end
 
+        authorize provider, :update?
+
         setup_view_data
       end
 
@@ -26,6 +28,8 @@ module Providers
           postcode: params.dig(:find, :postcode),
           building_name_or_number: params.dig(:find, :building_name_or_number)
         )
+
+        authorize provider, :update?
 
         if @form.valid?
           results = OrdnanceSurvey::AddressLookupService.call(

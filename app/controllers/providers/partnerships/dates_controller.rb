@@ -9,6 +9,7 @@ module Providers
         partnership_data = partnership_session.load_partnership
         @form = build_form_from_session(partnership_data)
 
+        authorize provider, :update?
         setup_view_data(:new)
       end
 
@@ -25,6 +26,8 @@ module Providers
 
       def create
         @form = ::Partnerships::DatesForm.new(dates_form_params)
+
+        authorize provider, :update?
 
         partnership_attributes = partnership_session.load_partnership
 

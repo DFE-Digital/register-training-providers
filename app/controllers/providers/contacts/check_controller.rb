@@ -4,6 +4,8 @@ module Providers
       include FormObjectSavePattern
 
       def new
+        authorize model
+
         redirect_to back_path if model.invalid?
       end
 

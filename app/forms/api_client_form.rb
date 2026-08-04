@@ -59,6 +59,10 @@ class ApiClientForm
     end
   end
 
+  def new_record?
+    id.blank?
+  end
+
 private
 
   def expires_at_within_one_year

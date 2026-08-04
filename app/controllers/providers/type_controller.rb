@@ -18,6 +18,8 @@ class Providers::TypeController < CheckController
     provider_type_data = provider_session.load_provider_type
     @form = Providers::ProviderType.new(provider_type_data || {})
 
+    authorize @form
+
     @form.assign_attributes(is_the_provider_accredited_data)
 
     render :new
@@ -25,6 +27,8 @@ class Providers::TypeController < CheckController
 
   def create
     @form = Providers::ProviderType.new(create_new_provider_type_params)
+
+    authorize @form
 
     if @form.valid?
       provider_session.store_provider_type(@form.attributes)

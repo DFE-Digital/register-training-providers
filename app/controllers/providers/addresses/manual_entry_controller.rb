@@ -6,11 +6,13 @@ module Providers
       def new
         # Setup mode specific validation
         if setup_context? && (provider.nil? || provider.invalid?)
+          skip_authorization
           redirect_to new_provider_details_path
           return
         end
 
         unless params[:skip_finder] == "true"
+          skip_authorization
           redirect_to find_path
           return
         end
@@ -22,6 +24,8 @@ module Providers
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.new
         @form.provider_id = provider.id unless setup_context?
+
+        authorize provider, :update?
 
         setup_view_data(:new)
       end
@@ -36,6 +40,9 @@ module Providers
         # Load from session if user is returning from check page with temporary changes
         address_data = address_session.load_address
         @form = address_data ? ::AddressForm.new(address_data) : ::AddressForm.from_address(@address)
+
+        authorize provider, :update?
+
         setup_view_data(:edit)
       end
 
@@ -44,6 +51,8 @@ module Providers
         @form.provider_id = provider.id unless setup_context?
         @form.manual_entry = true if @form.respond_to?(:manual_entry=)
         @form.provider_creation_mode = setup_context?
+
+        authorize provider, :update?
 
         if @form.valid?
           coordinates = ::Addresses::GeocodeService.call(postcode: @form.postcode)
@@ -60,6 +69,7 @@ module Providers
 
       def update
         # Update only available in manage context
+        authorize provider, :update?
         redirect_to provider_addresses_path(provider) if setup_context?
 
         @address = provider.addresses.kept.find(params[:id])

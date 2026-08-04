@@ -3,10 +3,12 @@ class Users::DeletesController < CheckController
 
   def show
     @user = User.find(params[:user_id])
+    authorize @user
   end
 
   def destroy
     @user = User.find(params[:user_id])
+    authorize @user
 
     User.ensure_minimum_active_users!(users_id_to_exclude: @user.id)
 

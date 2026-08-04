@@ -4,10 +4,13 @@ class Providers::OnboardingController < CheckController
   def new
     onboarding_data = provider_session.load_onboarding
     @form = Providers::OnboardingForm.new(onboarding_data || {})
+
+    authorize @form
   end
 
   def create
     @form = Providers::OnboardingForm.new(onboarding_params)
+    authorize @form
 
     if @form.valid?
       provider_session.store_onboarding(@form.attributes)

@@ -32,5 +32,9 @@ module Providers
     def onboarded_at
       resolve_date_from_choice(:onboarded_at_date)
     end
+
+    def new_record?
+      true
+    end
   end
 end

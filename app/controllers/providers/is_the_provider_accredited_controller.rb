@@ -4,10 +4,14 @@ class Providers::IsTheProviderAccreditedController < CheckController
   def new
     is_provider_accredited_data = provider_session.load_is_provider_accredited
     @form = Providers::IsTheProviderAccredited.new(is_provider_accredited_data || {})
+
+    authorize @form
   end
 
   def create
     @form = Providers::IsTheProviderAccredited.new(is_the_provider_accredited_params)
+
+    authorize @form
 
     if @form.valid?
       provider_session.store_is_provider_accredited(@form.attributes)

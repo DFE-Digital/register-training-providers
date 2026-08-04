@@ -5,6 +5,7 @@ class ProvidersController < ApplicationController
   helper_method :provider_filters, :keywords
 
   def index
+    authorize Provider
     # Clear provider creation sessions when returning to index
     provider_session = ProviderCreation::SessionManager.new(session)
     provider_session.clear!
@@ -16,8 +17,6 @@ class ProvidersController < ApplicationController
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
 
     @academic_years = AcademicYear.next_and_older
-
-    authorize provider_query
   end
 
   def show
@@ -34,6 +33,7 @@ class ProvidersController < ApplicationController
 
   def update
     @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
+    authorize @provider
 
     @provider.assign_attributes(params.expect(provider: [:provider_type,
                                                          :accreditation_status,

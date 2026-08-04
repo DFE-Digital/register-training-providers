@@ -23,6 +23,10 @@ module Providers
       end
     end
 
+    def new_record?
+      true
+    end
+
     alias_method :serializable_hash, :attributes
   end
 end

@@ -31,6 +31,8 @@ module Providers
         @form = ::AddressForm.new(address_data)
         @form.provider_id = provider.id
 
+        authorize @form
+
         if @form.invalid?
           query_params = { goto: "confirm", skip_finder: "true" }
           query_params[:debug] = true if imported_data_context?

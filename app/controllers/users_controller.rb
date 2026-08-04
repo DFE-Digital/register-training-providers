@@ -5,6 +5,8 @@ class UsersController < ApplicationController
     current_user.clear_temporary(User, purpose: :check_your_answers)
 
     @pagy, @records = pagy(policy_scope(scoped_user.order_by_first_then_last_name))
+    skip_authorization
+    verify_policy_scoped
   end
 
   def show
@@ -14,14 +16,18 @@ class UsersController < ApplicationController
 
   def new
     @user = current_user.load_temporary(scoped_user, purpose: :check_your_answers)
+    authorize @user
   end
 
   def edit
     @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
+    authorize @user
   end
 
   def create
     @user = scoped_user.new(params.expect(user: user_params))
+    authorize @user
+
     if @user.valid?
       @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
       redirect_to new_user_confirm_path
@@ -32,6 +38,7 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
+    authorize @user
 
     @user.assign_attributes(params.expect(user: user_params))
 
