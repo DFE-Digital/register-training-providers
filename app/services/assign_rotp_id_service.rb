@@ -11,16 +11,16 @@ class AssignRotpIdService
     attempt = 0
 
     begin
-      provider.rotp_id = RotpIdGeneratorService.call(
-        provider.operating_name,
-        provider.onboarded_at,
-        attempt
+      provider.assign_attributes(
+        rotp_id: RotpIdGeneratorService.call(
+          provider.operating_name,
+          provider.onboarded_at,
+          attempt
+        )
       )
 
-      provider.save!
-    rescue ActiveRecord::RecordInvalid => e
-      raise unless e.record&.errors&.of_kind?(:rotp_id, :taken)
-
+      provider.save!(validate: false)
+    rescue ActiveRecord::RecordNotUnique => e
       attempt += 1
       retry if attempt < MAX_RETRIES
 

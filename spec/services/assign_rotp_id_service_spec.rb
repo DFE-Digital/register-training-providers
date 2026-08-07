@@ -60,7 +60,7 @@ RSpec.describe AssignRotpIdService do
       it "raises after reaching the maximum retry limit" do
         expect {
           described_class.call(provider)
-        }.to raise_error(ActiveRecord::RecordInvalid)
+        }.to raise_error(ActiveRecord::RecordNotUnique)
 
         (0..9).each do |attempt|
           expect(RotpIdGeneratorService)
