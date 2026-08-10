@@ -15,7 +15,7 @@ module DataImporter
       assign_accreditation(provider) if raw_provider["accreditation_status"] == "accredited"
       assign_address(provider)
 
-      provider.save!(validate: false)
+      SaveProviderWithRotpIdService.call(provider, validate: false)
 
       attach_seed_data(provider)
 
