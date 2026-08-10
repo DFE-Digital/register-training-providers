@@ -28,10 +28,8 @@ private
     valid_count = 0
     invalid_count = 0
     CSV.foreach(file_path, headers: true) do |row|
-      ActiveRecord::Base.transaction do
-        importer_class.call(row.to_h.with_indifferent_access)
-        valid_count += 1
-      end
+      importer_class.call(row.to_h.with_indifferent_access)
+      valid_count += 1
     rescue StandardError => e
       invalid_count += 1
       Rails.logger.error("Failed row: #{row.inspect}")
