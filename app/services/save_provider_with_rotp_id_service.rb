@@ -30,21 +30,13 @@ private
         attempt
       )
       provider.save!(validate:)
-    rescue expected_exception_class => e
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, PG::UniqueViolation => e
       raise unless rotp_id_collision?(e)
 
       attempt += 1
       retry if attempt < MAX_RETRIES
 
       raise
-    end
-  end
-
-  def expected_exception_class
-    if validate
-      ActiveRecord::RecordInvalid
-    else
-      ActiveRecord::RecordNotUnique
     end
   end
 
