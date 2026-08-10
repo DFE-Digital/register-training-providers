@@ -60,6 +60,7 @@ RSpec.describe Provider, type: :model do
     it { is_expected.not_to allow_value("1234").for(:ukprn).with_message("Enter a valid UK provider reference number (UKPRN)") }
 
     it { is_expected.to validate_presence_of(:code).with_message("Enter provider code") }
+    it { is_expected.to validate_uniqueness_of(:rotp_id).with_message("has already been taken") }
 
     it { is_expected.to allow_value("ABC").for(:code) }
     it { is_expected.to allow_value("a1B").for(:code) }
@@ -88,7 +89,7 @@ RSpec.describe Provider, type: :model do
     end
 
     context "when provider_type is hei" do
-      let(:provider) { build(:provider, :hei, urn: nil) }
+      let(:provider) { build(:provider, :hei, urn: nil, rotp_id: "hei") }
 
       it "does not require URN" do
         expect(subject.valid?).to be_truthy
@@ -98,7 +99,7 @@ RSpec.describe Provider, type: :model do
   end
 
   describe "upcase_code callback" do
-    let(:provider) { build(:provider, code: "abc") }
+    let(:provider) { build(:provider, code: "abc", rotp_id: "code") }
 
     it "upcases the code before saving" do
       expect(provider.code).to eq("abc")
@@ -227,7 +228,7 @@ RSpec.describe Provider, type: :model do
   end
 
   describe "#restore!" do
-    let(:provider) { build(:provider, :archived) }
+    let(:provider) { build(:provider, :archived, rotp_id: "restore!") }
     it "sets archived_at to nil" do
       expect { provider.restore! }.to change { provider.archived_at }.to(nil)
     end

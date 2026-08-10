@@ -20,7 +20,7 @@
 #  urn                   :string(6)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  rotp_id               :string
+#  rotp_id               :string           not null
 #
 # Indexes
 #
@@ -85,7 +85,7 @@ class Provider < ApplicationRecord
     end
   end
 
-  validates :rotp_id, uniqueness: true, allow_nil: true
+  validates :rotp_id, uniqueness: true, allow_nil: false
   validates :provider_type, presence: true, provider_type: true
 
   include AccreditationStatusValidator
