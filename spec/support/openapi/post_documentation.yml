@@ -1,25 +1,7 @@
 provider_properties: &provider_properties
-  id:
-    description: The unique UUID identifier for the training provider.
-    example: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
-
-  accreditation_status:
-    description: The current accreditation status of the provider.
-    enum: [accredited, unaccredited]
-    example: accredited
-
-  code:
-    description: The unique 3-character identifier code for the provider.
-    example: 1BJ
-
-  operating_name:
-    description: The primary business or operating name of the training provider.
-    example: Bobby Jacob University
-
-  provider_type:
-    description: The classification of the provider.
-    enum: [hei, scitt, school, other]
-    example: hei
+  rotp_id:
+    description: The unique Register of training provider identifier.
+    example: "RoTP-00A0BC00"
 
   ukprn:
     description: The 8-digit UK Provider Reference Number.
