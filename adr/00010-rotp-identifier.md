@@ -309,7 +309,7 @@ It does not represent:
 
 ### Mandatory adoption
 
-All new services, services, and integrations must use RoTP-id as the primary provider reference.
+All services that integrate with RoTP must use RoTP-id as the primary provider reference.
 
 Failure to adopt RoTP-id will increase identity entropy through:
 
