@@ -470,5 +470,39 @@ RSpec.describe Provider, type: :model do
       expect(provider.errors[:rotp_id]).to eq(["cannot be changed"])
       expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
     end
+
+    it "retains the RoTP Id when the provider is updated" do
+      provider = create(:provider, rotp_id: "CANNOT CHANGE")
+
+      provider.update!(operating_name: "Changed name")
+
+      expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
+    end
+
+    it "retains the RoTP Id when the provider becomes inactive" do
+      provider = create(:provider, rotp_id: "CANNOT CHANGE")
+
+      provider.update!(inactive_periods: [{ start_date: build_capped_current_academic_year_date,
+                                            end_date: nil,
+                                            reason_for_inactive: "None given" }])
+
+      expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
+    end
+
+    it "retains the RoTP Id when the provider is soft-deleted" do
+      provider = create(:provider, rotp_id: "CANNOT CHANGE")
+
+      provider.discard!
+
+      expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
+    end
+
+    it "retains the RoTP Id when the provider code changes" do
+      provider = create(:provider, rotp_id: "CANNOT CHANGE")
+
+      provider.update!(code: "DOA")
+
+      expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
+    end
   end
 end
