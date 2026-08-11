@@ -5,6 +5,7 @@ module ProviderHelper
                                  use_details_for_academic_years_row: false, hide_onboarded_at: false,
                                  hide_first_active_at: false, hide_inactive_periods: false)
     summary_card_rows = [
+      { key: { text: "RoTP Id" }, value: { text: provider.rotp_id } },
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" }, value: { text: provider.operating_name } },
