@@ -1,0 +1,6 @@
+Provider:
+  rotp_id:
+    ColumnPresenceChecker:
+      enabled: false
+    ProviderRotpIdPresenceChecker:
+      enabled: true
