@@ -39,9 +39,9 @@ RoTP-id provides a stable identity anchor around which provider information can 
 
 ---
 
-## Sources of provider identity entropy
+### Sources of provider identity entropy
 
-### Naming and Coding Inconsistencies
+#### Naming and Coding Inconsistencies
 
 Providers are represented through multiple identifiers and descriptive attributes, including:
 
@@ -60,7 +60,7 @@ As a result, they cannot independently provide a reliable identity anchor.
 
 ---
 
-### Shifting functional roles
+#### Shifting functional roles
 
 A provider represents a persistent organisational identity, while its functional role within the ITT ecosystem may change over time.
 
@@ -146,7 +146,7 @@ flowchart TD
 
 ---
 
-### Organisational complexity and fictional operational entities
+#### Organisational complexity and fictional operational entities
 
 Not every operational construct represents an independent provider identity.
 
@@ -174,7 +174,7 @@ Operational, administrative, reporting, or fictional constructs should be repres
 
 ---
 
-### Lifecycle state transitions
+#### Lifecycle state transitions
 
 Providers undergo lifecycle changes including:
 
@@ -237,11 +237,11 @@ These concepts are modelled as attributes, relationships, and lifecycle states a
 
 ---
 
-## Applied principles
+### Applied principles
 
 The introduction of RoTP-id follows three core principles.
 
-### Promoting order
+#### Promoting order
 
 RoTP-id introduces a consistent identity structure across services by replacing multiple competing references with a single canonical provider identifier.
 
@@ -249,7 +249,7 @@ This reduces identity entropy by creating a stable reference point for provider 
 
 ---
 
-### Maintaining information integrity
+#### Maintaining information integrity
 
 RoTP-id preserves historical continuity by ensuring that changes in names, roles, relationships, or operational states do not break the connection between past and present information.
 
@@ -262,7 +262,7 @@ This supports:
 
 ---
 
-### Fostering interconnectedness
+#### Fostering interconnectedness
 
 RoTP-id provides a shared identity reference across provider-related services.
 
@@ -270,7 +270,7 @@ By connecting accreditation, funding, quality assurance, student, and operationa
 
 ---
 
-## Format
+### Format
 
 Format:
 
@@ -320,7 +320,7 @@ Failure to adopt RoTP-id will increase identity entropy through:
 
 ---
 
-### Implementation requirements
+#### Implementation requirements
 
 - Existing provider records must be mapped to RoTP-id during migration
 - Existing identifiers such as UKPRN, provider code, and names remain descriptive attributes
@@ -329,7 +329,7 @@ Failure to adopt RoTP-id will increase identity entropy through:
 
 ---
 
-## Benefits
+### Benefits
 
 - **Reduced identity entropy** through a persistent canonical reference
 - **Improved information integrity** through reliable lifecycle tracking
