@@ -437,4 +437,27 @@ RSpec.describe Provider, type: :model do
       end
     end
   end
+
+  describe "rotp_id" do
+    it "requires a RoTP Id normally" do
+      provider = build(:provider, rotp_id: nil)
+
+      expect(provider).not_to be_valid
+      expect(provider.errors[:rotp_id]).to include("can't be blank")
+    end
+
+    it "requires a unique RoTP Id normally" do
+      create(:provider, rotp_id: "some-id")
+      provider = build(:provider, rotp_id: "some-id")
+
+      expect(provider).not_to be_valid
+      expect(provider.errors[:rotp_id]).to include("has already been taken")
+    end
+
+    it "does not validate RoTP Id in the without_rotp_id context" do
+      provider = build(:provider, rotp_id: nil)
+
+      expect(provider.valid?(:without_rotp_id)).to be(true)
+    end
+  end
 end

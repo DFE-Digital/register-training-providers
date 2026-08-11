@@ -24,7 +24,7 @@ class Providers::AccreditationController < CheckController
 
     provider = provider_session.load_provider
 
-    if provider.nil? || provider.invalid?
+    if provider.nil? || provider.invalid?(:without_rotp_id)
       redirect_to new_provider_details_path
       return
     end

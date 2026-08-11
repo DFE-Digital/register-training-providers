@@ -5,7 +5,8 @@ module Providers
 
       def new
         # Setup mode specific validation
-        if setup_context? && (provider.nil? || provider.invalid?)
+        if setup_context? && (provider.nil? || provider.invalid?(:without_rotp_id))
+
           skip_authorization
           redirect_to new_provider_details_path
           return

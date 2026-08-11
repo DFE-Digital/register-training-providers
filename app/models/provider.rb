@@ -85,7 +85,9 @@ class Provider < ApplicationRecord
     end
   end
 
-  validates :rotp_id, uniqueness: true, allow_nil: false
+  validates :rotp_id, uniqueness: true, presence: true, unless: -> {
+    validation_context == :without_rotp_id
+  }
   validates :provider_type, presence: true, provider_type: true
 
   include AccreditationStatusValidator

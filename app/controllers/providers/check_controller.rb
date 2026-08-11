@@ -2,6 +2,11 @@ class Providers::CheckController < CheckController
   helper_method :change_provider_type_path, :accreditation_form, :change_provider_details_path, :address_form,
                 :change_address_path, :change_provider_onboarding_path, :change_provider_first_become_active_path
 
+  def new
+    authorize model
+    redirect_to back_path if model.invalid?(:without_rotp_id)
+  end
+
 private
 
   def model
