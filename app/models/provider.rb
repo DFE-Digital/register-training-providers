@@ -86,6 +86,8 @@ class Provider < ApplicationRecord
   end
 
   validates :rotp_id, uniqueness: true, presence: true, unless: :without_rotp_id?
+  validate :rotp_id_immutable, on: :update
+
   validates :provider_type, presence: true, provider_type: true
 
   include AccreditationStatusValidator
@@ -240,5 +242,11 @@ private
 
   def without_rotp_id?
     validation_context == :without_rotp_id
+  end
+
+  def rotp_id_immutable
+    return unless rotp_id_changed? && rotp_id_was.present?
+
+    errors.add(:rotp_id, "cannot be changed")
   end
 end
