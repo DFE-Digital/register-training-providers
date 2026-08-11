@@ -85,7 +85,7 @@ flowchart TD
     %% =====================================================================
 
     subgraph Identity["🏢 Organisational Identity"]
-        Provider["🏢 Provider<br/><br/>Persistent organisational identity"]
+        Provider["🏢 Provider: Persistent organisational identity"]
     end
 
     %% =====================================================================
@@ -95,13 +95,13 @@ flowchart TD
     subgraph Operations["📅 Operational Activity"]
         Activity["Academic Year Activity"]
 
-        Accredited["🎓 Accredited ITT Provider<br/><br/>Accreditation<br/>Quality assurance<br/>Delivery"]
+        Accredited["🎓 Accredited ITT Provider: Accreditation, Quality assurance, Delivery"]
 
-        Delivery["🤝 Training / Delivery Partner<br/><br/>Delivers provision<br/>through partnerships"]
+        Delivery["🤝 Training / Delivery Partner: Delivers provision through partnerships"]
 
-        Multiple["🔗 Multiple Operational Roles<br/><br/>Different responsibilities<br/>across arrangements"]
+        Multiple["🔗 Multiple Operational Roles: Different responsibilities across arrangements"]
 
-        Partnership["🏫 ITT Partnership Arrangement<br/><br/>Defines roles,<br/>relationships and delivery"]
+        Partnership["🏫 ITT Partnership Arrangement: Defines roles, relationships and delivery"]
     end
 
     %% =====================================================================
@@ -109,9 +109,9 @@ flowchart TD
     %% =====================================================================
 
     subgraph Lifecycle["📚 Historical Lifecycle"]
-        History["Historical Record<br/><br/>Previous roles<br/>Previous partnerships<br/>Previous activity"]
+        History["Historical Record: Previous roles, Previous partnerships, Previous activity"]
 
-        Dormant["💤 Dormant<br/><br/>No active provision<br/>Identity retained"]
+        Dormant["💤 Dormant: No active provision, Identity retained"]
     end
 
     %% Identity
