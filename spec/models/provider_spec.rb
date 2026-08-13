@@ -60,7 +60,7 @@ RSpec.describe Provider, type: :model do
     it { is_expected.not_to allow_value("1234").for(:ukprn).with_message("Enter a valid UK provider reference number (UKPRN)") }
 
     it { is_expected.to validate_presence_of(:code).with_message("Enter provider code") }
-    it { is_expected.to validate_uniqueness_of(:rotp_id).with_message("has already been taken") }
+    it { is_expected.to validate_uniqueness_of(:rotp_id).case_insensitive.with_message("has already been taken") }
 
     it { is_expected.to allow_value("ABC").for(:code) }
     it { is_expected.to allow_value("a1B").for(:code) }
