@@ -1,5 +1,5 @@
 module LivingDocs
-  class BaseController < ApplicationController
+  class BaseController < ActionController::Base
     include HttpBasicAuth
 
     layout "living_docs"
