@@ -25,6 +25,13 @@ RSpec.feature "Add Provider" do
       then_i_should_be_redirected_to_the_provider_list_page
       and_i_should_see_a_success_message
       and_the_address_should_be_saved_to_the_provider
+      and_the_rotp_id_should_be_generated_for_the_provider
+    end
+
+    def and_the_rotp_id_should_be_generated_for_the_provider
+      provider = Provider.last
+      expect(provider.rotp_id).to be_present
+      expect(provider.rotp_id).to start_with("RoTP-")
     end
 
     def when_i_navigate_to_the_add_provider_page

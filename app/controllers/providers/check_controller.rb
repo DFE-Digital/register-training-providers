@@ -95,7 +95,7 @@ private
   def save
     authorize model
 
-    if model.save
+    if ::SaveProviderWithRotpIdService.call(model)
       save_accreditation_if_present
       save_address_if_present
       clear_session_data
