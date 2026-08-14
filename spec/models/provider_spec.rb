@@ -459,5 +459,16 @@ RSpec.describe Provider, type: :model do
 
       expect(provider.valid?(:without_rotp_id)).to be(true)
     end
+
+    it "does not allow an existing RoTP Id to be changed" do
+      provider = create(:provider, rotp_id: "CANNOT CHANGE")
+
+      expect {
+        provider.update!(rotp_id: "LET'S TRY TO CHANGE IT")
+      }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Rotp cannot be changed")
+
+      expect(provider.errors[:rotp_id]).to eq(["cannot be changed"])
+      expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
+    end
   end
 end
