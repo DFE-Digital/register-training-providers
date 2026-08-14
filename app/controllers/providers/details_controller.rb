@@ -49,10 +49,9 @@ class Providers::DetailsController < CheckController
     @provider = provider_session.load_provider || Provider.new
 
     authorize @provider
-
     @provider.assign_attributes(create_new_provider_params)
 
-    if @provider.valid?
+    if @provider.valid?(:without_rotp_id)
       # Store relevant attributes as a plain hash, not all AR attributes which may include DB-specific fields
       provider_session.store_provider(
         @provider.attributes.slice(

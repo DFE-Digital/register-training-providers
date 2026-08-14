@@ -46,14 +46,14 @@ RSpec.describe SaveProviderWithRotpIdService do
 
       context "when the generated id keeps colliding" do
         before do
-          allow(RotpIdGeneratorService)
-            .to receive(:call)
-            .and_return("RoTP-26ABC1DEF01")
-
           create(
             :provider,
             rotp_id: "RoTP-26ABC1DEF01"
           )
+
+          allow(RotpIdGeneratorService)
+            .to receive(:call)
+            .and_return("RoTP-26ABC1DEF01")
         end
 
         it "raises after reaching the maximum retry limit" do
@@ -95,14 +95,14 @@ RSpec.describe SaveProviderWithRotpIdService do
 
         context "when the generated id keeps colliding" do
           before do
-            allow(RotpIdGeneratorService)
-              .to receive(:call)
-              .and_return("RoTP-26ABC1DEF01")
-
             create(
               :provider,
               rotp_id: "RoTP-26ABC1DEF01"
             )
+
+            allow(RotpIdGeneratorService)
+              .to receive(:call)
+              .and_return("RoTP-26ABC1DEF01")
           end
 
           it "raises after reaching the maximum retry limit" do

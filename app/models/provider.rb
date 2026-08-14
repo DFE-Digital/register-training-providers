@@ -20,7 +20,7 @@
 #  urn                   :string(6)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  rotp_id               :string
+#  rotp_id               :string           not null
 #
 # Indexes
 #
@@ -85,7 +85,7 @@ class Provider < ApplicationRecord
     end
   end
 
-  validates :rotp_id, uniqueness: true, allow_nil: true
+  validates :rotp_id, uniqueness: true, presence: true, unless: :without_rotp_id?
   validates :provider_type, presence: true, provider_type: true
 
   include AccreditationStatusValidator
@@ -236,5 +236,9 @@ private
 
   def set_default_academic_year
     self.academic_years = [AcademicYear.for_year(AcademicYearCalculator.current_academic_year)]
+  end
+
+  def without_rotp_id?
+    validation_context == :without_rotp_id
   end
 end

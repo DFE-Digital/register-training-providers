@@ -165,5 +165,11 @@ FactoryBot.define do
         provider.first_active_at = academic_year.duration.begin
       end
     end
+
+    before(:create) do |provider|
+      if provider.rotp_id.blank?
+        provider.rotp_id = RotpIdGeneratorService.call(provider.operating_name, provider.onboarded_at, Provider.count)
+      end
+    end
   end
 end
