@@ -272,6 +272,12 @@ By connecting accreditation, funding, quality assurance, student, and operationa
 
 ### Format
 
+RoTP-id will provide each provider with a **persistent**, **immutable** and **canonical identity** throughout its organisational lifecycle.
+The business decision is that the identifier must use a **readable format** and provide a **significantly larger identifier range than the current provider code format**, helping to future-proof RoTP and avoid exhausting the available identifier space.
+It will be assigned once, never reused, and will remain unchanged when provider names, codes, accreditation status, roles, partnerships or operational states change.
+Unlike provider codes, which are operational and may change, RoTP-id will provide the permanent reference used to connect provider information and relationships across services.
+The agreed format, `RoTP-YY[Letter][Number][Letter][Letter]MM`, will support historical continuity, data integrity, clear identification, and sufficient long-term capacity for provider growth.
+
 Format:
 
 ```
