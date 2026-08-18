@@ -20,7 +20,7 @@
 #  urn                   :string(6)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  rotp_id               :string           not null
+#  rotp_id               :citext           not null
 #
 # Indexes
 #
