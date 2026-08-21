@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Add Provider" do
-  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active|
+  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active, living_docs|
     let(:address_line_1) { Faker::Address.street_address }
     let(:address_line_2) { Faker::Address.secondary_address }
     let(:town_or_city) { Faker::Address.city }
@@ -52,10 +52,10 @@ RSpec.feature "Add Provider" do
 
       case option
       when String
-        choose(option)
+        and_i_choose(option)
         click_on("Continue")
       when Time, ActiveSupport::TimeWithZone
-        choose("Another day")
+        and_i_choose("Another day")
 
         click_on("Continue")
 
@@ -83,10 +83,10 @@ RSpec.feature "Add Provider" do
 
       case option
       when String
-        choose(option)
+        and_i_choose(option)
         click_on("Continue")
       when Time, ActiveSupport::TimeWithZone
-        choose("Another day")
+        and_i_choose("Another day")
 
         click_on("Continue")
 
@@ -257,7 +257,9 @@ RSpec.feature "Add Provider" do
       and_i_click_on("Continue")
     end
 
-    alias_method :and_i_choose, :choose
+    def and_i_choose(option)
+      find(:radio_button, option, visible: :all).choose
+    end
 
     def and_i_can_see_the_error_summary(*messages)
       expect(page).to have_error_summary(*messages)
@@ -319,7 +321,7 @@ RSpec.feature "Add Provider" do
     end
   end
 
-  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :living_docs
+  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date", nil
+  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago, nil
 end
