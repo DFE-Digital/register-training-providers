@@ -133,11 +133,6 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
-                          type: string
-                          description: The unique UUID identifier for the training
-                            provider.
-                          example: 7bcf4928-a0c7-4fa7-aa46-d4297eec31e0
                         operating_name:
                           type: string
                           description: The primary business or operating name of the
@@ -180,8 +175,13 @@ paths:
                             record was last modified.
                           format: date-time
                           example: '2025-09-15T11:34:56Z'
+                        rotp_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: The unique Register of training provider identifier.
+                          example: RoTP-00A0BC00
                       required:
-                      - id
                       - operating_name
                       - provider_type
                       - code
@@ -195,7 +195,7 @@ paths:
                 - data
               example:
                 data:
-                - id: 37a744e0-40e1-4be1-bac6-f844e3035716
+                - rotp_id: RoTP-26V6KK09
                   operating_name: Higher education institution (HEI) 2462
                   provider_type: hei
                   code: VFJ
@@ -203,7 +203,7 @@ paths:
                   ukprn: '44564753'
                   urn:
                   updated_at: '2026-09-15T11:34:56Z'
-                - id: e455c483-ed5b-4207-becd-af1e735898c0
+                - rotp_id: RoTP-26U8DH09
                   operating_name: Higher education institution (HEI) 7709
                   provider_type: hei
                   code: PAZ
@@ -211,7 +211,7 @@ paths:
                   ukprn: '34400987'
                   urn:
                   updated_at: '2026-09-15T11:34:56Z'
-                - id: 2b791634-cceb-489d-aecd-f508a675ff4e
+                - rotp_id: RoTP-26R7BR09
                   operating_name: Other 1996
                   provider_type: other
                   code: RGQ
@@ -219,7 +219,7 @@ paths:
                   ukprn: '89186965'
                   urn:
                   updated_at: '2026-09-15T11:34:56Z'
-                - id: f5a66d76-1313-4bed-92d0-3d57a4939658
+                - rotp_id: RoTP-26V5GL09
                   operating_name: Other 3576
                   provider_type: other
                   code: 9T7
@@ -227,7 +227,7 @@ paths:
                   ukprn: '66322726'
                   urn:
                   updated_at: '2026-09-15T11:34:56Z'
-                - id: 42adfd01-d4db-4601-8ba8-08251aaa21a1
+                - rotp_id: RoTP-26B8IM09
                   operating_name: School 3699
                   provider_type: school
                   code: YP8
@@ -235,7 +235,7 @@ paths:
                   ukprn: '10792824'
                   urn: '421472'
                   updated_at: '2026-09-15T11:34:56Z'
-                - id: 10bdc5c7-009b-45cf-bc95-5ce192250b1a
+                - rotp_id: RoTP-26B9HY09
                   operating_name: School-centred initial teacher training (SCITT)
                     6932
                   provider_type: scitt

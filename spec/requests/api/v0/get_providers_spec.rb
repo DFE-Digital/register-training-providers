@@ -55,7 +55,7 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
       # expect(response.parsed_body[:data].count).to eq(latest_providers.count)
       latest_providers.each_with_index do |latest_provider, index|
         expect(response.parsed_body[:data][index]).to eq(
-          { "id" => latest_provider.id,
+          { "rotp_id" => latest_provider.rotp_id,
             "operating_name" => latest_provider.operating_name,
             "provider_type" => latest_provider.provider_type,
             "code" => latest_provider.code,
