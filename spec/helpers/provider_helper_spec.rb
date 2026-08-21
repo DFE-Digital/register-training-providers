@@ -24,6 +24,7 @@ RSpec.describe ProviderHelper, type: :helper do
       expect(meta.text).to include(provider.urn)
 
       expect(result[:rows]).to match_array([
+        { key: { text: "RoTP Id" }, value: { text: provider.rotp_id } },
         { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
         { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
         { key: { text: "Operating name" }, value: { text: provider.operating_name } },
@@ -191,6 +192,10 @@ RSpec.describe ProviderHelper, type: :helper do
     it "returns the expected rows with 'Not entered' where applicable" do
       expect(helper.provider_details_rows(provider)).to eq([
         {
+          key: { text: "RoTP Id" },
+          value: { text: provider.rotp_id }
+        },
+        {
           key: { text: "Provider type" },
           value: { text: provider.provider_type_label },
         },
@@ -241,6 +246,10 @@ RSpec.describe ProviderHelper, type: :helper do
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_details_rows(provider)).to eq([
+          {
+            key: { text: "RoTP Id" },
+            value: { text: provider.rotp_id }
+          },
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
@@ -320,6 +329,10 @@ RSpec.describe ProviderHelper, type: :helper do
 
       it "returns the expected rows without 'Not entered'" do
         expect(helper.provider_details_rows(provider)).to eq([
+          {
+            key: { text: "RoTP Id" },
+            value: { text: provider.rotp_id }
+          },
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
