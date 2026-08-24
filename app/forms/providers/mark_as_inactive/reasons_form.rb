@@ -37,10 +37,12 @@ module Providers
       end
 
       def other_reason_selected?
-        other_reason_text.present?
+        other_reason_text.present? || reasons.include?("other")
       end
 
       def other_reason_text
+        return "" if reasons.include?("other") && other_reason.blank?
+
         (reasons - REASONS_FOR_INACTIVE.map { |_k, v| v }).first
       end
 
