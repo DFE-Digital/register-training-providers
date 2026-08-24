@@ -123,6 +123,10 @@ Rails.application.routes.draw do
       resource :delete, only: [:show, :destroy], module: "providers/contacts"
     end
     resources :partnerships, only: [:index], controller: "providers/partnerships"
+    resource :mark_as_inactive, only: [:show, :create], controller: "providers/mark_as_inactive/date" do
+      resource :reasons, only: [:show, :create], controller: "providers/mark_as_inactive/reasons"
+      resource :check, only: [:show, :update], controller: "providers/mark_as_inactive/check"
+    end
 
     # === Addresses ===
 

@@ -1,0 +1,22 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: provider_mark_as_inactive_path do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%=
+    form.govuk_date_field :start_date,
+    legend: { text: "When did the provider become inactive?" },
+    hint: { text: "Their onboard date was #{provider.onboarded_at.strftime('%-d %m %Y')}, after setting the start of the inactive period start date, you will not be able to change it" }
+  %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(provider)) %>
+</p>

@@ -7,6 +7,8 @@ module ApplicationHelper
 
     tag = [" ", govuk_tag(text: "Soft deleted", colour: "red", classes: "govuk-tag__heading")] if provider.discarded?
 
+    tag = [" ", govuk_tag(text: "Inactive", colour: "yellow", classes: "govuk-tag__heading")] if provider.inactive?
+
     page_data(title: provider.operating_name, caption: "Provider", subtitle: "Provider",
               header: safe_join([provider.operating_name] + tag))
   end

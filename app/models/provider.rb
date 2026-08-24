@@ -190,6 +190,18 @@ class Provider < ApplicationRecord
     end
   end
 
+  def inactive?
+    return false unless inactive_periods.any?
+
+    inactive_periods.any? { |ip| ip if ip[:end_date].nil? }
+  end
+
+  def current_inactive_period
+    return nil if inactive_periods.select { |ip| ip if ip[:end_date].nil? }.blank?
+
+    inactive_periods.find { |ip| ip if ip[:end_date].nil? }
+  end
+
 private
 
   def operational_academic_years

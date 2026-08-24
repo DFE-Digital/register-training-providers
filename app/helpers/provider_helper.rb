@@ -44,6 +44,8 @@ module ProviderHelper
       archived_tag =
         if provider.archived?
           govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")
+        elsif provider.inactive?
+          govuk_tag(text: "Inactive", colour: "yellow", classes: "govuk-!-margin-left-1")
         end
 
       provider_meta =
@@ -177,6 +179,29 @@ module ProviderHelper
     content_tag(:ul, class: "govuk-list govuk-list") do
       inactive_periods.map { |period|
         content_tag(:li, govuk_summary_list(rows: display_inactive_period(period)))
+      }.join.html_safe
+    end
+  end
+
+  def mark_as_inactive_rows(inactive_period)
+    [
+      {
+        key: { text: "Inactive period start date" },
+        value: { text: inactive_period["start_date"].to_date.strftime("%d %B %Y") },
+        actions: [{ href: provider_mark_as_inactive_path, visually_hidden_text: "start date" }]
+      },
+      {
+        key: { text: "Why did the provider become inactive" },
+        value: { text: inactive_reasons_html(inactive_period["reasons_for_inactive"]) },
+        actions: [{ href: provider_mark_as_inactive_reasons_path, visually_hidden_text: "reasons" }]
+      },
+    ]
+  end
+
+  def inactive_reasons_html(reasons)
+    content_tag(:ul, class: "govuk-list govuk-list") do
+      reasons.map { |reason|
+        content_tag(:li, reason)
       }.join.html_safe
     end
   end

@@ -22,6 +22,12 @@
     <% else %>
         <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
     <% end %>
+
+    <% if @provider.inactive? %>
+      <%= govuk_link_to("Mark as active", "#") %>
+    <% else %>
+      <%= govuk_link_to("Mark as inactive", provider_mark_as_inactive_path(@provider)) %>
+    <% end %>
 </div>
 
 <%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
