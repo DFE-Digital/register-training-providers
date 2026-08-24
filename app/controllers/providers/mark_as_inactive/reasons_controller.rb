@@ -5,7 +5,7 @@ module Providers
     def show
       authorize provider, :mark_as_inactive?
 
-      @form = Providers::MarkAsInactive::ReasonsForm.new(
+      @form = ::Providers::MarkAsInactive::ReasonsForm.new(
         reasons: reasons_for_inactive
       )
     end
@@ -13,7 +13,7 @@ module Providers
     def create
       authorize provider, :mark_as_inactive?
 
-      @form = Providers::MarkAsInactive::ReasonsForm.new(reasons_params)
+      @form = ::Providers::MarkAsInactive::ReasonsForm.new(reasons_params)
 
       if @form.valid?
         provider.current_inactive_period[:reasons_for_inactive] = @form.transformed_reasons

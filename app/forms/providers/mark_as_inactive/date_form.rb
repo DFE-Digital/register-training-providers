@@ -13,6 +13,10 @@ module Providers
       before_validation :convert_date_components
 
       validates :start_date, presence: true
+
+      def self.i18n_scope
+        :activerecord
+      end
     end
   end
 end
