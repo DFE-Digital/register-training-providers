@@ -10,7 +10,7 @@
 
   <%= form.govuk_check_boxes_fieldset :reasons, legend: { text: "Why did the provider become inactive?" } do %>
     <% @form.reasons_for_inactive.each do |reason| %>
-      <%= form.govuk_check_box :reasons, reason["id"], label: { text: reason["name"] }, checked: (@form.transformed_reasons.include?(reason["name"]) || @form.reasons.include?(reason["name"])) %>
+      <%= form.govuk_check_box :reasons, reason["id"], label: { text: reason["name"] }, checked: @form.transformed_reasons.include?(reason["name"]) || @form.reasons.include?(reason["name"]) %>
     <% end %>
 
     <%= form.govuk_check_box :reasons, :other, label: { text: "Another reason" }, checked: @form.other_reason_selected? do %>
