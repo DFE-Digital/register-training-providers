@@ -6,13 +6,18 @@ module Providers
     def show
       authorize provider, :mark_as_active?
 
-      @form = Providers::MarkAsActive::DateForm.new(end_date: end_date, start_date: inactive_period["start_date"])
+      @form = Providers::MarkAsActive::DateForm.new(
+        end_date: end_date,
+        start_date: inactive_period["start_date"]
+      )
     end
 
     def create
       authorize provider, :mark_as_active?
 
-      @form = Providers::MarkAsActive::DateForm.new(active_date_params.merge(start_date: inactive_period["start_date"].to_date))
+      @form = Providers::MarkAsActive::DateForm.new(
+        active_date_params.merge(start_date: inactive_period["start_date"].to_date)
+      )
 
       if @form.valid?
         inactive_period[:end_date] = @form.end_date
