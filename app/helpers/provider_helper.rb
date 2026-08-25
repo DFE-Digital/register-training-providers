@@ -203,7 +203,7 @@ module ProviderHelper
     [
       {
         key: { text: "Inactive period end date" },
-        value: { text: inactive_period["end_date"].to_date.strftime("%d %B %Y") },
+        value: { text: inactive_period["end_date"].to_date.to_fs(:govuk) },
         actions: [{ href: provider_mark_as_active_path, visually_hidden_text: "end date" }]
       },
     ]
