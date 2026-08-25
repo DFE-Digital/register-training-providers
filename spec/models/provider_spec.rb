@@ -505,4 +505,24 @@ RSpec.describe Provider, type: :model do
       expect(provider.reload.rotp_id).to eq("CANNOT CHANGE")
     end
   end
+
+  describe "#current_inactive_period" do
+    let(:completed_inactive_period) { { "start_date" => 1.year.ago.to_date.to_s, "end_date" => 6.months.ago.to_date.to_s } }
+    let(:current_inactive_period) { { "start_date" => 1.month.ago.to_date.to_s } }
+    let(:provider) { create(:provider, inactive_periods: [current_inactive_period, completed_inactive_period]) }
+
+    it "returns the inactive period that ended most recently" do
+      expect(provider.current_inactive_period).to eq(current_inactive_period)
+    end
+  end
+
+  describe "#latest_complete_inactive_period" do
+    let(:inactive_period_1) { { "start_date" => 1.year.ago.to_date.to_s, "end_date" => 6.months.ago.to_date.to_s } }
+    let(:inactive_period_2) { { "start_date" => 1.month.ago.to_date.to_s, "end_date" => 1.month.ago.to_date.to_s } }
+    let(:provider) { create(:provider, inactive_periods: [inactive_period_2, inactive_period_1]) }
+
+    it "returns the inactive period that ended most recently" do
+      expect(provider.latest_complete_inactive_period).to eq(inactive_period_2)
+    end
+  end
 end

@@ -1,0 +1,20 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path,
+      ) %>
+<% end %>
+
+<%= form_for provider, url: provider_mark_as_inactive_check_path, method: :patch do |form| %>
+  <% page_data(title: "Check your answers", subtitle: provider.operating_name) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= govuk_summary_list(rows: mark_as_active_rows(provider.latest_complete_inactive_period)) %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(provider)) %>
+</p>
