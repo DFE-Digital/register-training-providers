@@ -152,6 +152,16 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+        providers/mark_as_inactive/date_form:
+          attributes:
+            start_date:
+              blank: "Enter the date that inactivity started"
+        providers/mark_as_inactive/reasons_form:
+          attributes:
+            reasons:
+              blank: "Select at least one reason"
+            other_reason:
+              blank: "Enter a reason"
         academic_years:
           attributes:
             academic_year_ids:

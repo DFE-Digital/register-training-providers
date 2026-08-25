@@ -1,0 +1,26 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: provider_mark_as_inactive_reasons_path do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_check_boxes_fieldset :reasons, legend: { text: "Why did the provider become inactive?" } do %>
+    <% @form.reasons_for_inactive.each do |reason| %>
+      <%= form.govuk_check_box :reasons, reason["id"], label: { text: reason["name"] }, checked: @form.transformed_reasons.include?(reason["name"]) || @form.reasons.include?(reason["name"]) %>
+    <% end %>
+
+    <%= form.govuk_check_box :reasons, :other, label: { text: "Another reason" }, checked: @form.other_reason_selected? do %>
+      <%= form.govuk_text_area :other_reason, label: { text: "Enter the reason" }, hint: { text: "Any other reason not listed" }, value: @form.other_reason_text %>
+    <% end %>
+<% end %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(provider)) %>
+</p>

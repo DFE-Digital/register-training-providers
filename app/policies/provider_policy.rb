@@ -32,4 +32,8 @@ class ProviderPolicy < ApplicationPolicy
   def restore?
     record.kept? && record.archived? && !user.api_user
   end
+
+  def mark_as_inactive?
+    record.kept? && !user.api_user
+  end
 end
