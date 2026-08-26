@@ -9,7 +9,7 @@ RSpec.describe Provider, type: :model do
 
   describe "associations" do
     it { is_expected.to have_many(:provider_academic_years).dependent(:destroy) }
-
+    it { is_expected.to have_many(:provider_changes).dependent(:destroy) }
     it { is_expected.to have_many(:academic_years).through(:provider_academic_years) }
   end
 
