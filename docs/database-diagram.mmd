@@ -133,6 +133,16 @@ erDiagram
 		datetime discarded_at
 		uuid provider_id FK
 	}
+	ProviderChange {
+		string attribute_name
+		uuid created_by_id
+		date effective_on
+		text error_message
+		datetime processed_at
+		uuid provider_id FK
+		string status
+		jsonb value
+	}
 	TemporaryRecord {
 		uuid created_by FK
 		jsonb data
@@ -186,3 +196,4 @@ erDiagram
 	User ||--}o TemporaryRecord : ""
 	Provider o|--}o TemporaryRecord : ""
 	Provider ||--}o ProviderAcademicYear : ""
+	Provider ||--}o ProviderChange : ""

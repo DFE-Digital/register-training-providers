@@ -55,6 +55,8 @@ class Provider < ApplicationRecord
   has_many :provider_academic_years, dependent: :destroy
   has_many :academic_years, through: :provider_academic_years
 
+  has_many :provider_changes, dependent: :destroy
+
   audited except: [:searchable, :seed_data_notes, :seed_data_with_issues]
   has_associated_audits
 
