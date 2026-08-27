@@ -157,18 +157,27 @@ module ProviderHelper
 
     # Add edit actions to editable fields (skip Provider type and Accreditation status)
     editable_fields = {
-      "Operating name" => "operating name",
-      "Legal name" => "legal name",
-      "UK provider reference number (UKPRN)" => "UK provider reference number (UKPRN)",
-      "Unique reference number (URN)" => "unique reference number (URN)",
-      "Provider code" => "provider code",
-    }
+      "Operating name" => { visually_hidden_text: "operating name", href: edit_provider_path(provider) },
+      "Legal name" => { visually_hidden_text: "legal name", href: edit_provider_path(provider) },
+      "UK provider reference number (UKPRN)" => { visually_hidden_text: "UK provider reference number (UKPRN)",
+                                                  href: edit_provider_path(provider) },
+      "Unique reference number (URN)" => { visually_hidden_text: "unique reference number (URN)",
+                                           href: edit_provider_path(provider) },
+      "Provider code" => { visually_hidden_text: "provider code",
+                           href: provider_change_step_path(
+                             provider_id: provider.id,
+                             field: "code",
+                             step: "effective-academic-year"
+                           ) },
+    }.with_indifferent_access
 
     rows.each do |row|
       key_text = row[:key][:text]
-      if editable_fields.key?(key_text)
-        row[:actions] = [{ href: edit_provider_path(provider), visually_hidden_text: editable_fields[key_text] }]
-      end
+      next unless editable_fields.key?(key_text)
+
+      row[:actions] =
+        [{ href: editable_fields[key_text][:href],
+           visually_hidden_text: editable_fields[key_text][:visually_hidden_text] }]
     end
 
     rows
