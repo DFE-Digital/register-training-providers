@@ -226,7 +226,8 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "Provider code" },
           value: { text: provider.code },
-          actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+          actions: [{ href: provider_changes_path(provider_id: provider.id, field: "code"),
+                      visually_hidden_text: "provider code" }],
         },
         { key: { text: "Onboard at" }, value: { text: provider.onboarded_at.to_fs(:govuk) } },
         { key: { text: "First active at" }, value: { text: provider.first_active_at.to_fs(:govuk) } },
@@ -281,7 +282,8 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Provider code" },
             value: { text: provider.code },
-            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+            actions: [{ href: provider_changes_path(provider_id: provider.id, field: "code"),
+                        visually_hidden_text: "provider code" }],
           },
           { key: { text: "Onboard at" }, value: { text: provider.onboarded_at.to_fs(:govuk) } },
           { key: { text: "First active at" }, value: { text: provider.first_active_at.to_fs(:govuk) } },
@@ -364,7 +366,8 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Provider code" },
             value: { text: provider.code },
-            actions: [{ href: edit_provider_path(provider), visually_hidden_text: "provider code" }],
+            actions: [{ href: provider_changes_path(provider_id: provider.id, field: "code"),
+                        visually_hidden_text: "provider code" }],
           },
           {
             key: { text: "Onboard at" },
