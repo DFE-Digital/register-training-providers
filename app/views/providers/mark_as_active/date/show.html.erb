@@ -1,0 +1,18 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: provider_mark_as_active_path do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_date_field :end_date, legend: { text: "When did the provider become active?" }, hint: { text: "Their inactive period start date was #{inactive_period["start_date"].to_date.to_fs(:govuk)}, after setting the start of the inactive period end date, you will not be able to change it" } %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(provider)) %>
+</p>

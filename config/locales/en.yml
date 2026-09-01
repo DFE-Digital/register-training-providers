@@ -152,6 +152,11 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+        providers/mark_as_active/date_form:
+          attributes:
+            end_date:
+              blank: "Enter the date that inactivity ended"
+              greater_than: "Enter a valid end date"
         providers/mark_as_inactive/date_form:
           attributes:
             start_date:

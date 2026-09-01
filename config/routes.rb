@@ -128,6 +128,10 @@ Rails.application.routes.draw do
       resource :check, only: [:show, :update], controller: "providers/mark_as_inactive/check"
     end
 
+    resource :mark_as_active, only: [:show, :create], controller: "providers/mark_as_active/date" do
+      resource :check, only: [:show, :update], controller: "providers/mark_as_active/check"
+    end
+
     # === Addresses ===
 
     # Listing

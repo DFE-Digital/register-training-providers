@@ -24,7 +24,7 @@
     <% end %>
 
     <% if @provider.inactive? %>
-      <%= govuk_link_to("Mark as active", "#") %>
+      <%= govuk_link_to("Mark as active", provider_mark_as_active_path(@provider)) %>
     <% else %>
       <%= govuk_link_to("Mark as inactive", provider_mark_as_inactive_path(@provider)) %>
     <% end %>

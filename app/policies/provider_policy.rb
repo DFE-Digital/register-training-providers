@@ -36,4 +36,8 @@ class ProviderPolicy < ApplicationPolicy
   def mark_as_inactive?
     record.kept? && !user.api_user
   end
+
+  def mark_as_active?
+    record.kept? && !user.api_user
+  end
 end

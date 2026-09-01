@@ -199,6 +199,16 @@ module ProviderHelper
     ]
   end
 
+  def mark_as_active_rows(inactive_period)
+    [
+      {
+        key: { text: "Inactive period end date" },
+        value: { text: inactive_period["end_date"].to_date.to_fs(:govuk) },
+        actions: [{ href: provider_mark_as_active_path, visually_hidden_text: "end date" }]
+      },
+    ]
+  end
+
   def inactive_reasons_html(reasons)
     content_tag(:ul, class: "govuk-list govuk-list") do
       reasons.map { |reason|
