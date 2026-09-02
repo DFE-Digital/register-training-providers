@@ -19,3 +19,10 @@ sync_provider_accreditation_status:
   class: "Providers::SyncAccreditationStatusJob"
   priority: 100
   schedule: at 2am every day
+
+# Archive providers who have been inactive for more than three years
+
+archive_inactive_providers:
+  class: "Providers::ArchiveInactiveProvidersJob"
+  priority: 100
+  schedule: at 3am every day
