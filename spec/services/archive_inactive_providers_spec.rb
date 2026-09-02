@@ -14,6 +14,15 @@ RSpec.describe ArchiveInactiveProviders do
     expect(old_inactive_provider.archived?).to eq(true)
   end
 
+  it "should set an end date on the archived providers inactive period" do
+    old_inactive_provider
+    subject
+    old_inactive_provider.reload
+
+    expect(old_inactive_provider.current_inactive_period).to eq(nil)
+    expect(old_inactive_provider.latest_complete_inactive_period["end_date"]).to eq(Time.zone.today.to_s)
+  end
+
   it "should not archive providers who have been inactive for less than three years" do
     expect(newly_inactive_provider.archived?).to eq(false)
 

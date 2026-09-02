@@ -10,6 +10,10 @@ class ArchiveInactiveProviders
       provider if provider.current_inactive_period["start_date"].to_date <= 3.years.ago
     end
 
-    providers.each(&:archive!)
+    providers.each do |provider|
+      provider.current_inactive_period["end_date"] = Time.zone.today
+
+      provider.archive!
+    end
   end
 end
