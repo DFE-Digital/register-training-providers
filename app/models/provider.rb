@@ -70,6 +70,9 @@ class Provider < ApplicationRecord
       years.any? { |y| p.active_in_academic_year?(AcademicYear.for_year(y)) }
     }.map(&:id))
   }
+  scope :inactive, -> { where("inactive_periods @> ?", [{ end_date: nil }].to_json) }
+
+  scope :archived, -> { where.not(archived_at: nil) }
 
   def active_in_academic_year?(academic_year)
     ay_start = academic_year.duration.begin
