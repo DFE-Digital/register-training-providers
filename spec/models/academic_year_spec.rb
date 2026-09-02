@@ -101,7 +101,7 @@ RSpec.describe AcademicYear, type: :model do
     let!(:current_year) { create(:academic_year, :current) }
     let!(:previous_year) { create(:academic_year, :previous) }
     let!(:next_year) { create(:academic_year, :next) }
-    let!(:far_future_year) { create(:academic_year, academic_year: AcademicYearCalculator.next_academic_year + 1) }
+    let!(:far_future_year) { create(:academic_year, academic_year: AcademicYearCalculator.following_academic_year) }
 
     it "includes the next academic year (today + 1.year) and all older years" do
       result = described_class.next_and_older.to_a

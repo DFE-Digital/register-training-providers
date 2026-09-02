@@ -36,6 +36,13 @@ RSpec.describe AcademicYearCalculator do
     end
   end
 
+  describe ".following_academic_year" do
+    it "is current + 1" do
+      expect(described_class.following_academic_year)
+        .to eq(described_class.current_academic_year + 2)
+    end
+  end
+
   describe ".previous_academic_year" do
     it "is current - 1" do
       expect(described_class.previous_academic_year)
@@ -47,6 +54,20 @@ RSpec.describe AcademicYearCalculator do
     it "returns the correct academic year" do
       expect(described_class.academic_year_for(build_academic_year_date(2099)))
         .to eq(2099)
+    end
+  end
+
+  describe "#build_academic_year_start_date" do
+    it "returns 1 August for the given year" do
+      expect(subject.build_academic_year_start_date(2025))
+        .to eq(Date.new(2025, 8, 1))
+    end
+  end
+
+  describe "#build_academic_year_end_date" do
+    it "returns 31 July of the following year" do
+      expect(subject.build_academic_year_end_date(2025))
+        .to eq(Date.new(2026, 7, 31))
     end
   end
 end
