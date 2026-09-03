@@ -132,6 +132,23 @@ Rails.application.routes.draw do
       resource :check, only: [:show, :update], controller: "providers/mark_as_active/check"
     end
 
+    # === Provider field changes ===
+    get "changes/:field",
+        to: "providers/provider_changes#new",
+        as: :changes
+
+    patch "changes/:field",
+          to: "providers/provider_changes#update",
+          as: :change_update_changes
+
+    get "changes/:field/:step",
+        to: "providers/provider_changes#new",
+        as: :change_step
+
+    patch "changes/:field/:step",
+          to: "providers/provider_changes#update",
+          as: :change_update_step
+
     # === Addresses ===
 
     # Listing
