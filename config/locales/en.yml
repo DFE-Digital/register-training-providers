@@ -192,6 +192,18 @@ en:
           invalid: Enter an email address in the correct format, like name@example.com
         uk_telephone_number:
           invalid: Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+      models:
+        provider_changes/steps/code_step:
+          attributes:
+            code:
+              blank: "Enter provider code"
+              invalid: "Enter a valid provider code"
+              taken: "Enter a unique provider code"
+        provider_changes/steps/effective_academic_year_step:
+          attributes:
+            effective_on:
+              blank: "Select an academic year"
+              taken: "Select another academic year"
   flash_message:
     success:
       accreditation:
