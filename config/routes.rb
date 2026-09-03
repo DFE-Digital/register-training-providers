@@ -132,6 +132,16 @@ Rails.application.routes.draw do
       resource :check, only: [:show, :update], controller: "providers/mark_as_active/check"
     end
 
+    # === Provider field changes ===
+    constraints RouteConstraints::ProviderChangeConstraint.new do
+      get "changes/:field/:step",
+          to: "providers/provider_changes#new",
+          as: :change_step
+
+      patch "changes/:field/:step",
+            to: "providers/provider_changes#update",
+            as: :change_update_step
+    end
     # === Addresses ===
 
     # Listing
