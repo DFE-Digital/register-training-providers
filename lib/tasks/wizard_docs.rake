@@ -4,6 +4,7 @@ require "dfe/wizard/documentation/formatters/graphviz_formatter"
 
 namespace :wizard do
   namespace :docs do
+    desc "Generate documentation for all wizards"
     task generate: :environment do
       output_dir = "docs/wizards"
 
