@@ -249,6 +249,9 @@ en:
         deleted: "Contact deleted"
       partnership:
         deleted: "Partnership deleted"
+      provider_change:
+        code:
+          updated: "Provider code change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
