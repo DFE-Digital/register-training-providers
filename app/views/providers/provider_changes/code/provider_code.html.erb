@@ -1,0 +1,39 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @wizard.previous_step_path,
+      ) %>
+<% end %>
+
+<%= form_for(
+      @wizard.current_step,
+      as: @wizard.current_step.step_id,
+      url: @wizard.current_step_path,
+      method: :patch
+    ) do |form| %>
+
+  <% page_data(
+       title: @provider.operating_name,
+       subtitle: "What should the provider code change to?",
+       header: false,
+       error: @wizard.current_step.errors.present?
+     ) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_fieldset legend:
+        { text: "What should the provider code change to?" }, caption: { text: @provider.operating_name } do %>
+
+    <%= form.govuk_text_field :code, width: "one-quarter", label: { size: "s", text: "Provider code" },
+                                     hint: {
+                                       text: "A unique 3 digit alphanumeric code assigned by DfE to providers"
+                                     } %>
+  <% end %>
+
+  <%= form.govuk_submit %>
+
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
