@@ -131,6 +131,23 @@ Rails.application.routes.draw do
     resource :mark_as_active, only: [:show, :create], controller: "providers/mark_as_active/date" do
       resource :check, only: [:show, :update], controller: "providers/mark_as_active/check"
     end
+    scope as: :provider_changes do
+      get "changes/:field",
+          to: "providers/provider_changes#new",
+          as: :new
+
+      patch "changes/:field",
+            to: "providers/provider_changes#update",
+            as: :update
+
+      get "changes/:field/:step",
+          to: "providers/provider_changes#new",
+          as: :show_step
+
+      patch "changes/:field/:step",
+            to: "providers/provider_changes#update",
+            as: :update_step
+    end
 
     # === Provider field changes ===
     get "changes/:field",
