@@ -98,6 +98,19 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  describe "scopes" do
+    let(:inactive_provider) { create(:provider, inactive_periods: [{ start_date: 1.year.ago.to_date, end_date: nil }]) }
+    let(:archived_provider) { create(:provider, :archived) }
+
+    describe "#archived" do
+      it { expect(Provider.archived).to eq([archived_provider]) }
+    end
+
+    describe "#inactive" do
+      it { expect(Provider.inactive).to eq([inactive_provider]) }
+    end
+  end
+
   describe "upcase_code callback" do
     let(:provider) { build(:provider, code: "abc", rotp_id: "code") }
 

@@ -17,7 +17,7 @@ module Providers
         if provider.inactive?
           provider.current_inactive_period[:start_date] = @form.start_date
         else
-          provider.inactive_periods << { start_date: @form.start_date }
+          provider.inactive_periods << { start_date: @form.start_date, end_date: nil }
         end
 
         provider.save_as_temporary!(created_by: current_user, purpose: :edit_provider)
