@@ -75,7 +75,7 @@
           </div>
           <%= yield(:secondary_navigation) %>
           <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+              <div class="<%= content_for?(:full_width) ? "govuk-grid-column-full" : "govuk-grid-column-two-thirds" %>">
               <%= yield %>
             </div>
           </div>
