@@ -162,4 +162,4 @@ gem "rack-attack"
 gem "roo", "~> 3.0.0"
 gem "write_xlsx"
 
-gem "dfe-wizard", require: "dfe/wizard", github: "DFE-Digital/dfe-wizard", tag: "v1.0.0"
+gem "dfe-wizard", require: "dfe/wizard", github: "DFE-Digital/dfe-wizard", branch: "main"
