@@ -2,11 +2,16 @@ module Providers
   class ProviderChangesController < ApplicationController
     def new
       authorize provider, :update?
-      if wizard.check_your_answers?
-        @review = ProviderChanges::Presenters::CodeReview.new(@wizard)
-      end
 
-      render template_path
+      if wizard.valid_path_to_current_step?
+        if wizard.check_your_answers?
+          @review = ProviderChanges::Presenters::CodeReview.new(@wizard)
+        end
+
+        render template_path
+      else
+        redirect_to wizard.previous_step_path
+      end
     end
 
     def update
