@@ -61,6 +61,10 @@ module ProviderChanges
       end
     end
 
+    def check_your_answers?
+      current_step_name == :check_your_answers
+    end
+
     def logger
       DfE::Wizard::Logging::Logger.new(Rails.logger) if Rails.env.development?
     end
