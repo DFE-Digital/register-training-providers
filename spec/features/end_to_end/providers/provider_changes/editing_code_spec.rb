@@ -12,6 +12,17 @@ RSpec.feature "Editing provider code" do
     and_i_should_see_a_success_message
   end
 
+  scenario "User redirects to previous step when invalid" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_code_to_change
+
+    visit("/providers/#{provider_with_code_to_change.id}/changes/code/new-code")
+    and_i_am_taken_to("/providers/#{provider_with_code_to_change.id}/changes/code/effective-academic-year")
+
+    visit("/providers/#{provider_with_code_to_change.id}/changes/code/check-your-answers")
+    and_i_am_taken_to("/providers/#{provider_with_code_to_change.id}/changes/code/effective-academic-year")
+  end
+
   def and_i_review_the_check_your_answers_step
     expect(page).to have_link("Back", href: "/providers/#{provider_with_code_to_change.id}/changes/code/new-code")
 

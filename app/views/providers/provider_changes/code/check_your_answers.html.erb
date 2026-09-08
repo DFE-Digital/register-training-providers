@@ -8,7 +8,7 @@
 <%= form_for(
       @wizard.current_step,
       as: @wizard.current_step.step_id,
-      url: @wizard.current_step_path,
+      url: @wizard.current_step_path(return_to_review: params[:return_to_review]),
       method: :patch
     ) do |form| %>
 
