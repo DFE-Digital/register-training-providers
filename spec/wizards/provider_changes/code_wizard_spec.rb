@@ -1,7 +1,3 @@
-# spec/wizards/provider_changes/code_wizard_spec.rb
-
-require "rails_helper"
-
 RSpec.describe ProviderChanges::CodeWizard do
   include Rails.application.routes.url_helpers
 
@@ -85,6 +81,7 @@ RSpec.describe ProviderChanges::CodeWizard do
         code: "ABC"
       )
     end
+
     context "when returning to review" do
       let(:current_step_params) { { return_to_review: "new_code" } }
 
@@ -100,6 +97,88 @@ RSpec.describe ProviderChanges::CodeWizard do
       it "goes to check your answers" do
         expect(wizard.previous_step).to eq(:check_your_answers)
       end
+    end
+  end
+
+  describe "check_your_answers?" do
+    context "when current_step is effective_academic_year" do
+      let(:current_step) { :effective_academic_year }
+
+      it "returns false" do
+        expect(wizard.check_your_answers?).to be(false)
+      end
+    end
+
+    context "when current_step is new_code" do
+      let(:current_step) { :new_code }
+
+      it "returns false" do
+        expect(wizard.check_your_answers?).to be(false)
+      end
+    end
+
+    context "when current_step is check_your_answers" do
+      let(:current_step) { :check_your_answers }
+
+      it "returns true" do
+        expect(wizard.check_your_answers?).to be(true)
+      end
+    end
+  end
+
+  describe "#set_state_store" do
+    let(:provider_change) do
+      create(
+        :provider_change,
+        provider: provider,
+        attribute_name: "code",
+        value: "ABC",
+        effective_on: Date.new(2026, 9, 1)
+      )
+    end
+
+    context "when a provider change is present" do
+      it "loads the change into the state store" do
+        wizard.set_state_store(provider_change)
+
+        expect(state_store.read).to include(
+          code: "ABC",
+          effective_on: Date.new(2026, 9, 1)
+        )
+      end
+    end
+
+    context "when no provider change is present" do
+      it "does not change the state store" do
+        state_store.write(
+          code: "XYZ",
+          effective_on: Date.new(2026, 10, 1)
+        )
+
+        wizard.set_state_store(nil)
+
+        expect(state_store.read).to include(
+          code: "XYZ",
+          effective_on: Date.new(2026, 10, 1)
+        )
+      end
+    end
+  end
+
+  describe "#provider_change_attributes" do
+    before do
+      state_store.write(
+        effective_on: Date.new(2026, 9, 1),
+        code: "ABC"
+      )
+    end
+
+    it "returns the attributes for the provider change" do
+      expect(wizard.provider_change_attributes).to eq(
+        attribute_name: "code",
+        effective_on: Date.new(2026, 9, 1),
+        value: "ABC"
+      )
     end
   end
 end

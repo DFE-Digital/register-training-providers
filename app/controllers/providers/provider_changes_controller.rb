@@ -2,8 +2,7 @@ module Providers
   class ProviderChangesController < ApplicationController
     def new
       authorize provider, :update?
-
-      if wizard.current_step_name == :check_your_answers
+      if wizard.check_your_answers?
         @review = ProviderChanges::Presenters::CodeReview.new(@wizard)
       end
 
@@ -14,7 +13,7 @@ module Providers
       authorize provider, :update?
 
       if wizard.save_current_step
-        if wizard.current_step_name == :check_your_answers
+        if wizard.check_your_answers?
           wizard.mark_completed
         end
 
