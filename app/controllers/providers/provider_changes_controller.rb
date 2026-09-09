@@ -1,12 +1,14 @@
 module Providers
   class ProviderChangesController < ApplicationController
+    helper_method :provider_changes
+
     def new
       authorize provider, :update?
 
       if wizard.valid_path_to_current_step?
-        if wizard.check_your_answers?
-          @review = ProviderChanges::Presenters::CodeReview.new(@wizard)
-        end
+        try_restore_pending_existing_provider_changes
+
+        @review = ProviderChanges::Presenters::CodeReview.new(wizard) if wizard.check_your_answers?
 
         render template_path
       else
@@ -18,11 +20,11 @@ module Providers
       authorize provider, :update?
 
       if wizard.save_current_step
-        if wizard.check_your_answers?
-          wizard.mark_completed
-        end
+        wizard.mark_completed if wizard.check_your_answers?
 
         if wizard.completed?
+          save_provider_change
+
           wizard.clear_state
           redirect_to provider_path(provider),
                       flash: { success: I18n.t("flash_message.success.provider_change.#{field}.updated") }
@@ -30,12 +32,35 @@ module Providers
           redirect_to wizard.next_step_path
         end
       else
-
         render template_path
       end
     end
 
   private
+
+    def save_provider_change
+      provider_change = provider.provider_changes.pending.find_or_initialize_by(
+        attribute_name: field
+      )
+
+      provider_change.update!(
+        **wizard.provider_change_attributes,
+        creator: current_user
+      )
+
+      Providers::ApplyProviderChangeJob.perform_now(provider_change.id) if provider_change.effective_on <= Date.current
+    end
+
+    def try_restore_pending_existing_provider_changes
+      if wizard.first_step? && params[:return_to_review].blank?
+        provider_change = provider.provider_changes.pending.for_attribute(field).first
+        wizard.set_state_store(provider_change) if provider_change.present?
+      end
+    end
+
+    def provider_changes
+      @provider_changes ||= @provider.provider_changes.history.for_attribute(field)
+    end
 
     def provider
       @provider ||= Provider.kept.find(params[:provider_id])
