@@ -1,0 +1,31 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: provider_path(@provider),
+      ) %>
+<% end %>
+
+<% page_data(
+     title: @provider.operating_name,
+     subtitle: "Provider code history",
+     header: "Provider code history",
+     caption: @provider.operating_name
+   ) %>
+
+<% content_for :full_width, true %>
+
+<p class="govuk-body">
+  View previous provider codes and when they were changed.
+</p>
+
+<% if @provider_changes.empty? %>
+
+  <p class="govuk-body">
+    There is no provider code history.
+  </p>
+
+<% else %>
+  <%= govuk_table(head: ["Code", "Start date", "End date", "Changed by", "Status"],
+                  rows: provider_field_level_history(@provider_changes),
+                  first_cell_is_header: true) %>
+<% end %>
