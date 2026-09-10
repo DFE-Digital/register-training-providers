@@ -20,6 +20,16 @@ GIT
       rails (>= 7.0.2.3)
       view_component
 
+GIT
+  remote: https://github.com/DFE-Digital/dfe-wizard.git
+  revision: 1722832db7215fe4dc6667577c79752d978cbb29
+  branch: main
+  specs:
+    dfe-wizard (1.0.0)
+      activemodel (>= 7.1, < 9)
+      activesupport (>= 7.1, < 9)
+      ruby-graphviz (~> 1.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -590,6 +600,8 @@ GEM
     rubocop-rspec (3.9.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
+    ruby-graphviz (1.2.5)
+      rexml
     ruby-progressbar (1.13.0)
     rubyzip (3.4.1)
     safely_block (1.0.0)
@@ -768,6 +780,7 @@ DEPENDENCIES
   debug
   dfe-analytics!
   dfe-autocomplete!
+  dfe-wizard!
   discard (~> 2.0)
   dotenv-rails
   erb_lint
@@ -873,6 +886,7 @@ CHECKSUMS
   declarative (0.0.20) sha256=8021dd6cb17ab2b61233c56903d3f5a259c5cf43c80ff332d447d395b17d9ff9
   dfe-analytics (1.15.17)
   dfe-autocomplete (1.0.0)
+  dfe-wizard (1.0.0)
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   discard (2.0.0) sha256=0fc520786b4d7b9b1ea8b2b3dadbb13c3e41d2ce7d297d04869baf1c9e30d2c0
   dotenv (3.2.0) sha256=e375b83121ea7ca4ce20f214740076129ab8514cd81378161f11c03853fe619d
@@ -1024,6 +1038,7 @@ CHECKSUMS
   rubocop-rails (2.34.3) sha256=10d37989024865ecda8199f311f3faca990143fbac967de943f88aca11eb9ad2
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.9.0) sha256=8fa70a3619408237d789aeecfb9beef40576acc855173e60939d63332fdb55e2
+  ruby-graphviz (1.2.5) sha256=1c2bb44e3f6da9e2b829f5e7fd8d75a521485fb6b4d1fc66ff0f93f906121504
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   rubyzip (3.4.1) sha256=0a79e745b5c25872ebd148457df5665da8530ed8626c993b01457128f173ca02
   safely_block (1.0.0) sha256=bea80e084e620adeada62fd98cf461bbb9888d40dc0f06d337df9d01e1a658e5
