@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "User management" do
-  scenario "rate limited of a user deleting users" do
+  scenario "rate limited of a user deleting users", :living_docs do
     given_i_am_an_authenticated_user
     and_i_have_users_to_delete
     and_i_have_additional_users(number_of_users: 3)

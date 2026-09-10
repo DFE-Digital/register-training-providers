@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   extend ApiRoutes
+
   extend ApiDocsRoutes
+
+  extend LivingDocsRoutes
 
   def checkable(model, module_prefix: nil)
     if module_prefix

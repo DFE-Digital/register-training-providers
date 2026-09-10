@@ -1,0 +1,69 @@
+
+<% page_data(title: @data.dig(:metadata, :title)) %>
+
+<% content_for(:column_width, "full") %>
+
+<div class="app-markdown">
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <%= content_for(:breadcrumbs) do %>
+      <%= govuk_breadcrumbs(breadcrumbs: { "Home" => root_path, "Living documentation" => living_docs_home_path }) %>
+    <% end %>
+
+    <h2 class="govuk-heading-s">Contents</h2>
+
+    <ul class="govuk-list app-list--dash govuk-!-margin-bottom-8">
+      <li><a class="govuk-link" href="#automate-walkthrough">Automate walkthrough</a></li>
+      <li><a class="govuk-link" href="#authentication">Scenario</a></li>
+      <li><a class="govuk-link" href="#step-by-step-screenshots">Step by step screenshots</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-l" id="automate-walkthrough">Automate walkthrough</h2>
+    <video width="920" height="518" controls>
+      <source src="<%= "/living_docs/#{params[:path]}/#{@data.dig("media", "video_file")}" %>" type="video/webm">
+      Your browser does not support the video tag.
+    </video>
+    <h2 class="govuk-heading-l" id="authentication">Scenario</h2>
+    <pre><code class="language-text"><%= @data.dig("code", "snippet") %></code></pre>
+    <p class="govuk-body">Test: <%= govuk_tag(text: @data.dig(:metadata, :status), colour: "green") %> - <%= Time.zone.parse(@data.dig(:metadata, :timestamp)).to_fs(:govuk_date_and_time) %> </p>
+
+    <h2 class="govuk-heading-l" id="step-by-step-screenshots">Step by step screenshots</h2>
+
+    <%# 1. Generate the table of contents / index links %>
+    <ul class="govuk-list app-screenshots__contents">
+      <% screenshots = @data.dig("media", "screenshots") || []
+
+         screenshots.each do |screenshot|
+
+         unique_id = "step-#{screenshot['step_number']}-#{screenshot['label'].parameterize}" %>
+        <li>
+          <a href="#<%= unique_id %>">
+            Step <%= screenshot["step_number"] %>: <%= screenshot["label"] %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <%# 2. Generate the actual figures and images %>
+  <% screenshots.each do |screenshot|
+           unique_id = "step-#{screenshot['step_number']}-#{screenshot['label'].parameterize}"
+           img_path = "/living_docs/#{params[:path]}/#{screenshot['relative_path']}" # Adjust path base depending on how your assets are served %>
+
+    <figure class="app-screenshots__screenshot" id="<%= unique_id %>">
+      <h3 class="govuk-heading-s" href="#<%= unique_id %>">
+        Step <%= screenshot["step_number"] %>: <%= screenshot["label"] %>
+
+      </h3>
+
+      <%# You can use standard HTML or Rails helpers (link_to and image_tag) here %>
+      <%= link_to img_path do %>
+        <%= image_tag img_path,
+                      alt: "Screenshot of Step #{screenshot['step_number']} - #{screenshot['label']}",
+                      style: "max-width: 100%; height: auto; border: 1px solid #b1b4b6;" %>
+      <% end %>
+    </figure>
+  <% end %>
+  </div>
+</div>

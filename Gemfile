@@ -140,6 +140,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 
+  gem "capybara-playwright-driver"
   #  Simple one-liner tests for common Rails functionality
   gem "shoulda-matchers"
 
