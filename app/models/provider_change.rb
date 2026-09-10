@@ -38,7 +38,6 @@ class ProviderChange < ApplicationRecord
 
   enum :status, {
     pending: "pending",
-    processing: "processing",
     completed: "completed",
     failed: "failed"
   }
