@@ -13,6 +13,9 @@ RSpec.describe ProviderChanges::CodeWizard do
   let(:provider) { create(:provider) }
   let(:current_step) { :effective_academic_year }
   let(:current_step_params) { {} }
+  let(:effective_on) do
+    AcademicYearCalculator.build_academic_year_start_date(AcademicYearCalculator.following_academic_year)
+  end
 
   let(:repository) { DfE::Wizard::Repository::InMemory.new }
 
@@ -77,7 +80,7 @@ RSpec.describe ProviderChanges::CodeWizard do
   describe "review navigation" do
     before do
       state_store.write(
-        effective_on: "1/1/2026",
+        effective_on: effective_on,
         code: "ABC"
       )
     end

@@ -113,6 +113,42 @@ RSpec.feature "Editing provider code uniqueness over time" do
     expect(other_provider.reload.code).not_to eq(new_provider_code)
   end
 
+  scenario "allows a provider to edit its own following-year change and resolves over time" do
+    given_i_am_an_authenticated_user
+    and_there_are_two_providers
+    and_the_current_provider_has_a_pending_code_change(
+      code: new_provider_code,
+      effective_on: following_academic_year_start_date
+    )
+    and_the_other_provider_has_a_pending_code_change(
+      code: new_provider_code,
+      effective_on: next_academic_year_start_date
+    )
+
+    when_i_navigate_to_the_provider_page_to_change_code
+    and_i_keep_the_following_academic_year
+    and_i_fill_in_the_code_step_with_the_current_code
+    and_i_fill_in_the_code_step_with_a_unique_code
+    then_i_should_be_on_the_check_your_answers_page
+    and_i_confirm_the_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+    and_i_should_see_a_success_message
+
+    Timecop.freeze(next_academic_year_start_date) do
+      Providers::ApplyProviderChangesJob.new.perform
+    end
+
+    expect(provider_code_change(other_provider).reload).to be_completed
+    expect(other_provider.reload.code).to eq(new_provider_code)
+
+    Timecop.freeze(following_academic_year_start_date) do
+      Providers::ApplyProviderChangesJob.new.perform
+    end
+
+    expect(provider_code_change(provider_with_code_to_change).reload).to be_completed
+    expect(provider_with_code_to_change.reload.code).to eq(resolved_provider_code)
+  end
+
   def provider_code_change(provider)
     provider.provider_changes.find_by(attribute_name: "code")
   end
@@ -126,6 +162,16 @@ RSpec.feature "Editing provider code uniqueness over time" do
     create(
       :provider_change,
       provider: other_provider,
+      attribute_name: "code",
+      value: code,
+      effective_on: effective_on
+    )
+  end
+
+  def and_the_current_provider_has_a_pending_code_change(code:, effective_on:)
+    create(
+      :provider_change,
+      provider: provider_with_code_to_change,
       attribute_name: "code",
       value: code,
       effective_on: effective_on
@@ -176,6 +222,36 @@ RSpec.feature "Editing provider code uniqueness over time" do
     and_i_fill_in_the_code_step_incorrectly_with_another_existing_provider_code_from_provider_changes
 
     and_i_fill_in_the_code_step_correctly
+  end
+
+  def and_i_keep_the_following_academic_year
+    expect(page).to have_link("Back", href: "/providers/#{provider_with_code_to_change.id}")
+    and_i_can_see_the_title("#{provider_with_code_to_change.operating_name} - When should the provider code change? - Register of training providers - GOV.UK")
+    and_i_do_not_see_error_summary
+
+    choose(following_academic_year_label)
+    and_i_click_on("Continue")
+
+    and_i_am_taken_to("/providers/#{provider_with_code_to_change.id}/changes/code/new-code")
+  end
+
+  def and_i_fill_in_the_code_step_with_the_current_code
+    expect(page).to have_link("Back", href: "/providers/#{provider_with_code_to_change.id}/changes/code/effective-academic-year")
+    and_i_can_see_the_title("#{provider_with_code_to_change.operating_name} - What should the provider code change to? - Register of training providers - GOV.UK")
+    and_i_do_not_see_error_summary
+
+    page.fill_in "Provider code", with: new_provider_code
+    and_i_click_on("Continue")
+    and_i_can_see_the_error_summary("Enter a unique provider code")
+  end
+
+  def and_i_fill_in_the_code_step_with_a_unique_code
+    page.fill_in "Provider code", with: resolved_provider_code
+    and_i_click_on("Continue")
+  end
+
+  def resolved_provider_code
+    "N3W"
   end
 
   def and_i_confirm_the_change_on_the_check_your_answers_step
