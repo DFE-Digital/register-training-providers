@@ -259,6 +259,8 @@ en:
       provider_change:
         code:
           updated: "Provider code change request submitted successfully"
+        ukprn:
+          updated: "UK provider reference number change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
