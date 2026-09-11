@@ -204,6 +204,12 @@ en:
             effective_on:
               inclusion: "Select an academic year"
               taken: "Select another academic year"
+        provider_changes/steps/ukprn_step:
+          attributes:
+            ukprn:
+              blank: "Enter UK provider reference number"
+              invalid: "Enter a valid UK provider reference number"
+              same: "Enter a different UK provider reference number"
   flash_message:
     success:
       accreditation:
