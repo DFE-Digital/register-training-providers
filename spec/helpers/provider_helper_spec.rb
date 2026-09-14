@@ -216,7 +216,10 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "UK provider reference number (UKPRN)" },
           value: { text: provider.ukprn },
-          actions: [{ text: "Change",
+          actions: [{ text: "History",
+                      visually_hidden_text: "of UK provider reference numbers",
+                      href: provider_changes_field_history_path(provider_id: provider.id, field: "ukprn") },
+                    { text: "Change",
                       href: provider_change_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date"),
                       visually_hidden_text: "UK provider reference number (UKPRN)" }],
         },
@@ -278,9 +281,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "UK provider reference number (UKPRN)" },
             value: { text: provider.ukprn },
-            actions: [{ text: "Change",
-                      href: provider_change_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date"),
-                      visually_hidden_text: "UK provider reference number (UKPRN)" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of UK provider reference numbers",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "ukprn") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date"),
+                        visually_hidden_text: "UK provider reference number (UKPRN)" }],
           },
           {
             key: { text: "Unique reference number (URN)" },
@@ -368,9 +374,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "UK provider reference number (UKPRN)" },
             value: { text: provider.ukprn },
-            actions: [{ text: "Change",
-                      href: provider_change_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date"),
-                      visually_hidden_text: "UK provider reference number (UKPRN)" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of UK provider reference numbers",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "ukprn") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date"),
+                        visually_hidden_text: "UK provider reference number (UKPRN)" }],
           },
           {
             key: { text: "Unique reference number (URN)" },
