@@ -42,8 +42,8 @@ RSpec.feature "Provider code history" do
   def when_i_visit_the_provider_code_history_page
     visit provider_page
 
-    expect(page).to have_link("History")
-    click_on "History"
+    expect(page).to have_link("History of provider codes")
+    click_on "History of provider codes"
     and_i_am_taken_to(provider_code_history_page)
   end
 
