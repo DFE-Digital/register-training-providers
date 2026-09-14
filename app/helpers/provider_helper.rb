@@ -157,7 +157,13 @@ module ProviderHelper
 
     # Add edit actions to editable fields (skip Provider type and Accreditation status)
     editable_fields = {
-      "Operating name" => [{ text: "Change",
+      "Operating name" => [{ text: "History",
+                             visually_hidden_text: "of operating names",
+                             href: provider_changes_field_history_path(
+                               provider_id: provider.id,
+                               field: "operating_name"
+                             ) },
+                           { text: "Change",
                              visually_hidden_text: "operating name",
                              href: provider_change_step_path(
                                provider_id: provider.id,
