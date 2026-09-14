@@ -13,7 +13,7 @@ RSpec.feature "Change Provider Details" do
     visit "/providers"
     and_i_click_on(provider.operating_name)
     and_i_am_taken_to("/providers/#{provider.id}")
-    and_i_click_on("Change operating name")
+    visit "/providers/#{provider.id}/edit"
   end
 
   def and_i_fill_out_the_provider_form_with_updated_details

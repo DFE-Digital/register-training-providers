@@ -206,7 +206,9 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "Operating name" },
           value: { text: provider.operating_name },
-          actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
+          actions: [{ text: "Change",
+                      href: provider_change_step_path(provider_id: provider.id, field: "operating_name", step: "effective-date"),
+                      visually_hidden_text: "operating name" }],
         },
         {
           key: { text: "Legal name" },
@@ -276,7 +278,9 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
+            actions: [{ text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "operating_name", step: "effective-date"),
+                        visually_hidden_text: "operating name" }],
           },
           {
             key: { text: "Legal name" },
@@ -374,7 +378,9 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "operating name" }],
+            actions: [{ text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "operating_name", step: "effective-date"),
+                        visually_hidden_text: "operating name" }],
           },
           {
             key: { text: "Legal name" },

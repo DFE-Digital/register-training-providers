@@ -159,7 +159,11 @@ module ProviderHelper
     editable_fields = {
       "Operating name" => [{ text: "Change",
                              visually_hidden_text: "operating name",
-                             href: edit_provider_path(provider) }],
+                             href: provider_change_step_path(
+                               provider_id: provider.id,
+                               field: "operating_name",
+                               step: "effective-date"
+                             ) }],
       "Legal name" => [{ text: "Change", visually_hidden_text: "legal name", href: edit_provider_path(provider) }],
       "UK provider reference number (UKPRN)" => [{ text: "History",
                                                    visually_hidden_text: "of UK provider reference numbers",
