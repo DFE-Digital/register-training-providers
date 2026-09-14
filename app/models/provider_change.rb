@@ -25,6 +25,8 @@
 #  fk_rails_...  (provider_id => providers.id) ON DELETE => cascade
 #
 class ProviderChange < ApplicationRecord
+  OPTIONAL_ATTRIBUTES = %w[urn].freeze
+
   self.implicit_order_column = :created_at
   belongs_to :creator,
              class_name: "User",
@@ -43,8 +45,10 @@ class ProviderChange < ApplicationRecord
   }
 
   validates :attribute_name, presence: true
-  validates :value, presence: true
+  validates :value, presence: true, unless: :optional_attribute?
   validates :effective_on, presence: true
+
+  before_validation :normalise_optional_value
 
   scope :for_attribute, ->(attribute) {
     where(attribute_name: attribute)
@@ -62,4 +66,16 @@ class ProviderChange < ApplicationRecord
     .effective_on_or_before(effective_on)
     .where(value:)
   }
+
+private
+
+  def optional_attribute?
+    OPTIONAL_ATTRIBUTES.include?(attribute_name)
+  end
+
+  # The value column is NOT NULL; optional attributes are cleared with a blank
+  # string rather than nil.
+  def normalise_optional_value
+    self.value = "" if optional_attribute? && value.nil?
+  end
 end
