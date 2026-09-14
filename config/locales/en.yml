@@ -216,6 +216,11 @@ en:
               blank: "Enter unique reference number (URN)"
               invalid: "Enter a valid unique reference number (URN)"
               same: "Enter a different unique reference number (URN)"
+        provider_changes/steps/operating_name_step:
+          attributes:
+            operating_name:
+              blank: "Enter operating name"
+              same: "Enter a different operating name"
   flash_message:
     success:
       accreditation:
