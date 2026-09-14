@@ -1,31 +1,5 @@
-<%= content_for(:breadcrumbs) do %>
-  <%= render GovukComponent::BackLinkComponent.new(
-        text: "Back",
-        href: provider_path(@provider),
-      ) %>
-<% end %>
-
-<% page_data(
-     title: @provider.operating_name,
-     subtitle: "UK provider reference number history",
-     header: "UK provider reference number history",
-     caption: @provider.operating_name
-   ) %>
-
-<% content_for :full_width, true %>
-
-<p class="govuk-body">
-  View previous UK provider reference numbers and when they were changed.
-</p>
-
-<% if @provider_changes.empty? %>
-
-  <p class="govuk-body">
-    There is no UK provider reference number history.
-  </p>
-
-<% else %>
-  <%= govuk_table(head: ["UK provider reference number (UKPRN)", "Start date", "End date", "Changed by", "Status"],
-                  rows: provider_field_level_history(@provider_changes),
-                  first_cell_is_header: true) %>
-<% end %>
+<%= render "providers/provider_changes/shared/history",
+           subtitle: "UK provider reference number history",
+           intro: "View previous UK provider reference numbers and when they were changed.",
+           empty_message: "There is no UK provider reference number history.",
+           table_head: ["UK provider reference number (UKPRN)", "Start date", "End date", "Changed by", "Status"] %>
