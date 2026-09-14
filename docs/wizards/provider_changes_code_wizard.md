@@ -1,7 +1,7 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-09-02T11:40:22Z
+**Generated:** 2026-09-11T14:21:05Z
 **Processor:** DfE::Wizard::StepsProcessor
 
 ## Overview
@@ -26,7 +26,7 @@ All users start at this step. No conditional logic applies.
 ```
 [:effective_academic_year]
   ↓
-[:provider_code]
+[:new_code]
   ↓
 [:check_your_answers]
 ```
@@ -43,7 +43,7 @@ All users start at this step. No conditional logic applies.
 | Step ID                   | Label                   | Class                                               |
 | ------------------------- | ----------------------- | --------------------------------------------------- |
 | `effective_academic_year` | Effective Academic Year | `ProviderChanges::Steps::EffectiveAcademicYearStep` |
-| `provider_code`           | Provider Code           | `ProviderChanges::Steps::CodeStep`                  |
+| `new_code`                | New Code                | `ProviderChanges::Steps::CodeStep`                  |
 | `check_your_answers`      | Check Your Answers      | `ProviderChanges::Steps::CheckYourAnswersStep`      |
 
 ## Detailed Step Specifications
@@ -53,7 +53,7 @@ All users start at this step. No conditional logic applies.
 **Label:** Effective Academic Year
 **Class:** `ProviderChanges::Steps::EffectiveAcademicYearStep`
 **Entry Point:** ✓ Yes
-**Exit Points:** `provider_code`
+**Exit Points:** `new_code`
 
 #### Description
 
@@ -68,7 +68,7 @@ this step's purpose, user interactions, and business logic.
 
 #### Validations
 
-- **effective_on** (`presence`):
+- **effective_on** (`inclusion`):
 
 #### Operations
 
@@ -77,9 +77,9 @@ this step's purpose, user interactions, and business logic.
 | `validate` | Validate operation |
 | `persist`  | Persist operation  |
 
-### Step: `provider_code`
+### Step: `new_code`
 
-**Label:** Provider Code
+**Label:** New Code
 **Class:** `ProviderChanges::Steps::CodeStep`
 **Entry Point:** ✗ No
 **Exit Points:** `check_your_answers`
@@ -142,8 +142,8 @@ Simple transitions allow linear, unconditional progression from one step to the 
 
 | From                      | To                   | Behavior                       |
 | ------------------------- | -------------------- | ------------------------------ |
-| `effective_academic_year` | `provider_code`      | Always proceeds (no condition) |
-| `provider_code`           | `check_your_answers` | Always proceeds (no condition) |
+| `effective_academic_year` | `new_code`           | Always proceeds (no condition) |
+| `new_code`                | `check_your_answers` | Always proceeds (no condition) |
 
 ## Wizard Statistics
 
@@ -197,8 +197,8 @@ Simple transitions allow linear, unconditional progression from one step to the 
       :validators: [
         {
           :name: "effective_on",
-          :class: "ActiveModel::Validations::PresenceValidator",
-          :type: "presence",
+          :class: "ActiveModel::Validations::InclusionValidator",
+          :type: "inclusion",
           :message: null
         }
       ],
@@ -213,9 +213,9 @@ Simple transitions allow linear, unconditional progression from one step to the 
         }
       ]
     },
-    :provider_code: {
+    :new_code: {
       :class: "ProviderChanges::Steps::CodeStep",
-      :label: "Provider Code",
+      :label: "New Code",
       :attributes: [
         {
           :name: "code",
@@ -273,12 +273,12 @@ Simple transitions allow linear, unconditional progression from one step to the 
   :transitions: [
     {
       :from: "effective_academic_year",
-      :to: "provider_code",
+      :to: "new_code",
       :type: "simple",
       :label: null
     },
     {
-      :from: "provider_code",
+      :from: "new_code",
       :to: "check_your_answers",
       :type: "simple",
       :label: null
