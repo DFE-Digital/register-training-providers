@@ -117,8 +117,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :providers, except: [:new, :create] do
-    checkable(:providers)
+  resources :providers, except: %i[new create edit update] do
+    collection do
+      resource :check, only: %i[new create], path: "/check", controller: "providers/check", as: :provider_confirm
+    end
+
     resource :archive, only: [:show, :update], module: :providers
     resource :restore, only: [:show, :update], module: :providers
     resource :delete, only: [:show, :destroy], module: :providers

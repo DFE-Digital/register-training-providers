@@ -10,59 +10,27 @@ class Providers::CheckController < CheckController
 private
 
   def model
-    @model ||= if model_id.present?
-                 current_user.load_temporary(Provider, id: model_id, purpose: purpose)
-               else
-                 provider_session.load_provider || Provider.new
-               end
+    @model ||= provider_session.load_provider || Provider.new
   end
 
   def change_provider_onboarding_path
-    if model_id.nil?
-      new_provider_onboarding_path(goto: "confirm")
-    end
+    new_provider_onboarding_path(goto: "confirm")
   end
 
   def change_provider_first_become_active_path
-    if model_id.nil?
-      new_provider_first_become_active_path(goto: "confirm")
-    end
+    new_provider_first_become_active_path(goto: "confirm")
   end
 
   def change_provider_type_path
-    if model_id.present?
-      edit_provider_path(model, goto: "confirm")
-    else
-      new_provider_type_path(goto: "confirm")
-    end
+    new_provider_type_path(goto: "confirm")
   end
 
   def change_provider_details_path
-    if model_id.present?
-      edit_provider_path(model, goto: "confirm")
-    else
-      new_provider_details_path(goto: "confirm")
-    end
+    new_provider_details_path(goto: "confirm")
   end
 
   def back_path
-    if model_id.present?
-      edit_provider_path(model, goto: "confirm")
-    else
-      journey_coordinator.back_path
-    end
-  end
-
-  def purpose
-    model_id.present? ? :edit_provider : :create_provider
-  end
-
-  def success_path
-    if model_id.present?
-      provider_path(model)
-    else
-      providers_path
-    end
+    journey_coordinator.back_path
   end
 
   def accreditation_form
@@ -75,8 +43,6 @@ private
   end
 
   def address_form
-    return nil if model_id.present?
-
     address_data = address_session.load_address
     return nil unless address_data
 
@@ -84,8 +50,6 @@ private
   end
 
   def change_address_path
-    return nil if model_id.present?
-
     base_path = journey_coordinator.address_entry_path
     return nil unless base_path
 
@@ -118,7 +82,6 @@ private
   end
 
   def save_address_if_present
-    return if model_id.present?
     return unless address_form&.valid?
 
     address = model.addresses.build(address_form.to_address_attributes)

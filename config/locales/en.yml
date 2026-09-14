@@ -238,7 +238,6 @@ en:
           update: "User updated"
         provider:
           add: "Provider added"
-          update: "Provider updated"
         accreditation:
           add: "Accreditation added"
           update: "Accreditation updated"
