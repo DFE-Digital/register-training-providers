@@ -1,0 +1,34 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @wizard.previous_step_path(fallback: provider_path(@provider)),
+      ) %>
+<% end %>
+
+<%= form_for(
+      @wizard.current_step,
+      as: @wizard.current_step.step_id,
+      url: @wizard.current_step_path(return_to_review: params[:return_to_review]),
+      method: :patch
+    ) do |form| %>
+
+  <% page_data(
+       title: @provider.operating_name,
+       subtitle: "When should the UK provider reference number change?",
+       header: false,
+       error: @wizard.current_step.errors.present?
+     ) %>
+
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_date_field :effective_on,
+                            legend: { text: "When should the UK provider reference number change?" },
+                            caption: { text: @provider.operating_name },
+                            hint: { text: "For example, 31 7 2026" } %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", provider_path(@provider)) %>
+</p>
