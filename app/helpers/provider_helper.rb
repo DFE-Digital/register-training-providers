@@ -170,7 +170,13 @@ module ProviderHelper
                                field: "operating_name",
                                step: "effective-date"
                              ) }],
-      "Legal name" => [{ text: "Change",
+      "Legal name" => [{ text: "History",
+                         visually_hidden_text: "of legal names",
+                         href: provider_changes_field_history_path(
+                           provider_id: provider.id,
+                           field: "legal_name"
+                         ) },
+                       { text: "Change",
                          visually_hidden_text: "legal name",
                          href: provider_change_step_path(
                            provider_id: provider.id,
