@@ -163,7 +163,11 @@ module ProviderHelper
       "Legal name" => [{ text: "Change", visually_hidden_text: "legal name", href: edit_provider_path(provider) }],
       "UK provider reference number (UKPRN)" => [{ text: "Change",
                                                    visually_hidden_text: "UK provider reference number (UKPRN)",
-                                                   href: edit_provider_path(provider) }],
+                                                   href: provider_change_step_path(
+                                                     provider_id: provider.id,
+                                                     field: "ukprn",
+                                                     step: "effective-date"
+                                                   ) }],
       "Unique reference number (URN)" => [{ text: "Change",
                                             visually_hidden_text: "unique reference number (URN)",
                                             href: edit_provider_path(provider) }],
