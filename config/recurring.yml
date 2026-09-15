@@ -10,6 +10,11 @@ expire_authentication_tokens_backup:
   priority: 100
   schedule: "at 12:15 am every day"
 
+apply_provider_changes_job:
+  command: "Providers::ApplyProviderChangesJob"
+  priority: 100
+  schedule: "at 12:30 am every day"
+
 remove_temporary_record_command:
   command: "TemporaryRecord.expired.delete_all"
   priority: 100

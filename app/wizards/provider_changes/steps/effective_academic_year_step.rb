@@ -6,7 +6,10 @@ module ProviderChanges
 
       attribute :effective_on, :date
 
-      validates :effective_on, presence: true
+      validates :effective_on,
+                inclusion: {
+                  in: ->(step) { [step.next_academic_year_start_date, step.following_academic_year_start_date] }
+                }
 
       validate :code_is_available, unless: -> { errors.key?(:effective_on) }
 
@@ -31,11 +34,17 @@ module ProviderChanges
       end
 
       def code_is_available
-        if wizard.state_store.code.present? && ProviderCodeTakenService.call(
-          code: wizard.state_store.code, effective_on: effective_on, provider: wizard.provider
+        code = wizard.state_store.code
+        return if code.blank?
+
+        own_claim = wizard.provider.provider_changes.pending_value_change(
+          attribute: "code", value: code, effective_on: effective_on
         )
-          errors.add(:effective_on, :taken)
-        end
+        return if own_claim.exists? && following_academic_year_start_date == effective_on
+
+        errors.add(:effective_on, :taken) if ProviderCodeTakenService.call(
+          code: code, effective_on: effective_on, provider: wizard.provider
+        )
       end
     end
   end

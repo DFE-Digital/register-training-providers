@@ -202,7 +202,7 @@ en:
         provider_changes/steps/effective_academic_year_step:
           attributes:
             effective_on:
-              blank: "Select an academic year"
+              inclusion: "Select an academic year"
               taken: "Select another academic year"
   flash_message:
     success:

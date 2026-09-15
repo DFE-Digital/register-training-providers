@@ -39,16 +39,12 @@ module Providers
   private
 
     def save_provider_change
-      provider_change = provider.provider_changes.pending.find_or_initialize_by(
-        attribute_name: field
-      )
-
-      provider_change.update!(
-        **wizard.provider_change_attributes,
+      SaveProviderChangeService.call(
+        provider: provider,
+        attribute_name: field,
+        attributes: wizard.provider_change_attributes,
         creator: current_user
       )
-
-      Providers::ApplyProviderChangeJob.perform_now(provider_change.id) if provider_change.effective_on <= Date.current
     end
 
     def try_restore_pending_existing_provider_changes

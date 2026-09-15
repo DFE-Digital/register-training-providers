@@ -12,7 +12,6 @@ RSpec.describe ProviderChange, type: :model do
     it do
       expect(described_class.statuses).to eq(
         "pending" => "pending",
-        "processing" => "processing",
         "completed" => "completed",
         "failed" => "failed"
       )

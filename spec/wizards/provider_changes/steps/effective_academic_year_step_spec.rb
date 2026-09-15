@@ -4,8 +4,15 @@ RSpec.describe ProviderChanges::Steps::EffectiveAcademicYearStep do
   let(:wizard) { double(state_store:, provider:) }
   let(:state_store) { double(code:) }
   let(:code) { "ABC" }
-  let(:effective_on) { Date.new(2026, 9, 1) }
   let(:provider) { create(:provider) }
+  let(:effective_on) { following_academic_year_start_date }
+
+  let(:next_academic_year_start_date) do
+    AcademicYearCalculator.build_academic_year_start_date(AcademicYearCalculator.next_academic_year)
+  end
+  let(:following_academic_year_start_date) do
+    AcademicYearCalculator.build_academic_year_start_date(AcademicYearCalculator.following_academic_year)
+  end
 
   describe ".permitted_params" do
     it "permits effective_on" do
@@ -14,8 +21,23 @@ RSpec.describe ProviderChanges::Steps::EffectiveAcademicYearStep do
   end
 
   describe "validations" do
-    it "requires an effective date" do
+    it "requires an offered effective date" do
       step = described_class.new(wizard: wizard, effective_on: nil)
+
+      expect(step).not_to be_valid
+      expect(step.errors[:effective_on]).to include("Select an academic year")
+    end
+
+    it "accepts the next academic year start date" do
+      expect(described_class.new(wizard: wizard, effective_on: next_academic_year_start_date)).to be_valid
+    end
+
+    it "accepts the following academic year start date" do
+      expect(described_class.new(wizard: wizard, effective_on: following_academic_year_start_date)).to be_valid
+    end
+
+    it "rejects a date that is not an offered academic year" do
+      step = described_class.new(wizard: wizard, effective_on: Date.new(2026, 9, 1))
 
       expect(step).not_to be_valid
       expect(step.errors[:effective_on]).to include("Select an academic year")
@@ -67,6 +89,33 @@ RSpec.describe ProviderChanges::Steps::EffectiveAcademicYearStep do
 
       expect(ProviderCodeTakenService).not_to receive(:call)
       expect(step).not_to be_valid
+    end
+
+    it "does not check availability when the provider already holds a following-year claim" do
+      create(
+        :provider_change,
+        provider: provider,
+        attribute_name: "code",
+        value: code,
+        effective_on: following_academic_year_start_date
+      )
+
+      expect(ProviderCodeTakenService).not_to receive(:call)
+      expect(step).to be_valid
+    end
+
+    it "still checks availability when the provider's own claim is not the following year" do
+      create(
+        :provider_change,
+        provider: provider,
+        attribute_name: "code",
+        value: code,
+        effective_on: next_academic_year_start_date
+      )
+
+      expect(ProviderCodeTakenService).to receive(:call).and_return(false)
+
+      described_class.new(wizard: wizard, effective_on: next_academic_year_start_date).valid?
     end
   end
 
