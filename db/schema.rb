@@ -209,6 +209,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_113406) do
     t.index ["provider_id"], name: "index_provider_academic_years_on_provider_id"
   end
 
+  create_table "provider_changes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "attribute_name", null: false
+    t.datetime "created_at", null: false
+    t.uuid "created_by_id"
+    t.date "effective_on", null: false
+    t.text "error_message"
+    t.datetime "processed_at"
+    t.uuid "provider_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "value", null: false
+    t.index ["created_by_id"], name: "index_provider_changes_on_created_by_id"
+    t.index ["provider_id", "attribute_name", "status", "effective_on"], name: "idx_on_provider_id_attribute_name_status_effective__6547b4b7a9"
+  end
+
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "accreditation_status", null: false
     t.datetime "archived_at", precision: nil
@@ -413,6 +428,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_113406) do
   add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
   add_foreign_key "provider_academic_years", "academic_years"
   add_foreign_key "provider_academic_years", "providers"
+  add_foreign_key "provider_changes", "providers", on_delete: :cascade
+  add_foreign_key "provider_changes", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

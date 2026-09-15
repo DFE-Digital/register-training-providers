@@ -56,4 +56,8 @@ module AcademicYearHelper
       .transform_values { |academic_year| display_academic_year(academic_year) }
       .stringify_keys
   end
+
+  def academic_year_label(academic_year)
+    "#{academic_year} to #{academic_year + 1} academic year"
+  end
 end
