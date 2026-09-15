@@ -133,6 +133,16 @@ erDiagram
 		datetime discarded_at
 		uuid provider_id FK
 	}
+	ProviderChange {
+		string attribute_name
+		uuid created_by_id FK
+		date effective_on
+		text error_message
+		datetime processed_at
+		uuid provider_id FK
+		string status
+		jsonb value
+	}
 	TemporaryRecord {
 		uuid created_by FK
 		jsonb data
@@ -165,6 +175,7 @@ erDiagram
 	PartnershipAcademicYear o|--}o "Audited::Audit" : ""
 	Provider o|--}o "Audited::Audit" : ""
 	ProviderAcademicYear o|--}o "Audited::Audit" : ""
+	ProviderChange o|--}o "Audited::Audit" : ""
 	User o|--}o "Audited::Audit" : ""
 	Provider ||--}o Address : ""
 	ApiClient ||--}o AuthenticationToken : ""
@@ -184,5 +195,7 @@ erDiagram
 	Provider ||--}o Partnership : ""
 	Partnership ||--}o PartnershipAcademicYear : ""
 	User ||--}o TemporaryRecord : ""
+	User o|--}o ProviderChange : ""
 	Provider o|--}o TemporaryRecord : ""
 	Provider ||--}o ProviderAcademicYear : ""
+	Provider ||--}o ProviderChange : ""

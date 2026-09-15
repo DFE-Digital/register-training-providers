@@ -111,3 +111,15 @@
     - discarded_at
     - created_at
     - updated_at
+  :provider_changes:
+    - id
+    - provider_id
+    - attribute_name
+    - value
+    - effective_on
+    - status
+    - created_by_id
+    - processed_at
+    - error_message
+    - created_at
+    - updated_at
