@@ -138,4 +138,14 @@ RSpec.describe AcademicYearHelper, type: :helper do
       )
     end
   end
+
+  describe "#academic_year_label" do
+    subject { helper.academic_year_label(academic_year) }
+
+    let(:academic_year) { 2000 }
+
+    it "returns a hash indexed by start_year with formatted values" do
+      expect(subject).to eq("#{academic_year} to #{academic_year + 1} academic year")
+    end
+  end
 end
