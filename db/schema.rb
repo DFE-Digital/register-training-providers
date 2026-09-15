@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_13_102843) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_04_113406) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -44,11 +44,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_13_102843) do
     t.string "county"
     t.datetime "created_at", null: false
     t.datetime "discarded_at"
+    t.date "effective_end_date"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
     t.string "postcode", null: false
     t.uuid "provider_id", null: false
     t.string "town_or_city", null: false
+    t.string "types", default: [], array: true
     t.datetime "updated_at", null: false
     t.string "uprn", limit: 15
     t.index ["created_at"], name: "index_addresses_on_created_at"

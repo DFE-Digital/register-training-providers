@@ -1,0 +1,20 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: @form_url, method: "post" do |form| %>
+  <%= form.govuk_check_boxes_fieldset :types, legend: { text: "Address types" } do %>
+    <% Address::ADDRESS_TYPES.each do |type| %>
+      <%= form.govuk_check_box :types, type.to_sym, label: { text: type.humanize } %>
+<% end %>
+    <% end %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

@@ -180,6 +180,10 @@ RSpec.feature "Add Provider" do
       fill_in "Postcode", with: postcode
 
       and_i_click_on("Continue")
+
+      check "Trading"
+
+      and_i_click_on("Continue")
     end
 
     def and_i_fill_in_the_provider_details_form_correctly(provider_details:)

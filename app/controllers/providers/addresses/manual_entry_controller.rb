@@ -85,7 +85,7 @@ module Providers
           @form.longitude = coordinates[:longitude]
 
           address_session.store_address(@form.attributes)
-          redirect_to provider_address_check_path(@address, provider_id: provider.id)
+          redirect_to provider_edit_address_types_path(@address, provider_id: provider.id)
         else
           setup_view_data(:edit)
           render :edit
@@ -116,14 +116,14 @@ module Providers
         if setup_context?
           # If coming from check page, return to check
           if params[:goto] == "confirm"
-            new_provider_confirm_path
+            provider_new_address_types_path
           else
             journey_coordinator(:address_manual_entry).next_path
           end
         else
           query_params = {}
           query_params[:debug] = true if imported_data_context?
-          provider_new_address_confirm_path(provider, query_params)
+          provider_new_address_types_path(provider, query_params)
         end
       end
 

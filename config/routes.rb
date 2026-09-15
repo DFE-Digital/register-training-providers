@@ -108,6 +108,11 @@ Rails.application.routes.draw do
 
         get "select", to: "/providers/addresses/select#new", as: :select
         post "select", to: "/providers/addresses/select#create"
+
+        namespace :types do
+          get "", to: "/providers/addresses/types#new"
+          post "", to: "/providers/addresses/types#create"
+        end
       end
     end
   end
@@ -148,6 +153,13 @@ Rails.application.routes.draw do
     post "addresses/find", to: "providers/addresses/find#create", as: :find
     get "addresses/select/new", to: "providers/addresses/select#new", as: :new_select
     post "addresses/select", to: "providers/addresses/select#create", as: :select
+
+    # Types
+
+    get "addresses/types/new", to: "providers/addresses/types#new", as: :new_address_types
+    get "addresses/:id/types/edit", to: "providers/addresses/types#edit", as: :edit_address_types
+    post "addresses/types", to: "providers/addresses/types#create"
+    patch "addresses/:id/types", to: "providers/addresses/types#update", as: :update_address_types
 
     # Check/confirm
     get "addresses/check/new", to: "providers/addresses/check#new", as: :new_address_confirm

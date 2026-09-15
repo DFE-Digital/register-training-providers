@@ -1,0 +1,22 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path,
+      ) %>
+<% end %>
+
+<%= form_for @form, url: provider_update_address_types_path(provider: @provider, address: @address), method: :patch do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_check_boxes_fieldset :types, legend: { text: "Address types" } do %>
+    <% Address::ADDRESS_TYPES.each do |type| %>
+      <%= form.govuk_check_box :types, type.to_sym, label: { text: type.humanize }, checked: @address.types.include?(type) %>
+    <% end %>
+<% end %>
+
+  <%= form.govuk_submit %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", cancel_path) %>
+</p>

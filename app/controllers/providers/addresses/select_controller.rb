@@ -93,7 +93,7 @@ module Providers
         if setup_context?
           # If coming from check page, return to check
           if params[:goto] == "confirm"
-            new_provider_confirm_path
+            provider_new_address_types_path
           else
             journey_coordinator(:address_select).next_path
           end
@@ -101,7 +101,8 @@ module Providers
           query_params = {}
           query_params[:debug] = true if imported_data_context?
 
-          provider_new_address_confirm_path(provider, query_params)
+          provider_new_address_types_path(provider, query_params)
+          # provider_new_address_confirm_path(provider, query_params)
         end
       end
 

@@ -94,6 +94,15 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       then_i_should_be_on_the_address_page
       and_my_address_should_be_filled
 
+      # Go forward to address types page
+      when_i_click_on("Continue")
+      and_i_select_address_types
+
+      # Now on check page - test back button
+      when_i_click_the_back_link
+      then_i_should_be_on_address_types_page
+      and_my_address_types_are_selected
+
       # Complete the journey
       when_i_click_on("Continue")
       then_i_should_be_on_the_check_page
@@ -121,9 +130,14 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       when_i_click_on("Continue")
       and_i_fill_in_manual_address
 
-      # Back from Check to Address
+      # Go forward to address types page
+      when_i_click_on("Continue")
+      and_i_select_address_types
+
+      # Now on check page - test back button
       when_i_click_the_back_link
-      then_i_should_be_on_the_address_page
+      then_i_should_be_on_address_types_page
+      and_my_address_types_are_selected
 
       # Complete
       when_i_click_on("Continue")
@@ -153,7 +167,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       # Can select an address and continue
       when_i_select_the_first_address
       when_i_click_on("Continue")
-      then_i_should_be_on_the_check_page
+      then_i_should_be_on_address_types_page
     end
   end
 
@@ -521,6 +535,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     when_i_start_creating_a_provider
     and_i_complete_provider_details_as_unaccredited
     and_i_fill_in_manual_address
+    and_i_select_address_types
     then_i_should_be_on_the_check_page
   end
 
@@ -530,6 +545,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     when_i_search_for_an_address
     when_i_select_the_first_address
     click_on("Continue")
+    and_i_select_address_types
     then_i_should_be_on_the_check_page
   end
 
@@ -537,6 +553,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     when_i_start_creating_a_provider
     and_i_complete_provider_details_as_unaccredited
     and_i_fill_in_manual_address
+    and_i_select_address_types
     then_i_should_be_on_the_check_page
   end
 
@@ -546,5 +563,21 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
   def when_i_click_on_change_provider_details_link
     click_on("Change operating name")
+  end
+
+  def and_i_select_address_types
+    check "Trading"
+    check "Registered"
+
+    click_on("Continue")
+  end
+
+  def then_i_should_be_on_address_types_page
+    expect(page).to have_current_path(/\/providers\/.*\/addresses\/types/)
+  end
+
+  def and_my_address_types_are_selected
+    expect(find_field("Trading").checked?).to eq(true)
+    expect(find_field("Registered").checked?).to eq(true)
   end
 end

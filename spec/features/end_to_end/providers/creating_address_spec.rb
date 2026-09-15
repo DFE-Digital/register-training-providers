@@ -28,6 +28,10 @@ RSpec.describe "Creating address", type: :feature do
 
       click_button "Continue"
 
+      check "Trading"
+
+      and_i_click_on("Continue")
+
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("123 Test Street")
       expect(page).to have_content("Test Building")
@@ -61,6 +65,10 @@ RSpec.describe "Creating address", type: :feature do
       fill_in "Postcode", with: "M1 1AA"
 
       click_button "Continue"
+
+      check "Trading"
+
+      and_i_click_on("Continue")
 
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("456 Minimal Road")

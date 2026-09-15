@@ -6,7 +6,7 @@
 
 <%= debug_address_summary_card(@provider) %>
 
-<%= govuk_summary_list(rows: address_rows(@form, @change_path)) %>
+<%= govuk_summary_list(rows: address_rows(@form, @change_path, @type_change_path)) %>
 
 <% if show_location_section?(@form) %>
   <h2 class="govuk-heading-m">Location</h2>

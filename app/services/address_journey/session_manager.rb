@@ -23,6 +23,12 @@ module AddressJourney
       journey_data[:address] = address_attributes
     end
 
+    def add_attributes(new_attributes)
+      new_attributes.each do |k, v|
+        journey_data[:address][k] = v
+      end
+    end
+
     def load_address
       address_data = journey_data[:address]
       address_data&.with_indifferent_access

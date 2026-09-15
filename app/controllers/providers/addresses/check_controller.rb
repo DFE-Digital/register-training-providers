@@ -162,6 +162,14 @@ module Providers
         end
       end
 
+      def type_change_path
+        if edit_context?
+          provider_edit_address_types_path(@address, provider_id: provider.id, goto: "confirm")
+        else
+          provider_new_address_types_path(provider, goto: "confirm")
+        end
+      end
+
       def save_path
         if edit_context?
           provider_address_check_path(@address, provider_id: provider.id)
@@ -182,6 +190,7 @@ module Providers
       def setup_view_data(context)
         @back_path = back_path
         @change_path = change_path
+        @type_change_path = type_change_path
         @save_path = save_path
         @cancel_path = cancel_path
         @save_button_text = "Save address"
