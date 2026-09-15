@@ -36,6 +36,14 @@ module Providers
       end
     end
 
+    def history
+      authorize provider, :show?
+
+      provider_changes
+
+      render "providers/provider_changes/#{field}/history"
+    end
+
   private
 
     def save_provider_change
@@ -55,7 +63,7 @@ module Providers
     end
 
     def provider_changes
-      @provider_changes ||= @provider.provider_changes.history.for_attribute(field)
+      @provider_changes ||= provider.provider_changes.history.for_attribute(field)
     end
 
     def provider

@@ -37,4 +37,25 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
 
     it { is_expected.to be(false) }
   end
+
+  context "without a step (field only)" do
+    let(:request) do
+      instance_double(
+        ActionDispatch::Request,
+        path_parameters: { field: }
+      )
+    end
+
+    context "with a known field" do
+      let(:field) { "code" }
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with an unknown field" do
+      let(:field) { "unknown_field" }
+
+      it { is_expected.to be(false) }
+    end
+  end
 end
