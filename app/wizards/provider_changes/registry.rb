@@ -11,7 +11,10 @@ module ProviderChanges
                    review: Presenters::UkprnReview },
       "urn" => { wizard: UrnWizard,
                  state_store: StateStores::UrnStore,
-                 review: Presenters::UrnReview }
+                 review: Presenters::UrnReview },
+      "operating_name" => { wizard: OperatingNameWizard,
+                            state_store: StateStores::OperatingNameStore,
+                            review: Presenters::OperatingNameReview }
     }.freeze
 
     def self.fields

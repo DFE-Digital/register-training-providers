@@ -274,6 +274,8 @@ en:
           updated: "UK provider reference number change request submitted successfully"
         urn:
           updated: "Unique reference number change request submitted successfully"
+        operating_name:
+          updated: "Operating name change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
