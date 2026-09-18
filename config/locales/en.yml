@@ -179,6 +179,10 @@ en:
           attributes:
             start_date:
               blank: "Enter date the partnership started"
+        types:
+          attributes:
+            types:
+              blank: "Please select at least one address type"
   activemodel:
     errors:
       messages:

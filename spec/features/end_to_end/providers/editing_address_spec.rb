@@ -44,6 +44,10 @@ RSpec.describe "Editing address", type: :feature do
 
       click_button "Continue"
 
+      check "Trading"
+
+      click_button "Continue"
+
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("Updated Test Street")
       expect(page).to have_content("Updated Building")
@@ -75,6 +79,10 @@ RSpec.describe "Editing address", type: :feature do
       fill_in "Town or city", with: "Minimal Updated Town"
       fill_in "County (optional)", with: ""
       fill_in "Postcode", with: "B1 1AA"
+
+      click_button "Continue"
+
+      check "Trading"
 
       click_button "Continue"
 
@@ -137,6 +145,10 @@ RSpec.describe "Editing address", type: :feature do
 
       click_button "Continue"
 
+      check "Trading"
+
+      click_button "Continue"
+
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("First Update Street")
       expect(page).to have_content("First Update City")
@@ -147,6 +159,8 @@ RSpec.describe "Editing address", type: :feature do
       expect(page).to have_field("Town or city", with: "First Update City")
 
       fill_in "Address line 1", with: "Final Update Street"
+
+      click_button "Continue"
 
       click_button "Continue"
 

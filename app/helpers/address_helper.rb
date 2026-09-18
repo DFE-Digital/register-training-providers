@@ -8,7 +8,7 @@ module AddressHelper
       ) == address.id
 
       card = {
-        title: "#{address.town_or_city}, #{address.postcode}",
+        title: address_summary_card_title(address),
         rows: address_summary_card_rows(address),
         imported_data: imported_data
       }
@@ -28,8 +28,23 @@ module AddressHelper
     end
   end
 
+  def address_summary_card_title(address)
+    return "#{address.town_or_city}, #{address.postcode}" if address.types.blank?
+
+    "#{humanize_address_types(address.types.map(&:capitalize))} address"
+  end
+
+  def humanize_address_types(address_types)
+    return address_types.first if address_types.size == 1
+
+    return address_types.join(" and ") if address_types.size == 2
+
+    address_types[0..1].join(", ") + " and #{address_types[2]}"
+  end
+
   def address_summary_card_rows(address)
     rows = address_basic_row(address)
+    rows << { key: { text: "Effective from" }, value: { text: address.created_at.to_date.to_fs(:govuk) } }
     rows << location_row_with_coords(address) if show_location_section?(address)
     rows
   end
@@ -52,14 +67,24 @@ module AddressHelper
     }]
   end
 
-  def address_rows(address, change_path = nil)
+  def address_rows(address, change_path = nil, type_change_path = nil)
     address_row = address_basic_row(address).first
+
+    type_row = address_type_row(address, type_change_path)
 
     if change_path
       address_row[:actions] = [{ href: change_path, visually_hidden_text: "address" }]
     end
 
-    [address_row].compact
+    [address_row, type_row].compact
+  end
+
+  def address_type_row(address, type_change_path = nil)
+    type_row = { key: { text: "Address types" },
+                 value: { text: safe_join(address.types.map(&:capitalize), tag.br) } }
+    type_row[:actions] = [{ href: type_change_path, visually_hidden_text: "types" }] if type_change_path
+
+    type_row
   end
 
   def location_rows(address)

@@ -8,6 +8,7 @@ FactoryBot.define do
     town_or_city { Faker::Address.city }
     county { Faker::Address.county }
     postcode { Faker::Address.postcode }
+    types { [:registered, :trading] }
 
     trait :with_address_line_3 do
       address_line_3 { Faker::Address.building_number }
