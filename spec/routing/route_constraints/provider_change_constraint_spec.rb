@@ -56,6 +56,22 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
     end
   end
 
+  context "with a valid legal name field/step combination" do
+    let(:field) { "legal_name" }
+
+    %w[
+      effective-date
+      new-legal-name
+      check-your-answers
+    ].each do |valid_step|
+      context "when step is #{valid_step}" do
+        let(:step) { valid_step }
+
+        it { is_expected.to be(true) }
+      end
+    end
+  end
+
   context "with a valid operating name field/step combination" do
     let(:field) { "operating_name" }
 
@@ -108,6 +124,12 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
 
     context "with a known URN field" do
       let(:field) { "urn" }
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a known legal name field" do
+      let(:field) { "legal_name" }
 
       it { is_expected.to be(true) }
     end
