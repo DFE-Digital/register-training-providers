@@ -15,6 +15,11 @@ module RouteConstraints
         effective-date
         new-urn
         check-your-answers
+      ],
+      "operating_name" => %w[
+        effective-date
+        new-operating-name
+        check-your-answers
       ]
     }.freeze
 
