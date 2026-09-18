@@ -278,6 +278,8 @@ en:
           updated: "UK provider reference number change request submitted successfully"
         urn:
           updated: "Unique reference number change request submitted successfully"
+        legal_name:
+          updated: "Legal name change request submitted successfully"
         operating_name:
           updated: "Operating name change request submitted successfully"
   forms:
