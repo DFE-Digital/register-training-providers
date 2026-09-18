@@ -1,7 +1,7 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-09-11T14:21:05Z
+**Generated:** 2026-09-11T14:18:01Z
 **Processor:** DfE::Wizard::StepsProcessor
 
 ## Overview
@@ -17,16 +17,16 @@
 
 ## Root Entry Point (Fixed)
 
-**Entry Point:** `effective_academic_year`
+**Entry Point:** `effective_date`
 
 All users start at this step. No conditional logic applies.
 
 ## Wizard Flow
 
 ```
-[:effective_academic_year]
+[:effective_date]
   ↓
-[:new_code]
+[:new_ukprn]
   ↓
 [:check_your_answers]
 ```
@@ -40,20 +40,20 @@ All users start at this step. No conditional logic applies.
 
 ## Steps Inventory
 
-| Step ID                   | Label                   | Class                                               |
-| ------------------------- | ----------------------- | --------------------------------------------------- |
-| `effective_academic_year` | Effective Academic Year | `ProviderChanges::Steps::EffectiveAcademicYearStep` |
-| `new_code`                | New Code                | `ProviderChanges::Steps::CodeStep`                  |
-| `check_your_answers`      | Check Your Answers      | `ProviderChanges::Steps::CheckYourAnswersStep`      |
+| Step ID              | Label              | Class                                          |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `effective_date`     | Effective Date     | `ProviderChanges::Steps::EffectiveDateStep`    |
+| `new_ukprn`          | New Ukprn          | `ProviderChanges::Steps::UkprnStep`            |
+| `check_your_answers` | Check Your Answers | `ProviderChanges::Steps::CheckYourAnswersStep` |
 
 ## Detailed Step Specifications
 
-### Step: `effective_academic_year`
+### Step: `effective_date`
 
-**Label:** Effective Academic Year
-**Class:** `ProviderChanges::Steps::EffectiveAcademicYearStep`
+**Label:** Effective Date
+**Class:** `ProviderChanges::Steps::EffectiveDateStep`
 **Entry Point:** ✓ Yes
-**Exit Points:** `new_code`
+**Exit Points:** `new_ukprn`
 
 #### Description
 
@@ -62,13 +62,12 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute      | Type                      | Required | Description |
-| -------------- | ------------------------- | :------: | ----------- |
-| `effective_on` | `ActiveModel::Type::Date` |    ✗     |             |
-
-#### Validations
-
-- **effective_on** (`inclusion`):
+| Attribute            | Type                         | Required | Description |
+| -------------------- | ---------------------------- | :------: | ----------- |
+| `effective_on_day`   | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on_month` | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on_year`  | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on`       | `ActiveModel::Type::Date`    |    ✗     |             |
 
 #### Operations
 
@@ -77,10 +76,10 @@ this step's purpose, user interactions, and business logic.
 | `validate` | Validate operation |
 | `persist`  | Persist operation  |
 
-### Step: `new_code`
+### Step: `new_ukprn`
 
-**Label:** New Code
-**Class:** `ProviderChanges::Steps::CodeStep`
+**Label:** New Ukprn
+**Class:** `ProviderChanges::Steps::UkprnStep`
 **Entry Point:** ✗ No
 **Exit Points:** `check_your_answers`
 
@@ -93,13 +92,13 @@ this step's purpose, user interactions, and business logic.
 
 | Attribute | Type                       | Required | Description |
 | --------- | -------------------------- | :------: | ----------- |
-| `code`    | `ActiveModel::Type::Value` |    ✗     |             |
+| `ukprn`   | `ActiveModel::Type::Value` |    ✗     |             |
 
 #### Validations
 
-- **code** (`presence`):
-- **code** (`format`):
-- **code** (`length`):
+- **ukprn** (`presence`):
+- **ukprn** (`format`):
+- **ukprn** (`length`):
 
 #### Operations
 
@@ -140,10 +139,10 @@ This wizard contains **2 transitions** across 4 types:
 
 Simple transitions allow linear, unconditional progression from one step to the next.
 
-| From                      | To                   | Behavior                       |
-| ------------------------- | -------------------- | ------------------------------ |
-| `effective_academic_year` | `new_code`           | Always proceeds (no condition) |
-| `new_code`                | `check_your_answers` | Always proceeds (no condition) |
+| From             | To                   | Behavior                       |
+| ---------------- | -------------------- | ------------------------------ |
+| `effective_date` | `new_ukprn`          | Always proceeds (no condition) |
+| `new_ukprn`      | `check_your_answers` | Always proceeds (no condition) |
 
 ## Wizard Statistics
 
@@ -183,25 +182,30 @@ Simple transitions allow linear, unconditional progression from one step to the 
 ```json
 {
   :structure_type: "graph",
-  :root_step: "effective_academic_year",
+  :root_step: "effective_date",
   :steps: {
-    :effective_academic_year: {
-      :class: "ProviderChanges::Steps::EffectiveAcademicYearStep",
-      :label: "Effective Academic Year",
+    :effective_date: {
+      :class: "ProviderChanges::Steps::EffectiveDateStep",
+      :label: "Effective Date",
       :attributes: [
+        {
+          :name: "effective_on_day",
+          :type: "ActiveModel::Type::Integer"
+        },
+        {
+          :name: "effective_on_month",
+          :type: "ActiveModel::Type::Integer"
+        },
+        {
+          :name: "effective_on_year",
+          :type: "ActiveModel::Type::Integer"
+        },
         {
           :name: "effective_on",
           :type: "ActiveModel::Type::Date"
         }
       ],
-      :validators: [
-        {
-          :name: "effective_on",
-          :class: "ActiveModel::Validations::InclusionValidator",
-          :type: "inclusion",
-          :message: null
-        }
-      ],
+      :validators: [],
       :operations: [
         {
           :name: "validate",
@@ -213,30 +217,30 @@ Simple transitions allow linear, unconditional progression from one step to the 
         }
       ]
     },
-    :new_code: {
-      :class: "ProviderChanges::Steps::CodeStep",
-      :label: "New Code",
+    :new_ukprn: {
+      :class: "ProviderChanges::Steps::UkprnStep",
+      :label: "New Ukprn",
       :attributes: [
         {
-          :name: "code",
+          :name: "ukprn",
           :type: "ActiveModel::Type::Value"
         }
       ],
       :validators: [
         {
-          :name: "code",
+          :name: "ukprn",
           :class: "ActiveModel::Validations::PresenceValidator",
           :type: "presence",
           :message: null
         },
         {
-          :name: "code",
+          :name: "ukprn",
           :class: "ActiveModel::Validations::FormatValidator",
           :type: "format",
           :message: null
         },
         {
-          :name: "code",
+          :name: "ukprn",
           :class: "ActiveModel::Validations::LengthValidator",
           :type: "length",
           :message: null
@@ -272,13 +276,13 @@ Simple transitions allow linear, unconditional progression from one step to the 
   },
   :transitions: [
     {
-      :from: "effective_academic_year",
-      :to: "new_code",
+      :from: "effective_date",
+      :to: "new_ukprn",
       :type: "simple",
       :label: null
     },
     {
-      :from: "new_code",
+      :from: "new_ukprn",
       :to: "check_your_answers",
       :type: "simple",
       :label: null
@@ -291,7 +295,7 @@ Simple transitions allow linear, unconditional progression from one step to the 
     :multiple_conditional_edges: 0,
     :custom_branching_edges: 0
   },
-  :wizard_name: "Provider changes/code wizard"
+  :wizard_name: "Provider changes/ukprn wizard"
 }
 ```
 
