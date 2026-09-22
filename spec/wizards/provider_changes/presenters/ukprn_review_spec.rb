@@ -41,7 +41,7 @@ RSpec.describe ProviderChanges::Presenters::UkprnReview do
         [
           {
             href: provider_change_update_step_path(provider_id: provider.id, field: "ukprn", step: "new-ukprn", return_to_review: :new_ukprn),
-            visually_hidden_text: "New UK provider reference number (UKPRN)"
+            visually_hidden_text: "new UK provider reference number (UKPRN)"
           },
           {
             href: provider_change_update_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date", return_to_review: :effective_date),

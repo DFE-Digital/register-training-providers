@@ -48,7 +48,7 @@ RSpec.feature "Editing provider UKPRN" do
       within(".govuk-summary-list__row", text: "New UK provider reference number (UKPRN)") do
         expect(page).to have_css(".govuk-summary-list__value", text: new_ukprn)
         expect(page).to have_link(
-          "Change new uk provider reference number (ukprn)",
+          "Change new UK provider reference number (UKPRN)",
           href: "/providers/#{provider_with_ukprn_to_change.id}/changes/ukprn/new-ukprn?return_to_review=new_ukprn"
         )
       end

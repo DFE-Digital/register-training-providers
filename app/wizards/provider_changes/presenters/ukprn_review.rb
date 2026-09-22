@@ -4,7 +4,7 @@ module ProviderChanges
       include DfE::Wizard::CheckAnswersPresenter
 
       HIDDEN_TEXT_OVERRIDES = {
-        "new uk provider reference number (ukprn)" => "New UK provider reference number (UKPRN)",
+        "new uk provider reference number (ukprn)" => "new UK provider reference number (UKPRN)",
       }.freeze
 
       def rows
