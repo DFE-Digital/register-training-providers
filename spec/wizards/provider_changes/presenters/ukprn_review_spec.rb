@@ -35,6 +35,21 @@ RSpec.describe ProviderChanges::Presenters::UkprnReview do
         ]
       )
     end
+
+    it "uses the overridden visually hidden text for the change links" do
+      expect(presenter.rows.filter_map { |row| row[:actions]&.first }).to eq(
+        [
+          {
+            href: provider_change_update_step_path(provider_id: provider.id, field: "ukprn", step: "new-ukprn", return_to_review: :new_ukprn),
+            visually_hidden_text: "New UK provider reference number (UKPRN)"
+          },
+          {
+            href: provider_change_update_step_path(provider_id: provider.id, field: "ukprn", step: "effective-date", return_to_review: :effective_date),
+            visually_hidden_text: "effective date"
+          },
+        ]
+      )
+    end
   end
 
   describe "#format_value" do
