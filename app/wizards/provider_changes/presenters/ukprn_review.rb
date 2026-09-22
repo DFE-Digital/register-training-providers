@@ -3,6 +3,10 @@ module ProviderChanges
     class UkprnReview
       include DfE::Wizard::CheckAnswersPresenter
 
+      HIDDEN_TEXT_OVERRIDES = {
+        "new uk provider reference number (ukprn)" => "New UK provider reference number (UKPRN)",
+      }.freeze
+
       def rows
         [{ key: { text: "Old UK provider reference number (UKPRN)" },
            value: { text: wizard.provider.ukprn } }] +
@@ -12,7 +16,9 @@ module ProviderChanges
           ].map do |item|
             { key: { text: item.label },
               value: { text: item.formatted_value },
-              actions: [{ href: item.change_path, visually_hidden_text: item.label.downcase }] }
+              actions: [{ href: item.change_path,
+                          visually_hidden_text:
+                          HIDDEN_TEXT_OVERRIDES.fetch(item.label.downcase, item.label.downcase) }] }
           end
       end
 
