@@ -216,6 +216,11 @@ en:
               blank: "Enter unique reference number (URN)"
               invalid: "Enter a valid unique reference number (URN)"
               same: "Enter a different unique reference number (URN)"
+        provider_changes/steps/operating_name_step:
+          attributes:
+            operating_name:
+              blank: "Enter operating name"
+              same: "Enter a different operating name"
   flash_message:
     success:
       accreditation:
@@ -269,6 +274,8 @@ en:
           updated: "UK provider reference number change request submitted successfully"
         urn:
           updated: "Unique reference number change request submitted successfully"
+        operating_name:
+          updated: "Operating name change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
