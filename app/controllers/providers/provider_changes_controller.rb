@@ -2,21 +2,6 @@ module Providers
   class ProviderChangesController < ApplicationController
     helper_method :provider_changes
 
-    WIZARDS = {
-      "code" => ProviderChanges::CodeWizard,
-      "ukprn" => ProviderChanges::UkprnWizard
-    }.freeze
-
-    STATE_STORES = {
-      "code" => ProviderChanges::StateStores::CodeStore,
-      "ukprn" => ProviderChanges::StateStores::UkprnStore
-    }.freeze
-
-    REVIEWS = {
-      "code" => ProviderChanges::Presenters::CodeReview,
-      "ukprn" => ProviderChanges::Presenters::UkprnReview
-    }.freeze
-
     def new
       authorize provider, :update?
 
@@ -93,13 +78,13 @@ module Providers
     end
 
     def state_store
-      @state_store ||= STATE_STORES.fetch(field.to_s).new(
+      @state_store ||= ProviderChanges::Registry.state_store_for(field).new(
         repository:
       )
     end
 
     def wizard
-      @wizard ||= WIZARDS.fetch(field.to_s).new(
+      @wizard ||= ProviderChanges::Registry.wizard_for(field).new(
         provider: provider,
         current_step: current_step,
         current_step_params: params,
@@ -108,7 +93,7 @@ module Providers
     end
 
     def review
-      REVIEWS.fetch(field.to_s).new(wizard)
+      ProviderChanges::Registry.review_for(field).new(wizard)
     end
 
     def current_step

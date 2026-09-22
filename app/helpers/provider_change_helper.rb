@@ -7,7 +7,7 @@ module ProviderChangeHelper
       effective_to = next_change&.effective_on&.-(1.day)
 
       [
-        change.value,
+        format_change_value(change),
         display_change_date(effective_from),
         display_change_date(effective_to),
         change.creator&.name || "Deleted user",
@@ -20,6 +20,13 @@ module ProviderChangeHelper
     return "" if date.blank?
 
     date.to_date.to_fs(:govuk)
+  end
+
+  def format_change_value(change)
+    value = change.value
+    return "Not entered" if value.blank?
+
+    value
   end
 
 private

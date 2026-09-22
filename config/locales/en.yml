@@ -210,6 +210,12 @@ en:
               blank: "Enter UK provider reference number"
               invalid: "Enter a valid UK provider reference number"
               same: "Enter a different UK provider reference number"
+        provider_changes/steps/urn_step:
+          attributes:
+            urn:
+              blank: "Enter unique reference number (URN)"
+              invalid: "Enter a valid unique reference number (URN)"
+              same: "Enter a different unique reference number (URN)"
   flash_message:
     success:
       accreditation:
@@ -261,6 +267,8 @@ en:
           updated: "Provider code change request submitted successfully"
         ukprn:
           updated: "UK provider reference number change request submitted successfully"
+        urn:
+          updated: "Unique reference number change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:

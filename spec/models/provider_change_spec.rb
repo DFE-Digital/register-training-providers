@@ -22,6 +22,27 @@ RSpec.describe ProviderChange, type: :model do
     it { is_expected.to validate_presence_of(:attribute_name) }
     it { is_expected.to validate_presence_of(:value) }
     it { is_expected.to validate_presence_of(:effective_on) }
+
+    context "when the value is blank" do
+      it "is invalid for a required attribute" do
+        provider_change = build(:provider_change, attribute_name: "code", value: "")
+
+        expect(provider_change).not_to be_valid
+        expect(provider_change.errors[:value]).to include("can't be blank")
+      end
+
+      it "is valid for the optional urn attribute" do
+        provider_change = build(:provider_change, attribute_name: "urn", value: "")
+
+        expect(provider_change).to be_valid
+      end
+
+      it "normalises a nil urn to a blank string when stored" do
+        provider_change = create(:provider_change, attribute_name: "urn", value: nil)
+
+        expect(provider_change.reload.value).to eq("")
+      end
+    end
   end
 
   describe ".for_attribute" do

@@ -1,0 +1,11 @@
+digraph Provider_changes_urn_wizard {
+  rankdir=LR;
+  bgcolor="#ffffff";
+  node [shape=box, style="rounded,filled", fillcolor="#e8f4f8", fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10];
+  effective_date [label="Effective Date"];
+  new_urn [label="New Urn"];
+  check_your_answers [label="Check Your Answers"];
+  effective_date -> new_urn [style=solid];
+  new_urn -> check_your_answers [style=solid];
+}
