@@ -31,6 +31,12 @@ RSpec.describe ProviderChange, type: :model do
         expect(provider_change.errors[:value]).to include("can't be blank")
       end
 
+      it "is valid for the optional legal name attribute" do
+        provider_change = build(:provider_change, attribute_name: "legal_name", value: "")
+
+        expect(provider_change).to be_valid
+      end
+
       it "is valid for the optional urn attribute" do
         provider_change = build(:provider_change, attribute_name: "urn", value: "")
 

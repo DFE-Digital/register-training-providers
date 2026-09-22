@@ -16,6 +16,11 @@ module RouteConstraints
         new-urn
         check-your-answers
       ],
+      "legal_name" => %w[
+        effective-date
+        new-legal-name
+        check-your-answers
+      ],
       "operating_name" => %w[
         effective-date
         new-operating-name

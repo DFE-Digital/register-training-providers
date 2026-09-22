@@ -216,6 +216,10 @@ en:
               blank: "Enter unique reference number (URN)"
               invalid: "Enter a valid unique reference number (URN)"
               same: "Enter a different unique reference number (URN)"
+        provider_changes/steps/legal_name_step:
+          attributes:
+            legal_name:
+              same: "Enter a different legal name"
         provider_changes/steps/operating_name_step:
           attributes:
             operating_name:
@@ -274,6 +278,8 @@ en:
           updated: "UK provider reference number change request submitted successfully"
         urn:
           updated: "Unique reference number change request submitted successfully"
+        legal_name:
+          updated: "Legal name change request submitted successfully"
         operating_name:
           updated: "Operating name change request submitted successfully"
   forms:

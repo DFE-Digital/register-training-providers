@@ -25,7 +25,7 @@
 #  fk_rails_...  (provider_id => providers.id) ON DELETE => cascade
 #
 class ProviderChange < ApplicationRecord
-  OPTIONAL_ATTRIBUTES = %w[urn].freeze
+  OPTIONAL_ATTRIBUTES = %w[legal_name urn].freeze
 
   self.implicit_order_column = :created_at
   belongs_to :creator,

@@ -87,5 +87,32 @@ RSpec.describe SaveProviderChangeService do
         )
       end
     end
+
+    context "when the attribute is optional and the value is blank" do
+      let(:provider) { create(:provider, legal_name: "Old legal name") }
+      let(:attribute_name) { :legal_name }
+      let(:value) { "" }
+
+      it "creates a pending provider change with a blank value" do
+        provider_change = call_service
+
+        expect(provider_change).to have_attributes(
+          attribute_name: "legal_name",
+          effective_on: effective_on,
+          value: "",
+          pending?: true
+        )
+      end
+
+      context "when effective on is today" do
+        let(:effective_on) { Date.current }
+
+        it "applies the change and clears the provider legal name" do
+          call_service
+
+          expect(provider.reload.legal_name).to be_blank
+        end
+      end
+    end
   end
 end
