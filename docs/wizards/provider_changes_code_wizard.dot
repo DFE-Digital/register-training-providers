@@ -4,8 +4,8 @@ digraph Provider_changes_code_wizard {
   node [shape=box, style="rounded,filled", fillcolor="#e8f4f8", fontname="Helvetica"];
   edge [fontname="Helvetica", fontsize=10];
   effective_academic_year [label="Effective Academic Year"];
-  provider_code [label="Provider Code"];
+  new_code [label="New Code"];
   check_your_answers [label="Check Your Answers"];
-  effective_academic_year -> provider_code [style=solid];
-  provider_code -> check_your_answers [style=solid];
+  effective_academic_year -> new_code [style=solid];
+  new_code -> check_your_answers [style=solid];
 }
