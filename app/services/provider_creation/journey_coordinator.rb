@@ -38,6 +38,8 @@ module ProviderCreation
       when :accreditation
         providers_setup_addresses_find_path
       when :address, :address_find, :address_select, :address_manual_entry
+        providers_setup_addresses_types_path
+      when :address_types
         new_provider_confirm_path
       else
         raise ArgumentError, "Unknown step: #{@current_step}"
@@ -87,9 +89,11 @@ module ProviderCreation
           # Direct entry, back to find page
           providers_setup_addresses_find_path
         end
-      when :check_answers
-        # Back from check page - use shared address entry path logic
+      when :address_types
+        # Back from address types page - use shared address entry path logic
         address_entry_path
+      when :check_answers
+        providers_setup_addresses_types_path
       else
         raise ArgumentError, "Unknown step: #{@current_step}"
       end

@@ -15,14 +15,15 @@ RSpec.describe "Deleting address", type: :feature do
              address_line_3: "Test Floor",
              town_or_city: "Test City",
              county: "Test County",
-             postcode: "SW1A 1AA")
+             postcode: "SW1A 1AA",
+             types: [:trading])
     end
 
     scenario "deletes address for provider" do
       visit provider_addresses_path(provider)
 
       expect(page).to have_content("123 Test Street")
-      expect(page).to have_content("Test City, SW1A 1AA")
+      expect(page).to have_content("Trading address")
       expect(provider.addresses.kept.count).to eq(1)
 
       click_link "Delete", match: :first
@@ -36,6 +37,7 @@ RSpec.describe "Deleting address", type: :feature do
       expect(page).to have_content("Test City")
       expect(page).to have_content("Test County")
       expect(page).to have_content("SW1A 1AA")
+      expect(page).to have_content("Trading")
 
       expect(page).to have_content("Deleting an address is permanent – you cannot undo it.")
 
@@ -67,7 +69,7 @@ RSpec.describe "Deleting address", type: :feature do
       expect(current_path).to eq(provider_addresses_path(provider))
 
       expect(page).to have_content("123 Test Street")
-      expect(page).to have_content("Test City, SW1A 1AA")
+      expect(page).to have_content("Trading address")
       expect(provider.addresses.kept.count).to eq(1)
       expect(address.reload.discarded?).to be false
     end
@@ -80,14 +82,16 @@ RSpec.describe "Deleting address", type: :feature do
              provider: provider,
              address_line_1: "First Address Street",
              town_or_city: "First City",
-             postcode: "SW1A 1AA")
+             postcode: "SW1A 1AA",
+             types: [:trading])
     end
     let!(:address2) do
       create(:address,
              provider: provider,
              address_line_1: "Second Address Street",
              town_or_city: "Second City",
-             postcode: "M1 1AA")
+             postcode: "M1 1AA",
+             types: [:registered])
     end
 
     scenario "deletes one address while keeping others" do
@@ -97,7 +101,7 @@ RSpec.describe "Deleting address", type: :feature do
       expect(page).to have_content("Second Address Street")
       expect(provider.addresses.kept.count).to eq(2)
 
-      within(".govuk-summary-card", text: "First City, SW1A 1AA") do
+      within(".govuk-summary-card", text: "Trading address") do
         click_link "Delete"
       end
 

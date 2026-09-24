@@ -32,7 +32,8 @@ module Generators
         county: Faker::Address.county,
         postcode: Faker::Address.postcode,
         longitude: Faker::Address.longitude,
-        latitude: Faker::Address.latitude
+        latitude: Faker::Address.latitude,
+        types: ["registered"]
       )
     end
   end

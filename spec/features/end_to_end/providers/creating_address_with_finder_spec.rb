@@ -45,6 +45,10 @@ RSpec.describe "Creating address with finder", type: :feature do
     choose "10 Downing Street, London, SW1A 2AA"
     click_button "Continue"
 
+    check "Trading"
+
+    click_button "Continue"
+
     expect(page).to have_content("Check your answers")
     expect(page).to have_content("10 Downing Street")
     expect(page).to have_content("London")
@@ -94,6 +98,10 @@ RSpec.describe "Creating address with finder", type: :feature do
     choose "11 Downing Street, London, SW1A 2AA"
     click_button "Continue"
 
+    check "Trading"
+
+    click_button "Continue"
+
     expect(page).to have_content("Check your answers")
     expect(page).to have_content("11 Downing Street")
 
@@ -122,6 +130,10 @@ RSpec.describe "Creating address with finder", type: :feature do
 
     click_button "Continue"
 
+    check "Trading"
+
+    click_button "Continue"
+
     expect(page).to have_content("Check your answers")
     expect(page).to have_content("Custom Address")
 
@@ -147,6 +159,10 @@ RSpec.describe "Creating address with finder", type: :feature do
     fill_in "Address line 1", with: "Different Address"
     fill_in "Town or city", with: "Different Town"
     fill_in "Postcode", with: "D1 1AA"
+
+    click_button "Continue"
+
+    check "Trading"
 
     click_button "Continue"
 
