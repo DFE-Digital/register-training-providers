@@ -117,7 +117,7 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     aes_key_wrap (1.1.0)
     amazing_print (2.0.0)
-    annotaterb (4.24.0)
+    annotaterb (4.25.0)
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
     ast (2.4.3)
@@ -176,7 +176,7 @@ GEM
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
     csv (3.3.6)
-    database_consistency (3.0.11)
+    database_consistency (3.0.12)
       activerecord (>= 3.2)
     date (3.5.1)
     debug (1.11.1)
@@ -359,7 +359,7 @@ GEM
       net-protocol
     net-ssh (7.3.2)
     nio4r (2.7.5)
-    nkf (0.2.0)
+    nkf (0.3.0)
     nokogiri (1.19.4-aarch64-linux-gnu)
       racc (~> 1.4)
     nokogiri (1.19.4-aarch64-linux-musl)
@@ -602,7 +602,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
-    rubyzip (3.6.0)
+    rubyzip (3.7.0)
     safely_block (1.0.0)
     securerandom (0.4.1)
     selenium-webdriver (4.49.0)
@@ -740,7 +740,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    write_xlsx (1.15.0)
+    write_xlsx (1.15.1)
       nkf
       rubyzip (>= 2.4.0, < 4.0)
     xpath (3.2.0)
@@ -851,7 +851,7 @@ CHECKSUMS
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   aes_key_wrap (1.1.0) sha256=b935f4756b37375895db45669e79dfcdc0f7901e12d4e08974d5540c8e0776a5
   amazing_print (2.0.0) sha256=2e36aba46ac78d37ed27ca0e2056afe3583183bb5c64f157c246b267355e5d6a
-  annotaterb (4.24.0) sha256=3953d3a3fb86ef06639a8d5ea29001e4af1e51cabd147973b1b23524b8fbced6
+  annotaterb (4.25.0) sha256=1c7a4c43d6afe3eb460731289ea8c831e9d864ce2f57897b5e1c749c1dd4ed89
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   attr_required (1.0.2) sha256=f0ebfc56b35e874f4d0ae799066dbc1f81efefe2364ca3803dc9ea6a4de6cb99
   audited (5.8.0) sha256=35cd63f9ee1eb2a1f773e7abf5915bb4e870b6338173e27c31e0e604e353f371
@@ -879,7 +879,7 @@ CHECKSUMS
   crass (1.0.7) sha256=94868719948664c89ddcaf0a37c65048413dfcb1c869470a5f7a7ceb5390b295
   cssbundling-rails (1.4.3) sha256=53aecd5a7d24ac9c8fcd92975acd0e830fead4ee4583d3d3d49bb64651946e41
   csv (3.3.6) sha256=aba61e7e507a66f03d45cb1f3c4b6359861c3504038b422962875dce099e4456
-  database_consistency (3.0.11) sha256=08420799ffac89176d92548aba9d4a3dd18b8c32af34eaa51a5ce68dc48277f4
+  database_consistency (3.0.12) sha256=643475a22d1201f9f421851b59cd575ce987ca5650515202c3b2ef43f02c14b9
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   debug (1.11.1) sha256=2e0b0ac6119f2207a6f8ac7d4a73ca8eb4e440f64da0a3136c30343146e952b6
   declarative (0.0.20) sha256=8021dd6cb17ab2b61233c56903d3f5a259c5cf43c80ff332d447d395b17d9ff9
@@ -954,7 +954,7 @@ CHECKSUMS
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
   net-ssh (7.3.2) sha256=65029e213c380e20e5fd92ece663934ab0a0fe888e0cd7cc6a5b664074362dd4
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
-  nkf (0.2.0) sha256=fbc151bda025451f627fafdfcb3f4f13d0b22ae11f58c6d3a2939c76c5f5f126
+  nkf (0.3.0) sha256=357a8dbeba38b727b75930f665146546076a394a1c243faf634ff176e3588895
   nokogiri (1.19.4-aarch64-linux-gnu) sha256=1269fb644a6de405057a53dd5c762b1209b43ca7424f839454d3dbc677c31a8f
   nokogiri (1.19.4-aarch64-linux-musl) sha256=35c65b9ce72b3bb03207bdbe7067915019dc18c1b9b59139684bd6690fdd01af
   nokogiri (1.19.4-arm-linux-gnu) sha256=a301313e38bb065d68239e79734bcd6f56fb6efaacebde29e9abf2a4735340ca
@@ -1039,7 +1039,7 @@ CHECKSUMS
   rubocop-rspec (3.9.0) sha256=8fa70a3619408237d789aeecfb9beef40576acc855173e60939d63332fdb55e2
   ruby-graphviz (1.2.5) sha256=1c2bb44e3f6da9e2b829f5e7fd8d75a521485fb6b4d1fc66ff0f93f906121504
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
-  rubyzip (3.6.0) sha256=268994d44d62282d1cfd99bf10eae48d7267199158ad7ea3e1fee2da9458b695
+  rubyzip (3.7.0) sha256=65c19294da75297a939006f3516deacc33185fbd721ff1954f7a231db6d3e121
   safely_block (1.0.0) sha256=bea80e084e620adeada62fd98cf461bbb9888d40dc0f06d337df9d01e1a658e5
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
   selenium-webdriver (4.49.0) sha256=b430f091a3cababb356b6f6132e0e4f385b017819355f563557e1537819edc89
@@ -1088,7 +1088,7 @@ CHECKSUMS
   websocket (1.2.11) sha256=b7e7a74e2410b5e85c25858b26b3322f29161e300935f70a0e0d3c35e0462737
   websocket-driver (0.8.2) sha256=97c556b019bf3410b4961002ac501621e9322d3f8a7bc02161a09301cc4c4146
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
-  write_xlsx (1.15.0) sha256=67cfc1cc7361802e6088cdef5cec02addc8c788a4eb79914545f7032373b439a
+  write_xlsx (1.15.1) sha256=6a97a5ea9af2fd2f248af4aa61cdced0933b6887c96826b6a04f8384a656d3a2
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
   yard (0.9.45) sha256=52e211493f7cb8a3ebf7e104a25a1e73937a3103092545d34cb88fafebb3dc51
   yard-activesupport-concern (0.0.1) sha256=be790cb0efc23e2e87677063598ac8b743586154657bbd9655a7f03ce78390ef
