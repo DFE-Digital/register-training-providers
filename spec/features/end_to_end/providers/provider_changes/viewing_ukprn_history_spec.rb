@@ -17,22 +17,22 @@ RSpec.feature "Provider UKPRN history" do
     create(:provider_change,
            provider: provider_with_ukprn_changes,
            attribute_name: "ukprn",
-           value: "11111111",
-           effective_on: 2.years.ago.to_date,
+           value: "22222222",
+           effective_on: 1.year.ago.to_date,
            status: :completed,
            creator: current_user)
     create(:provider_change,
            provider: provider_with_ukprn_changes,
            attribute_name: "ukprn",
-           value: "22222222",
-           effective_on: 1.year.ago.to_date,
-           status: :completed)
+           value: "33333333",
+           effective_on: 2.years.ago.to_date,
+           status: :failed)
     create(:provider_change,
+           :baseline,
            provider: provider_with_ukprn_changes,
            attribute_name: "ukprn",
-           value: "33333333",
-           effective_on: 3.years.ago.to_date,
-           status: :failed)
+           value: "11111111",
+           effective_on: 3.years.ago.to_date)
   end
 
   def and_there_is_a_provider_without_ukprn_changes
@@ -62,11 +62,13 @@ RSpec.feature "Provider UKPRN history" do
 
     within(".govuk-table__body .govuk-table__row", text: "22222222") do
       expect(page).to have_css(".govuk-tag", text: "Active")
+      expect(page).to have_content(current_user.name)
     end
 
     within(".govuk-table__body .govuk-table__row", text: "11111111") do
       expect(page).to have_css(".govuk-tag", text: "Inactive")
-      expect(page).to have_content(current_user.name)
+      expect(page).to have_content("Initial value")
+      expect(page).not_to have_content("Deleted user")
     end
 
     within(".govuk-table__body .govuk-table__row", text: "33333333") do
@@ -82,7 +84,7 @@ RSpec.feature "Provider UKPRN history" do
   end
 
   def provider_with_ukprn_changes
-    @provider_with_ukprn_changes ||= create(:provider, operating_name: "Provider with UKPRN changes")
+    @provider_with_ukprn_changes ||= create(:provider, operating_name: "Provider with UKPRN changes", ukprn: "22222222")
   end
 
   def and_i_can_see_the_title(title)

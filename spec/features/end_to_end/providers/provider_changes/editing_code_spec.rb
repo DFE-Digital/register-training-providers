@@ -27,6 +27,39 @@ RSpec.feature "Editing provider code" do
     }.to change { existing_provider_change_for_provider_with_code_to_change.value }.from("POP").to(new_provider_code)
   end
 
+  scenario "User's first code change records and shows the code the provider held beforehand" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_code_to_change
+    when_i_navigate_to_the_provider_page_to_change_code
+    and_i_fill_in_the_effective_academic_year_step
+    and_i_fill_in_the_code_step
+    and_i_confirm_the_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+
+    baseline = provider_with_code_to_change.provider_changes.baseline.sole
+
+    expect(baseline).to have_attributes(
+      value: "R1P",
+      status: "completed",
+      effective_on: provider_with_code_to_change.created_at.to_date
+    )
+    expect(baseline.creator).to be_nil
+
+    visit "/providers/#{provider_with_code_to_change.id}/changes/code/history"
+
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(2)
+
+    within(".govuk-table__body .govuk-table__row", text: "R1P") do
+      expect(page).to have_css(".govuk-tag", text: "Active")
+      expect(page).to have_content("Initial value")
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: new_provider_code) do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content(current_user.name)
+    end
+  end
+
   scenario "User landing directly on a later step is redirected to the first step" do
     given_i_am_an_authenticated_user
     and_there_is_a_provider_with_code_to_change

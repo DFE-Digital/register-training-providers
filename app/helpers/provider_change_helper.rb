@@ -1,16 +1,15 @@
 module ProviderChangeHelper
   def provider_field_level_history(changes)
-    changes.each_with_index.map do |change, index|
-      next_change = index.zero? ? nil : changes[index - 1]
+    changes = changes.to_a
 
-      effective_from = change.effective_on
-      effective_to = next_change&.effective_on&.-(1.day)
+    changes.each_with_index.map do |change, index|
+      effective_to = change_period_end(change, next_completed_change(changes, index))
 
       [
         change.value,
-        display_change_date(effective_from),
+        display_change_date(change.effective_on),
         display_change_date(effective_to),
-        change.creator&.name || "Deleted user",
+        change_credit(change),
         status_tag(change, effective_to)
       ]
     end
@@ -24,16 +23,41 @@ module ProviderChangeHelper
 
 private
 
+  def next_completed_change(changes, index)
+    changes[0...index].reverse.find(&:completed?)
+  end
+
+  def change_period_end(change, next_change)
+    return if next_change.blank?
+
+    [next_change.effective_on - 1.day, change.effective_on].max
+  end
+
+  def change_credit(change)
+    return baseline_credit(change) if change.baseline?
+
+    change.creator&.name || "Deleted user"
+  end
+
+  def baseline_credit(change)
+    change.provider.audits.find_by(action: "create")&.user&.name || "Initial value"
+  end
+
   def status_tag(change, effective_to)
     return govuk_tag(text: "Error", colour: "red") if change.failed?
-    return govuk_tag(text: "Active", colour: "blue") if active_code_change?(change, effective_to)
+    return govuk_tag(text: "Active", colour: "blue") if active_change?(change, effective_to)
 
     govuk_tag(text: "Inactive", colour: "grey")
   end
 
-  def active_code_change?(change, effective_to)
+  def active_change?(change, effective_to)
     change.completed? &&
       change.effective_on <= Date.current &&
+      change.value.to_s == current_value_for(change) &&
       (effective_to.nil? || Date.current <= effective_to)
+  end
+
+  def current_value_for(change)
+    change.provider.public_send(change.attribute_name).to_s
   end
 end

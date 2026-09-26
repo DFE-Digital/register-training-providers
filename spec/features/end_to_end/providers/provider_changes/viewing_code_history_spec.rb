@@ -17,22 +17,22 @@ RSpec.feature "Provider code history" do
     create(:provider_change,
            provider: provider_with_code_changes,
            attribute_name: "code",
-           value: "AAA",
-           effective_on: 2.years.ago.to_date,
+           value: "BBB",
+           effective_on: 1.year.ago.to_date,
            status: :completed,
            creator: current_user)
     create(:provider_change,
            provider: provider_with_code_changes,
            attribute_name: "code",
-           value: "BBB",
-           effective_on: 1.year.ago.to_date,
-           status: :completed)
+           value: "CCC",
+           effective_on: 2.years.ago.to_date,
+           status: :failed)
     create(:provider_change,
+           :baseline,
            provider: provider_with_code_changes,
            attribute_name: "code",
-           value: "CCC",
-           effective_on: 3.years.ago.to_date,
-           status: :failed)
+           value: "AAA",
+           effective_on: 3.years.ago.to_date)
   end
 
   def and_there_is_a_provider_without_code_changes
@@ -62,11 +62,13 @@ RSpec.feature "Provider code history" do
 
     within(".govuk-table__body .govuk-table__row", text: "BBB") do
       expect(page).to have_css(".govuk-tag", text: "Active")
+      expect(page).to have_content(current_user.name)
     end
 
     within(".govuk-table__body .govuk-table__row", text: "AAA") do
       expect(page).to have_css(".govuk-tag", text: "Inactive")
-      expect(page).to have_content(current_user.name)
+      expect(page).to have_content("Initial value")
+      expect(page).not_to have_content("Deleted user")
     end
 
     within(".govuk-table__body .govuk-table__row", text: "CCC") do
@@ -82,7 +84,7 @@ RSpec.feature "Provider code history" do
   end
 
   def provider_with_code_changes
-    @provider_with_code_changes ||= create(:provider, operating_name: "Provider with code changes")
+    @provider_with_code_changes ||= create(:provider, operating_name: "Provider with code changes", code: "BBB")
   end
 
   def and_i_can_see_the_title(title)
