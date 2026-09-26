@@ -174,13 +174,19 @@ module ProviderHelper
                                                      field: "ukprn",
                                                      step: "effective-date"
                                                    ) }],
-      "Unique reference number (URN)" => [{ text: "Change",
-                                           visually_hidden_text: "unique reference number (URN)",
-                                           href: provider_change_step_path(
-                                             provider_id: provider.id,
-                                             field: "urn",
-                                             step: "effective-date"
-                                           ) }],
+      "Unique reference number (URN)" => [{ text: "History",
+                                            visually_hidden_text: "of unique reference numbers",
+                                            href: provider_changes_field_history_path(
+                                              provider_id: provider.id,
+                                              field: "urn"
+                                            ) },
+                                          { text: "Change",
+                                            visually_hidden_text: "unique reference number (URN)",
+                                            href: provider_change_step_path(
+                                              provider_id: provider.id,
+                                              field: "urn",
+                                              step: "effective-date"
+                                            ) }],
       "Provider code" => [{ text: "History",
                             visually_hidden_text: "of provider codes",
                             href: provider_changes_field_history_path(
