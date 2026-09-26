@@ -34,6 +34,12 @@ RSpec.feature "Provider legal name history" do
            value: "Failed legal name",
            effective_on: 3.years.ago.to_date,
            status: :failed)
+    create(:provider_change,
+           :baseline,
+           provider: provider_with_legal_name_changes,
+           attribute_name: "legal_name",
+           value: "Original legal name",
+           effective_on: 4.years.ago.to_date)
   end
 
   def and_there_is_a_blank_legal_name_change
@@ -68,7 +74,7 @@ RSpec.feature "Provider legal name history" do
     expect(page).to have_selector(".govuk-table__header", text: "Changed by")
     expect(page).to have_selector(".govuk-table__header", text: "Status")
 
-    expect(all(".govuk-table__body .govuk-table__row").count).to eq(4)
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(5)
 
     within(".govuk-table__body .govuk-table__row", text: "Second legal name") do
       expect(page).to have_css(".govuk-tag", text: "Active")
@@ -77,6 +83,12 @@ RSpec.feature "Provider legal name history" do
     within(".govuk-table__body .govuk-table__row", text: "First legal name") do
       expect(page).to have_css(".govuk-tag", text: "Inactive")
       expect(page).to have_content(current_user.name)
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: "Original legal name") do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content("Initial value")
+      expect(page).not_to have_content("Deleted user")
     end
 
     within(".govuk-table__body .govuk-table__row", text: "Failed legal name") do
@@ -99,7 +111,7 @@ RSpec.feature "Provider legal name history" do
     @provider_with_legal_name_changes ||= create(
       :provider,
       operating_name: "Provider with legal name changes",
-      legal_name: "Provider legal name"
+      legal_name: "Second legal name"
     )
   end
 
