@@ -18,6 +18,12 @@ RSpec.feature "Provider URN history" do
     create(:provider_change,
            provider: provider_with_urn_changes,
            attribute_name: "urn",
+           value: "222222",
+           effective_on: 1.year.ago.to_date,
+           status: :completed)
+    create(:provider_change,
+           provider: provider_with_urn_changes,
+           attribute_name: "urn",
            value: "111111",
            effective_on: 2.years.ago.to_date,
            status: :completed,
@@ -25,15 +31,15 @@ RSpec.feature "Provider URN history" do
     create(:provider_change,
            provider: provider_with_urn_changes,
            attribute_name: "urn",
-           value: "222222",
-           effective_on: 1.year.ago.to_date,
-           status: :completed)
-    create(:provider_change,
-           provider: provider_with_urn_changes,
-           attribute_name: "urn",
            value: "333333",
            effective_on: 3.years.ago.to_date,
            status: :failed)
+    create(:provider_change,
+           :baseline,
+           provider: provider_with_urn_changes,
+           attribute_name: "urn",
+           value: "000000",
+           effective_on: 4.years.ago.to_date)
   end
 
   def and_there_is_a_blank_urn_change
@@ -64,7 +70,7 @@ RSpec.feature "Provider URN history" do
     expect(page).to have_selector(".govuk-table__header", text: "Changed by")
     expect(page).to have_selector(".govuk-table__header", text: "Status")
 
-    expect(all(".govuk-table__body .govuk-table__row").count).to eq(4)
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(5)
 
     within(".govuk-table__body .govuk-table__row", text: "222222") do
       expect(page).to have_css(".govuk-tag", text: "Active")
@@ -77,6 +83,12 @@ RSpec.feature "Provider URN history" do
 
     within(".govuk-table__body .govuk-table__row", text: "333333") do
       expect(page).to have_css(".govuk-tag", text: "Error")
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: "000000") do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content("Initial value")
+      expect(page).not_to have_content("Deleted user")
     end
 
     within(".govuk-table__body .govuk-table__row", text: "Not entered") do
@@ -96,7 +108,7 @@ RSpec.feature "Provider URN history" do
   end
 
   def provider_with_urn_changes
-    @provider_with_urn_changes ||= create(:provider, :scitt, operating_name: "Provider with URN changes")
+    @provider_with_urn_changes ||= create(:provider, :scitt, operating_name: "Provider with URN changes", urn: "222222")
   end
 
   def and_i_can_see_the_title(title)

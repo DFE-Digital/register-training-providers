@@ -10,6 +10,39 @@ RSpec.feature "Editing provider URN" do
     and_i_should_see_a_success_message
   end
 
+  scenario "User's first URN change records and shows the URN the provider held beforehand" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_urn_to_change
+    when_i_navigate_to_the_provider_page_to_change_urn
+    and_i_fill_in_the_effective_date_step
+    and_i_fill_in_the_urn_step
+    and_i_confirm_the_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+
+    baseline = provider_with_urn_to_change.provider_changes.baseline.sole
+
+    expect(baseline).to have_attributes(
+      value: "123456",
+      status: "completed",
+      effective_on: provider_with_urn_to_change.created_at.to_date
+    )
+    expect(baseline.creator).to be_nil
+
+    visit "/providers/#{provider_with_urn_to_change.id}/changes/urn/history"
+
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(2)
+
+    within(".govuk-table__body .govuk-table__row", text: "123456") do
+      expect(page).to have_css(".govuk-tag", text: "Active")
+      expect(page).to have_content("Initial value")
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: new_urn) do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content(current_user.name)
+    end
+  end
+
   scenario "User can clear a URN for a provider that does not require one" do
     given_i_am_an_authenticated_user
     provider = create(:provider, :hei, operating_name: "Provider without required URN", urn: "123456")
