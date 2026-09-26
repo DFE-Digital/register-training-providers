@@ -33,6 +33,12 @@ RSpec.feature "Provider operating name history" do
            value: "Failed operating name",
            effective_on: 3.years.ago.to_date,
            status: :failed)
+    create(:provider_change,
+           :baseline,
+           provider: provider_with_operating_name_changes,
+           attribute_name: "operating_name",
+           value: "Original operating name",
+           effective_on: 4.years.ago.to_date)
   end
 
   def and_there_is_a_provider_without_operating_name_changes
@@ -58,7 +64,7 @@ RSpec.feature "Provider operating name history" do
     expect(page).to have_selector(".govuk-table__header", text: "Changed by")
     expect(page).to have_selector(".govuk-table__header", text: "Status")
 
-    expect(all(".govuk-table__body .govuk-table__row").count).to eq(3)
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(4)
 
     within(".govuk-table__body .govuk-table__row", text: "Second operating name") do
       expect(page).to have_css(".govuk-tag", text: "Active")
@@ -67,6 +73,12 @@ RSpec.feature "Provider operating name history" do
     within(".govuk-table__body .govuk-table__row", text: "First operating name") do
       expect(page).to have_css(".govuk-tag", text: "Inactive")
       expect(page).to have_content(current_user.name)
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: "Original operating name") do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content("Initial value")
+      expect(page).not_to have_content("Deleted user")
     end
 
     within(".govuk-table__body .govuk-table__row", text: "Failed operating name") do
@@ -82,7 +94,7 @@ RSpec.feature "Provider operating name history" do
   end
 
   def provider_with_operating_name_changes
-    @provider_with_operating_name_changes ||= create(:provider, operating_name: "Provider with operating name changes")
+    @provider_with_operating_name_changes ||= create(:provider, operating_name: "Second operating name")
   end
 
   def and_i_can_see_the_title(title)
