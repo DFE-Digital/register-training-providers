@@ -31,6 +31,7 @@ class ProviderChange < ApplicationRecord
     code
     ukprn
     urn
+    operating_name
   ].freeze
 
   OPTIONAL_ATTRIBUTES = %w[urn].freeze
