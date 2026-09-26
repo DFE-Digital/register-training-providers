@@ -10,6 +10,39 @@ RSpec.feature "Editing provider legal name" do
     and_i_should_see_a_success_message
   end
 
+  scenario "User's first legal name change records and shows the name the provider held beforehand" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_legal_name_to_change
+    when_i_navigate_to_the_provider_page_to_change_legal_name
+    and_i_fill_in_the_effective_date_step
+    and_i_fill_in_the_legal_name_step
+    and_i_confirm_the_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+
+    baseline = provider_with_legal_name_to_change.provider_changes.baseline.sole
+
+    expect(baseline).to have_attributes(
+      value: "Old provider name",
+      status: "completed",
+      effective_on: provider_with_legal_name_to_change.created_at.to_date
+    )
+    expect(baseline.creator).to be_nil
+
+    visit "/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/history"
+
+    expect(all(".govuk-table__body .govuk-table__row").count).to eq(2)
+
+    within(".govuk-table__body .govuk-table__row", text: "Old provider name") do
+      expect(page).to have_css(".govuk-tag", text: "Active")
+      expect(page).to have_content("Initial value")
+    end
+
+    within(".govuk-table__body .govuk-table__row", text: new_legal_name) do
+      expect(page).to have_css(".govuk-tag", text: "Inactive")
+      expect(page).to have_content(current_user.name)
+    end
+  end
+
   scenario "User can edit an existing provider legal name change" do
     given_i_am_an_authenticated_user
     and_there_is_a_provider_with_legal_name_to_change_with_an_existing_change
