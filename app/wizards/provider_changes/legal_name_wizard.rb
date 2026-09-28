@@ -6,7 +6,7 @@ module ProviderChanges
       {
         attribute_name: "legal_name",
         effective_on: state["effective_on"],
-        value: state["legal_name"]
+        value: state["legal_name"].presence || ""
       }
     end
 

@@ -24,6 +24,32 @@ RSpec.feature "Editing provider legal name" do
     expect(existing_provider_change.reload.value).to eq(new_legal_name)
   end
 
+  scenario "User can clear a provider legal name" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_legal_name_to_change
+    when_i_navigate_to_the_provider_page_to_change_legal_name
+    and_i_fill_in_the_effective_date_step_with_todays_date
+    and_i_fill_in_the_legal_name_step_with_a_blank_value
+    and_i_confirm_the_blank_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+    and_i_should_see_a_success_message
+
+    expect(provider_with_legal_name_to_change.reload.legal_name).to be_blank
+  end
+
+  scenario "User's legal name is stripped of surrounding whitespace" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_legal_name_to_change
+    when_i_navigate_to_the_provider_page_to_change_legal_name
+    and_i_fill_in_the_effective_date_step_with_todays_date
+    and_i_fill_in_the_legal_name_step_with_a_padded_value
+    and_i_confirm_the_blank_change_on_the_check_your_answers_step
+    then_i_should_be_redirected_to_the_provider_details_page
+    and_i_should_see_a_success_message
+
+    expect(provider_with_legal_name_to_change.reload.legal_name).to eq("Padded provider name")
+  end
+
   scenario "User landing directly on a later step is redirected to the first step" do
     given_i_am_an_authenticated_user
     and_there_is_a_provider_with_legal_name_to_change
@@ -65,6 +91,11 @@ RSpec.feature "Editing provider legal name" do
     and_i_click_on("Confirm and continue")
   end
 
+  def and_i_confirm_the_blank_change_on_the_check_your_answers_step
+    and_i_can_see_the_title("#{provider_with_legal_name_to_change.operating_name} - Check your answers - Register of training providers - GOV.UK")
+    and_i_click_on("Confirm and continue")
+  end
+
   def and_i_fill_in_the_effective_date_step(skip_validation_round_trip: false)
     expect(page).to have_link("Back", href: "/providers/#{provider_with_legal_name_to_change.id}")
     and_i_can_see_the_title("#{provider_with_legal_name_to_change.operating_name} - When should the legal name change? - Register of training providers - GOV.UK")
@@ -85,6 +116,22 @@ RSpec.feature "Editing provider legal name" do
     fill_in "Day", with: effective_on.day.to_s
     fill_in "Month", with: effective_on.month.to_s
     fill_in "Year", with: effective_on.year.to_s
+
+    and_i_click_on("Continue")
+  end
+
+  def and_i_fill_in_the_effective_date_step_with_todays_date
+    expect(page).to have_link("Back", href: "/providers/#{provider_with_legal_name_to_change.id}")
+    and_i_can_see_the_title("#{provider_with_legal_name_to_change.operating_name} - When should the legal name change? - Register of training providers - GOV.UK")
+    and_i_do_not_see_error_summary
+    and_i_fill_in_the_effective_date_form_with_todays_date
+    and_i_am_taken_to("/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/new-legal-name")
+  end
+
+  def and_i_fill_in_the_effective_date_form_with_todays_date
+    fill_in "Day", with: Time.zone.today.day.to_s
+    fill_in "Month", with: Time.zone.today.month.to_s
+    fill_in "Year", with: Time.zone.today.year.to_s
 
     and_i_click_on("Continue")
   end
@@ -110,6 +157,24 @@ RSpec.feature "Editing provider legal name" do
     page.fill_in "Legal name (optional)", with: new_legal_name
 
     and_i_click_on("Continue")
+  end
+
+  def and_i_fill_in_the_legal_name_step_with_a_blank_value
+    expect(page).to have_link("Back", href: "/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/effective-date")
+    and_i_can_see_the_title("#{provider_with_legal_name_to_change.operating_name} - What should the legal name change to? - Register of training providers - GOV.UK")
+    and_i_do_not_see_error_summary
+    page.fill_in "Legal name (optional)", with: ""
+    and_i_click_on("Continue")
+    and_i_am_taken_to("/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/check-your-answers")
+  end
+
+  def and_i_fill_in_the_legal_name_step_with_a_padded_value
+    expect(page).to have_link("Back", href: "/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/effective-date")
+    and_i_can_see_the_title("#{provider_with_legal_name_to_change.operating_name} - What should the legal name change to? - Register of training providers - GOV.UK")
+    and_i_do_not_see_error_summary
+    page.fill_in "Legal name (optional)", with: "  Padded provider name  "
+    and_i_click_on("Continue")
+    and_i_am_taken_to("/providers/#{provider_with_legal_name_to_change.id}/changes/legal_name/check-your-answers")
   end
 
   def then_i_should_see_the_existing_effective_date_prefilled
