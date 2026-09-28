@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_04_113406) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_26_093000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -217,11 +217,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_113406) do
     t.text "error_message"
     t.datetime "processed_at"
     t.uuid "provider_id", null: false
+    t.string "source", default: "requested", null: false
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.jsonb "value", null: false
     t.index ["created_by_id"], name: "index_provider_changes_on_created_by_id"
     t.index ["provider_id", "attribute_name", "status", "effective_on"], name: "idx_on_provider_id_attribute_name_status_effective__6547b4b7a9"
+    t.index ["provider_id", "attribute_name"], name: "index_provider_changes_on_baseline_per_attribute", unique: true, where: "((source)::text = 'baseline'::text)"
   end
 
   create_table "providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

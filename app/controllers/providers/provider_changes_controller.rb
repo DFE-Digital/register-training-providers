@@ -2,13 +2,28 @@ module Providers
   class ProviderChangesController < ApplicationController
     helper_method :provider_changes
 
+    WIZARDS = {
+      "code" => ProviderChanges::CodeWizard,
+      "ukprn" => ProviderChanges::UkprnWizard
+    }.freeze
+
+    STATE_STORES = {
+      "code" => ProviderChanges::StateStores::CodeStore,
+      "ukprn" => ProviderChanges::StateStores::UkprnStore
+    }.freeze
+
+    REVIEWS = {
+      "code" => ProviderChanges::Presenters::CodeReview,
+      "ukprn" => ProviderChanges::Presenters::UkprnReview
+    }.freeze
+
     def new
       authorize provider, :update?
 
       if wizard.valid_path_to_current_step?
         try_restore_pending_existing_provider_changes
 
-        @review = ProviderChanges::Presenters::CodeReview.new(wizard) if wizard.check_your_answers?
+        @review = review if wizard.check_your_answers?
 
         render template_path
       else
@@ -78,18 +93,22 @@ module Providers
     end
 
     def state_store
-      @state_store ||= ProviderChanges::StateStores::CodeStore.new(
+      @state_store ||= STATE_STORES.fetch(field.to_s).new(
         repository:
       )
     end
 
     def wizard
-      @wizard ||= ProviderChanges::CodeWizard.new(
+      @wizard ||= WIZARDS.fetch(field.to_s).new(
         provider: provider,
         current_step: current_step,
         current_step_params: params,
         state_store: state_store
       )
+    end
+
+    def review
+      REVIEWS.fetch(field.to_s).new(wizard)
     end
 
     def current_step

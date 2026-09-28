@@ -11,5 +11,17 @@ FactoryBot.define do
       attribute_name { "code" }
       value { "ABC" }
     end
+
+    trait :ukprn_change do
+      attribute_name { "ukprn" }
+      value { "10000001" }
+    end
+
+    trait :baseline do
+      source { "baseline" }
+      status { "completed" }
+      creator { nil }
+      processed_at { nil }
+    end
   end
 end

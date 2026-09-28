@@ -16,12 +16,96 @@ RSpec.describe ProviderChange, type: :model do
         "failed" => "failed"
       )
     end
+
+    it do
+      expect(described_class.sources).to eq(
+        "requested" => "requested",
+        "baseline" => "baseline"
+      )
+    end
+  end
+
+  describe "CHANGEABLE_ATTRIBUTES" do
+    it "matches the attributes the provider changes controller offers wizards for" do
+      expect(described_class::CHANGEABLE_ATTRIBUTES)
+        .to match_array(Providers::ProviderChangesController::WIZARDS.keys)
+    end
   end
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:attribute_name) }
     it { is_expected.to validate_presence_of(:value) }
     it { is_expected.to validate_presence_of(:effective_on) }
+
+    it "only allows changeable provider attributes" do
+      provider_change.attribute_name = "accreditation_status"
+
+      expect(provider_change).not_to be_valid
+      expect(provider_change.errors[:attribute_name]).to be_present
+    end
+  end
+
+  describe "baseline changes" do
+    subject(:baseline) { create(:provider_change, :baseline) }
+
+    it "is completed, so the nightly sweep can never re-apply it" do
+      expect(baseline).to be_completed
+    end
+
+    it "is not restorable into a wizard as a pending change" do
+      expect(baseline.provider.provider_changes.pending).to be_empty
+    end
+
+    it "is invisible to the pending value change lookup" do
+      expect(
+        described_class.pending_value_change(
+          attribute: baseline.attribute_name,
+          value: baseline.value,
+          effective_on: baseline.effective_on
+        )
+      ).to be_empty
+    end
+  end
+
+  describe "at most one baseline per attribute" do
+    let(:provider) { create(:provider) }
+
+    before { create(:provider_change, :baseline, provider:) }
+
+    it "rejects a second baseline for the same attribute" do
+      duplicate = build(:provider_change, :baseline, provider: provider, attribute_name: "code")
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:attribute_name]).to include("has already been taken")
+    end
+
+    it "allows a second requested change for the same attribute" do
+      expect(build(:provider_change, provider: provider, attribute_name: "code")).to be_valid
+    end
+
+    it "allows a baseline for another attribute" do
+      expect(build(:provider_change, :baseline, provider: provider, attribute_name: "ukprn")).to be_valid
+    end
+  end
+
+  describe "optional attributes" do
+    before { stub_const("ProviderChange::OPTIONAL_ATTRIBUTES", %w[code]) }
+
+    it "does not require a value for an optional attribute" do
+      expect(build(:provider_change, attribute_name: "code", value: nil)).to be_valid
+    end
+
+    it "stores a cleared optional attribute as a blank string rather than nil" do
+      change = create(:provider_change, attribute_name: "code", value: nil)
+
+      expect(change.reload.value).to eq("")
+    end
+
+    it "still requires a value for a required attribute" do
+      stub_const("ProviderChange::OPTIONAL_ATTRIBUTES", %w[])
+
+      expect(build(:provider_change, attribute_name: "code", value: nil)).not_to be_valid
+    end
   end
 
   describe ".for_attribute" do
@@ -29,8 +113,8 @@ RSpec.describe ProviderChange, type: :model do
       create(:provider_change, attribute_name: "code")
     end
 
-    let!(:name_change) do
-      create(:provider_change, attribute_name: "name")
+    let!(:ukprn_change) do
+      create(:provider_change, :ukprn_change)
     end
 
     it "returns changes for the specified attribute" do
@@ -80,7 +164,7 @@ RSpec.describe ProviderChange, type: :model do
     end
 
     let!(:different_attribute_change) do
-      create(:provider_change, status: :pending, attribute_name: "name", value: value, effective_on: effective_on)
+      create(:provider_change, :ukprn_change, status: :pending, effective_on: effective_on)
     end
 
     let!(:completed_change) do

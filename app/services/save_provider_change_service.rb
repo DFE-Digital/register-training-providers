@@ -9,6 +9,8 @@ class SaveProviderChangeService
   end
 
   def call
+    ProviderChangeBaselineService.call(provider:, attribute_name:)
+
     provider_change = provider.provider_changes.pending.find_or_initialize_by(
       attribute_name:
     )

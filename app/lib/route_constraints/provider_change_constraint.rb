@@ -5,6 +5,11 @@ module RouteConstraints
         effective-academic-year
         new-code
         check-your-answers
+      ],
+      "ukprn" => %w[
+        effective-date
+        new-ukprn
+        check-your-answers
       ]
     }.freeze
 

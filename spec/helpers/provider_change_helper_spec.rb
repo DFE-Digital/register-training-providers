@@ -1,8 +1,16 @@
 RSpec.describe ProviderChangeHelper, type: :helper do
   describe "#provider_field_level_history" do
-    let(:provider) { create(:provider, code: "AAA") }
+    let(:provider) { create(:provider, code: "BBB") }
     let(:creator) { create(:user) }
 
+    let(:baseline) do
+      create(:provider_change,
+             :baseline,
+             provider: provider,
+             attribute_name: "code",
+             value: "AAA",
+             effective_on: 3.years.ago.to_date)
+    end
     let(:older) do
       create(:provider_change,
              provider: provider,
@@ -39,8 +47,67 @@ RSpec.describe ProviderChangeHelper, type: :helper do
       expect(older_row[0]).to eq("AAA")
       expect(older_row[1]).to eq(older.effective_on.to_fs(:govuk))
       expect(older_row[2]).to eq((current.effective_on - 1.day).to_fs(:govuk))
-      expect(older_row[3]).to eq(creator.name)
       expect(older_row[4]).to include("Inactive")
+    end
+
+    context "when a baseline is included" do
+      let(:changes) { [current, baseline] }
+
+      it "renders the value the provider held before its first change" do
+        rows = helper.provider_field_level_history(changes)
+
+        expect(rows.last[0]).to eq("AAA")
+        expect(rows.last[1]).to eq(baseline.effective_on.to_fs(:govuk))
+        expect(rows.last[2]).to eq((current.effective_on - 1.day).to_fs(:govuk))
+      end
+
+      it "credits the person who created the provider, where the audit trail knows them" do
+        creator = create(:user)
+        provider.audits.find_by(action: "create").update!(user: creator)
+
+        expect(helper.provider_field_level_history(changes).last[3]).to eq(creator.name)
+      end
+
+      it "falls back to the value itself when no creation audit has a user" do
+        expect(helper.provider_field_level_history(changes).last[3]).to eq("Initial value")
+      end
+
+      context "when the provider still holds the baseline value" do
+        let(:provider) { create(:provider, code: "AAA") }
+
+        it "keeps the baseline active" do
+          expect(helper.provider_field_level_history([baseline]).first[4]).to include("Active")
+        end
+      end
+    end
+
+    context "when a baseline and the change superseding it share an effective date" do
+      let(:baseline) do
+        create(:provider_change,
+               :baseline,
+               provider: provider,
+               attribute_name: "code",
+               value: "AAA",
+               effective_on: Date.current)
+      end
+      let(:current) do
+        create(:provider_change,
+               provider: provider,
+               attribute_name: "code",
+               value: "BBB",
+               effective_on: Date.current,
+               status: :completed)
+      end
+      let(:changes) { [current, baseline] }
+
+      it "never ends a period before it starts" do
+        rows = helper.provider_field_level_history(changes)
+
+        baseline_row = rows.find { |row| row[0] == "AAA" }
+
+        expect(baseline_row[1]).to eq(Date.current.to_fs(:govuk))
+        expect(baseline_row[2]).to eq(Date.current.to_fs(:govuk))
+      end
     end
 
     context "when a completed change is not yet effective" do
@@ -52,7 +119,7 @@ RSpec.describe ProviderChangeHelper, type: :helper do
                effective_on: 1.year.from_now.to_date,
                status: :completed)
       end
-      let(:changes) { [current] }
+      let(:changes) { [current, older] }
 
       it "marks the change inactive" do
         rows = helper.provider_field_level_history(changes)
@@ -70,7 +137,7 @@ RSpec.describe ProviderChangeHelper, type: :helper do
                effective_on: Date.current,
                status: :completed)
       end
-      let(:changes) { [current] }
+      let(:changes) { [current, older] }
 
       it "marks the change active" do
         rows = helper.provider_field_level_history(changes)
@@ -80,6 +147,8 @@ RSpec.describe ProviderChangeHelper, type: :helper do
     end
 
     context "when the active change ends today" do
+      let(:provider) { create(:provider, code: "AAA") }
+
       let(:older) do
         create(:provider_change,
                provider: provider,
@@ -134,6 +203,8 @@ RSpec.describe ProviderChangeHelper, type: :helper do
     end
 
     context "when a change is pending" do
+      let(:provider) { create(:provider, code: "AAA") }
+
       let(:current) do
         create(:provider_change,
                provider: provider,
@@ -142,16 +213,25 @@ RSpec.describe ProviderChangeHelper, type: :helper do
                effective_on: 1.year.from_now.to_date,
                status: :pending)
       end
-      let(:changes) { [current] }
+      let(:changes) { [current, older] }
 
       it "marks the change inactive" do
         rows = helper.provider_field_level_history(changes)
 
         expect(rows.first[4]).to include("Inactive")
       end
+
+      it "does not let it end the period of the value still in force" do
+        rows = helper.provider_field_level_history(changes)
+
+        expect(rows.last[2]).to eq("")
+        expect(rows.last[4]).to include("Active")
+      end
     end
 
     context "when a change has failed" do
+      let(:provider) { create(:provider, code: "AAA") }
+
       let(:current) do
         create(:provider_change,
                provider: provider,
@@ -160,12 +240,36 @@ RSpec.describe ProviderChangeHelper, type: :helper do
                effective_on: 1.year.ago.to_date,
                status: :failed)
       end
-      let(:changes) { [current] }
+      let(:changes) { [current, baseline] }
 
       it "marks the change as an error" do
         rows = helper.provider_field_level_history(changes)
 
         expect(rows.first[4]).to include("Error")
+      end
+
+      it "leaves the value still in force marked active" do
+        rows = helper.provider_field_level_history(changes)
+
+        expect(rows.last[4]).to include("Active")
+      end
+
+      it "does not let the failed change truncate the value still in force" do
+        rows = helper.provider_field_level_history(changes)
+
+        expect(rows.last[2]).to eq("")
+      end
+    end
+
+    context "when the provider has been edited outside the change wizards" do
+      let(:changes) { [current, older] }
+
+      before { provider.update_column(:code, "ZZZ") }
+
+      it "does not call a superseded row active" do
+        rows = helper.provider_field_level_history(changes)
+
+        expect(rows.map(&:last).join).not_to include("Active")
       end
     end
 

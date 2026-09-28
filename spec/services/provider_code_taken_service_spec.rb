@@ -70,8 +70,8 @@ RSpec.describe ProviderCodeTakenService do
       before do
         create(
           :provider_change,
+          :ukprn_change,
           provider: create(:provider),
-          attribute_name: "name",
           value: code,
           effective_on: effective_on
         )
