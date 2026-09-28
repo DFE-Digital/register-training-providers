@@ -32,9 +32,10 @@ class ProviderChange < ApplicationRecord
     ukprn
     urn
     operating_name
+    legal_name
   ].freeze
 
-  OPTIONAL_ATTRIBUTES = %w[urn].freeze
+  OPTIONAL_ATTRIBUTES = %w[urn legal_name].freeze
 
   self.implicit_order_column = :created_at
   belongs_to :creator,
