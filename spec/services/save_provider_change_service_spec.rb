@@ -59,6 +59,66 @@ RSpec.describe SaveProviderChangeService do
 
           call_service
         end
+
+        it "still records the baseline, without applying it" do
+          expect(Providers::ApplyProviderChangeJob).not_to receive(:perform_now)
+
+          call_service
+
+          expect(provider.provider_changes.baseline.sole).to have_attributes(
+            value: "OLD",
+            status: "completed"
+          )
+        end
+      end
+    end
+
+    describe "the baseline it records" do
+      it "captures the value the provider holds before the change" do
+        call_service
+
+        expect(provider.provider_changes.baseline.sole.value).to eq("OLD")
+      end
+
+      it "is dated from when the provider first became active" do
+        allow(provider).to receive(:first_active_at).and_return(Date.new(2019, 8, 1))
+
+        call_service
+
+        expect(provider.provider_changes.baseline.sole.effective_on).to eq(Date.new(2019, 8, 1))
+      end
+
+      it "is written before the change, so a same-day change still sorts above it" do
+        call_service
+
+        history = provider.provider_changes.history.for_attribute("code").to_a
+
+        expect(history.map(&:value)).to eq([value, "OLD"])
+      end
+
+      context "when saving the change itself fails" do
+        def save_with(change_value)
+          described_class.call(
+            provider: provider,
+            attribute_name: :code,
+            attributes: { attribute_name: "code", effective_on: Date.current + 1.day, value: change_value },
+            creator: creator
+          )
+        end
+
+        it "raises, and still records the baseline, because it is still true" do
+          expect { save_with(nil) }.to raise_error(ActiveRecord::RecordInvalid)
+
+          expect(provider.provider_changes.baseline.sole.value).to eq("OLD")
+        end
+
+        it "does not duplicate the baseline when the save is retried" do
+          expect { save_with(nil) }.to raise_error(ActiveRecord::RecordInvalid)
+
+          save_with(value)
+
+          expect(provider.provider_changes.baseline.count).to eq(1)
+        end
       end
     end
 
@@ -85,6 +145,13 @@ RSpec.describe SaveProviderChangeService do
           value:,
           effective_on:
         )
+      end
+
+      it "does not record a second baseline" do
+        call_service
+        call_service
+
+        expect(provider.provider_changes.baseline.count).to eq(1)
       end
     end
   end

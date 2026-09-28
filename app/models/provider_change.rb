@@ -7,6 +7,7 @@
 #  effective_on   :date             not null
 #  error_message  :text
 #  processed_at   :datetime
+#  source         :string           default("requested"), not null
 #  status         :string           default("pending"), not null
 #  value          :jsonb            not null
 #  created_at     :datetime         not null
@@ -17,6 +18,7 @@
 # Indexes
 #
 #  idx_on_provider_id_attribute_name_status_effective__6547b4b7a9  (provider_id,attribute_name,status,effective_on)
+#  index_provider_changes_on_baseline_per_attribute                (provider_id,attribute_name) UNIQUE WHERE ((source)::text = 'baseline'::text)
 #  index_provider_changes_on_created_by_id                         (created_by_id)
 #
 # Foreign Keys
@@ -25,6 +27,13 @@
 #  fk_rails_...  (provider_id => providers.id) ON DELETE => cascade
 #
 class ProviderChange < ApplicationRecord
+  CHANGEABLE_ATTRIBUTES = %w[
+    code
+    ukprn
+  ].freeze
+
+  OPTIONAL_ATTRIBUTES = %w[].freeze
+
   self.implicit_order_column = :created_at
   belongs_to :creator,
              class_name: "User",
@@ -42,9 +51,20 @@ class ProviderChange < ApplicationRecord
     failed: "failed"
   }
 
-  validates :attribute_name, presence: true
-  validates :value, presence: true
+  enum :source, {
+    requested: "requested",
+    baseline: "baseline"
+  }
+
+  validates :attribute_name, presence: true, inclusion: { in: CHANGEABLE_ATTRIBUTES }
+  validates :attribute_name,
+            uniqueness: { scope: :provider_id, conditions: -> { where(source: :baseline) } },
+            if: :baseline?
+  validates :value, presence: true, unless: :optional_attribute?
   validates :effective_on, presence: true
+  validates :source, presence: true
+
+  before_validation :normalise_optional_value
 
   scope :for_attribute, ->(attribute) {
     where(attribute_name: attribute)
@@ -62,4 +82,14 @@ class ProviderChange < ApplicationRecord
     .effective_on_or_before(effective_on)
     .where(value:)
   }
+
+private
+
+  def optional_attribute?
+    OPTIONAL_ATTRIBUTES.include?(attribute_name)
+  end
+
+  def normalise_optional_value
+    self.value = "" if optional_attribute? && value.nil?
+  end
 end

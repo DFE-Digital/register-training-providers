@@ -4,3 +4,10 @@ Provider:
       enabled: false
     ProviderRotpIdPresenceChecker:
       enabled: true
+
+ProviderChange:
+  # False positive: nil is unreachable (optional attributes normalise to "" in
+  # before_validation; the rest require presence), and the column is NOT NULL.
+  value:
+    ColumnPresenceChecker:
+      enabled: false
