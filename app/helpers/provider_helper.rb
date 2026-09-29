@@ -239,7 +239,7 @@ module ProviderHelper
   end
 
   def insert_accreditation_number_row(rows, provider)
-    return rows unless provider.accreditation_status == "accredited"
+    return rows unless provider.accredited?
 
     accreditation = provider.current_accreditation
     return rows if accreditation.blank?
@@ -255,9 +255,7 @@ module ProviderHelper
     }
 
     status_index = rows.index { |existing| existing[:key][:text] == "Accreditation status" }
-    return rows + [row] if status_index.nil?
-
-    rows.dup.insert(status_index + 1, row)
+    rows.dup.insert(status_index ? status_index + 1 : rows.length, row)
   end
 
   def inactive_periods_html(inactive_periods)
@@ -316,25 +314,5 @@ module ProviderHelper
     return "Not entered" if date.blank?
 
     date.to_date.to_fs(:govuk)
-  end
-
-  def accreditation_history_rows(provider)
-    today = Date.current
-
-    provider.accreditations.kept.order_by_start_date.map do |accreditation|
-      status = if accreditation.start_date <= today &&
-                  (accreditation.end_date.nil? || accreditation.end_date >= today)
-        govuk_tag(text: "Active", colour: "blue")
-      else
-        govuk_tag(text: "Inactive", colour: "grey")
-      end
-
-      [
-        accreditation.number,
-        accreditation.start_date.to_fs(:govuk),
-        display_date(accreditation.end_date),
-        status
-      ]
-    end
   end
 end
