@@ -123,6 +123,30 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  describe "#current_accreditation" do
+    let(:provider) { create(:provider) }
+
+    it "returns the current accreditation with the newest start date" do
+      create(:accreditation, provider: provider, number: "1001", start_date: 4.years.ago.to_date, end_date: 3.years.ago.to_date)
+      newest = create(:accreditation, provider: provider, number: "1002", start_date: 2.years.ago.to_date, end_date: nil)
+
+      expect(provider.current_accreditation).to eq(newest)
+    end
+
+    it "returns nil when there is no active accreditation" do
+      create(:accreditation, :expired, provider:)
+
+      expect(provider.current_accreditation).to be_nil
+    end
+
+    it "breaks start-date ties by most recently created" do
+      create(:accreditation, provider: provider, number: "1001", start_date: 1.year.ago.to_date, end_date: nil)
+      second = create(:accreditation, provider: provider, number: "1002", start_date: 1.year.ago.to_date, end_date: nil)
+
+      expect(provider.current_accreditation).to eq(second)
+    end
+  end
+
   describe "#sync_accreditation_status!" do
     context "when provider type switching is needed" do
       context "when school becomes accredited" do
