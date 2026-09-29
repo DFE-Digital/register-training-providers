@@ -284,6 +284,13 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.accreditation_status_label },
           },
           {
+            key: { text: "Accreditation number" },
+            value: { text: provider.current_accreditation.number },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of accreditation numbers",
+                        href: provider_accreditation_history_path(provider_id: provider.id) }],
+          },
+          {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
             actions: [{ text: "History",
@@ -392,6 +399,13 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.accreditation_status_label },
           },
           {
+            key: { text: "Accreditation number" },
+            value: { text: provider.current_accreditation.number },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of accreditation numbers",
+                        href: provider_accreditation_history_path(provider_id: provider.id) }],
+          },
+          {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
             actions: [{ text: "History",
@@ -458,6 +472,44 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: "<ul class=\"govuk-list govuk-list\"><li><dl class=\"govuk-summary-list\"><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Starts on</dt><dd class=\"govuk-summary-list__value\">#{inactive_period[:start_date].to_date.to_fs(:govuk)}</dd></div><div class=\"govuk-summary-list__row\"><dt class=\"govuk-summary-list__key\">Ends on</dt><dd class=\"govuk-summary-list__value\">#{inactive_period[:end_date].to_date.to_fs(:govuk)}</dd></div></dl></li></ul>" }
           },
         ])
+      end
+    end
+
+    context "when the provider is accredited without an accreditation" do
+      let(:provider) { create(:provider, :hei) }
+
+      it "does not include the accreditation number row" do
+        provider.accreditations.destroy_all
+        provider.update!(accreditation_status: :accredited)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
+    context "when the provider has an expired accreditation" do
+      let(:provider) { create(:provider, :hei) }
+
+      it "does not include the accreditation number row" do
+        provider.accreditations.destroy_all
+        provider.update!(accreditation_status: :accredited)
+        create(:accreditation, :expired, provider: provider)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
+    context "when the provider has a future accreditation" do
+      let(:provider) { create(:provider, :hei) }
+
+      it "does not include the accreditation number row" do
+        provider.accreditations.destroy_all
+        provider.update!(accreditation_status: :accredited)
+        create(:accreditation, :future, provider: provider)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
       end
     end
 
