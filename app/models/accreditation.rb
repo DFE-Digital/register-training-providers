@@ -36,7 +36,8 @@ class Accreditation < ApplicationRecord
   validates :start_date, presence: true
 
   scope :current, -> { where("start_date <= ? AND (end_date IS NULL OR end_date >= ?)", Date.current, Date.current) }
-  scope :order_by_start_date, -> { order(:start_date) }
+  scope :history, -> { order(start_date: :desc, created_at: :desc) }
+  scope :order_by_start_date, -> { order(:start_date, :created_at) }
 
   after_discard :sync_provider_accreditation_status_on_destroy
   after_save :sync_provider_accreditation_status
