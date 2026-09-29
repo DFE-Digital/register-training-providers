@@ -151,6 +151,12 @@ Rails.application.routes.draw do
             to: "providers/provider_changes#update",
             as: :change_update_step
     end
+
+    # === Accreditation history ===
+    get "accreditation-history",
+        to: "providers/accreditation_histories#show",
+        as: :accreditation_history
+
     # === Addresses ===
 
     # Listing

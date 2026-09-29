@@ -1,0 +1,30 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: provider_path(provider)) %>
+<% end %>
+
+<% page_data(
+     title: provider.operating_name,
+     subtitle: "Accreditation number history",
+     header: "Accreditation number history",
+     caption: provider.operating_name
+   ) %>
+
+<% content_for :full_width, true %>
+
+<p class="govuk-body">
+  View previous accreditation numbers and when they were in effect.
+</p>
+
+<% if provider.accreditations.kept.none? %>
+
+  <p class="govuk-body">
+    There is no accreditation number history.
+  </p>
+
+<% else %>
+  <%= govuk_table(
+        head: ["Accreditation number", "Start date", "End date", "Status"],
+        rows: accreditation_history_rows(provider),
+        first_cell_is_header: true
+      ) %>
+<% end %>

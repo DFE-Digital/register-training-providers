@@ -146,6 +146,10 @@ class Provider < ApplicationRecord
     accreditations.kept.current.order_by_start_date
   end
 
+  def current_accreditation
+    current_accreditations.last
+  end
+
   def has_current_accreditations?
     current_accreditations.exists?
   end
