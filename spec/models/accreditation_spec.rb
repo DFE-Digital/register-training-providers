@@ -52,6 +52,13 @@ RSpec.describe Accreditation, type: :model do
         expect(accreditations.first).to eq(expired_accreditation)
         expect(accreditations.last).to eq(future_accreditation)
       end
+
+      it "breaks start-date ties by creation order" do
+        first = create(:accreditation, :current, provider: provider, start_date: 3.months.ago, number: "1001")
+        second = create(:accreditation, :current, provider: provider, start_date: 3.months.ago, number: "1002")
+
+        expect(Accreditation.order_by_start_date.where(start_date: first.start_date)).to eq([first, second])
+      end
     end
   end
 end

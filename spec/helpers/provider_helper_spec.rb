@@ -521,5 +521,47 @@ RSpec.describe ProviderHelper, type: :helper do
         expect(rows).to all(satisfy { |row| !row.key?(:actions) })
       end
     end
+
+    context "when an accredited provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived, accreditation_status: "accredited") }
+
+      it "does not include the accreditation number row" do
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+  end
+
+  describe "#accreditation_history_rows" do
+    let(:provider) { create(:provider) }
+
+    def tag_text(row)
+      Nokogiri::HTML.fragment(row.last).text
+    end
+
+    it "marks an accreditation as active when the start and end dates sandwich today" do
+      _past = create(:accreditation, provider: provider, number: "1001", start_date: 2.years.ago.to_date, end_date: 2.days.ago.to_date)
+      _starts_today = create(:accreditation, provider: provider, number: "1002", start_date: Date.current, end_date: 1.year.from_now.to_date)
+      _ends_today = create(:accreditation, provider: provider, number: "1003", start_date: 1.year.ago.to_date, end_date: Date.current)
+      _indefinite = create(:accreditation, provider: provider, number: "1004", start_date: 1.year.ago.to_date, end_date: nil)
+      _future = create(:accreditation, provider: provider, number: "1005", start_date: 1.year.from_now.to_date, end_date: 2.years.from_now.to_date)
+
+      rows = helper.accreditation_history_rows(provider.reload)
+
+      expect(rows.map(&:first)).to eq(%w[1001 1003 1004 1002 1005])
+      expect(tag_text(rows[0])).to eq("Inactive")
+      expect(tag_text(rows[1])).to eq("Active")
+      expect(tag_text(rows[2])).to eq("Active")
+      expect(tag_text(rows[3])).to eq("Active")
+      expect(tag_text(rows[4])).to eq("Inactive")
+    end
+
+    it "renders 'Not entered' when the end date is missing" do
+      create(:accreditation, provider: provider, number: "1001", start_date: 1.year.ago.to_date, end_date: nil)
+
+      rows = helper.accreditation_history_rows(provider.reload)
+
+      expect(rows.first.third).to eq("Not entered")
+    end
   end
 end
