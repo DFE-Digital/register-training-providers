@@ -76,4 +76,23 @@ module AccreditationHelper
       card
     end
   end
+
+  def accreditation_history_rows(provider)
+    current_ids = provider.accreditations.kept.current.ids
+
+    provider.accreditations.kept.history.map do |accreditation|
+      status = if current_ids.include?(accreditation.id)
+                 govuk_tag(text: "Active", colour: "blue")
+               else
+                 govuk_tag(text: "Inactive", colour: "grey")
+               end
+
+      [
+        accreditation.number,
+        accreditation.start_date.to_fs(:govuk),
+        accreditation.end_date&.to_fs(:govuk) || "Not entered",
+        status
+      ]
+    end
+  end
 end
