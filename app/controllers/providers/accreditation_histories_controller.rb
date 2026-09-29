@@ -9,8 +9,6 @@ module Providers
 
   private
 
-    def provider
-      @provider
-    end
+    attr_reader :provider
   end
 end

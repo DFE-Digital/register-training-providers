@@ -493,7 +493,7 @@ RSpec.describe ProviderHelper, type: :helper do
       it "does not include the accreditation number row" do
         provider.accreditations.destroy_all
         provider.update!(accreditation_status: :accredited)
-        create(:accreditation, :expired, provider: provider)
+        create(:accreditation, :expired, provider:)
 
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
         expect(keys).not_to include("Accreditation number")
@@ -506,7 +506,7 @@ RSpec.describe ProviderHelper, type: :helper do
       it "does not include the accreditation number row" do
         provider.accreditations.destroy_all
         provider.update!(accreditation_status: :accredited)
-        create(:accreditation, :future, provider: provider)
+        create(:accreditation, :future, provider:)
 
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
         expect(keys).not_to include("Accreditation number")
