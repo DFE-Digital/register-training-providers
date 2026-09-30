@@ -476,23 +476,18 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when the provider is accredited without an accreditation" do
-      let(:provider) { create(:provider, :hei) }
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
 
       it "does not include the accreditation number row" do
-        provider.accreditations.destroy_all
-        provider.update!(accreditation_status: :accredited)
-
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
         expect(keys).not_to include("Accreditation number")
       end
     end
 
     context "when the provider has an expired accreditation" do
-      let(:provider) { create(:provider, :hei) }
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
 
       it "does not include the accreditation number row" do
-        provider.accreditations.destroy_all
-        provider.update!(accreditation_status: :accredited)
         create(:accreditation, :expired, provider:)
 
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
@@ -501,11 +496,9 @@ RSpec.describe ProviderHelper, type: :helper do
     end
 
     context "when the provider has a future accreditation" do
-      let(:provider) { create(:provider, :hei) }
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
 
       it "does not include the accreditation number row" do
-        provider.accreditations.destroy_all
-        provider.update!(accreditation_status: :accredited)
         create(:accreditation, :future, provider:)
 
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
@@ -522,8 +515,19 @@ RSpec.describe ProviderHelper, type: :helper do
       end
     end
 
+    context "when the provider has a current accreditation but is flagged unaccredited" do
+      let(:provider) { create(:provider, :hei) }
+
+      it "does not include the accreditation number row" do
+        provider.update!(accreditation_status: :unaccredited)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
     context "when an accredited provider is archived" do
-      let(:provider) { build_stubbed(:provider, :archived, accreditation_status: "accredited") }
+      let(:provider) { build_stubbed(:provider, :archived, :accredited) }
 
       it "does not include the accreditation number row" do
         keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
@@ -532,36 +536,42 @@ RSpec.describe ProviderHelper, type: :helper do
     end
   end
 
-  describe "#accreditation_history_rows" do
-    let(:provider) { create(:provider) }
+  describe "#insert_accreditation_number_row" do
+    let(:provider) { create(:provider, :hei) }
 
-    def tag_text(row)
-      Nokogiri::HTML.fragment(row.last).text
+    let(:rows) do
+      [
+        { key: { text: "Provider type" }, value: { text: "Higher education institution" } },
+        { key: { text: "Accreditation status" }, value: { text: "Accredited" } },
+        { key: { text: "Operating name" }, value: { text: provider.operating_name } }
+      ]
     end
 
-    it "marks an accreditation as active when the start and end dates sandwich today" do
-      _past = create(:accreditation, provider: provider, number: "1001", start_date: 2.years.ago.to_date, end_date: 2.days.ago.to_date)
-      _starts_today = create(:accreditation, provider: provider, number: "1002", start_date: Date.current, end_date: 1.year.from_now.to_date)
-      _ends_today = create(:accreditation, provider: provider, number: "1003", start_date: 1.year.ago.to_date, end_date: Date.current)
-      _indefinite = create(:accreditation, provider: provider, number: "1004", start_date: 1.year.ago.to_date, end_date: nil)
-      _future = create(:accreditation, provider: provider, number: "1005", start_date: 1.year.from_now.to_date, end_date: 2.years.from_now.to_date)
+    it "inserts the accreditation number row immediately after the Accreditation status row" do
+      result = helper.insert_accreditation_number_row(rows, provider)
+      keys = result.map { |row| row[:key][:text] }
 
-      rows = helper.accreditation_history_rows(provider.reload)
-
-      expect(rows.map(&:first)).to eq(%w[1001 1003 1004 1002 1005])
-      expect(tag_text(rows[0])).to eq("Inactive")
-      expect(tag_text(rows[1])).to eq("Active")
-      expect(tag_text(rows[2])).to eq("Active")
-      expect(tag_text(rows[3])).to eq("Active")
-      expect(tag_text(rows[4])).to eq("Inactive")
+      expect(keys).to eq(["Provider type", "Accreditation status", "Accreditation number", "Operating name"])
+      expect(result[2][:value][:text]).to eq(provider.current_accreditation.number)
+      expect(result[2][:actions]).to eq([{
+        text: "History",
+        visually_hidden_text: "of accreditation numbers",
+        href: provider_accreditation_history_path(provider_id: provider.id)
+      }])
     end
 
-    it "renders 'Not entered' when the end date is missing" do
-      create(:accreditation, provider: provider, number: "1001", start_date: 1.year.ago.to_date, end_date: nil)
+    it "returns the rows unchanged when the provider is unaccredited" do
+      unaccredited_provider = create(:provider, accreditation_status: :unaccredited)
 
-      rows = helper.accreditation_history_rows(provider.reload)
+      expect(helper.insert_accreditation_number_row(rows, unaccredited_provider)).to eq(rows)
+    end
 
-      expect(rows.first.third).to eq("Not entered")
+    it "appends the accreditation number row when there is no Accreditation status row to anchor to" do
+      rows_without_anchor = rows.reject { |row| row[:key][:text] == "Accreditation status" }
+
+      result = helper.insert_accreditation_number_row(rows_without_anchor, provider)
+
+      expect(result.map { |row| row[:key][:text] }.last).to eq("Accreditation number")
     end
   end
 end
