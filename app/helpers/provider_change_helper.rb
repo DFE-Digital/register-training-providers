@@ -23,12 +23,18 @@ module ProviderChangeHelper
 
   def format_change_value(change)
     value = change.value
-    return "Not entered" if value.blank?
+    return format_blank_change_value(change) if value.blank?
 
     value
   end
 
 private
+
+  def format_blank_change_value(change)
+    return "No URN recorded" if change.attribute_name == "urn"
+
+    "Not entered"
+  end
 
   def next_completed_change(changes, index)
     changes[0...index].reverse.find(&:completed?)

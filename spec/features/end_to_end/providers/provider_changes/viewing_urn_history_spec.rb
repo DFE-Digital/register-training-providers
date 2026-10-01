@@ -91,7 +91,7 @@ RSpec.feature "Provider URN history" do
       expect(page).not_to have_content("Deleted user")
     end
 
-    within(".govuk-table__body .govuk-table__row", text: "Not entered") do
+    within(".govuk-table__body .govuk-table__row", text: "No URN recorded") do
       expect(page).to have_css(".govuk-tag", text: "Inactive")
     end
   end
