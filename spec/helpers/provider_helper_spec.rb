@@ -226,7 +226,12 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "Unique reference number (URN)" },
           value: { text: "Not entered", classes: "govuk-hint" },
-          actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
+          actions: [{ text: "History",
+                      visually_hidden_text: "of unique reference numbers",
+                      href: provider_changes_field_history_path(provider_id: provider.id, field: "urn") },
+                    { text: "Change",
+                      href: provider_change_step_path(provider_id: provider.id, field: "urn", step: "effective-date"),
+                      visually_hidden_text: "unique reference number (URN)" }],
         },
         {
           key: { text: "Provider code" },
@@ -291,7 +296,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Unique reference number (URN)" },
             value: { text: provider.urn },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of unique reference numbers",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "urn") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "urn", step: "effective-date"),
+                        visually_hidden_text: "unique reference number (URN)" }],
           },
           {
             key: { text: "Provider code" },
@@ -384,7 +394,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Unique reference number (URN)" },
             value: { text: provider.urn },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "unique reference number (URN)" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of unique reference numbers",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "urn") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "urn", step: "effective-date"),
+                        visually_hidden_text: "unique reference number (URN)" }],
           },
           {
             key: { text: "Provider code" },

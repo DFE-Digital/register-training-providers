@@ -30,9 +30,10 @@ class ProviderChange < ApplicationRecord
   CHANGEABLE_ATTRIBUTES = %w[
     code
     ukprn
+    urn
   ].freeze
 
-  OPTIONAL_ATTRIBUTES = %w[].freeze
+  OPTIONAL_ATTRIBUTES = %w[urn].freeze
 
   self.implicit_order_column = :created_at
   belongs_to :creator,
@@ -63,6 +64,8 @@ class ProviderChange < ApplicationRecord
   validates :value, presence: true, unless: :optional_attribute?
   validates :effective_on, presence: true
   validates :source, presence: true
+
+  before_validation :normalise_optional_value
 
   before_validation :normalise_optional_value
 

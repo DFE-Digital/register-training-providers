@@ -40,6 +40,22 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
     end
   end
 
+  context "with a valid URN field/step combination" do
+    let(:field) { "urn" }
+
+    %w[
+      effective-date
+      new-urn
+      check-your-answers
+    ].each do |valid_step|
+      context "when step is #{valid_step}" do
+        let(:step) { valid_step }
+
+        it { is_expected.to be(true) }
+      end
+    end
+  end
+
   context "with an invalid step" do
     let(:field) { "code" }
     let(:step) { "invalid_step" }
@@ -70,6 +86,12 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
 
     context "with a known UKPRN field" do
       let(:field) { "ukprn" }
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a known URN field" do
+      let(:field) { "urn" }
 
       it { is_expected.to be(true) }
     end

@@ -6,7 +6,7 @@ module ProviderChangeHelper
       effective_to = change_period_end(change, next_completed_change(changes, index))
 
       [
-        change.value,
+        format_change_value(change),
         display_change_date(change.effective_on),
         display_change_date(effective_to),
         change_credit(change),
@@ -21,7 +21,20 @@ module ProviderChangeHelper
     date.to_date.to_fs(:govuk)
   end
 
+  def format_change_value(change)
+    value = change.value
+    return format_blank_change_value(change) if value.blank?
+
+    value
+  end
+
 private
+
+  def format_blank_change_value(change)
+    return "No URN recorded" if change.attribute_name == "urn"
+
+    "Not entered"
+  end
 
   def next_completed_change(changes, index)
     changes[0...index].reverse.find(&:completed?)

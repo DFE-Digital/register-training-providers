@@ -8,7 +8,8 @@ namespace :wizard do
     task generate: :environment do
       output_dir = "docs/wizards"
 
-      [ProviderChanges::CodeWizard, ProviderChanges::UkprnWizard].each do |wizard_class|
+      ProviderChanges::Registry.fields.each do |field|
+        wizard_class = ProviderChanges::Registry.wizard_for(field)
         # rubocop:disable Style/OpenStructUse
         wizard = wizard_class.new(state_store: OpenStruct.new, provider: Provider.new)
         # rubocop:enable Style/OpenStructUse

@@ -10,6 +10,11 @@ module RouteConstraints
         effective-date
         new-ukprn
         check-your-answers
+      ],
+      "urn" => %w[
+        effective-date
+        new-urn
+        check-your-answers
       ]
     }.freeze
 

@@ -1,25 +1,25 @@
 module ProviderChanges
-  class CodeWizard < BaseWizard
+  class UrnWizard < BaseWizard
     def provider_change_attributes
       state = state_store.read.with_indifferent_access
 
       {
-        attribute_name: "code",
+        attribute_name: "urn",
         effective_on: state["effective_on"],
-        value: state["code"].presence || ""
+        value: state["urn"].presence || ""
       }
     end
 
   private
 
     def field
-      "code"
+      "urn"
     end
 
     def steps
       {
-        effective_academic_year: ProviderChanges::Steps::EffectiveAcademicYearStep,
-        new_code: ProviderChanges::Steps::CodeStep,
+        effective_date: ProviderChanges::Steps::EffectiveDateStep,
+        new_urn: ProviderChanges::Steps::UrnStep,
         check_your_answers: ProviderChanges::Steps::CheckYourAnswersStep
       }
     end

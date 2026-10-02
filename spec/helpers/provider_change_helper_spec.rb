@@ -288,6 +288,35 @@ RSpec.describe ProviderChangeHelper, type: :helper do
         expect(rows.first[3]).to eq("Deleted user")
       end
     end
+
+    context "when a change has a blank value" do
+      let(:urn_change) do
+        create(:provider_change,
+               provider: provider,
+               attribute_name: "urn",
+               value: "",
+               effective_on: 1.year.ago.to_date,
+               status: :completed)
+      end
+      let(:code_change) do
+        build(:provider_change,
+              provider: provider,
+              attribute_name: "code",
+              value: "",
+              effective_on: 1.year.ago.to_date,
+              status: :completed)
+      end
+
+      it "labels a blank URN as no URN recorded" do
+        row = helper.provider_field_level_history([urn_change]).first
+
+        expect(row[0]).to eq("No URN recorded")
+      end
+
+      it "keeps the default label for other blank attributes" do
+        expect(helper.format_change_value(code_change)).to eq("Not entered")
+      end
+    end
   end
 
   describe "#display_change_date" do

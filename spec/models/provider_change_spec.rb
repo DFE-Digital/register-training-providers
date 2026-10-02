@@ -26,9 +26,9 @@ RSpec.describe ProviderChange, type: :model do
   end
 
   describe "CHANGEABLE_ATTRIBUTES" do
-    it "matches the attributes the provider changes controller offers wizards for" do
+    it "matches the attributes the provider changes registry offers wizards for" do
       expect(described_class::CHANGEABLE_ATTRIBUTES)
-        .to match_array(Providers::ProviderChangesController::WIZARDS.keys)
+        .to match_array(ProviderChanges::Registry.fields)
     end
   end
 
@@ -43,8 +43,27 @@ RSpec.describe ProviderChange, type: :model do
       expect(provider_change).not_to be_valid
       expect(provider_change.errors[:attribute_name]).to be_present
     end
-  end
+    context "when the value is blank" do
+      it "is invalid for a required attribute" do
+        provider_change = build(:provider_change, attribute_name: "code", value: "")
 
+        expect(provider_change).not_to be_valid
+        expect(provider_change.errors[:value]).to include("can't be blank")
+      end
+
+      it "is valid for the optional urn attribute" do
+        provider_change = build(:provider_change, attribute_name: "urn", value: "")
+
+        expect(provider_change).to be_valid
+      end
+
+      it "normalises a nil urn to a blank string when stored" do
+        provider_change = create(:provider_change, attribute_name: "urn", value: nil)
+
+        expect(provider_change.reload.value).to eq("")
+      end
+    end
+  end
   describe "baseline changes" do
     subject(:baseline) { create(:provider_change, :baseline) }
 
@@ -85,26 +104,6 @@ RSpec.describe ProviderChange, type: :model do
 
     it "allows a baseline for another attribute" do
       expect(build(:provider_change, :baseline, provider: provider, attribute_name: "ukprn")).to be_valid
-    end
-  end
-
-  describe "optional attributes" do
-    before { stub_const("ProviderChange::OPTIONAL_ATTRIBUTES", %w[code]) }
-
-    it "does not require a value for an optional attribute" do
-      expect(build(:provider_change, attribute_name: "code", value: nil)).to be_valid
-    end
-
-    it "stores a cleared optional attribute as a blank string rather than nil" do
-      change = create(:provider_change, attribute_name: "code", value: nil)
-
-      expect(change.reload.value).to eq("")
-    end
-
-    it "still requires a value for a required attribute" do
-      stub_const("ProviderChange::OPTIONAL_ATTRIBUTES", %w[])
-
-      expect(build(:provider_change, attribute_name: "code", value: nil)).not_to be_valid
     end
   end
 
