@@ -98,11 +98,7 @@ module Providers
             journey_coordinator(:address_select).next_path
           end
         else
-          query_params = {}
-          query_params[:debug] = true if imported_data_context?
-
-          provider_new_address_types_path(provider, query_params)
-          # provider_new_address_confirm_path(provider, query_params)
+          manual_entry_path
         end
       end
 
