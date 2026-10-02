@@ -216,7 +216,12 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "Legal name" },
           value: { text: "Not entered", classes: "govuk-hint" },
-          actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
+          actions: [{ text: "History",
+                      visually_hidden_text: "of legal names",
+                      href: provider_changes_field_history_path(provider_id: provider.id, field: "legal_name") },
+                    { text: "Change",
+                      href: provider_change_step_path(provider_id: provider.id, field: "legal_name", step: "effective-date"),
+                      visually_hidden_text: "legal name" }],
         },
         {
           key: { text: "UK provider reference number (UKPRN)" },
@@ -291,7 +296,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Legal name" },
             value: { text: provider.legal_name },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of legal names",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "legal_name") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "legal_name", step: "effective-date"),
+                        visually_hidden_text: "legal name" }],
           },
           {
             key: { text: "UK provider reference number (UKPRN)" },
@@ -394,7 +404,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Legal name" },
             value: { text: provider.legal_name },
-            actions: [{ text: "Change", href: edit_provider_path(provider), visually_hidden_text: "legal name" }],
+            actions: [{ text: "History",
+                        visually_hidden_text: "of legal names",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "legal_name") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "legal_name", step: "effective-date"),
+                        visually_hidden_text: "legal name" }],
           },
           {
             key: { text: "UK provider reference number (UKPRN)" },
