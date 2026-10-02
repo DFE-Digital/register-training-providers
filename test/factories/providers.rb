@@ -64,11 +64,15 @@ FactoryBot.define do
       accreditation_status { :unaccredited }
     end
 
+    transient do
+      with_accreditations { true }
+    end
+
     trait :accredited do
       accreditation_status { :accredited }
 
-      after(:create) do |provider|
-        create(:accreditation, :current, provider:)
+      after(:create) do |provider, evaluator|
+        create(:accreditation, :current, provider:) if evaluator.with_accreditations
       end
     end
 

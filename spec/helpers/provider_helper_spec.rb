@@ -284,6 +284,13 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.accreditation_status_label },
           },
           {
+            key: { text: "Accreditation number" },
+            value: { text: provider.current_accreditation.number },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of accreditation numbers",
+                        href: provider_accreditation_history_path(provider_id: provider.id) }],
+          },
+          {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
             actions: [{ text: "History",
@@ -392,6 +399,13 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.accreditation_status_label },
           },
           {
+            key: { text: "Accreditation number" },
+            value: { text: provider.current_accreditation.number },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of accreditation numbers",
+                        href: provider_accreditation_history_path(provider_id: provider.id) }],
+          },
+          {
             key: { text: "Operating name" },
             value: { text: provider.operating_name },
             actions: [{ text: "History",
@@ -461,6 +475,37 @@ RSpec.describe ProviderHelper, type: :helper do
       end
     end
 
+    context "when the provider is accredited without an accreditation" do
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
+
+      it "does not include the accreditation number row" do
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
+    context "when the provider has an expired accreditation" do
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
+
+      it "does not include the accreditation number row" do
+        create(:accreditation, :expired, provider:)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
+    context "when the provider has a future accreditation" do
+      let(:provider) { create(:provider, :hei, with_accreditations: false) }
+
+      it "does not include the accreditation number row" do
+        create(:accreditation, :future, provider:)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
     context "when the provider is archived" do
       let(:provider) { build_stubbed(:provider, :archived) }
 
@@ -468,6 +513,65 @@ RSpec.describe ProviderHelper, type: :helper do
         rows = helper.provider_details_rows(provider)
         expect(rows).to all(satisfy { |row| !row.key?(:actions) })
       end
+    end
+
+    context "when the provider has a current accreditation but is flagged unaccredited" do
+      let(:provider) { create(:provider, :hei) }
+
+      it "does not include the accreditation number row" do
+        provider.update!(accreditation_status: :unaccredited)
+
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+
+    context "when an accredited provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived, :accredited) }
+
+      it "does not include the accreditation number row" do
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+        expect(keys).not_to include("Accreditation number")
+      end
+    end
+  end
+
+  describe "#insert_accreditation_number_row" do
+    let(:provider) { create(:provider, :hei) }
+
+    let(:rows) do
+      [
+        { key: { text: "Provider type" }, value: { text: "Higher education institution" } },
+        { key: { text: "Accreditation status" }, value: { text: "Accredited" } },
+        { key: { text: "Operating name" }, value: { text: provider.operating_name } }
+      ]
+    end
+
+    it "inserts the accreditation number row immediately after the Accreditation status row" do
+      result = helper.insert_accreditation_number_row(rows, provider)
+      keys = result.map { |row| row[:key][:text] }
+
+      expect(keys).to eq(["Provider type", "Accreditation status", "Accreditation number", "Operating name"])
+      expect(result[2][:value][:text]).to eq(provider.current_accreditation.number)
+      expect(result[2][:actions]).to eq([{
+        text: "History",
+        visually_hidden_text: "of accreditation numbers",
+        href: provider_accreditation_history_path(provider_id: provider.id)
+      }])
+    end
+
+    it "returns the rows unchanged when the provider is unaccredited" do
+      unaccredited_provider = create(:provider, accreditation_status: :unaccredited)
+
+      expect(helper.insert_accreditation_number_row(rows, unaccredited_provider)).to eq(rows)
+    end
+
+    it "appends the accreditation number row when there is no Accreditation status row to anchor to" do
+      rows_without_anchor = rows.reject { |row| row[:key][:text] == "Accreditation status" }
+
+      result = helper.insert_accreditation_number_row(rows_without_anchor, provider)
+
+      expect(result.map { |row| row[:key][:text] }.last).to eq("Accreditation number")
     end
   end
 end
