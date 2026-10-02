@@ -1,0 +1,11 @@
+digraph Provider_changes_operating_name_wizard {
+  rankdir=LR;
+  bgcolor="#ffffff";
+  node [shape=box, style="rounded,filled", fillcolor="#e8f4f8", fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10];
+  effective_date [label="Effective Date"];
+  new_operating_name [label="New Operating Name"];
+  check_your_answers [label="Check Your Answers"];
+  effective_date -> new_operating_name [style=solid];
+  new_operating_name -> check_your_answers [style=solid];
+}
