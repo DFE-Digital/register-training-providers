@@ -22,6 +22,20 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
 
     let(:headers) { { Authorization: token } }
 
+    { "empty-string" => "", "whitespace-only" => "   " }.each do |description, legacy_urn|
+      it "serialises a legacy #{description} URN as null" do
+        provider = create(:provider, :scitt)
+        provider.update_column(:urn, legacy_urn)
+
+        get(url, headers:, params:)
+
+        expect(response).to have_http_status(:ok)
+
+        serialised = response.parsed_body[:data].find { |row| row["rotp_id"] == provider.rotp_id }
+        expect(serialised).to include("urn" => nil)
+      end
+    end
+
     it "returns an array of training providers", openapi: do
       create(:provider, :accredited, first_active_at: build_academic_year_date(previous_academic_year),
                                      inactive_periods: [{ start_date: build_academic_year_date(previous_academic_year),
@@ -39,6 +53,9 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
       ].map do |trait|
         create(:provider, trait)
       end
+
+      provider_with_no_urn = create(:provider, :scitt, urn: nil)
+      latest_providers << provider_with_no_urn
 
       latest_providers.sort_by! do |provider|
         [

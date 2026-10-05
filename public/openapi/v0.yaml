@@ -88,7 +88,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_10f697511912efc58705f64cd7df5ab508cf35c37cab549abe2b6e7a2a038fff
+        example: test_d27443581310a59525f0323fffe9412db849fec901beb840cb021c65b273f171
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -197,54 +197,63 @@ paths:
                 - data
               example:
                 data:
-                - rotp_id: RoTP-26V6KK09
-                  operating_name: Higher education institution (HEI) 2462
+                - rotp_id: RoTP-26C6QI09
+                  operating_name: Higher education institution (HEI) 4270
                   provider_type: hei
-                  code: VFJ
+                  code: LVI
                   accreditation_status: unaccredited
-                  ukprn: '44564753'
-                  urn:
+                  ukprn: '66967363'
+                  urn: '73040'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26U8DH09
-                  operating_name: Higher education institution (HEI) 7709
+                - rotp_id: RoTP-26D0IA09
+                  operating_name: Higher education institution (HEI) 7244
                   provider_type: hei
-                  code: PAZ
+                  code: IQX
                   accreditation_status: accredited
-                  ukprn: '34400987'
-                  urn:
+                  ukprn: '29257567'
+                  urn: '483494'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26R7BR09
-                  operating_name: Other 1996
+                - rotp_id: RoTP-26K8HH09
+                  operating_name: Other 4502
                   provider_type: other
-                  code: RGQ
-                  accreditation_status: accredited
-                  ukprn: '89186965'
-                  urn:
-                  updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26V5GL09
-                  operating_name: Other 3576
-                  provider_type: other
-                  code: 9T7
+                  code: 1ZV
                   accreditation_status: unaccredited
-                  ukprn: '66322726'
-                  urn:
+                  ukprn: '13681317'
+                  urn: '396629'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26B8IM09
-                  operating_name: School 3699
+                - rotp_id: RoTP-26F9CK09
+                  operating_name: Other 5710
+                  provider_type: other
+                  code: 7BX
+                  accreditation_status: accredited
+                  ukprn: '13858851'
+                  urn: '98144'
+                  updated_at: '2026-09-15T11:34:56Z'
+                - rotp_id: RoTP-26F1DI09
+                  operating_name: School 6728
                   provider_type: school
-                  code: YP8
+                  code: JN8
                   accreditation_status: unaccredited
-                  ukprn: '10792824'
-                  urn: '421472'
+                  ukprn: '88489798'
+                  urn: '179880'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26B9HY09
+                - rotp_id: RoTP-26K4CJ09
                   operating_name: School-centred initial teacher training (SCITT)
-                    6932
+                    3180
                   provider_type: scitt
-                  code: ALV
+                  code: HT4
                   accreditation_status: accredited
-                  ukprn: '95696736'
-                  urn: '806304'
+                  ukprn: '19407537'
+                  urn:
+                  updated_at: '2026-09-15T11:34:56Z'
+                - rotp_id: RoTP-26V5XY09
+                  operating_name: School-centred initial teacher training (SCITT)
+                    6787
+                  provider_type: scitt
+                  code: O3Y
+                  accreditation_status: accredited
+                  ukprn: '82228738'
+                  urn: '577270'
                   updated_at: '2026-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
