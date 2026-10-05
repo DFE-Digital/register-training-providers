@@ -126,8 +126,8 @@ RSpec.feature "Change Provider Details" do
     expect(page).to have_text(provider_details_to_use.provider_type_label)
     expect(page).to have_text(provider_details_to_use.ukprn)
     expect(page).to have_text(provider_details_to_use.code)
-    expect(page).to have_text(provider_details_to_use.urn || "Not entered")
-    expect(page).to have_text(provider_details_to_use.legal_name || "Not entered")
+    expect(page).to have_text(provider_details_to_use.urn)
+    expect(page).to have_text(provider_details_to_use.legal_name)
   end
 
   def and_there_is_a_provider
