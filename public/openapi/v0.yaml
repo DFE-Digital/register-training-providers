@@ -167,7 +167,9 @@ paths:
                           type:
                           - string
                           - 'null'
-                          description: The 6-digit Unique Reference Number for schools.
+                          description: The 5 or 6 digit Unique Reference Number. Optional
+                            for all provider types; returned as null when no URN is
+                            recorded.
                           example: '543380'
                         updated_at:
                           type: string

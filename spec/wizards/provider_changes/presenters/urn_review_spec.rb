@@ -36,6 +36,21 @@ RSpec.describe ProviderChanges::Presenters::UrnReview do
       )
     end
 
+    context "when the new URN is cleared" do
+      before do
+        repository.write(
+          effective_on: Date.new(2027, 1, 15),
+          urn: ""
+        )
+      end
+
+      it "shows the new URN as not entered" do
+        new_urn_row = presenter.rows.find { |row| row[:key][:text] == "New unique reference number (URN)" }
+
+        expect(new_urn_row[:value][:text]).to eq("Not entered")
+      end
+    end
+
     context "when the provider has no URN" do
       let(:provider) { create(:provider, :hei, urn: nil) }
 

@@ -1,7 +1,7 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-09-11T16:04:09Z
+**Generated:** 2026-10-09T11:25:31Z
 **Processor:** DfE::Wizard::StepsProcessor
 
 ## Overview
@@ -96,9 +96,7 @@ this step's purpose, user interactions, and business logic.
 
 #### Validations
 
-- **urn** (`presence`):
 - **urn** (`format`):
-- **urn** (`length`):
 
 #### Operations
 
@@ -229,20 +227,8 @@ Simple transitions allow linear, unconditional progression from one step to the 
       :validators: [
         {
           :name: "urn",
-          :class: "ActiveModel::Validations::PresenceValidator",
-          :type: "presence",
-          :message: null
-        },
-        {
-          :name: "urn",
           :class: "ActiveModel::Validations::FormatValidator",
           :type: "format",
-          :message: null
-        },
-        {
-          :name: "urn",
-          :class: "ActiveModel::Validations::LengthValidator",
-          :type: "length",
           :message: null
         }
       ],
