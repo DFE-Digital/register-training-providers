@@ -6,8 +6,6 @@ module ProviderChanges
 
       attribute :urn
 
-      validates :urn, presence: true, if: :urn_required?
-
       validates :urn,
                 format: { with: /\A[0-9]{5,6}\z/ },
                 length: { in: 5..6 },
@@ -17,10 +15,6 @@ module ProviderChanges
 
       def self.permitted_params
         %i[urn]
-      end
-
-      def urn_required?
-        wizard.provider.requires_urn?
       end
 
     private

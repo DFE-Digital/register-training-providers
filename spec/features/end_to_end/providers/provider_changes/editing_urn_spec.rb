@@ -43,30 +43,33 @@ RSpec.feature "Editing provider URN" do
     end
   end
 
-  scenario "User can clear a URN for a provider that does not require one" do
+  scenario "User can clear a URN" do
     given_i_am_an_authenticated_user
-    provider = create(:provider, :hei, operating_name: "Provider without required URN", urn: "123456")
-
-    visit "/providers"
-    click_on provider.operating_name
-    and_i_am_taken_to("/providers/#{provider.id}")
-    and_i_click_on "Change unique reference number (URN)"
-    and_i_am_taken_to("/providers/#{provider.id}/changes/urn/effective-date")
-
-    fill_in "Day", with: Time.zone.today.day.to_s
-    fill_in "Month", with: Time.zone.today.month.to_s
-    fill_in "Year", with: Time.zone.today.year.to_s
+    and_there_is_a_provider_with_a_urn_to_clear
+    when_i_navigate_to_the_provider_page_to_change_urn(@provider_with_a_urn_to_clear)
+    and_i_fill_in_the_effective_date_form_correctly(Time.zone.today)
+    and_i_am_taken_to("/providers/#{@provider_with_a_urn_to_clear.id}/changes/urn/new-urn")
+    and_i_can_see_the_title("#{@provider_with_a_urn_to_clear.operating_name} - What should the unique reference number (URN) change to? - Register of training providers - GOV.UK")
     and_i_click_on("Continue")
-    and_i_am_taken_to("/providers/#{provider.id}/changes/urn/new-urn")
-
-    and_i_can_see_the_title("#{provider.operating_name} - What should the unique reference number (URN) change to? - Register of training providers - GOV.UK")
-    and_i_click_on("Continue")
-    and_i_am_taken_to("/providers/#{provider.id}/changes/urn/check-your-answers")
-
+    and_i_am_taken_to("/providers/#{@provider_with_a_urn_to_clear.id}/changes/urn/check-your-answers")
+    and_i_should_see_the_urn_shown_as_not_entered
     and_i_click_on("Confirm and continue")
-    and_i_am_taken_to("/providers/#{provider.id}")
+    then_i_should_be_redirected_to_the_provider_details_page(@provider_with_a_urn_to_clear)
+    then_the_providers_urn_should_be_cleared
+  end
 
-    expect(provider.reload.urn).to be_blank
+  def and_there_is_a_provider_with_a_urn_to_clear
+    @provider_with_a_urn_to_clear = create(:provider, :scitt, operating_name: "Provider with a URN to clear", urn: "123456")
+  end
+
+  def and_i_should_see_the_urn_shown_as_not_entered
+    within(".govuk-summary-list__row", text: "New unique reference number (URN)") do
+      expect(page).to have_css(".govuk-summary-list__value", text: "Not entered")
+    end
+  end
+
+  def then_the_providers_urn_should_be_cleared
+    expect(@provider_with_a_urn_to_clear.reload.urn).to be_blank
   end
 
   scenario "User can edit an existing provider URN change" do
@@ -140,10 +143,10 @@ RSpec.feature "Editing provider URN" do
     and_i_can_see_the_title("Error: #{provider_with_urn_to_change.operating_name} - When should the unique reference number (URN) change? - Register of training providers - GOV.UK")
   end
 
-  def and_i_fill_in_the_effective_date_form_correctly
-    fill_in "Day", with: effective_on.day.to_s
-    fill_in "Month", with: effective_on.month.to_s
-    fill_in "Year", with: effective_on.year.to_s
+  def and_i_fill_in_the_effective_date_form_correctly(date = effective_on)
+    fill_in "Day", with: date.day.to_s
+    fill_in "Month", with: date.month.to_s
+    fill_in "Year", with: date.year.to_s
 
     and_i_click_on("Continue")
   end
@@ -159,20 +162,21 @@ RSpec.feature "Editing provider URN" do
   end
 
   def and_i_fill_in_the_urn_step_incorrectly
+    page.fill_in "Unique reference number (URN) (optional)", with: "1234"
     and_i_click_on("Continue")
-    and_i_can_see_the_error_summary("Enter unique reference number (URN)")
+    and_i_can_see_the_error_summary("Enter a valid unique reference number (URN)")
 
     and_i_can_see_the_title("Error: #{provider_with_urn_to_change.operating_name} - What should the unique reference number (URN) change to? - Register of training providers - GOV.UK")
   end
 
   def and_i_fill_in_the_urn_step_with_the_same_urn
-    page.fill_in "Unique reference number (URN)", with: provider_with_urn_to_change.urn
+    page.fill_in "Unique reference number (URN) (optional)", with: provider_with_urn_to_change.urn
     and_i_click_on("Continue")
     and_i_can_see_the_error_summary("Enter a different unique reference number (URN)")
   end
 
   def and_i_fill_in_the_urn_step_correctly
-    page.fill_in "Unique reference number (URN)", with: new_urn
+    page.fill_in "Unique reference number (URN) (optional)", with: new_urn
 
     and_i_click_on("Continue")
   end
@@ -201,16 +205,16 @@ RSpec.feature "Editing provider URN" do
     )
   end
 
-  def then_i_should_be_redirected_to_the_provider_details_page
-    and_i_am_taken_to("/providers/#{provider_with_urn_to_change.id}")
+  def then_i_should_be_redirected_to_the_provider_details_page(provider = provider_with_urn_to_change)
+    and_i_am_taken_to("/providers/#{provider.id}")
   end
 
-  def when_i_navigate_to_the_provider_page_to_change_urn
+  def when_i_navigate_to_the_provider_page_to_change_urn(provider = provider_with_urn_to_change)
     visit "/providers"
-    click_on provider_with_urn_to_change.operating_name
-    and_i_am_taken_to("/providers/#{provider_with_urn_to_change.id}")
+    click_on provider.operating_name
+    and_i_am_taken_to("/providers/#{provider.id}")
     and_i_click_on "Change unique reference number (URN)"
-    and_i_am_taken_to("/providers/#{provider_with_urn_to_change.id}/changes/urn/effective-date")
+    and_i_am_taken_to("/providers/#{provider.id}/changes/urn/effective-date")
   end
 
   def and_there_is_a_provider_with_urn_to_change

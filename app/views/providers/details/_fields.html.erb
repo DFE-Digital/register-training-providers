@@ -14,7 +14,7 @@
   Find UKPRNs on the <%= govuk_link_to("UK register of learning providers", "https://ukrlp.co.uk/", new_tab: true) %>
 </p>
 
-<%= form.govuk_text_field :urn, width: "one-quarter", label: { size: "s", text: "Unique reference number (URN)#{" (optional)" unless @provider.requires_urn?}" }, hint: { text: "A unique 5 or 6 digit number used by the UK government to identify educational establishments in the United Kingdom" } %>
+<%= form.govuk_text_field :urn, width: "one-quarter", label: { size: "s", text: "Unique reference number (URN) (optional)" }, hint: { text: "A unique 5 or 6 digit number used by the UK government to identify educational establishments in the United Kingdom" } %>
 
 <p class="govuk-body">
   Find URNs on the <%= govuk_link_to("Get information about schools", "https://get-information-schools.service.gov.uk/", new_tab: true) %>
