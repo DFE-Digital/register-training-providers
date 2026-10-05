@@ -40,6 +40,9 @@ RSpec.describe "`GET /providers` endpoint", type: :request do
         create(:provider, trait)
       end
 
+      provider_with_no_urn = create(:provider, :scitt, urn: nil)
+      latest_providers << provider_with_no_urn
+
       latest_providers.sort_by! do |provider|
         [
           provider.updated_at,

@@ -88,7 +88,7 @@ paths:
         required: true
         schema:
           type: string
-        example: test_10f697511912efc58705f64cd7df5ab508cf35c37cab549abe2b6e7a2a038fff
+        example: test_21c19710b3a8d5285855a14e0bff505bef296a4cd43682ee6bc52b4ef792a860
         description: A valid API token must be provided in the Authorization header
           to access this endpoint.
       - name: academic_year
@@ -197,54 +197,63 @@ paths:
                 - data
               example:
                 data:
-                - rotp_id: RoTP-26V6KK09
-                  operating_name: Higher education institution (HEI) 2462
+                - rotp_id: RoTP-26N3WA09
+                  operating_name: Higher education institution (HEI) 6493
                   provider_type: hei
-                  code: VFJ
+                  code: TWN
                   accreditation_status: unaccredited
-                  ukprn: '44564753'
-                  urn:
+                  ukprn: '19092440'
+                  urn: '556475'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26U8DH09
-                  operating_name: Higher education institution (HEI) 7709
+                - rotp_id: RoTP-26K1TA09
+                  operating_name: Higher education institution (HEI) 8639
                   provider_type: hei
-                  code: PAZ
+                  code: 4H9
                   accreditation_status: accredited
-                  ukprn: '34400987'
-                  urn:
+                  ukprn: '43156322'
+                  urn: '632425'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26R7BR09
+                - rotp_id: RoTP-26R0ST09
                   operating_name: Other 1996
                   provider_type: other
-                  code: RGQ
-                  accreditation_status: accredited
-                  ukprn: '89186965'
-                  urn:
+                  code: JWZ
+                  accreditation_status: unaccredited
+                  ukprn: '75735242'
+                  urn: '27607'
                   updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26V5GL09
-                  operating_name: Other 3576
+                - rotp_id: RoTP-26L8ZK09
+                  operating_name: Other 4214
                   provider_type: other
-                  code: 9T7
-                  accreditation_status: unaccredited
-                  ukprn: '66322726'
-                  urn:
-                  updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26B8IM09
-                  operating_name: School 3699
-                  provider_type: school
-                  code: YP8
-                  accreditation_status: unaccredited
-                  ukprn: '10792824'
-                  urn: '421472'
-                  updated_at: '2026-09-15T11:34:56Z'
-                - rotp_id: RoTP-26B9HY09
-                  operating_name: School-centred initial teacher training (SCITT)
-                    6932
-                  provider_type: scitt
-                  code: ALV
+                  code: KAS
                   accreditation_status: accredited
-                  ukprn: '95696736'
-                  urn: '806304'
+                  ukprn: '92400295'
+                  urn: '828162'
+                  updated_at: '2026-09-15T11:34:56Z'
+                - rotp_id: RoTP-26W6TO09
+                  operating_name: School 1407
+                  provider_type: school
+                  code: 3W3
+                  accreditation_status: unaccredited
+                  ukprn: '73092262'
+                  urn: '68569'
+                  updated_at: '2026-09-15T11:34:56Z'
+                - rotp_id: RoTP-26N4XD09
+                  operating_name: School-centred initial teacher training (SCITT)
+                    4494
+                  provider_type: scitt
+                  code: ZSF
+                  accreditation_status: accredited
+                  ukprn: '85675853'
+                  urn: '780671'
+                  updated_at: '2026-09-15T11:34:56Z'
+                - rotp_id: RoTP-26X6LX09
+                  operating_name: School-centred initial teacher training (SCITT)
+                    7629
+                  provider_type: scitt
+                  code: 1ZV
+                  accreditation_status: accredited
+                  ukprn: '13681317'
+                  urn:
                   updated_at: '2026-09-15T11:34:56Z'
         '401':
           description: returns 401 Unauthorized for invalid token
