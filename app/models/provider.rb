@@ -98,12 +98,12 @@ class Provider < ApplicationRecord
 
   validates :operating_name, presence: true
   validates :ukprn, presence: true, format: { with: /\A[0-9]{8}\z/ }, length: { is: 8 }
-  validates :urn, presence: true, if: -> { requires_urn? }
   validates :urn, format: { with: /\A[0-9]{5,6}\z/ }, length: { in: 5..6 },
-                  if: -> { urn.present? && requires_urn? }
+                  if: -> { urn.present? }
   validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z0-9]{3}\z/i }, length: { is: 3 }
 
   after_initialize :set_default_academic_year, if: :new_record?
+  before_validation :normalise_blank_urn
   before_save :upcase_code
   before_save :update_searchable
 
@@ -120,8 +120,8 @@ class Provider < ApplicationRecord
     self.code = code.upcase
   end
 
-  def requires_urn?
-    [:school, :scitt].include?(provider_type&.to_sym)
+  def normalise_blank_urn
+    self.urn = nil if urn.blank?
   end
 
   def archive!

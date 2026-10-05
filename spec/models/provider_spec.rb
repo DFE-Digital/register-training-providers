@@ -66,34 +66,60 @@ RSpec.describe Provider, type: :model do
     it { is_expected.to allow_value("a1B").for(:code) }
     it { is_expected.not_to allow_value("abcdx").for(:code).with_message("Enter a valid provider code") }
 
-    context "when provider_type is school or scitt" do
-      [:school, :scitt].each do |provider_type|
-        let(:provider) { build(:provider, provider_type, urn:) }
+    provider_types = %i[hei school scitt other]
 
-        context "urn is set to nil" do
-          let(:urn) { nil }
-          it "requires URN" do
-            expect(subject.valid?).to be_falsey
-            expect(subject.errors[:urn]).to include("Enter unique reference number (URN)")
-          end
-        end
+    context "when urn is set to a valid value" do
+      provider_types.each do |provider_type|
+        context "and the provider type is #{provider_type}" do
+          let(:provider) { build(:provider, provider_type, urn: "123456", rotp_id: provider_type.to_s) }
 
-        context "urn is set to an invalid value" do
-          let(:urn) { "invalid" }
-          it "requires valid URN" do
-            expect(subject.valid?).to be_falsey
-            expect(subject.errors[:urn]).to include("Enter a valid unique reference number (URN)")
+          it "accepts the URN" do
+            expect(subject.valid?).to be_truthy
+            expect(subject.errors[:urn]).to be_empty
           end
         end
       end
     end
 
-    context "when provider_type is hei" do
-      let(:provider) { build(:provider, :hei, urn: nil, rotp_id: "hei") }
+    context "when urn is set to an invalid value" do
+      provider_types.each do |provider_type|
+        context "and the provider type is #{provider_type}" do
+          let(:provider) { build(:provider, provider_type, urn: "invalid", rotp_id: provider_type.to_s) }
 
-      it "does not require URN" do
-        expect(subject.valid?).to be_truthy
-        expect(subject.errors[:urn]).to be_empty
+          it "requires a valid URN" do
+            expect(subject.valid?).to be_falsey
+            expect(subject.errors[:urn]).to include("Enter a valid unique reference number (URN)")
+          end
+
+          it "is invalid only because of the URN" do
+            subject.valid?
+
+            expect(subject.errors.attribute_names).to eq([:urn])
+          end
+        end
+      end
+    end
+
+    context "when urn is blank" do
+      { "nil" => nil, "an empty string" => "", "whitespace only" => "   " }.each do |description, blank_urn|
+        context "and urn is #{description}" do
+          provider_types.each do |provider_type|
+            context "and the provider type is #{provider_type}" do
+              let(:provider) { build(:provider, provider_type, urn: blank_urn, rotp_id: provider_type.to_s) }
+
+              it "does not require URN" do
+                expect(subject.valid?).to be_truthy
+                expect(subject.errors[:urn]).to be_empty
+              end
+
+              it "normalises the blank URN to nil" do
+                subject.valid?
+
+                expect(subject.urn).to be_nil
+              end
+            end
+          end
+        end
       end
     end
   end
