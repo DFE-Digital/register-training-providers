@@ -24,8 +24,8 @@ RSpec.feature "View Provider" do
     expect(page).to have_text(provider.provider_type_label)
     expect(page).to have_text(provider.ukprn)
     expect(page).to have_text(provider.code)
-    expect(page).to have_text(provider.urn || "Not entered")
-    expect(page).to have_text(provider.legal_name || "Not entered")
+    expect(page).to have_text(provider.urn)
+    expect(page).to have_text(provider.legal_name)
   end
 
   def and_there_is_a_provider

@@ -69,8 +69,6 @@ class ProviderChange < ApplicationRecord
 
   before_validation :normalise_optional_value
 
-  before_validation :normalise_optional_value
-
   scope :for_attribute, ->(attribute) {
     where(attribute_name: attribute)
   }
