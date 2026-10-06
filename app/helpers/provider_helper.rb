@@ -155,6 +155,8 @@ module ProviderHelper
 
     return rows if provider.archived?
 
+    rows = insert_accreditation_number_row(rows, provider)
+
     # Add edit actions to editable fields (skip Provider type and Accreditation status)
     editable_fields = {
       "Operating name" => [{ text: "History",
@@ -234,6 +236,26 @@ module ProviderHelper
     end
 
     rows
+  end
+
+  def insert_accreditation_number_row(rows, provider)
+    return rows unless provider.accredited?
+
+    accreditation = provider.current_accreditation
+    return rows if accreditation.blank?
+
+    row = {
+      key: { text: "Accreditation number" },
+      value: { text: accreditation.number },
+      actions: [{
+        text: "History",
+        visually_hidden_text: "of accreditation numbers",
+        href: provider_accreditation_history_path(provider_id: provider.id)
+      }]
+    }
+
+    status_index = rows.index { |existing| existing[:key][:text] == "Accreditation status" }
+    rows.dup.insert(status_index ? status_index + 1 : rows.length, row)
   end
 
   def inactive_periods_html(inactive_periods)
