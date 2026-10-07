@@ -18,48 +18,46 @@ RSpec.describe ProviderTypeValidator, type: :model do
 
   subject { DummyModel.new(provider_type:, accredited_status_override:) }
 
-  context "when accredited" do
-    let(:accredited_status_override) { true }
+  ProviderTypeEnum::PROVIDER_TYPES.each_value do |valid_type|
+    context "when provider_type is #{valid_type}" do
+      let(:provider_type) { valid_type }
 
-    context "with valid provider types" do
-      ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
-        let(:provider_type) { valid_type }
+      context "and the provider is accredited" do
+        let(:accredited_status_override) { true }
 
-        it "is valid when provider_type is #{valid_type}" do
+        it "is valid" do
           expect(subject).to be_valid
         end
       end
-    end
 
-    context "with invalid provider types" do
-      (ProviderTypeEnum::PROVIDER_TYPES.values - ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values).each do |invalid_type|
-        let(:provider_type) { invalid_type }
-        it "is invalid when provider_type is #{invalid_type}" do
-          expect(subject).not_to be_valid
-          expect(subject.errors[:provider_type]).to include("is not included in the list")
+      context "and the provider is unaccredited" do
+        let(:accredited_status_override) { false }
+
+        it "is valid" do
+          expect(subject).to be_valid
         end
       end
     end
   end
 
-  context "when unaccredited" do
-    let(:accredited_status_override) { false }
-    context "with valid provider types" do
-      ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
-        let(:provider_type) { valid_type }
+  context "when provider_type is not a known value" do
+    let(:provider_type) { "invalid_type" }
 
-        it "is valid when provider_type is #{valid_type}" do
-          expect(subject).to be_valid
-        end
+    context "and the provider is accredited" do
+      let(:accredited_status_override) { true }
+
+      it "is invalid" do
+        expect(subject).not_to be_valid
+        expect(subject.errors[:provider_type]).to include("is not included in the list")
       end
     end
-    context "with invalid provider types" do
-      (ProviderTypeEnum::PROVIDER_TYPES.values - ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.values).each do |invalid_type|
-        let(:provider_type) { invalid_type }
-        it "is invalid when provider_type is #{invalid_type}" do
-          expect(subject).not_to be_valid
-          expect(subject.errors[:provider_type]).to include("is not included in the list")
-        end
+
+    context "and the provider is unaccredited" do
+      let(:accredited_status_override) { false }
+
+      it "is invalid" do
+        expect(subject).not_to be_valid
+        expect(subject.errors[:provider_type]).to include("is not included in the list")
       end
     end
   end

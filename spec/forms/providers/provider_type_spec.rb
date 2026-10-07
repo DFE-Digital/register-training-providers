@@ -40,63 +40,46 @@ RSpec.describe Providers::ProviderType, type: :model do
       end
     end
 
-    context "with valid accredited provider_type" do
-      ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
+    context "with a known provider_type and accreditation_status" do
+      ProviderTypeEnum::PROVIDER_TYPES.each_value do |valid_type|
         context "when provider_type is #{valid_type}" do
           let(:provider_type) { valid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
 
-          it "is valid" do
-            expect(subject).to be_valid
+          AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+            context "and accreditation_status is #{valid_status}" do
+              let(:accreditation_status) { valid_status }
+
+              it "is valid" do
+                expect(subject).to be_valid
+              end
+            end
           end
         end
       end
     end
 
-    context "with valid unaccredited provider_type" do
-      ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
-        context "when provider_type is #{valid_type}" do
-          let(:provider_type) { valid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::UNACCREDITED }
+    context "with an unknown provider_type" do
+      let(:provider_type) { "invalid_type" }
 
-          it "is valid" do
-            expect(subject).to be_valid
-          end
-        end
-      end
-    end
-
-    context "with invalid accredited provider_type" do
-      ["invalid_type", "scitt"].each do |invalid_type|
-        let(:provider_type) { invalid_type }
-        let(:accreditation_status) { AccreditationStatusEnum::UNACCREDITED }
-
-        it "is not valid" do
-          expect(subject).not_to be_valid
-          expect(subject.errors[:provider_type]).to include("is not included in the list")
-        end
-      end
-
-      context "with invalid unaccredited provider_type" do
-        ["invalid_type", "school"].each do |invalid_type|
-          let(:provider_type) { invalid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
+      AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+        context "and accreditation_status is #{valid_status}" do
+          let(:accreditation_status) { valid_status }
 
           it "is not valid" do
             expect(subject).not_to be_valid
             expect(subject.errors[:provider_type]).to include("is not included in the list")
           end
         end
+      end
+    end
 
-        context "with nil provider_type" do
-          let(:provider_type) { nil }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITATION_STATUSES.values.first }
+    context "with nil provider_type" do
+      let(:provider_type) { nil }
+      let(:accreditation_status) { AccreditationStatusEnum::ACCREDITATION_STATUSES.values.first }
 
-          it "is not valid" do
-            expect(subject).not_to be_valid
-            expect(subject.errors[:provider_type]).to include("Select provider type")
-          end
-        end
+      it "is not valid" do
+        expect(subject).not_to be_valid
+        expect(subject.errors[:provider_type]).to include("Select provider type")
       end
     end
   end
