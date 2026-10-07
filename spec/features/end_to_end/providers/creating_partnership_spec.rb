@@ -7,7 +7,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
   context "when accredited provider adds unaccredited partner" do
     let(:accredited_provider) { create(:provider, :accredited) }
-    let!(:unaccredited_partner) { create(:provider, :hei, :unaccredited, operating_name: "Test Training Partner") }
+    let!(:unaccredited_partner) { create(:provider, :hei_without_accreditation, operating_name: "Test Training Partner") }
     let!(:academic_year) { create(:academic_year) }
 
     scenario "successfully creates a partnership" do
@@ -94,7 +94,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
   context "with validation errors" do
     let(:provider) { create(:provider, :accredited) }
-    let!(:partner) { create(:provider, :hei, :unaccredited) }
+    let!(:partner) { create(:provider, :hei_without_accreditation) }
     let!(:academic_year) { create(:academic_year) }
 
     scenario "shows error when no partner selected" do
@@ -136,7 +136,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
   context "cancellation flow" do
     let(:provider) { create(:provider, :accredited) }
-    let!(:partner) { create(:provider, :hei, :unaccredited) }
+    let!(:partner) { create(:provider, :hei_without_accreditation) }
 
     scenario "can cancel and return to partnerships" do
       visit provider_new_partnership_find_path(provider)
