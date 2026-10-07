@@ -5,8 +5,10 @@ RSpec.describe ProvidersQuery do
   let(:search_term) { nil }
 
   describe "#call (filters only)" do
-    let!(:scitt)                { create(:provider, :scitt) }
-    let!(:school)               { create(:provider, :school) }
+    let!(:accredited_scitt)     { create(:provider, :scitt) }
+    let!(:unaccredited_scitt)   { create(:provider, :scitt_without_accreditation) }
+    let!(:accredited_school)    { create(:provider, :school_with_accreditation) }
+    let!(:unaccredited_school)  { create(:provider, :school) }
     let!(:accredited_hei)       { create(:provider, :hei) }
     let!(:unaccredited_hei)     { create(:provider, :hei_without_accreditation) }
     let!(:accredited_other)     { create(:provider, :other) }
@@ -15,18 +17,24 @@ RSpec.describe ProvidersQuery do
       create(:provider, :hei, archived_at: 1.week.ago)
     end
 
+    let(:all_active_providers) do
+      [
+        accredited_scitt,
+        unaccredited_scitt,
+        accredited_school,
+        unaccredited_school,
+        accredited_hei,
+        unaccredited_hei,
+        accredited_other,
+        unaccredited_other
+      ]
+    end
+
     context "without filters" do
       let(:filters) { {} }
 
       it "returns all non-archived providers" do
-        expect(results).to match_array([
-          scitt,
-          school,
-          accredited_hei,
-          unaccredited_hei,
-          accredited_other,
-          unaccredited_other
-        ])
+        expect(results).to match_array(all_active_providers)
       end
     end
 
@@ -45,15 +53,7 @@ RSpec.describe ProvidersQuery do
         let(:filters) { { show_seed_data: [] } }
 
         it "returns only providers with seed_data_with_issues = false" do
-          expect(results).to match_array([
-            provider_with_issues,
-            scitt,
-            school,
-            accredited_hei,
-            unaccredited_hei,
-            accredited_other,
-            unaccredited_other
-          ])
+          expect(results).to match_array([provider_with_issues, *all_active_providers])
         end
       end
 
@@ -61,15 +61,7 @@ RSpec.describe ProvidersQuery do
         let(:filters) { {} }
 
         it "returns providers with seed_data_with_issues = false" do
-          expect(results).to match_array([
-            provider_with_issues,
-            scitt,
-            school,
-            accredited_hei,
-            unaccredited_hei,
-            accredited_other,
-            unaccredited_other
-          ])
+          expect(results).to match_array([provider_with_issues, *all_active_providers])
         end
       end
     end
@@ -78,17 +70,19 @@ RSpec.describe ProvidersQuery do
       let(:filters) { { show_archived: "show_archived_provider" } }
 
       it "includes archived providers" do
-        expect(results).to include(archived_accredited_hei, scitt, school)
+        expect(results).to include(archived_accredited_hei, accredited_scitt, unaccredited_school)
       end
     end
 
     describe "provider_types filtering" do
       [
-        { types: ["scitt_or_school"], expected: -> { [scitt, school] } },
         { types: ["hei"], expected: -> { [accredited_hei, unaccredited_hei] } },
+        { types: ["scitt"], expected: -> { [accredited_scitt, unaccredited_scitt] } },
+        { types: ["school"], expected: -> { [accredited_school, unaccredited_school] } },
         { types: ["other"], expected: -> { [accredited_other, unaccredited_other] } },
+        { types: ["scitt_or_school"], expected: -> { [accredited_scitt, unaccredited_scitt, accredited_school, unaccredited_school] } },
         { types: ["hei", "other"], expected: -> { [accredited_hei, unaccredited_hei, accredited_other, unaccredited_other] } },
-        { types: ["hei", "other", "scitt_or_school"], expected: -> { [scitt, school, accredited_hei, unaccredited_hei, accredited_other, unaccredited_other] } }
+        { types: ["hei", "other", "scitt_or_school"], expected: -> { [accredited_scitt, unaccredited_scitt, accredited_school, unaccredited_school, accredited_hei, unaccredited_hei, accredited_other, unaccredited_other] } }
       ].each do |case_data|
         context "when provider_types is #{case_data[:types].inspect}" do
           let(:filters) { { provider_types: case_data[:types] } }
@@ -100,33 +94,76 @@ RSpec.describe ProvidersQuery do
       end
     end
 
-    context "accreditation_statuses filtering" do
-      let(:filters) { { accreditation_statuses: ["accredited"] } }
+    describe "accreditation_statuses filtering" do
+      context "with accredited" do
+        let(:filters) { { accreditation_statuses: ["accredited"] } }
 
-      it "returns all accredited non-archived providers" do
-        expect(results).to match_array([scitt, accredited_hei, accredited_other])
+        it "returns all accredited non-archived providers" do
+          expect(results).to match_array([accredited_scitt, accredited_school, accredited_hei, accredited_other])
+        end
+      end
+
+      context "with unaccredited" do
+        let(:filters) { { accreditation_statuses: ["unaccredited"] } }
+
+        it "returns all unaccredited non-archived providers" do
+          expect(results).to match_array([unaccredited_scitt, unaccredited_school, unaccredited_hei, unaccredited_other])
+        end
+      end
+
+      context "with both statuses" do
+        let(:filters) { { accreditation_statuses: ["accredited", "unaccredited"] } }
+
+        it "returns all non-archived providers" do
+          expect(results).to match_array(all_active_providers)
+        end
       end
     end
 
     describe "combined provider_types and accreditation_statuses filters" do
+      context "hei + accredited" do
+        let(:filters) { { provider_types: ["hei"], accreditation_statuses: ["accredited"] } }
+        it { is_expected.to match_array([accredited_hei]) }
+      end
+
+      context "hei + unaccredited" do
+        let(:filters) { { provider_types: ["hei"], accreditation_statuses: ["unaccredited"] } }
+        it { is_expected.to match_array([unaccredited_hei]) }
+      end
+
+      context "scitt + accredited" do
+        let(:filters) { { provider_types: ["scitt"], accreditation_statuses: ["accredited"] } }
+        it { is_expected.to match_array([accredited_scitt]) }
+      end
+
+      context "scitt + unaccredited" do
+        let(:filters) { { provider_types: ["scitt"], accreditation_statuses: ["unaccredited"] } }
+        it { is_expected.to match_array([unaccredited_scitt]) }
+      end
+
+      context "school + accredited" do
+        let(:filters) { { provider_types: ["school"], accreditation_statuses: ["accredited"] } }
+        it { is_expected.to match_array([accredited_school]) }
+      end
+
+      context "school + unaccredited" do
+        let(:filters) { { provider_types: ["school"], accreditation_statuses: ["unaccredited"] } }
+        it { is_expected.to match_array([unaccredited_school]) }
+      end
+
       context "scitt_or_school + accredited" do
         let(:filters) { { provider_types: ["scitt_or_school"], accreditation_statuses: ["accredited"] } }
-        it { is_expected.to match_array([scitt]) }
+        it { is_expected.to match_array([accredited_scitt, accredited_school]) }
       end
 
       context "scitt_or_school + unaccredited" do
         let(:filters) { { provider_types: ["scitt_or_school"], accreditation_statuses: ["unaccredited"] } }
-        it { is_expected.to match_array([school]) }
+        it { is_expected.to match_array([unaccredited_scitt, unaccredited_school]) }
       end
 
       context "scitt_or_school + both statuses" do
         let(:filters) { { provider_types: ["scitt_or_school"], accreditation_statuses: ["accredited", "unaccredited"] } }
-        it { is_expected.to match_array([scitt, school]) }
-      end
-
-      context "hei + accredited" do
-        let(:filters) { { provider_types: ["hei"], accreditation_statuses: ["accredited"] } }
-        it { is_expected.to match_array([accredited_hei]) }
+        it { is_expected.to match_array([accredited_scitt, unaccredited_scitt, accredited_school, unaccredited_school]) }
       end
     end
 
