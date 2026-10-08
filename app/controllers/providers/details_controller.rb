@@ -2,42 +2,14 @@ class Providers::DetailsController < CheckController
   helper_method :back_path
 
   def new
-    # Validate previous steps from session
-    onboarding_data = provider_session.load_onboarding
-    onboarding_form = Providers::OnboardingForm.new(onboarding_data)
-    if onboarding_data.nil? || onboarding_form.invalid?
-      redirect_to new_provider_onboarding_path
-      return
-    end
-
-    first_become_active_data = provider_session.load_first_become_active
-    first_become_active_form = Providers::FirstBecomeActiveForm.new(first_become_active_data)
-    if first_become_active_data.nil? || first_become_active_form.invalid?
-      redirect_to new_provider_first_become_active_path
-      return
-    end
-
-    is_provider_accredited_data = provider_session.load_is_provider_accredited
-    if is_provider_accredited_data.nil? || Providers::IsTheProviderAccredited.new(is_provider_accredited_data).invalid?
-      redirect_to new_provider_is_provider_accredited_path
-      return
-    end
-
-    provider_type_data = provider_session.load_provider_type
-    if provider_type_data.nil? || Providers::ProviderType.new(provider_type_data).invalid?
-      redirect_to new_provider_type_path
-      return
-    end
+    return unless valid_session_data?
 
     @provider = provider_session.load_provider
 
-    # Only set provider_type attributes if this is a fresh provider (not loaded from session)
+    # Only derive attributes if this is a fresh provider (not loaded from session)
     if @provider.nil?
       @provider = Provider.new
-      provider_attributes = provider_type_data.merge({ onboarded_at: onboarding_form.onboarded_at,
-                                                       first_active_at: first_become_active_form.first_active_at })
-      @provider.assign_attributes(provider_attributes)
-
+      @provider.assign_attributes(session_provider_attributes)
     end
 
     authorize @provider
@@ -49,7 +21,10 @@ class Providers::DetailsController < CheckController
     @provider = provider_session.load_provider || Provider.new
 
     authorize @provider
-    @provider.assign_attributes(create_new_provider_params)
+
+    return unless valid_session_data?
+
+    @provider.assign_attributes(provider_attributes)
 
     if @provider.valid?(:without_rotp_id)
       # Store relevant attributes as a plain hash, not all AR attributes which may include DB-specific fields
@@ -72,16 +47,62 @@ private
     journey_coordinator(:details, @provider).back_path
   end
 
+  def valid_session_data?
+    if provider_session.load_onboarding.nil? || onboarding_form.invalid?
+      redirect_to new_provider_onboarding_path
+      return false
+    end
+
+    if provider_session.load_first_become_active.nil? || first_become_active_form.invalid?
+      redirect_to new_provider_first_become_active_path
+      return false
+    end
+
+    if provider_session.load_is_provider_accredited.nil? ||
+        Providers::IsTheProviderAccredited.new(provider_session.load_is_provider_accredited).invalid?
+      redirect_to new_provider_is_the_provider_accredited_path
+      return false
+    end
+
+    if provider_session.load_provider_type.nil? || Providers::ProviderType.new(provider_session.load_provider_type).invalid?
+      redirect_to new_provider_type_path
+      return false
+    end
+
+    true
+  end
+
+  def onboarding_form
+    @onboarding_form ||= Providers::OnboardingForm.new(provider_session.load_onboarding)
+  end
+
+  def first_become_active_form
+    @first_become_active_form ||= Providers::FirstBecomeActiveForm.new(provider_session.load_first_become_active)
+  end
+
+  def stored_provider_type_data
+    @stored_provider_type_data ||= provider_session.load_provider_type || {}
+  end
+
+  def session_provider_attributes
+    {
+      provider_type: stored_provider_type_data["provider_type"],
+      accreditation_status: stored_provider_type_data["accreditation_status"],
+      onboarded_at: onboarding_form.onboarded_at || @provider&.onboarded_at,
+      first_active_at: first_become_active_form.first_active_at || @provider&.first_active_at
+    }
+  end
+
+  def provider_attributes
+    session_provider_attributes.merge(create_new_provider_params)
+  end
+
   def create_new_provider_params
-    params.expect(provider: [:provider_type,
-                             :accreditation_status,
-                             :operating_name,
+    params.expect(provider: [:operating_name,
                              :ukprn,
                              :code,
                              :urn,
-                             :legal_name,
-                             :onboarded_at,
-                             :first_active_at])
+                             :legal_name])
   end
 
   def journey_coordinator(current_step, provider)

@@ -5,13 +5,13 @@ class Providers::TypeController < CheckController
     is_the_provider_accredited_data = provider_session.load_is_provider_accredited
 
     if is_the_provider_accredited_data.nil?
-      redirect_to new_provider_is_provider_accredited_path
+      redirect_to new_provider_is_the_provider_accredited_path
       return
     end
 
     is_the_provider_accredited_form = Providers::IsTheProviderAccredited.new(is_the_provider_accredited_data)
     if is_the_provider_accredited_form.invalid?
-      redirect_to new_provider_is_provider_accredited_path
+      redirect_to new_provider_is_the_provider_accredited_path
       return
     end
 
@@ -26,9 +26,19 @@ class Providers::TypeController < CheckController
   end
 
   def create
-    @form = Providers::ProviderType.new(create_new_provider_type_params)
+    @form = Providers::ProviderType.new(provider_type_params)
 
     authorize @form
+
+    is_the_provider_accredited_data = provider_session.load_is_provider_accredited
+
+    if is_the_provider_accredited_data.nil? ||
+        Providers::IsTheProviderAccredited.new(is_the_provider_accredited_data).invalid?
+      redirect_to new_provider_is_the_provider_accredited_path
+      return
+    end
+
+    @form.assign_attributes(is_the_provider_accredited_data)
 
     if @form.valid?
       provider_session.store_provider_type(@form.attributes)
@@ -45,8 +55,8 @@ private
     journey_coordinator(:type, nil).back_path
   end
 
-  def create_new_provider_type_params
-    params.expect(provider: [:provider_type, :accreditation_status])
+  def provider_type_params
+    params.fetch(:provider, {}).permit(:provider_type)
   end
 
   def journey_coordinator(current_step, provider)
