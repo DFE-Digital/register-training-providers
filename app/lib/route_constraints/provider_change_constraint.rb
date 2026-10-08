@@ -25,6 +25,11 @@ module RouteConstraints
         effective-date
         new-operating-name
         check-your-answers
+      ],
+      "provider_type" => %w[
+        effective-date
+        new-provider-type
+        check-your-answers
       ]
     }.freeze
 

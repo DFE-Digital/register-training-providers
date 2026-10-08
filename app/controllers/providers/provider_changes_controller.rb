@@ -19,6 +19,8 @@ module Providers
     def update
       authorize provider, :update?
 
+      return redirect_to wizard.previous_step_path unless wizard.valid_path_to_current_step?
+
       if wizard.save_current_step
         wizard.mark_completed if wizard.check_your_answers?
 

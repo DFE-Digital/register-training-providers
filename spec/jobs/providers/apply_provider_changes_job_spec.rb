@@ -34,6 +34,17 @@ RSpec.describe Providers::ApplyProviderChangesJob, type: :job do
       expect(change.reload.processed_at).to be_nil
     end
 
+    it "marks a change for an archived provider as failed without applying it" do
+      provider = create(:provider, code: "OLD", archived_at: Time.zone.now)
+      change = create(:provider_change, provider: provider, value: "ABC", effective_on: Date.current)
+
+      perform
+
+      expect(change.reload).to be_failed
+      expect(change.error_message).to eq("Provider is archived")
+      expect(provider.reload.code).to eq("OLD")
+    end
+
     it "applies the earliest effective change when two changes conflict" do
       later_provider = create(:provider, code: "NEW")
       earlier_provider = create(:provider, code: "OLD")
