@@ -1,0 +1,11 @@
+digraph Provider_changes_provider_type_wizard {
+  rankdir=LR;
+  bgcolor="#ffffff";
+  node [shape=box, style="rounded,filled", fillcolor="#e8f4f8", fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10];
+  effective_date [label="Effective Date"];
+  new_provider_type [label="New Provider Type"];
+  check_your_answers [label="Check Your Answers"];
+  effective_date -> new_provider_type [style=solid];
+  new_provider_type -> check_your_answers [style=solid];
+}
