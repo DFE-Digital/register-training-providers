@@ -115,7 +115,7 @@ RSpec.describe "providers/edit.html.erb", type: :view do
       let(:provider) do
         provider = create(:provider,
                           accreditation_status: [:unaccredited, :accredited].sample,
-                          provider_type: (ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys - %i[scitt school]).sample)
+                          provider_type: (ProviderTypeEnum::PROVIDER_TYPES.keys - %i[scitt school]).sample)
         provider.operating_name = nil
         provider.ukprn = nil
         provider.urn = nil

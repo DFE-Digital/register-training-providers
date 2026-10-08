@@ -136,6 +136,7 @@ en:
               invalid_provider_type: "School cannot be accredited"
               blank: "Select if the provider is accredited"
             provider_type:
+              inclusion: "Select a valid provider type"
               invalid_accreditation_status: "School cannot be accredited"
               blank: "Select provider type"
             operating_name:

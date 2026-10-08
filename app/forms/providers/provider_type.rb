@@ -8,7 +8,8 @@ module Providers
 
     attribute :accreditation_status, :string
 
-    validates :provider_type, presence: true, provider_type: true
+    validates :provider_type, presence: true,
+                              inclusion: { in: ProviderTypeEnum::PROVIDER_TYPES.values }
 
     def self.model_name
       ActiveModel::Name.new(self, nil, "Provider")
@@ -19,7 +20,7 @@ module Providers
     end
 
     def provider_type_options_for_radios
-      provider_types.keys.map do |key|
+      ProviderTypeEnum::PROVIDER_TYPES.keys.map do |key|
         SelectOption.new(
           key: key,
           value: I18n.t("providers.provider_types.#{key}"),
@@ -35,16 +36,6 @@ module Providers
 
     def new_record?
       true
-    end
-
-  private
-
-    def provider_types
-      if accredited?
-        ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES
-      else
-        ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES
-      end
     end
   end
 end
