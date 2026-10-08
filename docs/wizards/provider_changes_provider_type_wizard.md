@@ -4,25 +4,22 @@
 **Generated:** 2026-10-08T07:53:16Z
 **Processor:** DfE::Wizard::StepsProcessor
 
-
 ## Overview
 
-| Metric                           | Value                       |
-|----------------------------------|-----------------------------|
-| Total Steps                      | 3              |
-| Simple Transitions               | 0       |
-| Conditional Transitions          | 0         |
-| Multiple Conditional Transitions | 0        |
-| Custom Branching Transitions     | 0       |
-| **Total Transitions**            | **0**    |
-
+| Metric                           | Value |
+| -------------------------------- | ----- |
+| Total Steps                      | 3     |
+| Simple Transitions               | 0     |
+| Conditional Transitions          | 0     |
+| Multiple Conditional Transitions | 0     |
+| Custom Branching Transitions     | 0     |
+| **Total Transitions**            | **0** |
 
 ## Root Entry Point (Fixed)
 
 **Entry Point:** `effective_date`
 
 All users start at this step. No conditional logic applies.
-
 
 ## Wizard Flow
 
@@ -41,15 +38,13 @@ All users start at this step. No conditional logic applies.
 - **┼** Multiple conditional edge (N-way branching)
 - **⊕** Custom branching edge (complex status-driven routing)
 
-
 ## Steps Inventory
 
-| Step ID | Label | Class |
-|---------|-------|-------|
-| `effective_date` | Effective Date | `ProviderChanges::Steps::EffectiveDateStep` |
-| `new_provider_type` | New Provider Type | `ProviderChanges::Steps::ProviderTypeStep` |
+| Step ID              | Label              | Class                                          |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `effective_date`     | Effective Date     | `ProviderChanges::Steps::EffectiveDateStep`    |
+| `new_provider_type`  | New Provider Type  | `ProviderChanges::Steps::ProviderTypeStep`     |
 | `check_your_answers` | Check Your Answers | `ProviderChanges::Steps::CheckYourAnswersStep` |
-
 
 ## Detailed Step Specifications
 
@@ -67,20 +62,19 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute | Type | Required | Description |
-|-----------|------|:--------:|-------------|
-| `effective_on_day` | `ActiveModel::Type::Integer` | ✗ |  |
-| `effective_on_month` | `ActiveModel::Type::Integer` | ✗ |  |
-| `effective_on_year` | `ActiveModel::Type::Integer` | ✗ |  |
-| `effective_on` | `ActiveModel::Type::Date` | ✗ |  |
+| Attribute            | Type                         | Required | Description |
+| -------------------- | ---------------------------- | :------: | ----------- |
+| `effective_on_day`   | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on_month` | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on_year`  | `ActiveModel::Type::Integer` |    ✗     |             |
+| `effective_on`       | `ActiveModel::Type::Date`    |    ✗     |             |
 
 #### Operations
 
-| Operation | Description |
-|-----------|-------------|
+| Operation  | Description        |
+| ---------- | ------------------ |
 | `validate` | Validate operation |
-| `persist` | Persist operation |
-
+| `persist`  | Persist operation  |
 
 ### Step: `new_provider_type`
 
@@ -96,22 +90,21 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute | Type | Required | Description |
-|-----------|------|:--------:|-------------|
-| `provider_type` | `ActiveModel::Type::String` | ✗ |  |
+| Attribute       | Type                        | Required | Description |
+| --------------- | --------------------------- | :------: | ----------- |
+| `provider_type` | `ActiveModel::Type::String` |    ✗     |             |
 
 #### Validations
 
-- **provider_type** (`presence`): 
-- **provider_type** (`inclusion`): 
+- **provider_type** (`presence`):
+- **provider_type** (`inclusion`):
 
 #### Operations
 
-| Operation | Description |
-|-----------|-------------|
+| Operation  | Description        |
+| ---------- | ------------------ |
 | `validate` | Validate operation |
-| `persist` | Persist operation |
-
+| `persist`  | Persist operation  |
 
 ### Step: `check_your_answers`
 
@@ -127,11 +120,10 @@ this step's purpose, user interactions, and business logic.
 
 #### Operations
 
-| Operation | Description |
-|-----------|-------------|
+| Operation  | Description        |
+| ---------- | ------------------ |
 | `validate` | Validate operation |
-| `persist` | Persist operation |
-
+| `persist`  | Persist operation  |
 
 ## Transitions Reference
 
@@ -142,28 +134,25 @@ This wizard contains **2 transitions** across 4 types:
 - **0 multiple conditional transitions** – N-way branching
 - **0 custom branching transitions** – Complex status-driven routing
 
-
 ### Simple Transitions
 
 Simple transitions allow linear, unconditional progression from one step to the next.
 
-| From | To | Behavior |
-|------|-----|----------|
-| `effective_date` | `new_provider_type` | Always proceeds (no condition) |
+| From                | To                   | Behavior                       |
+| ------------------- | -------------------- | ------------------------------ |
+| `effective_date`    | `new_provider_type`  | Always proceeds (no condition) |
 | `new_provider_type` | `check_your_answers` | Always proceeds (no condition) |
-
 
 ## Wizard Statistics
 
-| Metric | Count |
-|--------|-------|
-| Total Steps | 3 |
-| Simple Transitions | 0 |
-| Conditional Transitions | 0 |
-| Multiple Conditional Transitions | 0 |
-| Custom Branching Transitions | 0 |
-| **Total Transitions** | **2** |
-
+| Metric                           | Count |
+| -------------------------------- | ----- |
+| Total Steps                      | 3     |
+| Simple Transitions               | 0     |
+| Conditional Transitions          | 0     |
+| Multiple Conditional Transitions | 0     |
+| Custom Branching Transitions     | 0     |
+| **Total Transitions**            | **2** |
 
 ## Example User Journeys
 
@@ -186,7 +175,6 @@ Simple transitions allow linear, unconditional progression from one step to the 
 ```
 
 **Note:** Actual journeys depend on wizard state transitions and predicates.
-
 
 ## Raw Metadata
 
