@@ -228,6 +228,12 @@ en:
             operating_name:
               blank: "Enter operating name"
               same: "Enter a different operating name"
+        provider_changes/steps/provider_type_step:
+          attributes:
+            provider_type:
+              blank: "Select provider type"
+              inclusion: "Select a valid provider type"
+              same: "Select a different provider type"
   flash_message:
     success:
       accreditation:
@@ -284,6 +290,8 @@ en:
           updated: "Legal name change request submitted successfully"
         operating_name:
           updated: "Operating name change request submitted successfully"
+        provider_type:
+          updated: "Provider type change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
