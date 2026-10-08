@@ -116,6 +116,28 @@ RSpec.describe SaveProviderWithRotpIdService do
           end
         end
       end
+
+      context "when a database-level collision occurs inside an outer transaction" do
+        let(:validate) { false }
+
+        before do
+          create(
+            :provider,
+            rotp_id: "RoTP-26ABC1DEF01"
+          )
+
+          allow(RotpIdGeneratorService).to receive(:call)
+            .and_return("RoTP-26ABC1DEF01", "RoTP-26XYZ2ABC01")
+        end
+
+        it "retries within a savepoint and saves the provider" do
+          ActiveRecord::Base.transaction do
+            described_class.call(provider, validate: false)
+          end
+
+          expect(provider.reload.rotp_id).to eq("RoTP-26XYZ2ABC01")
+        end
+      end
     end
 
     context "when provider already has a rotp_id" do
