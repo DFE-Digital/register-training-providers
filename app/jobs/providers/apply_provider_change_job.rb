@@ -6,6 +6,15 @@ module Providers
       return if change.effective_on > Date.current
       return if change.completed?
 
+      if change.provider.archived?
+        change.update!(
+          status: :failed,
+          error_message: "Provider is archived",
+          processed_at: Time.current
+        )
+        return
+      end
+
       saved = change.provider.update(
         change.attribute_name => change.value
       )

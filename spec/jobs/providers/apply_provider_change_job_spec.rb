@@ -43,6 +43,30 @@ RSpec.describe Providers::ApplyProviderChangeJob, type: :job do
       end
     end
 
+    context "when the provider is archived" do
+      let(:provider_change) do
+        create(:provider_change, provider: create(:provider, code: "OLD", archived_at: Time.zone.now), value: "ABC")
+      end
+
+      it "marks the change as failed" do
+        expect { perform }
+          .to change { provider_change.reload.status }
+          .from("pending").to("failed")
+      end
+
+      it "records that the provider is archived" do
+        perform
+
+        expect(provider_change.reload.error_message).to eq("Provider is archived")
+        expect(provider_change.reload.processed_at).to be_present
+      end
+
+      it "does not apply the change to the provider" do
+        expect { perform }
+          .not_to(change { provider_change.provider.reload.code })
+      end
+    end
+
     context "when the change is already completed" do
       let(:provider_change) do
         create(:provider_change, provider: create(:provider, code: "OLD"), value: "ABC", status: :completed)
