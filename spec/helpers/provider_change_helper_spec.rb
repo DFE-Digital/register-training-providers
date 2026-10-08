@@ -317,6 +317,29 @@ RSpec.describe ProviderChangeHelper, type: :helper do
         expect(helper.format_change_value(code_change)).to eq("Not entered")
       end
     end
+
+    context "when a change is a provider type" do
+      let(:provider_type_change) do
+        create(:provider_change,
+               provider: provider,
+               attribute_name: "provider_type",
+               value: "scitt",
+               effective_on: 1.year.ago.to_date,
+               status: :completed)
+      end
+
+      it "renders the provider type as a human label" do
+        row = helper.provider_field_level_history([provider_type_change]).first
+
+        expect(row[0]).to eq("School-centred initial teacher training (SCITT)")
+      end
+
+      it "renders a blank provider type as not entered" do
+        change = build(:provider_change, attribute_name: "provider_type", value: "")
+
+        expect(helper.format_change_value(change)).to eq("Not entered")
+      end
+    end
   end
 
   describe "#display_change_date" do
