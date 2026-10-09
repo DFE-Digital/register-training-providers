@@ -49,6 +49,28 @@ RSpec.describe ProviderChanges::Steps::UrnStep do
       expect(described_class.new(wizard: wizard, urn: "")).to be_valid
     end
 
+    it "normalises a blank URN to nil" do
+      step = described_class.new(wizard: wizard, urn: "")
+      step.valid?
+
+      expect(step.urn).to be_nil
+    end
+
+    it "normalises a whitespace-only URN to nil" do
+      step = described_class.new(wizard: wizard, urn: "   ")
+      step.valid?
+
+      expect(step.urn).to be_nil
+    end
+
+    it "strips surrounding whitespace from a URN" do
+      step = described_class.new(wizard: wizard, urn: " 123456 ")
+      step.valid?
+
+      expect(step.urn).to eq("123456")
+      expect(step.errors[:urn]).to be_empty
+    end
+
     it "does not consult the provider when the URN is blank" do
       step = described_class.new(wizard: double("wizard"), urn: "")
 
