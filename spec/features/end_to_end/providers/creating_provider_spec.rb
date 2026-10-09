@@ -153,11 +153,14 @@ RSpec.feature "Add Provider" do
     end
 
     def accredited_provider_number
-      # HEI numbers start with 1; scitt/school numbers start with 5
-      # (AccreditationNumberValidator#valid_format?). Derived from the fixture
-      # rather than the row argument, so the type-less rows resolve to the
-      # factory default (hei) correctly.
-      @provider_details_to_use.provider_type == "hei" ? "1001" : "5678"
+      accredited_provider_numbers_by_type.fetch(@provider_details_to_use.provider_type)
+    end
+
+    def accredited_provider_numbers_by_type
+      {
+        "hei" => "1001",
+        "scitt" => "5678",
+      }
     end
 
     def and_i_fill_in_the_accreditation_details
