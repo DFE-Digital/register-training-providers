@@ -9,6 +9,38 @@ RSpec.feature "Change Provider Details" do
     then_i_see_the_success_message
   end
 
+  scenario "User can clear a provider URN" do
+    given_i_am_an_authenticated_user
+    and_there_is_a_provider_with_a_urn
+    when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
+    and_i_fill_in_the_provider_details_form_with_a_blank_urn
+    and_i_submit_the_provider_details_form
+    and_i_do_not_see_error_summary
+    and_i_checked_my_answers
+    then_the_provider_should_have_no_urn
+    and_i_should_see_no_urn_recorded
+  end
+
+  def and_there_is_a_provider_with_a_urn
+    and_there_is_a_provider
+
+    expect(provider.urn).to be_present
+  end
+
+  def and_i_submit_the_provider_details_form
+    and_i_click_on("Continue")
+  end
+
+  def then_the_provider_should_have_no_urn
+    expect(provider.reload.urn).to be_blank
+  end
+
+  def and_i_should_see_no_urn_recorded
+    within(".govuk-summary-list__row", text: "Unique reference number (URN)") do
+      expect(page).to have_css(".govuk-summary-list__value", text: "Not entered")
+    end
+  end
+
   def when_i_navigate_to_the_change_provider_details_page_for_a_specific_provider
     visit "/providers"
     and_i_click_on(provider.operating_name)
@@ -29,7 +61,6 @@ RSpec.feature "Change Provider Details" do
     and_i_can_see_the_error_summary(
       "Enter operating name",
       "Enter UK provider reference number (UKPRN)",
-      "Enter unique reference number (URN)",
       "Enter provider code",
     )
 
@@ -43,6 +74,17 @@ RSpec.feature "Change Provider Details" do
       value = nil if use_incorrect_value
       page.fill_in label, with: value
     end
+  end
+
+  def and_i_fill_in_the_provider_details_form_with_a_blank_urn
+    provider_details.each do |label, value|
+      value = "" if label == urn_field_label
+      page.fill_in label, with: value
+    end
+  end
+
+  def urn_field_label
+    "Unique reference number (URN) (optional)"
   end
 
   def and_i_can_see_the_error_summary(*messages)
@@ -84,8 +126,8 @@ RSpec.feature "Change Provider Details" do
     expect(page).to have_text(provider_details_to_use.provider_type_label)
     expect(page).to have_text(provider_details_to_use.ukprn)
     expect(page).to have_text(provider_details_to_use.code)
-    expect(page).to have_text(provider_details_to_use.urn || "Not entered")
-    expect(page).to have_text(provider_details_to_use.legal_name || "Not entered")
+    expect(page).to have_text(provider_details_to_use.urn)
+    expect(page).to have_text(provider_details_to_use.legal_name)
   end
 
   def and_there_is_a_provider
@@ -105,7 +147,7 @@ RSpec.feature "Change Provider Details" do
       ["Operating name", provider_details_to_use.operating_name],
       ["Legal name (optional)", provider_details_to_use.legal_name],
       ["UK provider reference number (UKPRN)", provider_details_to_use.ukprn],
-      ["Unique reference number (URN)#{" (optional)" unless provider_details_to_use.requires_urn?}", provider_details_to_use.urn],
+      ["Unique reference number (URN) (optional)", provider_details_to_use.urn],
       ["Provider code", provider_details_to_use.code],
     ]
   end

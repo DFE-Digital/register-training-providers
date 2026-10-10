@@ -6,11 +6,10 @@ module ProviderChanges
 
       attribute :urn
 
-      validates :urn, presence: true, if: :urn_required?
+      before_validation :normalise_blank_urn
 
       validates :urn,
                 format: { with: /\A[0-9]{5,6}\z/ },
-                length: { in: 5..6 },
                 if: -> { urn.present? }
 
       validate :urn_changed, if: -> { urn.present? && errors[:urn].empty? }
@@ -19,11 +18,11 @@ module ProviderChanges
         %i[urn]
       end
 
-      def urn_required?
-        wizard.provider.requires_urn?
-      end
-
     private
+
+      def normalise_blank_urn
+        self.urn = urn.to_s.strip.presence
+      end
 
       def urn_changed
         errors.add(:urn, :same) if wizard.provider.urn == urn

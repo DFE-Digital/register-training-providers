@@ -55,88 +55,32 @@ RSpec.describe "providers/edit.html.erb", type: :view do
   end
 
   context "with validation errors" do
-    context "for school provider" do
-      let(:provider) do
-        provider = create(:provider, :unaccredited, :school)
-        provider.operating_name = nil
-        provider.ukprn = nil
-        provider.urn = nil
-        provider.code = nil
-        provider.valid?
-        provider
-      end
+    %i[hei school scitt other].each do |provider_type|
+      context "for a #{provider_type} provider" do
+        let(:provider) do
+          provider = create(:provider, provider_type)
+          provider.operating_name = nil
+          provider.ukprn = nil
+          provider.urn = nil
+          provider.code = nil
+          provider.valid?
+          provider
+        end
 
-      it "calls page_data with error" do
-        expect(view).to have_received(:page_data).with({ error: true,
-                                                         header: false,
-                                                         subtitle: "Provider details",
-                                                         title: provider.operating_name_was })
-      end
+        it "calls page_data with error" do
+          expect(view).to have_received(:page_data).with({ error: true,
+                                                           header: false,
+                                                           subtitle: "Provider details",
+                                                           title: provider.operating_name_was })
+        end
 
-      it "renders the error summary" do
-        expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name",
-          "Enter UK provider reference number (UKPRN)",
-          "Enter unique reference number (URN)",
-          "Enter provider code",
-        )
-      end
-    end
-
-    context "for scitt provider" do
-      let(:provider) do
-        provider = create(:provider, :scitt, :accredited)
-        provider.operating_name = nil
-        provider.ukprn = nil
-        provider.urn = nil
-        provider.code = nil
-        provider.valid?
-        provider
-      end
-
-      it "calls page_data with error" do
-        expect(view).to have_received(:page_data).with({ error: true,
-                                                         header: false,
-                                                         subtitle: "Provider details",
-                                                         title: provider.operating_name_was })
-      end
-
-      it "renders the error summary" do
-        expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name",
-          "Enter UK provider reference number (UKPRN)",
-          "Enter unique reference number (URN)",
-          "Enter provider code",
-        )
-      end
-    end
-
-    context "for non school or non scitt provider" do
-      let(:provider) do
-        provider = create(:provider,
-                          accreditation_status: [:unaccredited, :accredited].sample,
-                          provider_type: (ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys - %i[scitt school]).sample)
-        provider.operating_name = nil
-        provider.ukprn = nil
-        provider.urn = nil
-        provider.code = nil
-        provider.valid?
-        provider
-      end
-
-      it "calls page_data with error" do
-        expect(view).to have_received(:page_data).with({ error: true,
-                                                         header: false,
-                                                         subtitle: "Provider details",
-                                                         title: provider.operating_name_was })
-      end
-
-      it "renders the error summary" do
-        expect(view.content_for(:page_alerts)).to have_error_summary(
-          "Enter operating name",
-          "Enter UK provider reference number (UKPRN)",
-          "Enter provider code",
-        )
+        it "renders the error summary without a URN error" do
+          expect(view.content_for(:page_alerts)).to have_error_summary(
+            "Enter operating name",
+            "Enter UK provider reference number (UKPRN)",
+            "Enter provider code",
+          )
+        end
       end
     end
   end

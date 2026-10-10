@@ -25,7 +25,7 @@
         { text: "What should the unique reference number (URN) change to?" }, caption: { text: @provider.operating_name } do %>
 
     <%= form.govuk_text_field :urn, width: "one-quarter",
-                                    label: { size: "s", text: "Unique reference number (URN)#{" (optional)" unless @provider.requires_urn?}" },
+                                    label: { size: "s", text: "Unique reference number (URN) (optional)" },
                                     hint: {
                                       text: "A unique 5 or 6 digit number used by the UK government to identify educational establishments in the United Kingdom"
                                     } %>

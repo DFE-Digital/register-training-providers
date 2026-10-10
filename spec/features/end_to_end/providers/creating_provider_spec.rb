@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Add Provider" do
-  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active|
+  shared_examples "adding a provider with accreditation status" do |accreditation_status, onboarded_at, first_become_active, provider_type = nil|
     let(:address_line_1) { Faker::Address.street_address }
     let(:address_line_2) { Faker::Address.secondary_address }
     let(:town_or_city) { Faker::Address.city }
@@ -13,12 +13,12 @@ RSpec.feature "Add Provider" do
     end
 
     scenario "User can add a new provider with accreditation status:
-      #{accreditation_status}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}" do
+      #{accreditation_status}, provider_type: #{provider_type || "default"}, onboarded_at: #{onboarded_at}, first_become_active: #{first_become_active}" do
       given_i_am_an_authenticated_user
       when_i_navigate_to_the_add_provider_page
       and_i_fill_out_the_onboarding_details(onboarded_at)
       and_i_fill_out_the_first_become_active_details(first_become_active)
-      and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
+      and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:, provider_type:)
       and_i_am_on_the_check_answers_page
       then_the_address_should_be_displayed_on_check_answers
       when_i_save_the_provider
@@ -26,6 +26,23 @@ RSpec.feature "Add Provider" do
       and_i_should_see_a_success_message
       and_the_address_should_be_saved_to_the_provider
       and_the_rotp_id_should_be_generated_for_the_provider
+    end
+
+    scenario "User can add a new provider without a unique reference number (URN)" do
+      given_i_am_an_authenticated_user
+      when_i_navigate_to_the_add_provider_page
+      and_i_fill_out_the_onboarding_details(onboarded_at)
+      and_i_fill_out_the_first_become_active_details(first_become_active)
+      and_i_fill_out_the_provider_form_with_valid_details(accreditation_status: accreditation_status, provider_type: provider_type, without_urn: true)
+      and_i_am_on_the_check_answers_page
+      when_i_save_the_provider
+      then_i_should_be_redirected_to_the_provider_list_page
+      and_i_should_see_a_success_message
+      and_the_provider_should_have_no_urn
+    end
+
+    def and_the_provider_should_have_no_urn
+      expect(Provider.last.urn).to be_blank
     end
 
     def and_the_rotp_id_should_be_generated_for_the_provider
@@ -101,14 +118,17 @@ RSpec.feature "Add Provider" do
       end
     end
 
-    def and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:)
-      info = get_provider_information_for_the_forms(accreditation_status:)
+    def and_i_fill_out_the_provider_form_with_valid_details(accreditation_status:, without_urn: false, provider_type: nil)
+      info = get_provider_information_for_the_forms(accreditation_status:, provider_type:)
 
       and_i_answer_the_accreditation_question(select_if_the_provider_is_accredited: info[:select_if_the_provider_is_accredited])
 
       and_i_select_the_provider_type(select_provider_type: info[:select_provider_type])
 
-      and_i_fill_in_the_provider_details(provider_details: info[:provider_details], select_provider_type: info[:select_provider_type])
+      provider_details = info[:provider_details]
+      provider_details = provider_details.reject { |label, _value| label == urn_field_label } if without_urn
+
+      and_i_fill_in_the_provider_details(provider_details:)
 
       if accreditation_status == :accredited
         and_i_fill_in_the_accreditation_details
@@ -117,20 +137,30 @@ RSpec.feature "Add Provider" do
       and_i_fill_in_the_address_details
     end
 
-    def and_i_fill_in_the_provider_details(provider_details:, select_provider_type:)
+    def and_i_fill_in_the_provider_details(provider_details:)
       and_i_am_taken_to("/providers/new/details")
       and_i_can_see_the_title("Provider details - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
 
       and_i_click_on("Continue")
 
-      error_messages = provider_details_error_messages(select_provider_type:)
-      and_i_can_see_the_error_summary(*error_messages)
+      and_i_can_see_the_error_summary(*provider_details_error_messages)
       and_i_can_see_the_title("Error: Provider details - Add provider - Register of training providers - GOV.UK")
 
       and_i_fill_in_the_provider_details_form_correctly(provider_details:)
 
       and_i_click_on("Continue")
+    end
+
+    def accredited_provider_number
+      accredited_provider_numbers_by_type.fetch(@provider_details_to_use.provider_type)
+    end
+
+    def accredited_provider_numbers_by_type
+      {
+        "hei" => "1001",
+        "scitt" => "5678",
+      }
     end
 
     def and_i_fill_in_the_accreditation_details
@@ -144,7 +174,7 @@ RSpec.feature "Add Provider" do
       and_i_can_see_the_title("Error: Accreditation details - Register of training providers - GOV.UK")
 
       start_year = Date.current.year
-      fill_in "Accredited provider number", with: "1234"
+      fill_in "Accredited provider number", with: accredited_provider_number
       within_fieldset("Accreditation start date") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
@@ -192,16 +222,16 @@ RSpec.feature "Add Provider" do
       end
     end
 
-    def provider_details_error_messages(select_provider_type:)
-      errors = ["Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code"]
-
-      errors += ["Enter unique reference number (URN)"] if ["School", "School-centred initial teacher training (SCITT)"].include?(select_provider_type)
-
-      errors
+    def provider_details_error_messages
+      ["Enter operating name", "Enter UK provider reference number (UKPRN)", "Enter provider code"]
     end
 
-    def get_provider_information_for_the_forms(accreditation_status:)
-      @provider_details_to_use = build(:provider, accreditation_status)
+    def urn_field_label
+      "Unique reference number (URN) (optional)"
+    end
+
+    def get_provider_information_for_the_forms(accreditation_status:, provider_type: nil)
+      @provider_details_to_use = provider_type ? build(:provider, accreditation_status, provider_type) : build(:provider, accreditation_status)
 
       select_if_the_provider_is_accredited = {
         accredited: "Yes",
@@ -219,7 +249,7 @@ RSpec.feature "Add Provider" do
         ["Operating name", @provider_details_to_use.operating_name],
         ["Legal name (optional)", @provider_details_to_use.legal_name],
         ["UK provider reference number (UKPRN)", @provider_details_to_use.ukprn],
-        ["Unique reference number (URN)#{" (optional)" unless @provider_details_to_use.requires_urn?}", @provider_details_to_use.urn],
+        [urn_field_label, @provider_details_to_use.urn],
         ["Provider code", @provider_details_to_use.code],
       ]
 
@@ -326,4 +356,6 @@ RSpec.feature "Add Provider" do
   include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date"
   include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date"
   include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago
+  include_examples "adding a provider with accreditation status", :unaccredited, "Today", "Same as onboarded at date", :school
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :scitt
 end
