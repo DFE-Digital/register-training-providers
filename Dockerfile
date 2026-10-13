@@ -17,7 +17,9 @@ RUN apk add --update --no-cache tzdata && \
 # yarn: node package manager
 # postgresql-dev: postgres driver and libraries
 # yaml-dev: psych issues
-RUN apk add --no-cache build-base git yarn postgresql16-dev yaml-dev
+RUN apk add --no-cache \
+    'zlib>=1.3.2-r1' \
+    build-base git yarn postgresql16-dev yaml-dev
 
 # Install gems defined in Gemfile
 COPY Gemfile Gemfile.lock ./
@@ -68,7 +70,9 @@ RUN apk add --update --no-cache tzdata && \
 RUN addgroup -S appgroup -g 20001 && adduser -S appuser -G appgroup -u 10001
 
 # libpq: required to run postgres
-RUN apk add --no-cache libpq
+RUN apk add --no-cache \
+    'zlib>=1.3.2-r1' \
+    libpq
 
 # Copy files generated in the builder image
 COPY --from=builder /app /app
