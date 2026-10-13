@@ -26,30 +26,6 @@ class ProvidersController < ApplicationController
     authorize @provider
   end
 
-  def edit
-    @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
-    authorize @provider
-  end
-
-  def update
-    @provider = current_user.load_temporary(scoped_provider, id: provider_id, purpose: :edit_provider)
-    authorize @provider
-
-    @provider.assign_attributes(params.expect(provider: [:provider_type,
-                                                         :accreditation_status,
-                                                         :operating_name,
-                                                         :ukprn,
-                                                         :code,
-                                                         :urn,
-                                                         :legal_name]))
-    if @provider.valid?
-      @provider.save_as_temporary!(created_by: current_user, purpose: :edit_provider)
-      redirect_to provider_check_path(@provider)
-    else
-      render(:edit)
-    end
-  end
-
 private
 
   def provider_id
