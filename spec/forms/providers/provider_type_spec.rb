@@ -22,7 +22,7 @@ RSpec.describe Providers::ProviderType, type: :model do
 
     context "with invalid accreditation_status" do
       let(:accreditation_status) { "invalid_status" }
-      let(:provider_type) { ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.values.first }
+      let(:provider_type) { :hei }
 
       it "is not valid" do
         expect(subject).not_to be_valid
@@ -40,63 +40,46 @@ RSpec.describe Providers::ProviderType, type: :model do
       end
     end
 
-    context "with valid accredited provider_type" do
-      ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
+    context "with a known provider_type and accreditation_status" do
+      ProviderTypeEnum::PROVIDER_TYPES.each_key do |valid_type|
         context "when provider_type is #{valid_type}" do
           let(:provider_type) { valid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
 
-          it "is valid" do
-            expect(subject).to be_valid
+          AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+            context "and accreditation_status is #{valid_status}" do
+              let(:accreditation_status) { valid_status }
+
+              it "is valid" do
+                expect(subject).to be_valid
+              end
+            end
           end
         end
       end
     end
 
-    context "with valid unaccredited provider_type" do
-      ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.each_value do |valid_type|
-        context "when provider_type is #{valid_type}" do
-          let(:provider_type) { valid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::UNACCREDITED }
+    context "with an unknown provider_type" do
+      let(:provider_type) { "invalid_type" }
 
-          it "is valid" do
-            expect(subject).to be_valid
+      AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+        context "and accreditation_status is #{valid_status}" do
+          let(:accreditation_status) { valid_status }
+
+          it "is not valid" do
+            expect(subject).not_to be_valid
+            expect(subject.errors[:provider_type]).to include("Select a valid provider type")
           end
         end
       end
     end
 
-    context "with invalid accredited provider_type" do
-      ["invalid_type", "scitt"].each do |invalid_type|
-        let(:provider_type) { invalid_type }
-        let(:accreditation_status) { AccreditationStatusEnum::UNACCREDITED }
+    context "with nil provider_type" do
+      let(:provider_type) { nil }
+      let(:accreditation_status) { AccreditationStatusEnum::ACCREDITATION_STATUSES.values.first }
 
-        it "is not valid" do
-          expect(subject).not_to be_valid
-          expect(subject.errors[:provider_type]).to include("is not included in the list")
-        end
-      end
-
-      context "with invalid unaccredited provider_type" do
-        ["invalid_type", "school"].each do |invalid_type|
-          let(:provider_type) { invalid_type }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
-
-          it "is not valid" do
-            expect(subject).not_to be_valid
-            expect(subject.errors[:provider_type]).to include("is not included in the list")
-          end
-        end
-
-        context "with nil provider_type" do
-          let(:provider_type) { nil }
-          let(:accreditation_status) { AccreditationStatusEnum::ACCREDITATION_STATUSES.values.first }
-
-          it "is not valid" do
-            expect(subject).not_to be_valid
-            expect(subject.errors[:provider_type]).to include("Select provider type")
-          end
-        end
+      it "is not valid" do
+        expect(subject).not_to be_valid
+        expect(subject.errors[:provider_type]).to include("Select provider type")
       end
     end
   end
@@ -115,12 +98,12 @@ RSpec.describe Providers::ProviderType, type: :model do
 
   describe "#provider_type_options_for_radios" do
     subject { described_class.new(accreditation_status:) }
-    context "when accredited" do
-      let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
-      it "returns SelectOption objects with correct keys and values" do
+
+    shared_examples "the provider type options" do
+      it "returns all provider type options including Other" do
         options = subject.provider_type_options_for_radios
 
-        expect(options.size).to eq(ProviderTypeEnum::ACCREDITED_PROVIDER_TYPES.keys.size)
+        expect(options.map(&:key)).to eq(%i[hei scitt school other])
 
         options.each do |option|
           expect(option).to be_a(SelectOption)
@@ -132,21 +115,16 @@ RSpec.describe Providers::ProviderType, type: :model do
       end
     end
 
+    context "when accredited" do
+      let(:accreditation_status) { AccreditationStatusEnum::ACCREDITED }
+
+      it_behaves_like "the provider type options"
+    end
+
     context "when unaccredited" do
       let(:accreditation_status) { AccreditationStatusEnum::UNACCREDITED }
-      it "returns SelectOption objects with correct keys and values" do
-        options = subject.provider_type_options_for_radios
 
-        expect(options.size).to eq(ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys.size)
-
-        options.each do |option|
-          expect(option).to be_a(SelectOption)
-          expect(option.key).to be_a(Symbol)
-          expect(option.value).to eq(
-            I18n.t("providers.provider_types.#{option.key}")
-          )
-        end
-      end
+      it_behaves_like "the provider type options"
     end
   end
 end

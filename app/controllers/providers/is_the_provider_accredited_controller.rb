@@ -14,7 +14,9 @@ class Providers::IsTheProviderAccreditedController < CheckController
     authorize @form
 
     if @form.valid?
+      previous_data = provider_session.load_is_provider_accredited
       provider_session.store_is_provider_accredited(@form.attributes)
+      clear_stale_provider_type(previous_data)
 
       redirect_to journey_coordinator(:is_the_provider_accredited, nil).next_path
     else
@@ -23,6 +25,14 @@ class Providers::IsTheProviderAccreditedController < CheckController
   end
 
 private
+
+  def clear_stale_provider_type(previous_data)
+    return if previous_data.blank?
+    return if previous_data["accreditation_status"] == @form.accreditation_status
+
+    provider_session.clear_provider_type
+    provider_session.clear_accreditation
+  end
 
   def back_path
     journey_coordinator(:is_the_provider_accredited, nil).back_path
