@@ -24,11 +24,16 @@ module ProviderChangeHelper
   def format_change_value(change)
     value = change.value
     return format_blank_change_value(change) if value.blank?
+    return provider_type_label(value) if change.attribute_name == "provider_type"
 
     value
   end
 
 private
+
+  def provider_type_label(value)
+    ProviderTypeEnum.label_for(value)
+  end
 
   def format_blank_change_value(change)
     return "No URN recorded" if change.attribute_name == "urn"

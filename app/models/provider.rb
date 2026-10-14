@@ -156,20 +156,8 @@ class Provider < ApplicationRecord
 
   def sync_accreditation_status!
     new_status = has_current_accreditations? ? "accredited" : "unaccredited"
-    new_provider_type = provider_type
 
-    # Handle school ↔ scitt type switching based on accreditation status
-    if new_status == "accredited" && school?
-      new_provider_type = "scitt"
-    elsif new_status == "unaccredited" && scitt?
-      new_provider_type = "school"
-    end
-
-    updates = {}
-    updates[:accreditation_status] = new_status if accreditation_status != new_status
-    updates[:provider_type] = new_provider_type if provider_type != new_provider_type
-
-    update_columns(updates) if updates.any?
+    update_columns(accreditation_status: new_status) if accreditation_status != new_status
   end
 
   def partnerships

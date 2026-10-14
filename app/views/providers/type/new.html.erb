@@ -10,17 +10,11 @@
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
-  <%= form.hidden_field :accreditation_status %>
-  <%= form.hidden_field :provider_type %>
-
   <%= form.govuk_radio_buttons_fieldset(:provider_type, legend: { text: "Provider type" }, caption: { text: "Add provider" }) do %>
     <% form.object.provider_type_options_for_radios.each_with_index do |item, index| %>
       <%= form.govuk_radio_button :provider_type, item[:key],
                                   label: { text: item[:value] },
                                   link_errors: index.zero? %>
-      <% if index == 1 %>
-        <%= form.govuk_radio_divider %>
-      <% end %>
     <% end %>
   <% end %>
   <%= form.govuk_submit %>

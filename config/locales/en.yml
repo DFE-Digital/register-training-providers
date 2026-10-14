@@ -136,6 +136,7 @@ en:
               invalid_provider_type: "School cannot be accredited"
               blank: "Select if the provider is accredited"
             provider_type:
+              inclusion: "Select a valid provider type"
               invalid_accreditation_status: "School cannot be accredited"
               blank: "Select provider type"
             operating_name:
@@ -229,6 +230,12 @@ en:
             operating_name:
               blank: "Enter operating name"
               same: "Enter a different operating name"
+        provider_changes/steps/provider_type_step:
+          attributes:
+            provider_type:
+              blank: "Select provider type"
+              inclusion: "Select a valid provider type"
+              same: "Select a different provider type"
   flash_message:
     success:
       accreditation:
@@ -286,6 +293,8 @@ en:
           updated: "Legal name change request submitted successfully"
         operating_name:
           updated: "Operating name change request submitted successfully"
+        provider_type:
+          updated: "Provider type change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
@@ -324,8 +333,10 @@ en:
           label: Partnership end date (optional)
   provider_types_labels:
     hei: "Higher education institution (HEI)"
-    scitt_or_school: "School"
+    scitt: "School-centred initial teacher training (SCITT)"
+    school: "School"
     other: "Other"
+    scitt_or_school: "School"
   accreditation_labels:
     accredited: "Accredited"
     unaccredited: "Not accredited"

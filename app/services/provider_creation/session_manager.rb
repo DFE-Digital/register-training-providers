@@ -23,6 +23,10 @@ module ProviderCreation
       data[:accreditation]
     end
 
+    def clear_accreditation
+      data.delete(:accreditation)
+    end
+
     def store_onboarding(attributes)
       data[:onboarding] = attributes
     end
@@ -49,10 +53,18 @@ module ProviderCreation
 
     def store_provider_type(attributes)
       data[:provider_type] = attributes
+      sync_provider_type(attributes)
     end
 
     def load_provider_type
       data[:provider_type]
+    end
+
+    def clear_provider_type
+      data.delete(:provider_type)
+      return unless data[:provider]
+
+      data[:provider] = data[:provider].except("provider_type", "accreditation_status")
     end
 
     def clear!
@@ -68,6 +80,15 @@ module ProviderCreation
     end
 
   private
+
+    def sync_provider_type(attributes)
+      return unless data[:provider]
+
+      data[:provider] = data[:provider].merge(
+        "provider_type" => attributes["provider_type"],
+        "accreditation_status" => attributes["accreditation_status"]
+      )
+    end
 
     def data
       @session[:provider_creation] ||= {}
