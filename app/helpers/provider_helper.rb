@@ -1,11 +1,34 @@
 module ProviderHelper
+  # The status tag is driven by ProviderStatusEnum: the precedence chain is
+  # the enum's own `status` method and the text comes from `status_label`
+  # (the same providers.statuses i18n keys as the summary row and history
+  # column), so a new status or a precedence change has one place to be
+  # edited and these tags update with it. Only the colour mapping and the
+  # discard case live here: "Soft deleted" is discard-specific and
+  # deliberately not an enum status, so the enum cannot own it.
+  STATUS_TAG_COLOURS = {
+    "archived" => "grey",
+    "offboarded" => "orange",
+    "inactive" => "yellow"
+  }.freeze
+
+  def provider_status_tag(provider)
+    return { text: "Soft deleted", colour: "red" } if provider.discarded?
+
+    colour = STATUS_TAG_COLOURS[provider.status]
+    { text: provider.status_label, colour: colour } if colour
+  end
+
   # Base rows for displaying provider details in summary cards/lists.
   # Used by: provider index cards, provider show page.
-  def provider_summary_card_rows(provider, hide_provider_code: false, hide_ukprn: false, hide_urn: false,
-                                 use_details_for_academic_years_row: false, hide_onboarded_at: false,
-                                 hide_first_active_at: false, hide_inactive_periods: false)
+  def provider_summary_card_rows(provider, hide_provider_status: false, hide_provider_code: false, hide_ukprn: false,
+                                 hide_urn: false, use_details_for_academic_years_row: false, hide_onboarded_at: false,
+                                 hide_first_active_at: false, hide_inactive_periods: false, hide_offboarded: false)
+    status_rows = hide_provider_status ? [] : [provider_status_row(provider)]
+
     summary_card_rows = [
       { key: { text: "RoTP Id" }, value: { text: provider.rotp_id } },
+      *status_rows,
       { key: { text: "Provider type" }, value: { text: provider.provider_type_label } },
       { key: { text: "Accreditation status" }, value: { text: provider.accreditation_status_label } },
       { key: { text: "Operating name" }, value: { text: provider.operating_name } },
@@ -31,7 +54,15 @@ module ProviderHelper
 
     unless hide_inactive_periods
       summary_card_rows += [{ key: { text: "Inactive periods" },
-                              value: { text: inactive_periods_html(provider.inactive_periods) } }]
+                              value: {
+                                text: inactive_periods_html(provider.inactive_periods -
+                                  provider.offboarded_periods)
+                              } }]
+    end
+
+    unless hide_offboarded
+      summary_card_rows += [{ key: { text: "Offboarded" },
+                              value: { text: display_date(provider.offboarded_period&.dig("start_date")) } }]
     end
 
     summary_card_rows
@@ -42,12 +73,9 @@ module ProviderHelper
     providers.map do |provider|
       path_options = params[:debug] == "true" ? { debug: "true" } : {}
 
-      archived_tag =
-        if provider.archived?
-          govuk_tag(text: "Archived", classes: "govuk-!-margin-left-1")
-        elsif provider.inactive?
-          govuk_tag(text: "Inactive", colour: "yellow", classes: "govuk-!-margin-left-1")
-        end
+      status_tag = provider_status_tag(provider)
+      archived_tag = status_tag && govuk_tag(text: status_tag[:text], colour: status_tag[:colour],
+                                             classes: "govuk-!-margin-left-1")
 
       provider_meta =
         if provider.code.present? || provider.ukprn.present? || provider.urn.present?
@@ -75,13 +103,15 @@ module ProviderHelper
         title: safe_join(title_parts, " "),
         rows: provider_summary_card_rows(
           provider,
+          hide_provider_status: true,
           hide_provider_code: true,
           hide_ukprn: true,
           hide_urn: true,
           use_details_for_academic_years_row: true,
           hide_inactive_periods: true,
           hide_onboarded_at: true,
-          hide_first_active_at: true
+          hide_first_active_at: true,
+          hide_offboarded: true
         )
       }
     end
@@ -159,6 +189,21 @@ module ProviderHelper
 
     # Add edit actions to editable fields (skip Provider type and Accreditation status)
     editable_fields = {
+      "Provider status" => [
+        { text: "History",
+          visually_hidden_text: "of provider statuses",
+          href: provider_changes_field_history_path(
+            provider_id: provider.id,
+            field: "status"
+          ) },
+        { text: "Change",
+          visually_hidden_text: "provider status",
+          href: provider_change_step_path(
+            provider_id: provider.id,
+            field: "status",
+            step: "new-status"
+          ) }
+      ],
       "Operating name" => [{ text: "History",
                              visually_hidden_text: "of operating names",
                              href: provider_changes_field_history_path(
@@ -266,6 +311,10 @@ module ProviderHelper
         content_tag(:li, govuk_summary_list(rows: display_inactive_period(period)))
       }.join.html_safe
     end
+  end
+
+  def provider_status_row(provider)
+    { key: { text: "Provider status" }, value: { text: provider.status_label } }
   end
 
   def mark_as_inactive_rows(inactive_period)
