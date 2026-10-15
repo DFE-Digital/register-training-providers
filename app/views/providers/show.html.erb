@@ -21,14 +21,8 @@
         <%= govuk_button_link_to("Restore provider", provider_restore_path(@provider)) %>
         <%= govuk_link_to("Delete provider", provider_delete_path(@provider)) %>
 
-    <% else %>
+    <% elsif @provider.status == ProviderStatusEnum::INACTIVE %>
         <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
-    <% end %>
-
-    <% if @provider.inactive? %>
-      <%= govuk_link_to("Mark as active", provider_mark_as_active_path(@provider)) %>
-    <% else %>
-      <%= govuk_link_to("Mark as inactive", provider_mark_as_inactive_path(@provider)) %>
     <% end %>
 </div>
 

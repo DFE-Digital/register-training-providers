@@ -26,11 +26,11 @@ RSpec.feature "Archive Provider" do
 
     archive_change = provider.provider_changes.requested.for_attribute("status").sole
     expect(archive_change).to have_attributes(
-      value: { "status" => "archived" },
+      value: { "status" => "archived", "previous_status" => "inactive" },
       status: "completed",
       creator: current_user
     )
-    expect(provider.provider_changes.baseline.for_attribute("status").sole.value).to eq("status" => "active")
+    expect(provider.provider_changes.baseline.for_attribute("status").sole.value).to eq("status" => "inactive")
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
@@ -62,7 +62,7 @@ RSpec.feature "Archive Provider" do
   end
 
   def provider
-    @provider ||= create(:provider)
+    @provider ||= create(:provider, :with_current_inactive_period)
   end
 
   def and_there_is_a_provider_with_an_accreditation
@@ -70,7 +70,7 @@ RSpec.feature "Archive Provider" do
   end
 
   def provider_with_accreditation
-    @provider_with_accreditation ||= create(:provider, :accredited)
+    @provider_with_accreditation ||= create(:provider, :accredited, :with_current_inactive_period)
   end
 
   def and_i_archive_the_provider(provider_to_archive = provider_with_accreditation)

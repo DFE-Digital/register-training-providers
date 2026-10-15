@@ -57,8 +57,6 @@ RSpec.describe ProviderHelper, type: :helper do
       end
 
       it "renders the archived tag in the same colour as the page header" do
-        # The card tag and the header tag share provider_status_tag, so the
-        # card cannot drift back to colourless Archived.
         result = helper.provider_summary_cards([provider]).first
         doc = Nokogiri::HTML.fragment(result[:title])
 
@@ -130,9 +128,6 @@ RSpec.describe ProviderHelper, type: :helper do
   end
 
   describe "#provider_status_tag" do
-    # The precedence chain is ProviderStatusEnum#status's, and both surfaces
-    # — the provider index cards (provider_summary_cards) and the provider
-    # page header (ApplicationHelper#provider_page_data) — render this tag.
     subject(:status_tag) { helper.provider_status_tag(provider) }
 
     let(:provider) { build_stubbed(:provider, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
@@ -146,8 +141,6 @@ RSpec.describe ProviderHelper, type: :helper do
         allow(provider).to receive(:inactive?).and_return(true)
       end
 
-      # Reads the providers.statuses key so the tag cannot drift back to a
-      # hard-coded label desynced from the summary row and history column.
       it { expect(status_tag).to eq(text: I18n.t("providers.statuses.inactive"), colour: "yellow") }
     end
 
@@ -167,9 +160,6 @@ RSpec.describe ProviderHelper, type: :helper do
         allow(provider).to receive(:inactive?).and_return(true)
       end
 
-      # The tag must follow the enum's own status rather than re-running
-      # the precedence chain by hand, so a precedence change in the enum
-      # moves the tag with it.
       it "follows the enum's status" do
         expect(status_tag).to eq(text: I18n.t("providers.statuses.offboarded"), colour: "orange")
       end

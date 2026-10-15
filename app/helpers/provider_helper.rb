@@ -1,11 +1,4 @@
 module ProviderHelper
-  # The status tag is driven by ProviderStatusEnum: the precedence chain is
-  # the enum's own `status` method and the text comes from `status_label`
-  # (the same providers.statuses i18n keys as the summary row and history
-  # column), so a new status or a precedence change has one place to be
-  # edited and these tags update with it. Only the colour mapping and the
-  # discard case live here: "Soft deleted" is discard-specific and
-  # deliberately not an enum status, so the enum cannot own it.
   STATUS_TAG_COLOURS = {
     "archived" => "grey",
     "offboarded" => "orange",
@@ -19,8 +12,6 @@ module ProviderHelper
     { text: provider.status_label, colour: colour } if colour
   end
 
-  # Base rows for displaying provider details in summary cards/lists.
-  # Used by: provider index cards, provider show page.
   def provider_summary_card_rows(provider, hide_provider_status: false, hide_provider_code: false, hide_ukprn: false,
                                  hide_urn: false, use_details_for_academic_years_row: false, hide_onboarded_at: false,
                                  hide_first_active_at: false, hide_inactive_periods: false, hide_offboarded: false)
@@ -187,7 +178,6 @@ module ProviderHelper
 
     rows = insert_accreditation_number_row(rows, provider)
 
-    # Add edit actions to editable fields (skip Accreditation status)
     editable_fields = {
       "Provider status" => [
         { text: "History",
@@ -328,39 +318,6 @@ module ProviderHelper
 
   def provider_status_row(provider)
     { key: { text: "Provider status" }, value: { text: provider.status_label } }
-  end
-
-  def mark_as_inactive_rows(inactive_period)
-    [
-      {
-        key: { text: "Inactive period start date" },
-        value: { text: inactive_period["start_date"].to_date.strftime("%d %B %Y") },
-        actions: [{ href: provider_mark_as_inactive_path, visually_hidden_text: "start date" }]
-      },
-      {
-        key: { text: "Why did the provider become inactive" },
-        value: { text: inactive_reasons_html(inactive_period["reasons_for_inactive"]) },
-        actions: [{ href: provider_mark_as_inactive_reasons_path, visually_hidden_text: "reasons" }]
-      },
-    ]
-  end
-
-  def mark_as_active_rows(inactive_period)
-    [
-      {
-        key: { text: "Inactive period end date" },
-        value: { text: inactive_period["end_date"].to_date.to_fs(:govuk) },
-        actions: [{ href: provider_mark_as_active_path, visually_hidden_text: "end date" }]
-      },
-    ]
-  end
-
-  def inactive_reasons_html(reasons)
-    content_tag(:ul, class: "govuk-list govuk-list") do
-      reasons.map { |reason|
-        content_tag(:li, reason)
-      }.join.html_safe
-    end
   end
 
   def display_inactive_period(period)

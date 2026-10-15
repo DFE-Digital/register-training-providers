@@ -25,19 +25,15 @@ class ProviderPolicy < ApplicationPolicy
     record.new_record? && !user.api_user
   end
 
+  def archive?
+    record.kept? && !record.archived? && record.status == ProviderStatusEnum::INACTIVE && !user.api_user
+  end
+
   def destroy?
-    record.kept? && !user.api_user
+    record.kept? && record.archived? && !user.api_user
   end
 
   def restore?
     record.kept? && record.archived? && !user.api_user
-  end
-
-  def mark_as_inactive?
-    record.kept? && !user.api_user
-  end
-
-  def mark_as_active?
-    record.kept? && !user.api_user
   end
 end

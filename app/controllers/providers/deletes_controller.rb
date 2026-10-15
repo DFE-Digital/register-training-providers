@@ -3,13 +3,20 @@ class Providers::DeletesController < CheckController
 
   def show
     @provider = Provider.find(params[:provider_id])
-    authorize @provider
+    authorize @provider, :destroy?
   end
 
   def destroy
     @provider = Provider.find(params[:provider_id])
-    authorize @provider
-    @provider.discard!
+    authorize @provider, :destroy?
+
+    @provider.with_lock do
+      next unless @provider.archived?
+      next if @provider.discarded?
+
+      @provider.discard!
+    end
+
     redirect_to(providers_path, flash: { success: "Provider deleted" })
   end
 end
