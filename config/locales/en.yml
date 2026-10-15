@@ -25,6 +25,11 @@ en:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
   providers:
+    statuses:
+      active: "Active"
+      inactive: "Inactive"
+      offboarded: "Offboarded"
+      archived: "Archived"
     accreditation_statuses:
       accredited: "Accredited"
       unaccredited: "Not accredited"

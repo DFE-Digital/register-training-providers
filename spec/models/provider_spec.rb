@@ -279,6 +279,19 @@ RSpec.describe Provider, type: :model do
         be_within(1.second).of(Time.zone.now.utc)
       )
     end
+
+    it "cancels the queued pending status change" do
+      create(:provider_change, :status_change, provider: provider, value: { "status" => "active" })
+
+      expect { provider.archive! }.to change { provider.provider_changes.pending.count }.from(1).to(0)
+    end
+
+    it "cancels queued pending changes for other attributes as well" do
+      create(:provider_change, :code_change, provider: provider, value: "NEW")
+      create(:provider_change, :ukprn_change, provider: provider, value: "10000001")
+
+      expect { provider.archive! }.to change { provider.provider_changes.pending.count }.from(2).to(0)
+    end
   end
 
   describe "#archived?" do
@@ -599,16 +612,6 @@ RSpec.describe Provider, type: :model do
 
     it "returns the inactive period that ended most recently" do
       expect(provider.current_inactive_period).to eq(current_inactive_period)
-    end
-  end
-
-  describe "#latest_complete_inactive_period" do
-    let(:inactive_period_1) { { "start_date" => 1.year.ago.to_date.to_s, "end_date" => 6.months.ago.to_date.to_s } }
-    let(:inactive_period_2) { { "start_date" => 1.month.ago.to_date.to_s, "end_date" => 1.month.ago.to_date.to_s } }
-    let(:provider) { create(:provider, inactive_periods: [inactive_period_2, inactive_period_1]) }
-
-    it "returns the inactive period that ended most recently" do
-      expect(provider.latest_complete_inactive_period).to eq(inactive_period_2)
     end
   end
 end

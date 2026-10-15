@@ -60,6 +60,7 @@ class Provider < ApplicationRecord
   has_associated_audits
 
   include ProviderTypeEnum
+  include ProviderStatusEnum
   include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
@@ -127,8 +128,14 @@ class Provider < ApplicationRecord
   end
 
   def archive!
-    self.archived_at = Time.zone.now.utc
-    save!(validate: false)
+    ActiveRecord::Base.transaction do
+      # Archiving closes the provider out: no pending change (status or any
+      # other attribute) may survive to mutate an archived record later.
+      provider_changes.pending.destroy_all
+
+      self.archived_at = Time.zone.now.utc
+      save!(validate: false)
+    end
   end
 
   def archived?
@@ -210,10 +217,6 @@ class Provider < ApplicationRecord
     return nil if inactive_periods.select { |ip| ip if ip["end_date"].nil? }.blank?
 
     inactive_periods.find { |ip| ip if ip["end_date"].nil? }
-  end
-
-  def latest_complete_inactive_period
-    inactive_periods.max_by { |ip| ip["end_date"] }
   end
 
 private

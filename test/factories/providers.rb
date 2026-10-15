@@ -143,6 +143,28 @@ FactoryBot.define do
       end
     end
 
+    trait :with_current_inactive_period do
+      after(:create) do |provider|
+        if provider.inactive_periods.none? { |period| period["end_date"].nil? }
+          provider.inactive_periods << { start_date: 1.month.ago.to_date,
+                                         end_date: nil,
+                                         reasons_for_inactive: ["None given"] }
+          provider.save!
+        end
+      end
+    end
+
+    trait :with_current_offboarded_period do
+      after(:create) do |provider|
+        next if provider.open_offboarded_period.present?
+
+        provider.inactive_periods << { start_date: 1.month.ago.to_date,
+                                       end_date: nil,
+                                       offboarded: true }
+        provider.save!
+      end
+    end
+
     after(:create) do |provider|
       if provider.first_active_at.present?
         academic_year = create(:academic_year,
