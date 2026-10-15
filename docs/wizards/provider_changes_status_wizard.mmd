@@ -1,0 +1,9 @@
+flowchart TD
+  new_status["New Status"]
+  reasons["Reasons"]
+  effective_date["Effective Date"]
+  check_your_answers["Check Your Answers"]
+  reasons --> effective_date
+  effective_date --> check_your_answers
+  new_status -->|#<Proc:0x0000716639160010 /home/defong/repos/DfE/register-training-providers/app/wizards/provider_changes/status_wizard.rb:11 (lambda)>: ✓ yes| reasons
+  new_status -->|#<Proc:0x0000716639160010 /home/defong/repos/DfE/register-training-providers/app/wizards/provider_changes/status_wizard.rb:11 (lambda)>: ✗ no| effective_date

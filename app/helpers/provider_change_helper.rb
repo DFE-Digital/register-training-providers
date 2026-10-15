@@ -3,16 +3,31 @@ module ProviderChangeHelper
     changes = changes.to_a
 
     changes.each_with_index.map do |change, index|
-      effective_to = change_period_end(change, next_completed_change(changes, index))
+      next_change = next_completed_change(changes, index)
+      effective_to = change_period_end(change, next_change)
 
-      [
-        format_change_value(change),
-        display_change_date(change.effective_on),
-        display_change_date(effective_to),
-        change_credit(change),
-        status_tag(change, effective_to)
-      ]
+      history_cells(change, effective_to, next_change)
     end
+  end
+
+  def status_reason_legend(new_status)
+    return "Why was the provider offboarded?" if new_status == ProviderStatusEnum::OFFBOARDED
+
+    "Why did the provider become inactive?"
+  end
+
+  def status_effective_date_legend(new_status)
+    return "When was the provider offboarded?" if new_status == ProviderStatusEnum::OFFBOARDED
+
+    "When did the provider become #{new_status}?"
+  end
+
+  def status_effective_date_hint(provider)
+    earliest_date = ProviderStatusEnum.earliest_valid_date(provider)
+    return "For example, 31 7 2026" if earliest_date.blank?
+
+    "For example, 31 7 2026. The provider has existed since " \
+      "#{earliest_date.to_fs(:govuk)}, so the date cannot be earlier."
   end
 
   def display_change_date(date)
@@ -26,13 +41,41 @@ module ProviderChangeHelper
     return format_blank_change_value(change) if value.blank?
     return provider_type_label(value) if change.attribute_name == "provider_type"
 
-    value
+    if change.attribute_name == "status"
+      status_value = status_change_value(change)
+
+      return format_blank_change_value(change) if status_value.blank?
+
+      I18n.t("providers.statuses.#{status_value}")
+    else
+      value
+    end
   end
 
 private
 
+  def history_cells(change, effective_to, next_change)
+    cells = [
+      format_change_value(change),
+      display_change_date(change.effective_on),
+      display_change_date(effective_to),
+      change_credit(change),
+      status_tag(change, next_change)
+    ]
+    return cells unless change.attribute_name == "status"
+
+    cells.insert(1, change_reasons(change))
+  end
+
   def provider_type_label(value)
     ProviderTypeEnum.label_for(value)
+  end
+
+  def change_reasons(change)
+    return "" unless change.value.is_a?(Hash)
+
+    ProviderStatusEnum.reason_labels_for(change.value["reason_ids"],
+                                         change.value["other_reason"]).join(", ")
   end
 
   def format_blank_change_value(change)
@@ -53,6 +96,7 @@ private
 
   def change_credit(change)
     return baseline_credit(change) if change.baseline?
+    return "System" if change.system?
 
     change.creator&.name || "Deleted user"
   end
@@ -61,18 +105,40 @@ private
     change.provider.audits.find_by(action: "create")&.user&.name || "Initial value"
   end
 
-  def status_tag(change, effective_to)
+  def status_tag(change, next_change)
     return govuk_tag(text: "Error", colour: "red") if change.failed?
-    return govuk_tag(text: "Active", colour: "blue") if active_change?(change, effective_to)
+    return status_row_tag(change, next_change) if change.attribute_name == "status"
+    return govuk_tag(text: "Active", colour: "blue") if active_change?(change, next_change)
 
     govuk_tag(text: "Inactive", colour: "grey")
   end
 
-  def active_change?(change, effective_to)
+  def status_row_tag(change, next_change)
+    return govuk_tag(text: "Scheduled", colour: "yellow") if change.pending?
+    return govuk_tag(text: "Current", colour: "blue") if active_change?(change, next_change)
+
+    govuk_tag(text: "Superseded", colour: "grey")
+  end
+
+  def active_change?(change, next_change)
     change.completed? &&
       change.effective_on <= Date.current &&
-      change.value.to_s == current_value_for(change) &&
-      (effective_to.nil? || Date.current <= effective_to)
+      change_value_matches_provider_state?(change) &&
+      (next_change.blank? || next_change.effective_on > Date.current)
+  end
+
+  def change_value_matches_provider_state?(change)
+    if change.attribute_name == "status"
+      status_change_value(change) == change.provider.status
+    else
+      change.value.to_s == current_value_for(change)
+    end
+  end
+
+  def status_change_value(change)
+    return nil unless change.value.is_a?(Hash)
+
+    change.value["status"]
   end
 
   def current_value_for(change)

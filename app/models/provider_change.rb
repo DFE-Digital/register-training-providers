@@ -34,6 +34,7 @@ class ProviderChange < ApplicationRecord
     operating_name
     legal_name
     provider_type
+    status
   ].freeze
 
   OPTIONAL_ATTRIBUTES = %w[urn legal_name].freeze

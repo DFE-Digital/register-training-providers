@@ -239,6 +239,24 @@ en:
               blank: "Select provider type"
               inclusion: "Select a valid provider type"
               same: "Select a different provider type"
+        provider_changes/steps/status_step:
+          attributes:
+            new_status:
+              blank: "Select the new provider status"
+              inclusion: "Select a valid provider status"
+        provider_changes/steps/reasons_step:
+          attributes:
+            reasons:
+              blank: "Select at least one reason"
+              inclusion: "Select a valid reason"
+            other_reason:
+              blank: "Enter a reason"
+              too_long: "The reason must be 255 characters or fewer"
+        provider_changes/steps/status_effective_date_step:
+          attributes:
+            effective_on:
+              within_existing_period: "Enter a date that is not within or before an existing period"
+              before_the_provider_existed: "Enter a date that is not before the provider was onboarded"
   flash_message:
     success:
       accreditation:
@@ -297,6 +315,8 @@ en:
           updated: "Operating name change request submitted successfully"
         provider_type:
           updated: "Provider type change request submitted successfully"
+        status:
+          updated: "Provider status change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:

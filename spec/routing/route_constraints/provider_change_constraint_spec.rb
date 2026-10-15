@@ -104,6 +104,23 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
     end
   end
 
+  context "with a valid status field/step combination" do
+    let(:field) { "status" }
+
+    %w[
+      new-status
+      reasons
+      effective-date
+      check-your-answers
+    ].each do |valid_step|
+      context "when step is #{valid_step}" do
+        let(:step) { valid_step }
+
+        it { is_expected.to be(true) }
+      end
+    end
+  end
+
   context "with an invalid step" do
     let(:field) { "code" }
     let(:step) { "invalid_step" }
@@ -158,6 +175,12 @@ RSpec.describe RouteConstraints::ProviderChangeConstraint do
 
     context "with a known provider type field" do
       let(:field) { "provider_type" }
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a known status field" do
+      let(:field) { "status" }
 
       it { is_expected.to be(true) }
     end

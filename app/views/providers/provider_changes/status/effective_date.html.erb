@@ -1,0 +1,3 @@
+<%= render "providers/provider_changes/shared/effective_date",
+           title: status_effective_date_legend(@wizard.state_store.read.with_indifferent_access["new_status"]),
+           hint: status_effective_date_hint(@provider) %>

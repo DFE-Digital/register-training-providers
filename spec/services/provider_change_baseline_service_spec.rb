@@ -37,6 +37,26 @@ RSpec.describe ProviderChangeBaselineService do
       ).to be_empty
     end
 
+    context "when the attribute is the provider status" do
+      let(:attribute_name) { "status" }
+
+      it "records the current status as a structured value" do
+        call_service
+
+        expect(provider.provider_changes.baseline.sole.value)
+          .to eq("status" => "active")
+      end
+
+      context "when a status value is supplied" do
+        it "records the supplied status instead of the provider's current one" do
+          described_class.call(provider: provider, attribute_name: "status", status_before_change: "archived")
+
+          expect(provider.provider_changes.baseline.sole.value)
+            .to eq("status" => "archived")
+        end
+      end
+    end
+
     it "records a baseline per attribute" do
       described_class.call(provider: provider, attribute_name: "code")
       described_class.call(provider: provider, attribute_name: "ukprn")
