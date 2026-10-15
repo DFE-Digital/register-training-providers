@@ -15,7 +15,10 @@ module ProviderChanges
                             review: Presenters::OperatingNameReview },
       "legal_name" => { wizard: LegalNameWizard,
                         state_store: StateStores::LegalNameStore,
-                        review: Presenters::LegalNameReview }
+                        review: Presenters::LegalNameReview },
+      "status" => { wizard: StatusWizard,
+                    state_store: StateStores::StatusStore,
+                    review: Presenters::StatusReview }
     }.freeze
 
     def self.fields

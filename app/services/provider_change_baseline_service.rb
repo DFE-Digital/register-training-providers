@@ -1,9 +1,10 @@
 class ProviderChangeBaselineService
   include ServicePattern
 
-  def initialize(provider:, attribute_name:)
+  def initialize(provider:, attribute_name:, status_value: nil)
     @provider = provider
     @attribute_name = attribute_name.to_s
+    @status_value = status_value
   end
 
   def call
@@ -15,7 +16,7 @@ class ProviderChangeBaselineService
     ActiveRecord::Base.transaction(requires_new: true) do
       provider.provider_changes.create!(
         attribute_name: attribute_name,
-        value: provider.public_send(attribute_name),
+        value: baseline_value,
         effective_on: effective_on,
         status: :completed,
         source: :baseline
@@ -27,7 +28,16 @@ class ProviderChangeBaselineService
 
 private
 
-  attr_reader :provider, :attribute_name
+  attr_reader :provider, :attribute_name, :status_value
+
+  def baseline_value
+    # The supplied status lets a caller that has already mutated the provider
+    # (restore clears archived_at) still capture the status it held when the
+    # change was made, rather than re-reading the post-change status.
+    return { "status" => status_value.presence || provider.status } if attribute_name == "status"
+
+    provider.public_send(attribute_name)
+  end
 
   def original_value_already_lost?
     provider.provider_changes.completed.for_attribute(attribute_name).exists?
