@@ -317,39 +317,6 @@ module ProviderHelper
     { key: { text: "Provider status" }, value: { text: provider.status_label } }
   end
 
-  def mark_as_inactive_rows(inactive_period)
-    [
-      {
-        key: { text: "Inactive period start date" },
-        value: { text: inactive_period["start_date"].to_date.strftime("%d %B %Y") },
-        actions: [{ href: provider_mark_as_inactive_path, visually_hidden_text: "start date" }]
-      },
-      {
-        key: { text: "Why did the provider become inactive" },
-        value: { text: inactive_reasons_html(inactive_period["reasons_for_inactive"]) },
-        actions: [{ href: provider_mark_as_inactive_reasons_path, visually_hidden_text: "reasons" }]
-      },
-    ]
-  end
-
-  def mark_as_active_rows(inactive_period)
-    [
-      {
-        key: { text: "Inactive period end date" },
-        value: { text: inactive_period["end_date"].to_date.to_fs(:govuk) },
-        actions: [{ href: provider_mark_as_active_path, visually_hidden_text: "end date" }]
-      },
-    ]
-  end
-
-  def inactive_reasons_html(reasons)
-    content_tag(:ul, class: "govuk-list govuk-list") do
-      reasons.map { |reason|
-        content_tag(:li, reason)
-      }.join.html_safe
-    end
-  end
-
   def display_inactive_period(period)
     [
       { key: { text: "Starts on" },
