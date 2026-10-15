@@ -54,6 +54,158 @@ RSpec.describe Providers::ApplyProviderChangeJob, type: :job do
       end
     end
 
+    context "when the provider has since been archived" do
+      let(:provider) { create(:provider, :archived, code: "OLD") }
+      let(:provider_change) do
+        create(:provider_change, provider: provider, value: "ABC")
+      end
+
+      it "does not apply the change to the provider" do
+        expect { perform }
+          .not_to(change { provider_change.provider.reload.code })
+      end
+
+      it "marks the change as failed with an archived-provider message" do
+        expect { perform }
+          .to change { provider_change.reload.status }
+          .from("pending").to("failed")
+
+        expect(provider_change.error_message).to eq("Provider was archived before the change could be applied")
+      end
+
+      it "records when the change was processed" do
+        expect { perform }
+          .to change { provider_change.reload.processed_at }
+          .from(nil)
+      end
+
+      context "when the change is a status change" do
+        let(:provider_change) do
+          create(:provider_change, :status_change, provider: provider,
+                                                   value: { "status" => "inactive", "reason_ids" => ["no_current_cohorts"] })
+        end
+
+        it "marks the change as failed via the transition guard" do
+          expect { perform }
+            .to change { provider_change.reload.status }
+            .from("pending").to("failed")
+
+          expect(provider_change.error_message)
+            .to eq("Status cannot change from archived to inactive")
+        end
+
+        it "does not create an inactive period" do
+          expect { perform }
+            .not_to(change { provider.reload.inactive_periods })
+        end
+      end
+    end
+
+    context "when the provider has since been discarded" do
+      let(:provider) { create(:provider, code: "OLD") }
+      let(:provider_change) do
+        create(:provider_change, provider: provider, value: "ABC")
+      end
+
+      before { provider.discard! }
+
+      it "does not apply the change to the provider" do
+        expect { perform }
+          .not_to(change { provider.reload.code })
+      end
+
+      it "marks the change as failed with a discarded-provider message" do
+        expect { perform }
+          .to change { provider_change.reload.status }
+          .from("pending").to("failed")
+
+        expect(provider_change.error_message).to eq("Provider was discarded before the change could be applied")
+      end
+
+      it "records when the change was processed" do
+        expect { perform }
+          .to change { provider_change.reload.processed_at }
+          .from(nil)
+      end
+
+      context "when the change is a status change" do
+        let(:provider_change) do
+          create(:provider_change, :status_change, provider: provider,
+                                                   value: { "status" => "inactive", "reason_ids" => ["no_current_cohorts"] })
+        end
+
+        it "marks the change as failed with a discarded-provider message" do
+          expect { perform }
+            .to change { provider_change.reload.status }
+            .from("pending").to("failed")
+
+          expect(provider_change.error_message).to eq("Provider was discarded before the change could be applied")
+        end
+
+        it "does not create an inactive period" do
+          expect { perform }
+            .not_to(change { provider.reload.inactive_periods })
+        end
+      end
+    end
+
+    context "when the change is destroyed by a mid-apply archive" do
+      let(:provider) { create(:provider) }
+      let(:provider_change) do
+        create(:provider_change, :status_change, provider: provider, value: { "status" => "inactive" })
+      end
+
+      before do
+        provider_change # materialise before the stub
+
+        allow(Providers::ApplyStatusChangeService).to receive(:call) do
+          provider.archive! # destroys the pending change
+          raise StandardError, "archive landed mid-apply"
+        end
+      end
+
+      it "does not raise out of the job" do
+        expect { perform }.not_to raise_error
+      end
+
+      it "leaves the destroyed change to the archive's bookkeeping" do
+        perform
+
+        expect(ProviderChange.exists?(provider_change.id)).to be(false)
+        expect(provider.reload).to be_archived
+      end
+    end
+
+    context "when applying the change raises" do
+      let(:provider) { create(:provider) }
+      let(:provider_change) do
+        create(:provider_change, :status_change, provider: provider, value: { "status" => "inactive" })
+      end
+
+      before do
+        allow(Providers::ApplyStatusChangeService)
+          .to receive(:call).and_raise(StandardError, "lock wait timeout")
+      end
+
+      it "marks the change as failed instead of aborting" do
+        expect { perform }.not_to raise_error
+
+        expect(provider_change.reload).to be_failed
+        expect(provider_change.error_message).to eq("lock wait timeout")
+      end
+
+      it "records when the change was processed" do
+        expect { perform }
+          .to change { provider_change.reload.processed_at }
+          .from(nil)
+      end
+
+      it "leaves the provider untouched" do
+        expect { perform }
+          .not_to(change { provider.reload.status })
+      end
+    end
+
     context "when the value is not valid for the provider" do
       let(:provider_change) do
         create(:provider_change, provider: create(:provider, code: "OLD"), value: "AAAA")
@@ -74,6 +226,53 @@ RSpec.describe Providers::ApplyProviderChangeJob, type: :job do
       it "keeps the provider code unchanged" do
         expect { perform }
           .not_to(change { provider_change.provider.reload.code })
+      end
+    end
+
+    context "when the change is a status change" do
+      let(:provider) { create(:provider) }
+      let(:provider_change) do
+        create(:provider_change, :status_change, provider: provider, effective_on: Date.current,
+                                                 value: { "status" => new_status, "reason_ids" => ["no_current_cohorts"], "other_reason" => other_reason })
+      end
+
+      let(:new_status) { "inactive" }
+      let(:other_reason) { nil }
+
+      it "applies the status transition" do
+        expect { perform }
+          .to change { provider_change.provider.reload.status }
+          .from("active").to("inactive")
+
+        expect(provider_change.reload).to be_completed
+        expect(provider.reload.inactive_periods.sole["reasons_for_inactive"]).to eq(["No current cohorts"])
+      end
+
+      context "with a custom reason" do
+        let(:other_reason) { "Custom reason" }
+        let(:provider_change) do
+          create(:provider_change, :status_change, provider: provider, effective_on: Date.current,
+                                                   value: { "status" => new_status, "reason_ids" => %w[no_current_cohorts other], "other_reason" => other_reason })
+        end
+
+        it "records the custom reason label" do
+          perform
+
+          expect(provider.reload.inactive_periods.sole["reasons_for_inactive"])
+            .to eq(["No current cohorts", "Custom reason"])
+        end
+      end
+
+      context "when the new status is not a transitionable status" do
+        let(:new_status) { "archived" }
+
+        it "marks the change as failed" do
+          expect { perform }
+            .to change { provider_change.reload.status }
+            .from("pending").to("failed")
+
+          expect(provider_change.reload.error_message).to include("Status cannot change from active to archived")
+        end
       end
     end
   end

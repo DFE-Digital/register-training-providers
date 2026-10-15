@@ -17,6 +17,11 @@ FactoryBot.define do
       value { "10000001" }
     end
 
+    trait :status_change do
+      attribute_name { "status" }
+      value { { "status" => "inactive" } }
+    end
+
     trait :baseline do
       source { "baseline" }
       status { "completed" }
