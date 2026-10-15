@@ -57,7 +57,8 @@ class ProviderChange < ApplicationRecord
 
   enum :source, {
     requested: "requested",
-    baseline: "baseline"
+    baseline: "baseline",
+    system: "system"
   }
 
   validates :attribute_name, presence: true, inclusion: { in: CHANGEABLE_ATTRIBUTES }
