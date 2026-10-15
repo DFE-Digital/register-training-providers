@@ -6,6 +6,7 @@ RSpec.feature "Archive Provider" do
     and_i_confirm_archiving_the_provider
     then_i_should_be_redirected_to_the_provider_details_page
     and_i_should_see_a_success_message
+    and_the_archive_is_recorded_in_the_provider_status_history
   end
 
   scenario "Accreditation buttons are not available after archiving a provider" do
@@ -18,6 +19,18 @@ RSpec.feature "Archive Provider" do
 
   def and_i_should_see_a_success_message
     expect(page).to have_notification_banner("Success", "Provider archived")
+  end
+
+  def and_the_archive_is_recorded_in_the_provider_status_history
+    provider.reload
+
+    archive_change = provider.provider_changes.requested.for_attribute("status").sole
+    expect(archive_change).to have_attributes(
+      value: { "status" => "archived" },
+      status: "completed",
+      creator: current_user
+    )
+    expect(provider.provider_changes.baseline.for_attribute("status").sole.value).to eq("status" => "active")
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
