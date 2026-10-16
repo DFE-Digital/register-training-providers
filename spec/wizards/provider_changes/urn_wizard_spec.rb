@@ -191,5 +191,39 @@ RSpec.describe ProviderChanges::UrnWizard do
         value: "123456"
       )
     end
+
+    context "when the URN is cleared" do
+      before do
+        state_store.write(
+          effective_on: Date.new(2027, 1, 15),
+          urn: ""
+        )
+      end
+
+      it "stores a blank value" do
+        expect(wizard.provider_change_attributes).to eq(
+          attribute_name: "urn",
+          effective_on: Date.new(2027, 1, 15),
+          value: ""
+        )
+      end
+    end
+
+    context "when no URN is in the state store" do
+      before do
+        state_store.write(
+          effective_on: Date.new(2027, 1, 15),
+          urn: nil
+        )
+      end
+
+      it "stores a blank value rather than nil" do
+        expect(wizard.provider_change_attributes).to eq(
+          attribute_name: "urn",
+          effective_on: Date.new(2027, 1, 15),
+          value: ""
+        )
+      end
+    end
   end
 end

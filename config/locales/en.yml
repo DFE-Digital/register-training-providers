@@ -144,7 +144,6 @@ en:
               blank: "Enter UK provider reference number (UKPRN)"
               invalid: "Enter a valid UK provider reference number (UKPRN)"
             urn:
-              blank: "Enter unique reference number (URN)"
               invalid: "Enter a valid unique reference number (URN)"
             code:
               blank: "Enter provider code"
@@ -217,7 +216,6 @@ en:
         provider_changes/steps/urn_step:
           attributes:
             urn:
-              blank: "Enter unique reference number (URN)"
               invalid: "Enter a valid unique reference number (URN)"
               same: "Enter a different unique reference number (URN)"
         provider_changes/steps/legal_name_step:

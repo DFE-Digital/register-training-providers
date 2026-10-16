@@ -386,7 +386,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
     fill_in "Operating name", with: @provider.operating_name
     fill_in "Legal name (optional)", with: @provider.legal_name
     fill_in "UK provider reference number (UKPRN)", with: @provider.ukprn
-    fill_in "Unique reference number (URN)", with: @provider.urn if @provider.urn.present?
+    fill_in "Unique reference number (URN) (optional)", with: @provider.urn
     fill_in "Provider code", with: @provider.code
 
     click_on("Continue")

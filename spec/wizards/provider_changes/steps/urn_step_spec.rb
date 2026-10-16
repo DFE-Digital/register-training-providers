@@ -45,23 +45,36 @@ RSpec.describe ProviderChanges::Steps::UrnStep do
   end
 
   describe "optionality" do
-    context "when the provider does not require a URN" do
-      let(:provider) { create(:provider, urn: nil) }
-
-      it "allows a blank URN" do
-        expect(described_class.new(wizard: wizard, urn: "")).to be_valid
-      end
+    it "allows a blank URN" do
+      expect(described_class.new(wizard: wizard, urn: "")).to be_valid
     end
 
-    context "when the provider requires a URN" do
-      let(:provider) { create(:provider, :scitt, urn: "654321") }
+    it "normalises a blank URN to nil" do
+      step = described_class.new(wizard: wizard, urn: "")
+      step.valid?
 
-      it "rejects a blank URN" do
-        step = described_class.new(wizard: wizard, urn: "")
+      expect(step.urn).to be_nil
+    end
 
-        expect(step).not_to be_valid
-        expect(step.errors[:urn]).to include("Enter unique reference number (URN)")
-      end
+    it "normalises a whitespace-only URN to nil" do
+      step = described_class.new(wizard: wizard, urn: "   ")
+      step.valid?
+
+      expect(step.urn).to be_nil
+    end
+
+    it "strips surrounding whitespace from a URN" do
+      step = described_class.new(wizard: wizard, urn: " 123456 ")
+      step.valid?
+
+      expect(step.urn).to eq("123456")
+      expect(step.errors[:urn]).to be_empty
+    end
+
+    it "does not consult the provider when the URN is blank" do
+      step = described_class.new(wizard: double("wizard"), urn: "")
+
+      expect(step).to be_valid
     end
   end
 
