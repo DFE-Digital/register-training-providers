@@ -1,7 +1,7 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-10-14T14:25:59Z
+**Generated:** 2026-10-26T10:32:50Z
 **Processor:** DfE::Wizard::StepsProcessor
 
 ## Overview
@@ -9,11 +9,11 @@
 | Metric                           | Value |
 | -------------------------------- | ----- |
 | Total Steps                      | 4     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
+| Simple Transitions               | 2     |
+| Conditional Transitions          | 1     |
 | Multiple Conditional Transitions | 0     |
 | Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **0** |
+| **Total Transitions**            | **3** |
 
 ## Root Entry Point (Fixed)
 
@@ -25,12 +25,12 @@ All users start at this step. No conditional logic applies.
 
 ```
 [:new_status]
-├─→ [:reasons]  (✓)
+├─→ [:reasons] reason_capture_required? (✓)
 │   ↓
 │ [:effective_date]
 │   ↓
 │ [:check_your_answers]
-└─→ [:effective_date]  (✗)
+└─→ [:effective_date] reason_capture_required? (✗)
 ```
 
 ### Legend
@@ -94,6 +94,10 @@ this step's purpose, user interactions, and business logic.
 | -------------- | --------------------------- | :------: | ----------- |
 | `reasons`      | `ActiveModel::Type::Value`  |    ✗     |             |
 | `other_reason` | `ActiveModel::Type::String` |    ✗     |             |
+
+#### Validations
+
+- **other_reason** (`length`):
 
 #### Operations
 
@@ -173,28 +177,27 @@ Conditional transitions split the flow into two branches based on a predicate ev
 
 #### `new_status` → `reasons` OR `effective_date`
 
-| Property        | Value            |
-| --------------- | ---------------- |
-| From            | `new_status`     |
-| Condition       | `Condition`      |
-| Then (if true)  | `reasons`        |
-| Else (if false) | `effective_date` |
+| Property        | Value                      |
+| --------------- | -------------------------- |
+| From            | `new_status`               |
+| Condition       | `reason_capture_required?` |
+| Then (if true)  | `reasons`                  |
+| Else (if false) | `effective_date`           |
 
 **Flow Logic:**
 
-Evaluates the predicate `Condition`:
+Evaluates the predicate `reason_capture_required?`:
 
 - If condition is **true** → proceed to `reasons`
 - If condition is **false** → proceed to `effective_date`
-  "
 
 ## Wizard Statistics
 
 | Metric                           | Count |
 | -------------------------------- | ----- |
 | Total Steps                      | 4     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
+| Simple Transitions               | 2     |
+| Conditional Transitions          | 1     |
 | Multiple Conditional Transitions | 0     |
 | Custom Branching Transitions     | 0     |
 | **Total Transitions**            | **3** |
@@ -262,7 +265,14 @@ Evaluates the predicate `Condition`:
           :type: "ActiveModel::Type::String"
         }
       ],
-      :validators: [],
+      :validators: [
+        {
+          :name: "other_reason",
+          :class: "ActiveModel::Validations::LengthValidator",
+          :type: "length",
+          :message: null
+        }
+      ],
       :operations: [
         {
           :name: "validate",
@@ -343,15 +353,15 @@ Evaluates the predicate `Condition`:
       :then: "reasons",
       :else: "effective_date",
       :type: "conditional",
-      :label: null
+      :label: "reason_capture_required?"
     }
   ],
   :counts: {
     :steps: 4,
-    :simple_edges: 2,
-    :conditional_edges: 1,
-    :multiple_conditional_edges: 0,
-    :custom_branching_edges: 0
+    :simple_transitions: 2,
+    :conditional_transitions: 1,
+    :multiple_conditional_transitions: 0,
+    :custom_branching_transitions: 0
   },
   :wizard_name: "Provider changes/status wizard"
 }

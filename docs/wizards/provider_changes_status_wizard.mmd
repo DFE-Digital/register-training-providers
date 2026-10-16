@@ -5,5 +5,5 @@ flowchart TD
   check_your_answers["Check Your Answers"]
   reasons --> effective_date
   effective_date --> check_your_answers
-  new_status -->|#<Proc:0x0000716639160010 /home/defong/repos/DfE/register-training-providers/app/wizards/provider_changes/status_wizard.rb:11 (lambda)>: ✓ yes| reasons
-  new_status -->|#<Proc:0x0000716639160010 /home/defong/repos/DfE/register-training-providers/app/wizards/provider_changes/status_wizard.rb:11 (lambda)>: ✗ no| effective_date
+  new_status -->|reason_capture_required?: ✓ yes| reasons
+  new_status -->|reason_capture_required?: ✗ no| effective_date
