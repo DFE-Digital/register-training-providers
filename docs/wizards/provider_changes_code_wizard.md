@@ -1,25 +1,28 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-09-11T14:21:05Z
+**Generated:** 2026-10-16T08:49:36Z
 **Processor:** DfE::Wizard::StepsProcessor
+
 
 ## Overview
 
-| Metric                           | Value |
-| -------------------------------- | ----- |
-| Total Steps                      | 3     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
-| Multiple Conditional Transitions | 0     |
-| Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **0** |
+| Metric                           | Value                       |
+|----------------------------------|-----------------------------|
+| Total Steps                      | 3              |
+| Simple Transitions               | 2       |
+| Conditional Transitions          | 0         |
+| Multiple Conditional Transitions | 0        |
+| Custom Branching Transitions     | 0       |
+| **Total Transitions**            | **2**    |
+
 
 ## Root Entry Point (Fixed)
 
 **Entry Point:** `effective_academic_year`
 
 All users start at this step. No conditional logic applies.
+
 
 ## Wizard Flow
 
@@ -38,13 +41,15 @@ All users start at this step. No conditional logic applies.
 - **┼** Multiple conditional edge (N-way branching)
 - **⊕** Custom branching edge (complex status-driven routing)
 
+
 ## Steps Inventory
 
-| Step ID                   | Label                   | Class                                               |
-| ------------------------- | ----------------------- | --------------------------------------------------- |
+| Step ID | Label | Class |
+|---------|-------|-------|
 | `effective_academic_year` | Effective Academic Year | `ProviderChanges::Steps::EffectiveAcademicYearStep` |
-| `new_code`                | New Code                | `ProviderChanges::Steps::CodeStep`                  |
-| `check_your_answers`      | Check Your Answers      | `ProviderChanges::Steps::CheckYourAnswersStep`      |
+| `new_code` | New Code | `ProviderChanges::Steps::CodeStep` |
+| `check_your_answers` | Check Your Answers | `ProviderChanges::Steps::CheckYourAnswersStep` |
+
 
 ## Detailed Step Specifications
 
@@ -62,20 +67,21 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute      | Type                      | Required | Description |
-| -------------- | ------------------------- | :------: | ----------- |
-| `effective_on` | `ActiveModel::Type::Date` |    ✗     |             |
+| Attribute | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `effective_on` | `ActiveModel::Type::Date` | ✗ |  |
 
 #### Validations
 
-- **effective_on** (`inclusion`):
+- **effective_on** (`inclusion`): 
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ### Step: `new_code`
 
@@ -91,22 +97,23 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute | Type                       | Required | Description |
-| --------- | -------------------------- | :------: | ----------- |
-| `code`    | `ActiveModel::Type::Value` |    ✗     |             |
+| Attribute | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `code` | `ActiveModel::Type::Value` | ✗ |  |
 
 #### Validations
 
-- **code** (`presence`):
-- **code** (`format`):
-- **code** (`length`):
+- **code** (`presence`): 
+- **code** (`format`): 
+- **code** (`length`): 
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ### Step: `check_your_answers`
 
@@ -122,10 +129,11 @@ this step's purpose, user interactions, and business logic.
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ## Transitions Reference
 
@@ -136,25 +144,28 @@ This wizard contains **2 transitions** across 4 types:
 - **0 multiple conditional transitions** – N-way branching
 - **0 custom branching transitions** – Complex status-driven routing
 
+
 ### Simple Transitions
 
 Simple transitions allow linear, unconditional progression from one step to the next.
 
-| From                      | To                   | Behavior                       |
-| ------------------------- | -------------------- | ------------------------------ |
-| `effective_academic_year` | `new_code`           | Always proceeds (no condition) |
-| `new_code`                | `check_your_answers` | Always proceeds (no condition) |
+| From | To | Behavior |
+|------|-----|----------|
+| `effective_academic_year` | `new_code` | Always proceeds (no condition) |
+| `new_code` | `check_your_answers` | Always proceeds (no condition) |
+
 
 ## Wizard Statistics
 
-| Metric                           | Count |
-| -------------------------------- | ----- |
-| Total Steps                      | 3     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
-| Multiple Conditional Transitions | 0     |
-| Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **2** |
+| Metric | Count |
+|--------|-------|
+| Total Steps | 3 |
+| Simple Transitions | 2 |
+| Conditional Transitions | 0 |
+| Multiple Conditional Transitions | 0 |
+| Custom Branching Transitions | 0 |
+| **Total Transitions** | **2** |
+
 
 ## Example User Journeys
 
@@ -177,6 +188,7 @@ Simple transitions allow linear, unconditional progression from one step to the 
 ```
 
 **Note:** Actual journeys depend on wizard state transitions and predicates.
+
 
 ## Raw Metadata
 
@@ -286,10 +298,10 @@ Simple transitions allow linear, unconditional progression from one step to the 
   ],
   :counts: {
     :steps: 3,
-    :simple_edges: 2,
-    :conditional_edges: 0,
-    :multiple_conditional_edges: 0,
-    :custom_branching_edges: 0
+    :simple_transitions: 2,
+    :conditional_transitions: 0,
+    :multiple_conditional_transitions: 0,
+    :custom_branching_transitions: 0
   },
   :wizard_name: "Provider changes/code wizard"
 }

@@ -9,6 +9,6 @@ digraph Provider_changes_status_wizard {
   check_your_answers [label="Check Your Answers"];
   reasons -> effective_date [style=solid];
   effective_date -> check_your_answers [style=solid];
-  new_status -> reasons [label="condition\nyes", style=dashed, color=blue];
-  new_status -> effective_date [label="condition\nno", style=dashed, color=blue];
+  new_status -> reasons [label="reason_capture_required?\nyes", style=dashed, color=blue];
+  new_status -> effective_date [label="reason_capture_required?\nno", style=dashed, color=blue];
 }

@@ -1,19 +1,21 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-10-14T14:25:59Z
+**Generated:** 2026-10-16T08:49:36Z
 **Processor:** DfE::Wizard::StepsProcessor
+
 
 ## Overview
 
-| Metric                           | Value |
-| -------------------------------- | ----- |
-| Total Steps                      | 4     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
-| Multiple Conditional Transitions | 0     |
-| Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **0** |
+| Metric                           | Value                       |
+|----------------------------------|-----------------------------|
+| Total Steps                      | 4              |
+| Simple Transitions               | 2       |
+| Conditional Transitions          | 1         |
+| Multiple Conditional Transitions | 0        |
+| Custom Branching Transitions     | 0       |
+| **Total Transitions**            | **3**    |
+
 
 ## Root Entry Point (Fixed)
 
@@ -21,16 +23,17 @@
 
 All users start at this step. No conditional logic applies.
 
+
 ## Wizard Flow
 
 ```
 [:new_status]
-├─→ [:reasons]  (✓)
+├─→ [:reasons] reason_capture_required? (✓)
 │   ↓
 │ [:effective_date]
 │   ↓
 │ [:check_your_answers]
-└─→ [:effective_date]  (✗)
+└─→ [:effective_date] reason_capture_required? (✗)
 ```
 
 ### Legend
@@ -40,14 +43,16 @@ All users start at this step. No conditional logic applies.
 - **┼** Multiple conditional edge (N-way branching)
 - **⊕** Custom branching edge (complex status-driven routing)
 
+
 ## Steps Inventory
 
-| Step ID              | Label              | Class                                             |
-| -------------------- | ------------------ | ------------------------------------------------- |
-| `new_status`         | New Status         | `ProviderChanges::Steps::StatusStep`              |
-| `reasons`            | Reasons            | `ProviderChanges::Steps::ReasonsStep`             |
-| `effective_date`     | Effective Date     | `ProviderChanges::Steps::StatusEffectiveDateStep` |
-| `check_your_answers` | Check Your Answers | `ProviderChanges::Steps::CheckYourAnswersStep`    |
+| Step ID | Label | Class |
+|---------|-------|-------|
+| `new_status` | New Status | `ProviderChanges::Steps::StatusStep` |
+| `reasons` | Reasons | `ProviderChanges::Steps::ReasonsStep` |
+| `effective_date` | Effective Date | `ProviderChanges::Steps::StatusEffectiveDateStep` |
+| `check_your_answers` | Check Your Answers | `ProviderChanges::Steps::CheckYourAnswersStep` |
+
 
 ## Detailed Step Specifications
 
@@ -65,16 +70,17 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute    | Type                       | Required | Description |
-| ------------ | -------------------------- | :------: | ----------- |
-| `new_status` | `ActiveModel::Type::Value` |    ✗     |             |
+| Attribute | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `new_status` | `ActiveModel::Type::Value` | ✗ |  |
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ### Step: `reasons`
 
@@ -90,17 +96,22 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute      | Type                        | Required | Description |
-| -------------- | --------------------------- | :------: | ----------- |
-| `reasons`      | `ActiveModel::Type::Value`  |    ✗     |             |
-| `other_reason` | `ActiveModel::Type::String` |    ✗     |             |
+| Attribute | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `reasons` | `ActiveModel::Type::Value` | ✗ |  |
+| `other_reason` | `ActiveModel::Type::String` | ✗ |  |
+
+#### Validations
+
+- **other_reason** (`length`): 
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ### Step: `effective_date`
 
@@ -116,19 +127,20 @@ this step's purpose, user interactions, and business logic.
 
 #### Attributes
 
-| Attribute            | Type                         | Required | Description |
-| -------------------- | ---------------------------- | :------: | ----------- |
-| `effective_on_day`   | `ActiveModel::Type::Integer` |    ✗     |             |
-| `effective_on_month` | `ActiveModel::Type::Integer` |    ✗     |             |
-| `effective_on_year`  | `ActiveModel::Type::Integer` |    ✗     |             |
-| `effective_on`       | `ActiveModel::Type::Date`    |    ✗     |             |
+| Attribute | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `effective_on_day` | `ActiveModel::Type::Integer` | ✗ |  |
+| `effective_on_month` | `ActiveModel::Type::Integer` | ✗ |  |
+| `effective_on_year` | `ActiveModel::Type::Integer` | ✗ |  |
+| `effective_on` | `ActiveModel::Type::Date` | ✗ |  |
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ### Step: `check_your_answers`
 
@@ -144,10 +156,11 @@ this step's purpose, user interactions, and business logic.
 
 #### Operations
 
-| Operation  | Description        |
-| ---------- | ------------------ |
+| Operation | Description |
+|-----------|-------------|
 | `validate` | Validate operation |
-| `persist`  | Persist operation  |
+| `persist` | Persist operation |
+
 
 ## Transitions Reference
 
@@ -158,46 +171,50 @@ This wizard contains **3 transitions** across 4 types:
 - **0 multiple conditional transitions** – N-way branching
 - **0 custom branching transitions** – Complex status-driven routing
 
+
 ### Simple Transitions
 
 Simple transitions allow linear, unconditional progression from one step to the next.
 
-| From             | To                   | Behavior                       |
-| ---------------- | -------------------- | ------------------------------ |
-| `reasons`        | `effective_date`     | Always proceeds (no condition) |
+| From | To | Behavior |
+|------|-----|----------|
+| `reasons` | `effective_date` | Always proceeds (no condition) |
 | `effective_date` | `check_your_answers` | Always proceeds (no condition) |
+
 
 ### Conditional Transitions (If/Else)
 
+
 Conditional transitions split the flow into two branches based on a predicate evaluation.
+
 
 #### `new_status` → `reasons` OR `effective_date`
 
-| Property        | Value            |
-| --------------- | ---------------- |
-| From            | `new_status`     |
-| Condition       | `Condition`      |
-| Then (if true)  | `reasons`        |
+| Property | Value |
+|----------|-------|
+| From | `new_status` |
+| Condition | `reason_capture_required?` |
+| Then (if true) | `reasons` |
 | Else (if false) | `effective_date` |
 
 **Flow Logic:**
 
-Evaluates the predicate `Condition`:
-
+Evaluates the predicate `reason_capture_required?`:
 - If condition is **true** → proceed to `reasons`
 - If condition is **false** → proceed to `effective_date`
-  "
+
 
 ## Wizard Statistics
 
-| Metric                           | Count |
-| -------------------------------- | ----- |
-| Total Steps                      | 4     |
-| Simple Transitions               | 0     |
-| Conditional Transitions          | 0     |
-| Multiple Conditional Transitions | 0     |
-| Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **3** |
+| Metric | Count |
+|--------|-------|
+| Total Steps | 4 |
+| Simple Transitions | 2 |
+| Conditional Transitions | 1 |
+| Multiple Conditional Transitions | 0 |
+| Custom Branching Transitions | 0 |
+| **Total Transitions** | **3** |
+
 
 ## Example User Journeys
 
@@ -220,6 +237,7 @@ Evaluates the predicate `Condition`:
 ```
 
 **Note:** Actual journeys depend on wizard state transitions and predicates.
+
 
 ## Raw Metadata
 
@@ -262,7 +280,14 @@ Evaluates the predicate `Condition`:
           :type: "ActiveModel::Type::String"
         }
       ],
-      :validators: [],
+      :validators: [
+        {
+          :name: "other_reason",
+          :class: "ActiveModel::Validations::LengthValidator",
+          :type: "length",
+          :message: null
+        }
+      ],
       :operations: [
         {
           :name: "validate",
@@ -343,15 +368,15 @@ Evaluates the predicate `Condition`:
       :then: "reasons",
       :else: "effective_date",
       :type: "conditional",
-      :label: null
+      :label: "reason_capture_required?"
     }
   ],
   :counts: {
     :steps: 4,
-    :simple_edges: 2,
-    :conditional_edges: 1,
-    :multiple_conditional_edges: 0,
-    :custom_branching_edges: 0
+    :simple_transitions: 2,
+    :conditional_transitions: 1,
+    :multiple_conditional_transitions: 0,
+    :custom_branching_transitions: 0
   },
   :wizard_name: "Provider changes/status wizard"
 }

@@ -1,6 +1,9 @@
 require "ostruct"
 require "dfe/wizard/documentation/formatters/mermaid_formatter"
 require "dfe/wizard/documentation/formatters/graphviz_formatter"
+# Patch the gem's MarkdownFormatter (edge counts, stray quotes) before
+# generating docs.
+require "dfe_wizard/markdown_formatter_patch"
 
 namespace :wizard do
   namespace :docs do
