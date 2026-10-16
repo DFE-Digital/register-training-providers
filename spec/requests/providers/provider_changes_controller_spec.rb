@@ -53,5 +53,45 @@ RSpec.describe "Provider changes", type: :request do
         )
       )
     end
+
+    context "when the status wizard state has been lost" do
+      it "redirects to the wizard rather than reporting a successful confirmation" do
+        expect {
+          patch provider_change_update_step_path(
+            provider_id: provider.id,
+            field: "status",
+            step: "check-your-answers"
+          ), params: {}
+        }.not_to(change { ProviderChange.count })
+
+        expect(response).not_to redirect_to(provider_path(provider))
+        expect(flash[:success]).to be_nil
+      end
+    end
+
+    context "when the status wizard has partial state" do
+      before do
+        patch provider_change_update_step_path(
+          provider_id: provider.id,
+          field: "status",
+          step: "new-status"
+        ), params: { new_status: { new_status: "inactive" } }
+      end
+
+      it "preserves the state instead of clearing it as a duplicate confirmation" do
+        patch provider_change_update_step_path(
+          provider_id: provider.id,
+          field: "status",
+          step: "check-your-answers"
+        ), params: {}
+
+        expect(response).not_to redirect_to(provider_path(provider))
+        expect(flash[:success]).to be_nil
+
+        get provider_change_step_path(provider_id: provider.id, field: "status", step: "reasons")
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
   end
 end

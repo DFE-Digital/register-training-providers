@@ -181,5 +181,115 @@ RSpec.describe SaveProviderChangeService do
         end
       end
     end
+
+    context "when an identical change has since been superseded" do
+      let(:provider) { create(:provider, code: "OLD") }
+      let(:effective_on) { Date.current }
+
+      def save_code(new_code)
+        described_class.call(
+          provider: provider,
+          attribute_name: :code,
+          attributes: { attribute_name: "code", effective_on: effective_on, value: new_code },
+          creator: creator
+        )
+      end
+
+      it "applies the change rather than reusing the superseded row" do
+        save_code("ABC")
+        save_code("OLD")
+        save_code("ABC")
+
+        expect(provider.reload.code).to eq("ABC")
+        expect(provider.provider_changes.requested.completed.for_attribute(:code).count).to eq(3)
+      end
+    end
+
+    context "when the identical value reverts to the baseline within the window" do
+      let(:provider) { create(:provider, code: "OLD") }
+      let(:effective_on) { Date.current }
+
+      def save_code(new_code)
+        described_class.call(
+          provider: provider,
+          attribute_name: :code,
+          attributes: { attribute_name: "code", effective_on: effective_on, value: new_code },
+          creator: creator
+        )
+      end
+
+      it "applies the revert instead of reusing the baseline row" do
+        save_code("ABC")
+        save_code("OLD")
+
+        expect(provider.reload.code).to eq("OLD")
+        expect(
+          provider.provider_changes.requested.completed.for_attribute(:code).pluck(:value)
+        ).to eq(%w[ABC OLD])
+      end
+    end
+
+    context "when an identical change was just confirmed" do
+      let(:provider) { create(:provider, operating_name: "Old name") }
+      let(:attribute_name) { :operating_name }
+      let(:value) { "New name" }
+      let(:effective_on) { Date.current }
+
+      def save_change
+        described_class.call(provider:, attribute_name:, attributes:, creator:)
+      end
+
+      it "reuses the completed row instead of appending a duplicate history row" do
+        first_change = save_change
+
+        expect { save_change }
+          .not_to(change { provider.provider_changes.for_attribute(:operating_name).count })
+        expect(save_change).to eq(first_change.reload)
+      end
+
+      it "takes no second apply pass on the reused row" do
+        save_change
+        first_name = provider.reload.operating_name
+
+        save_change
+
+        expect(provider.reload.operating_name).to eq(first_name)
+        expect(provider.reload.operating_name).to eq("New name")
+      end
+
+      context "when the identical completed change is older than the reuse window" do
+        before do
+          save_change
+          provider.provider_changes.for_attribute(:operating_name).requested.sole.update_columns(
+            created_at: described_class::IDENTICAL_CONFIRM_REUSE_WINDOW.ago - 1.minute
+          )
+        end
+
+        it "records the change again as a new row" do
+          expect { save_change }
+            .to change { provider.provider_changes.for_attribute(:operating_name).count }.by(1)
+        end
+      end
+    end
+
+    context "when the identical status change is confirmed twice" do
+      let(:provider) { create(:provider) }
+      let(:attribute_name) { :status }
+      let(:value) { { "status" => "inactive", "reason_ids" => ["no_current_cohorts"] } }
+      let(:effective_on) { Date.current }
+
+      def save_change
+        described_class.call(provider:, attribute_name:, attributes:, creator:)
+      end
+
+      it "reuses the completed status row instead of appending a duplicate" do
+        first_change = save_change
+
+        expect { save_change }
+          .not_to(change { provider.provider_changes.requested.completed.for_attribute(:status).count })
+        expect(provider.provider_changes.requested.completed.for_attribute(:status).sole)
+          .to eq(first_change.reload)
+      end
+    end
   end
 end
