@@ -68,7 +68,7 @@
         <%= f.govuk_submit "Apply filters" %>
 
         <%= f.govuk_check_boxes_fieldset :provider_types, small: true, legend: { text: "Provider type", size: "s" }, form_group: { classes: "app-filter__group" } do %>
-          <% t("provider_types_labels").each do |value, label| %>
+          <% t("provider_types_labels").except(:scitt_or_school).each do |value, label| %>
             <%= f.govuk_check_box :provider_types, value, label: { text: label }, checked: filter_checked?(:provider_types, value) %>
           <% end %>
         <% end %>

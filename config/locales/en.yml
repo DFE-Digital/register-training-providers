@@ -322,8 +322,10 @@ en:
           label: Partnership end date (optional)
   provider_types_labels:
     hei: "Higher education institution (HEI)"
-    scitt_or_school: "School"
+    scitt: "School-centred initial teacher training (SCITT)"
+    school: "School"
     other: "Other"
+    scitt_or_school: "School"
   accreditation_labels:
     accredited: "Accredited"
     unaccredited: "Not accredited"

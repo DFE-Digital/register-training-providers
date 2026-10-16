@@ -5,7 +5,7 @@ FactoryBot.define do
       prefix = case provider&.provider_type&.to_s
                when "hei"
                  "1"
-               when "scitt"
+               when "scitt", "school"
                  "5"
                when "other"
                  ["1", "5"].sample
