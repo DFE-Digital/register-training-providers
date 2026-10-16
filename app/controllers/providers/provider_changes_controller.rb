@@ -47,10 +47,21 @@ module Providers
   private
 
     def save_provider_change
+      attributes = wizard.provider_change_attributes
+
+      # A stale "Confirm and continue" resubmit (double-click, re-submitted
+      # page) arrives after the first confirm has already applied the change
+      # and cleared the wizard state: its payload then carries no effective
+      # date, which no live confirmation can produce — every wizard's
+      # effective-date step validates effective_on presence before the
+      # review page is reachable. Skip it and land on the normal success
+      # redirect: the first confirm already recorded the change.
+      return if attributes[:effective_on].blank?
+
       SaveProviderChangeService.call(
         provider: provider,
         attribute_name: field,
-        attributes: wizard.provider_change_attributes,
+        attributes: attributes,
         creator: current_user
       )
     end
