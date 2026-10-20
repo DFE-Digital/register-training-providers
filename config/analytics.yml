@@ -90,7 +90,7 @@
     - town_or_city
     - updated_at
     - uprn
-    - effective_end_date
+    - effective_end_dates
     - types
   :accreditations:
     - id

@@ -165,6 +165,9 @@ Rails.application.routes.draw do
     # Listing
     get "addresses", to: "providers/addresses/lists#index", as: :addresses
 
+    # Historic
+    get "addresses/historic", to: "providers/addresses/historic#index", as: :historic_addresses
+
     # Manual entry (CRUD)
     get "addresses/new", to: "providers/addresses/manual_entry#new", as: :new_address
     post "addresses", to: "providers/addresses/manual_entry#create"

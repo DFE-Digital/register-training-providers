@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_093000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_113956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -44,15 +44,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_093000) do
     t.string "county"
     t.datetime "created_at", null: false
     t.datetime "discarded_at"
-    t.date "effective_end_date"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
     t.string "postcode", null: false
     t.uuid "provider_id", null: false
     t.string "town_or_city", null: false
-    t.string "types", default: [], array: true
     t.datetime "updated_at", null: false
     t.string "uprn", limit: 15
+    t.string "types", default: [], array: true
+    t.jsonb "effective_end_dates", default: {}
     t.index ["created_at"], name: "index_addresses_on_created_at"
     t.index ["provider_id"], name: "index_addresses_on_provider_id"
   end
@@ -210,17 +210,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_093000) do
   end
 
   create_table "provider_changes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "attribute_name", null: false
-    t.datetime "created_at", null: false
-    t.uuid "created_by_id"
-    t.date "effective_on", null: false
-    t.text "error_message"
-    t.datetime "processed_at"
     t.uuid "provider_id", null: false
-    t.string "source", default: "requested", null: false
-    t.string "status", default: "pending", null: false
-    t.datetime "updated_at", null: false
+    t.string "attribute_name", null: false
     t.jsonb "value", null: false
+    t.date "effective_on", null: false
+    t.string "status", default: "pending", null: false
+    t.uuid "created_by_id"
+    t.datetime "processed_at"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "source", default: "requested", null: false
     t.index ["created_by_id"], name: "index_provider_changes_on_created_by_id"
     t.index ["provider_id", "attribute_name", "status", "effective_on"], name: "idx_on_provider_id_attribute_name_status_effective__6547b4b7a9"
     t.index ["provider_id", "attribute_name"], name: "index_provider_changes_on_baseline_per_attribute", unique: true, where: "((source)::text = 'baseline'::text)"

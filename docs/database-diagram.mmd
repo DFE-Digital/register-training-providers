@@ -20,7 +20,7 @@ erDiagram
 		string address_line_3
 		string county
 		datetime discarded_at
-		date effective_end_date
+		jsonb effective_end_dates
 		decimal latitude
 		decimal longitude
 		string postcode
@@ -142,6 +142,7 @@ erDiagram
 		text error_message
 		datetime processed_at
 		uuid provider_id FK
+		string source
 		string status
 		jsonb value
 	}
@@ -168,7 +169,6 @@ erDiagram
 	AcademicYear ||--}o ProviderAcademicYear : ""
 	AcademicYear o|..}o Provider : ""
 	Provider ||--}o Accreditation : ""
-	Auditable o|--}o "Audited::Audit" : ""
 	Accreditation o|--}o "Audited::Audit" : ""
 	Address o|--}o "Audited::Audit" : ""
 	ApiClient o|--}o "Audited::Audit" : ""
@@ -182,7 +182,6 @@ erDiagram
 	Provider ||--}o Address : ""
 	ApiClient ||--}o AuthenticationToken : ""
 	User ||--}o ApiClient : ""
-	Associated o|--}o "Audited::Audit" : ""
 	User ||--}o AuthenticationToken : ""
 	User o|--}o "Blazer::Audit" : ""
 	"Blazer::Query" o|--}o "Blazer::Audit" : ""
