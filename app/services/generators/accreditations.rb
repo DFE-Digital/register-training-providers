@@ -7,7 +7,7 @@ module Generators
   private
 
     def target_providers
-      Provider.where.not(provider_type: "school")
+      Provider.all
     end
 
     def existing_target_data_joins
@@ -36,7 +36,7 @@ module Generators
       case provider.provider_type
       when "hei"
         "1"
-      when "scitt"
+      when "scitt", "school"
         "5"
       else
         ["1", "5"].sample

@@ -198,6 +198,12 @@ RSpec.describe ProviderHelper, type: :helper do
         {
           key: { text: "Provider type" },
           value: { text: provider.provider_type_label },
+          actions: [{ text: "History",
+                      visually_hidden_text: "of provider types",
+                      href: provider_changes_field_history_path(provider_id: provider.id, field: "provider_type") },
+                    { text: "Change",
+                      href: provider_change_step_path(provider_id: provider.id, field: "provider_type", step: "effective-date"),
+                      visually_hidden_text: "provider type" }],
         },
         {
           key: { text: "Accreditation status" },
@@ -278,6 +284,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of provider types",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "provider_type") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "provider_type", step: "effective-date"),
+                        visually_hidden_text: "provider type" }],
           },
           {
             key: { text: "Accreditation status" },
@@ -393,6 +405,12 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of provider types",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "provider_type") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "provider_type", step: "effective-date"),
+                        visually_hidden_text: "provider type" }],
           },
           {
             key: { text: "Accreditation status" },

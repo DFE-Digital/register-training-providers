@@ -157,8 +157,21 @@ module ProviderHelper
 
     rows = insert_accreditation_number_row(rows, provider)
 
-    # Add edit actions to editable fields (skip Provider type and Accreditation status)
+    # Add edit actions to editable fields (skip Accreditation status)
     editable_fields = {
+      "Provider type" => [{ text: "History",
+                            visually_hidden_text: "of provider types",
+                            href: provider_changes_field_history_path(
+                              provider_id: provider.id,
+                              field: "provider_type"
+                            ) },
+                          { text: "Change",
+                            visually_hidden_text: "provider type",
+                            href: provider_change_step_path(
+                              provider_id: provider.id,
+                              field: "provider_type",
+                              step: "effective-date"
+                            ) }],
       "Operating name" => [{ text: "History",
                              visually_hidden_text: "of operating names",
                              href: provider_changes_field_history_path(

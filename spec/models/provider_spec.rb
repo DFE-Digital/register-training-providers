@@ -197,11 +197,11 @@ RSpec.describe Provider, type: :model do
   end
 
   describe "#sync_accreditation_status!" do
-    context "when provider type switching is needed" do
+    context "when the accreditation status changes" do
       context "when school becomes accredited" do
         let(:provider) { create(:provider, :school) }
 
-        it "changes provider type to scitt and status to accredited when accreditation is added" do
+        it "changes status to accredited and preserves the school provider type" do
           # Initially unaccredited school
           expect(provider.provider_type).to eq("school")
           expect(provider.accreditation_status).to eq("unaccredited")
@@ -209,9 +209,9 @@ RSpec.describe Provider, type: :model do
           # Add a current accreditation - this should trigger automatic sync via callback
           create(:accreditation, :current, provider: provider, number: "5123")
 
-          # Check that the provider was automatically switched
+          # Check that only the status was synced
           provider.reload
-          expect(provider.provider_type).to eq("scitt")
+          expect(provider.provider_type).to eq("school")
           expect(provider.accreditation_status).to eq("accredited")
         end
       end
@@ -219,7 +219,7 @@ RSpec.describe Provider, type: :model do
       context "when scitt loses accreditation" do
         let(:provider) { create(:provider, :accredited, :scitt) }
 
-        it "changes provider type to school and status to unaccredited when accreditation expires" do
+        it "changes status to unaccredited and preserves the scitt provider type" do
           # Initially accredited scitt (factory creates accreditation)
           expect(provider.provider_type).to eq("scitt")
           expect(provider.accreditation_status).to eq("accredited")
@@ -230,8 +230,8 @@ RSpec.describe Provider, type: :model do
           # Manually trigger sync to test the logic
           provider.sync_accreditation_status!
 
-          # Check that provider switched to school
-          expect(provider.reload.provider_type).to eq("school")
+          # Check that only the status was synced
+          expect(provider.reload.provider_type).to eq("scitt")
           expect(provider.reload.accreditation_status).to eq("unaccredited")
         end
       end
@@ -269,6 +269,36 @@ RSpec.describe Provider, type: :model do
           expect(provider.provider_type).to eq("hei")
           expect(provider.accreditation_status).to eq("unaccredited")
         end
+      end
+    end
+  end
+
+  describe "independent provider type and accreditation status" do
+    context "when a school is accredited" do
+      let(:provider) { create(:provider, :school_with_accreditation) }
+
+      it "remains a school with a current accreditation" do
+        expect(provider).to be_valid
+        expect(provider.provider_type).to eq("school")
+        expect(provider.accreditation_status).to eq("accredited")
+        expect(provider).to have_current_accreditations
+
+        expect(provider.reload.provider_type).to eq("school")
+        expect(provider.reload.accreditation_status).to eq("accredited")
+      end
+    end
+
+    context "when a scitt is unaccredited" do
+      let(:provider) { create(:provider, :scitt_without_accreditation) }
+
+      it "remains a scitt with no current accreditation" do
+        expect(provider).to be_valid
+        expect(provider.provider_type).to eq("scitt")
+        expect(provider.accreditation_status).to eq("unaccredited")
+        expect(provider).not_to have_current_accreditations
+
+        expect(provider.reload.provider_type).to eq("scitt")
+        expect(provider.reload.accreditation_status).to eq("unaccredited")
       end
     end
   end

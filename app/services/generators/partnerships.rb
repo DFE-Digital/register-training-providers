@@ -7,7 +7,7 @@ module Generators
   private
 
     def target_providers
-      Provider.where(provider_type: ProviderTypeEnum::UNACCREDITED_PROVIDER_TYPES.keys)
+      Provider.where(accreditation_status: :unaccredited)
         .where.not(id: Accreditation.distinct.select(:provider_id))
     end
 

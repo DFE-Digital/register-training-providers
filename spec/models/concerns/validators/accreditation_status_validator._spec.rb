@@ -13,11 +13,11 @@ RSpec.describe AccreditationStatusValidator, type: :model do
 
   subject { DummyModel.new(accreditation_status:) }
 
-  context "with valid accreditation status" do
-    AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+  AccreditationStatusEnum::ACCREDITATION_STATUSES.each_value do |valid_status|
+    context "with valid accreditation status #{valid_status}" do
       let(:accreditation_status) { valid_status }
 
-      it "is valid when accreditation_status is #{valid_status}" do
+      it "is valid" do
         expect(subject).to be_valid
       end
     end

@@ -55,23 +55,7 @@ private
   def filter_by_accreditation_status(scope)
     return scope if sanitised_accreditation_statuses.blank?
 
-    allowed_statuses =
-      if sanitised_provider_types.present?
-        sanitised_provider_types.flat_map { |provider_type|
-          case provider_type
-          when "scitt"  then ["accredited"]
-          when "school" then ["unaccredited"]
-          else VALID_ACCREDITATION_STATUSES
-          end
-        }.uniq
-      else
-        sanitised_accreditation_statuses
-      end
-
-    filtered_statuses = sanitised_accreditation_statuses & allowed_statuses
-    return scope.none if filtered_statuses.empty?
-
-    scope.where(accreditation_status: filtered_statuses)
+    scope.where(accreditation_status: sanitised_accreditation_statuses)
   end
 
   def filter_by_archived(scope)
