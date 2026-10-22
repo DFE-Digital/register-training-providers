@@ -2,8 +2,8 @@
   "name": "app",
   "dependencies": {
     "accessible-autocomplete": "^3.0.2",
-    "govuk-frontend": "6.5.1",
-    "sass": "^1.105.1"
+    "govuk-frontend": "6.6.0",
+    "sass": "^1.105.2"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules --quiet-deps",
