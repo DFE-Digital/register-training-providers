@@ -132,7 +132,7 @@ module AddressHelper
       safe_join([
         effective_end_dates.map do |end_date|
           tag.div(class: "govuk-summary-list__row") do
-            tag.dt("#{end_date[0]} address", class: "govuk-summary-list__key") +
+            tag.dt("#{end_date[0].capitalize} address", class: "govuk-summary-list__key") +
             tag.dd(end_date[1].to_date.to_fs(:govuk), class: "govuk-summary-list__value")
           end
         end
