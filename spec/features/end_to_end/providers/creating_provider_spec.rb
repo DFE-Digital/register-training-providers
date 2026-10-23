@@ -184,6 +184,19 @@ RSpec.feature "Add Provider" do
       and_i_click_on("Continue")
     end
 
+    def accredited_provider_number
+      accredited_provider_numbers_by_type.fetch(@provider_details_to_use.provider_type)
+    end
+
+    def accredited_provider_numbers_by_type
+      {
+        "hei" => "1001",
+        "scitt" => "5678",
+        "school" => "5111",
+        "other" => "5222",
+      }
+    end
+
     def and_i_fill_in_the_address_details
       and_i_am_taken_to("/providers/new/addresses/find")
       and_i_can_see_the_title("Find address - Add provider - Register of training providers - GOV.UK")
@@ -231,7 +244,7 @@ RSpec.feature "Add Provider" do
     end
 
     def get_provider_information_for_the_forms(accreditation_status:, provider_type: nil)
-      @provider_details_to_use = provider_type ? build(:provider, accreditation_status, provider_type) : build(:provider, accreditation_status)
+      @provider_details_to_use = build(:provider, provider_trait_for(accreditation_status, provider_type))
 
       select_if_the_provider_is_accredited = {
         accredited: "Yes",
@@ -260,10 +273,28 @@ RSpec.feature "Add Provider" do
       }
     end
 
+    def provider_trait_for(accreditation_status, provider_type)
+      {
+        %i[accredited hei] => :hei,
+        %i[unaccredited hei] => :hei_without_accreditation,
+        %i[accredited scitt] => :scitt,
+        %i[unaccredited scitt] => :scitt_without_accreditation,
+        %i[accredited school] => :school_with_accreditation,
+        %i[unaccredited school] => :school,
+        %i[accredited other] => :other,
+        %i[unaccredited other] => :other_without_accreditation,
+      }.fetch([accreditation_status.to_sym, (provider_type || :hei).to_sym])
+    end
+
     def and_i_select_the_provider_type(select_provider_type:)
       and_i_am_taken_to("/providers/new/type")
       and_i_can_see_the_title("Provider type - Add provider - Register of training providers - GOV.UK")
       and_i_do_not_see_error_summary
+
+      expect(page).to have_field("Higher education institution (HEI)")
+      expect(page).to have_field("School-centred initial teacher training (SCITT)")
+      expect(page).to have_field("School")
+      expect(page).to have_field("Other")
 
       and_i_click_on("Continue")
 
@@ -353,9 +384,13 @@ RSpec.feature "Add Provider" do
     end
   end
 
-  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date"
-  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago
-  include_examples "adding a provider with accreditation status", :unaccredited, "Today", "Same as onboarded at date", :school
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :hei
+  include_examples "adding a provider with accreditation status", :unaccredited, "Yesterday", "Same as onboarded at date", :hei
+  include_examples "adding a provider with accreditation status", :unaccredited, 2.weeks.ago, 1.week.ago, :hei
   include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :scitt
+  include_examples "adding a provider with accreditation status", :unaccredited, "Today", "Same as onboarded at date", :scitt
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :school
+  include_examples "adding a provider with accreditation status", :unaccredited, "Today", "Same as onboarded at date", :school
+  include_examples "adding a provider with accreditation status", :accredited, "Today", "Same as onboarded at date", :other
+  include_examples "adding a provider with accreditation status", :unaccredited, "Today", "Same as onboarded at date", :other
 end

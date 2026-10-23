@@ -24,12 +24,14 @@ private
     attempt = 0
 
     begin
-      provider.rotp_id = RotpIdGeneratorService.call(
-        provider.operating_name,
-        provider.onboarded_at,
-        attempt
-      )
-      provider.save!(validate:)
+      provider.class.transaction(requires_new: true) do
+        provider.rotp_id = RotpIdGeneratorService.call(
+          provider.operating_name,
+          provider.onboarded_at,
+          attempt
+        )
+        provider.save!(validate:)
+      end
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, PG::UniqueViolation => e
       raise unless rotp_id_collision?(e)
 
