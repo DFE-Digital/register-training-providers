@@ -5,7 +5,7 @@ module Providers
 
       def index
         authorize provider, :show?
-        @addresses = policy_scope(provider.addresses)
+        @addresses = policy_scope(provider.addresses.current)
       end
 
       def imported_data

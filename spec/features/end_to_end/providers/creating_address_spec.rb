@@ -80,13 +80,72 @@ RSpec.describe "Creating address", type: :feature do
       expect(page).to have_content("Address added")
       expect(provider.addresses.count).to eq(1)
 
-      address = provider.addresses.first
+      address = provider.addresses.current.first
       expect(address.address_line_1).to eq("456 Minimal Road")
       expect(address.address_line_2).to be_blank
       expect(address.address_line_3).to be_blank
       expect(address.town_or_city).to eq("Minimal Town")
       expect(address.county).to be_blank
       expect(address.postcode).to eq("M1 1AA")
+    end
+  end
+
+  context "with existing address" do
+    let(:provider) { create(:provider, :hei) }
+    let(:existing_address) { create(:address, types: [:trading], provider: provider) }
+
+    scenario "creating new address sets previous one to be historic" do
+      existing_address.reload
+
+      expect(provider.addresses.current.count).to eq(1)
+      expect(provider.addresses.historic.count).to eq(0)
+
+      visit provider_historic_addresses_path(provider)
+
+      expect(page).to have_content("There are no historic addresses for #{provider.operating_name}")
+
+      visit provider_addresses_path(provider)
+
+      expect(page).to have_content("Addresses (1)")
+
+      visit provider_new_address_path(provider_id: provider.id, skip_finder: "true")
+
+      fill_in "Address line 1", with: "456 Minimal Road"
+      fill_in "Town or city", with: "Minimal Town"
+      fill_in "Postcode", with: "M1 1AA"
+
+      click_button "Continue"
+
+      check "Trading"
+
+      and_i_click_on("Continue")
+
+      expect(page).to have_content("Check your answers")
+      expect(page).to have_content("456 Minimal Road")
+      expect(page).to have_content("Minimal Town")
+      expect(page).to have_content("M1 1AA")
+
+      click_button "Save address"
+
+      expect(page).to have_content("Address added")
+      expect(provider.addresses.current.count).to eq(1)
+      expect(provider.addresses.historic.count).to eq(1)
+
+      address = provider.addresses.current.first
+      expect(address.address_line_1).to eq("456 Minimal Road")
+      expect(address.address_line_2).to be_blank
+      expect(address.address_line_3).to be_blank
+      expect(address.town_or_city).to eq("Minimal Town")
+      expect(address.county).to be_blank
+      expect(address.postcode).to eq("M1 1AA")
+
+      visit provider_historic_addresses_path(provider)
+
+      expect(page).to have_content("Historic addresses (1)")
+
+      visit provider_addresses_path(provider)
+
+      expect(page).to have_content("Addresses (1)")
     end
   end
 
