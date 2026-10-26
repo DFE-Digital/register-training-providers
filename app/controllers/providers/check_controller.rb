@@ -64,14 +64,22 @@ private
   def save
     authorize model
 
-    if ::SaveProviderWithRotpIdService.call(model)
+    # A duplicate creation confirmation arrives after the provider_creation
+    # session has been cleared, so there is nothing left to save. The edit
+    # provider flow has no creation session at all and always saves, so guard
+    # on the create purpose only.
+    return redirect_to success_path, flash: flash_message if model_id.nil? && provider_session.load_provider.nil?
+
+    ActiveRecord::Base.transaction do
+      ::SaveProviderWithRotpIdService.call(model)
       save_accreditation_if_present
       save_address_if_present
-      clear_session_data
-      redirect_to success_path, flash: flash_message
-    else
-      redirect_to back_path
     end
+
+    clear_session_data
+    redirect_to success_path, flash: flash_message
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    redirect_to back_path
   end
 
   def save_accreditation_if_present

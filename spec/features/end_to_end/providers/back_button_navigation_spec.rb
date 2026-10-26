@@ -258,10 +258,32 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
       then_i_should_be_on_the_type_page
       expect(page.current_url).to include("goto=confirm")
 
-      # Change selection and continue should return to check
-      choose "School"
+      # Change selection and continue should return to check. "Other" keeps the
+      # stored provider valid without involving URN requirements.
+      choose "Other"
       when_i_click_on("Continue")
       then_i_should_be_on_the_check_page
+      and_the_check_page_should_show_provider_type("Other")
+    end
+
+    scenario "Changing the accreditation answer clears the stored provider type" do
+      given_i_am_an_authenticated_user
+      when_i_start_creating_a_provider
+      and_i_answer_the_onboarding_question_as("Today")
+      and_i_answer_the_first_become_active_question_as("Same as onboarded at date,")
+      and_i_answer_the_accreditation_question_as("No")
+      and_i_select_provider_type(:hei)
+
+      # Back to the accreditation question and change the answer
+      when_i_click_the_back_link
+      then_i_should_be_on_the_type_page
+      when_i_click_the_back_link
+      then_i_should_be_on_the_is_the_provider_accredited_page
+      and_i_answer_the_accreditation_question_as("Yes")
+
+      # Now re-prompted for a provider type with no stale selection
+      then_i_should_be_on_the_type_page
+      and_no_provider_type_should_be_selected
     end
 
     scenario "Change provider details - continue returns to check page" do
@@ -465,6 +487,21 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   def and_my_provider_type_should_be_selected(type)
     display_name = I18n.t("providers.provider_types.#{type}")
     expect(find_field(display_name, checked: true)).to be_present
+  end
+
+  def and_no_provider_type_should_be_selected
+    %i[hei scitt school].each do |type|
+      display_name = I18n.t("providers.provider_types.#{type}")
+      expect(find_field(display_name)).not_to be_checked
+    end
+  end
+
+  def and_the_check_page_should_show_provider_type(label)
+    expect(page).to have_selector(
+      ".govuk-summary-list__row:has(.govuk-summary-list__key:text('Provider type')) .govuk-summary-list__value",
+      text: label,
+      exact_text: true
+    )
   end
 
   def and_my_provider_details_should_be_filled
