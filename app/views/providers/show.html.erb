@@ -26,6 +26,10 @@
     <% end %>
 </div>
 
+<% if @provider.status == ProviderStatusEnum::OFFBOARDED %>
+    <p class="govuk-hint">Offboarded providers are archived automatically on 1 August.</p>
+<% end %>
+
 <%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
 
 <%= debug_provider(@provider) %>

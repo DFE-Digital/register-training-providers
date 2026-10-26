@@ -31,3 +31,10 @@ archive_inactive_providers:
   class: "Providers::ArchiveInactiveProvidersJob"
   priority: 100
   schedule: at 3am every day
+
+# Archive providers who were still offboarded at the end of the academic year
+
+archive_offboarded_providers:
+  class: "Providers::ArchiveOffboardedProvidersJob"
+  priority: 100
+  schedule: at 4am every day
