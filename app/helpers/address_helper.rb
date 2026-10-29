@@ -1,5 +1,5 @@
 module AddressHelper
-  def address_summary_cards(addresses, provider, include_actions: true)
+  def address_summary_cards(addresses, provider, include_actions: true, historic: false)
     return [] if addresses.empty?
 
     addresses.map do |address|
@@ -8,8 +8,8 @@ module AddressHelper
       ) == address.id
 
       card = {
-        title: address_summary_card_title(address),
-        rows: address_summary_card_rows(address),
+        title: address_summary_card_title(address, historic),
+        rows: address_summary_card_rows(address, historic),
         imported_data: imported_data
       }
 
@@ -28,10 +28,12 @@ module AddressHelper
     end
   end
 
-  def address_summary_card_title(address)
+  def address_summary_card_title(address, historic)
     return "#{address.town_or_city}, #{address.postcode}" if address.types.blank?
 
-    "#{humanize_address_types(address.types.map(&:capitalize))} address"
+    return "#{humanize_address_types(address.effective_end_dates.keys.map(&:capitalize))} address" if historic
+
+    "#{humanize_address_types((address.types - address.effective_end_dates.keys).map(&:capitalize))} address"
   end
 
   def humanize_address_types(address_types)
@@ -42,9 +44,10 @@ module AddressHelper
     address_types[0..1].join(", ") + " and #{address_types[2]}"
   end
 
-  def address_summary_card_rows(address)
+  def address_summary_card_rows(address, historic)
     rows = address_basic_row(address)
     rows << { key: { text: "Effective from" }, value: { text: address.created_at.to_date.to_fs(:govuk) } }
+    rows << effectve_end_dates_row(address.effective_end_dates) if historic
     rows << location_row_with_coords(address) if show_location_section?(address)
     rows
   end
@@ -121,6 +124,24 @@ module AddressHelper
     {
       key: { text: "Location" },
       value: { text: location_html }
+    }
+  end
+
+  def effectve_end_dates_row(effective_end_dates)
+    effective_end_dates_html = tag.dl(class: "govuk-summary-list") do
+      safe_join([
+        effective_end_dates.map do |end_date|
+          tag.div(class: "govuk-summary-list__row") do
+            tag.dt("#{end_date[0].capitalize} address", class: "govuk-summary-list__key") +
+            tag.dd(end_date[1].to_date.to_fs(:govuk), class: "govuk-summary-list__value")
+          end
+        end
+      ])
+    end
+
+    {
+      key: { text: "Effective until" },
+      value: { text: effective_end_dates_html }
     }
   end
 

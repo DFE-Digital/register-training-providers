@@ -63,6 +63,8 @@ module Providers
         if address.save
           address_session.clear!
 
+          mark_old_addresses_as_historic(address.types, address.id)
+
           if imported_data_context?
             provider.update_column(
               :seed_data_notes,
@@ -204,6 +206,10 @@ module Providers
           @page_subtitle = "Add address - #{provider.operating_name}"
           @page_caption = "Add address - #{provider.operating_name}"
         end
+      end
+
+      def mark_old_addresses_as_historic(address_types, new_address_id)
+        address_types.each { |type| ::Addresses::MarkAsHistoricService.call(provider_id: provider.id, new_address_id: new_address_id, type: type) }
       end
     end
   end

@@ -19,6 +19,7 @@
 <% unless @provider.archived? %>
   <div class="govuk-button-group">
     <%= govuk_button_link_to("Add address", provider_new_address_path(@provider)) %>
+    <%= govuk_link_to("Historic addresses", provider_historic_addresses_path(@provider)) %>
   </div>
 <% end %>
 
