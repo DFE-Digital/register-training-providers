@@ -11,6 +11,7 @@
 #  first_name        :string           not null
 #  last_name         :string           not null
 #  last_signed_in_at :datetime
+#  role              :string
 #  system_admin      :boolean          default(FALSE), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
@@ -25,6 +26,7 @@ class User < ApplicationRecord
   self.implicit_order_column = :created_at
   include Discard::Model
   include SaveAsTemporary
+  include UserRoleEnum
 
   has_many :temporary_records, foreign_key: :created_by, dependent: :destroy
   has_many :provider_changes, foreign_key: :created_by_id, inverse_of: :creator, dependent: :nullify
@@ -34,12 +36,15 @@ class User < ApplicationRecord
   audited except: [:dfe_sign_in_uid, :last_signed_in_at]
 
   before_validation :sanitise_email
+  before_validation :clear_role_for_api_users
+  before_validation :assign_default_role
 
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :api_user, inclusion: [true, false]
   validates :active, inclusion: [true, false]
+  validates :role, presence: true, unless: :api_user?
 
   validate do |record|
     DfEEmailFormatValidator.new(record).validate if email.present?
@@ -89,6 +94,17 @@ private
 
   def sanitise_email
     self.email = email.gsub(/\s+/, "").downcase unless email.nil?
+  end
+
+  def clear_role_for_api_users
+    self.role = nil if api_user?
+  end
+
+  def assign_default_role
+    return if api_user? || role.present?
+    return unless new_record? || will_save_change_to_api_user?
+
+    self.role = UserRoleEnum::REG
   end
 
   def discard_all_api_clients!

@@ -7,6 +7,23 @@ FactoryBot.define do
 
     api_user { false }
     active { true }
+    role { "reg" unless api_user }
+
+    trait :reg do
+      role { "reg" }
+    end
+
+    trait :mr do
+      role { "mr" }
+    end
+
+    trait :bat do
+      role { "bat" }
+    end
+
+    trait :ro do
+      role { "ro" }
+    end
 
     trait :discarded do
       discarded_at { Time.zone.now }

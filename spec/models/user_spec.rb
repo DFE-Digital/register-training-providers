@@ -20,6 +20,53 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_many(:provider_changes).dependent(:nullify) }
   end
 
+  describe "role" do
+    it "defaults new internal users to REG" do
+      expect(create(:user, role: nil).role).to eq("reg")
+    end
+
+    it "does not assign a role to API users" do
+      user = build(:user, api_user: true, role: nil)
+      user.valid?
+
+      expect(user.role).to be_nil
+    end
+
+    it "assigns REG when an API user becomes an internal user" do
+      user = create(:user, api_user: true)
+
+      user.update!(api_user: false)
+
+      expect(user.role).to eq("reg")
+    end
+
+    it "clears the role when an internal user becomes an API user" do
+      user = create(:user, :mr)
+
+      user.update!(api_user: true)
+
+      expect(user.role).to be_nil
+    end
+
+    it "requires a role for internal users" do
+      user = create(:user)
+      user.role = nil
+
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to include("Select a role")
+    end
+
+    it "exposes the four roles" do
+      expect(described_class.roles.keys).to eq(%w[reg mr bat ro])
+    end
+
+    %i[reg mr bat ro].each do |trait_name|
+      it "has a #{trait_name} trait" do
+        expect(build(:user, trait_name).role).to eq(trait_name.to_s)
+      end
+    end
+  end
+
   describe "validations" do
     it { is_expected.to validate_presence_of(:first_name).with_message("Enter first name") }
     it { is_expected.to validate_presence_of(:last_name).with_message("Enter last name") }

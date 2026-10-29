@@ -24,6 +24,12 @@ en:
       otp:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
+  users:
+    roles:
+      reg: "Register"
+      mr: "Market Regulations"
+      bat: "BAT Support"
+      ro: "Read-only"
   providers:
     accreditation_statuses:
       accredited: "Accredited"
@@ -71,6 +77,8 @@ en:
               inclusion: "Select if the account is an API user"
             active:
               inclusion: "Select if the account is active"
+            role:
+              blank: "Select a role"
         accreditation:
           attributes:
             number:
