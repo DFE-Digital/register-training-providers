@@ -361,6 +361,9 @@ en:
       archives:
         update:
           status_changed: "The provider could not be archived because its status changed"
+      deletes:
+        update:
+          status_changed: "The provider could not be deleted because its status changed"
       restores:
         update:
           status_changed: "The provider could not be restored because its status changed"

@@ -2,14 +2,18 @@ module Providers
   class ApplyProviderChangeJob < ApplicationJob
     def perform(provider_change_id)
       change = ProviderChange.find_by(id: provider_change_id)
-
       return if change.blank?
-      return if change.effective_on > Date.current
-      return if change.completed?
-      return if change.failed?
-      return fail_change(change, "Provider is archived") if change.provider.archived?
 
-      apply(change)
+      change.provider.with_lock do
+        change = ProviderChange.find_by(id: provider_change_id)
+
+        next if change.blank?
+        next if change.completed? || change.failed?
+        next if change.effective_on > Date.current
+        next fail_change(change, "Provider is archived") if change.provider.archived?
+
+        apply(change)
+      end
     end
 
   private

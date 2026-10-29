@@ -31,6 +31,10 @@ module ProviderStatusEnum
     [provider.first_active_at, provider.onboarded_at].compact.map(&:to_date).min
   end
 
+  def self.effective_period_start(period)
+    [period["start_date"], period["restored_at"]].compact.map(&:to_date).max
+  end
+
   def self.period_conflicting_with_date(inactive_periods, date)
     inactive_periods.find { |period| date_conflicts_with_period?(period, date) }
   end

@@ -174,18 +174,19 @@ module ProviderHelper
   def provider_details_rows(provider)
     rows = provider_summary_card_rows(provider)
 
-    return rows if provider.archived?
+    if provider.archived?
+      rows.each do |row|
+        row[:actions] = [status_history_action(provider)] if row[:key][:text] == "Provider status"
+      end
+
+      return rows
+    end
 
     rows = insert_accreditation_number_row(rows, provider)
 
     editable_fields = {
       "Provider status" => [
-        { text: "History",
-          visually_hidden_text: "of provider statuses",
-          href: provider_changes_field_history_path(
-            provider_id: provider.id,
-            field: "status"
-          ) },
+        status_history_action(provider),
         { text: "Change",
           visually_hidden_text: "provider status",
           href: provider_change_step_path(
@@ -284,6 +285,12 @@ module ProviderHelper
     end
 
     rows
+  end
+
+  def status_history_action(provider)
+    { text: "History",
+      visually_hidden_text: "of provider statuses",
+      href: provider_changes_field_history_path(provider_id: provider.id, field: "status") }
   end
 
   def insert_accreditation_number_row(rows, provider)

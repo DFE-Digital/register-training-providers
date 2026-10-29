@@ -81,6 +81,24 @@ RSpec.describe "Provider deletion", type: :request do
     expect(provider.reload).to be_kept
   end
 
+  context "when the provider is restored between authorisation and the row lock" do
+    let(:provider) { create(:provider, :archived) }
+
+    it "does not claim success when there was nothing left to delete" do
+      allow_any_instance_of(Provider).to receive(:with_lock).and_wrap_original do |original, &block|
+        Provider.find(provider.id).restore!
+        original.call(&block)
+      end
+
+      delete provider_delete_path(provider)
+
+      expect(response).to have_http_status(:redirect)
+      expect(flash[:alert]).to eq("The provider could not be deleted because its status changed")
+      expect(flash[:success]).to be_nil
+      expect(provider.reload).to be_kept
+    end
+  end
+
   context "when the provider is active" do
     let(:provider) { create(:provider) }
 

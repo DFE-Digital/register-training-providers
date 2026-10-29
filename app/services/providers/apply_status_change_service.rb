@@ -10,11 +10,6 @@ module Providers
     end
 
     def call
-      return false if discarded?
-
-      return true if already_in_new_status?
-      return false unless valid_transition?
-
       provider.with_lock do
         next false if discarded?
         next true if already_in_new_status?

@@ -390,6 +390,20 @@ RSpec.describe Providers::ApplyStatusChangeService, type: :service do
       expect(open_periods.count).to eq(1)
     end
 
+    it "rechecks the state under the lock when the loaded instance claims the new status" do
+      provider.update_columns(
+        inactive_periods: [{ "start_date" => 1.month.ago.to_date.to_s, "end_date" => nil }]
+      )
+      stale_provider = Provider.find(provider.id)
+      Provider.find(provider.id).update_columns(inactive_periods: [])
+
+      result = described_class.call(provider: stale_provider, new_status: "inactive",
+                                    effective_on: effective_on, reasons: ["No current cohorts"])
+
+      expect(result).to be(true)
+      expect(provider.reload.current_inactive_period).to be_present
+    end
+
     it "refuses the transition when the concurrently created period conflicts with the date" do
       applier = Provider.find(provider.id)
       applier.inactive_periods << { "start_date" => (effective_on + 1.day).to_s, "end_date" => nil }

@@ -717,9 +717,16 @@ RSpec.describe ProviderHelper, type: :helper do
     context "when the provider is archived" do
       let(:provider) { build_stubbed(:provider, :archived) }
 
-      it "returns the expected rows without actions" do
+      it "returns only the status history action" do
         rows = helper.provider_details_rows(provider)
-        expect(rows).to all(satisfy { |row| !row.key?(:actions) })
+        rows_with_actions = rows.select { |row| row.key?(:actions) }
+
+        expect(rows_with_actions.map { |row| row[:key][:text] }).to eq(["Provider status"])
+        expect(rows_with_actions.sole[:actions]).to eq(
+          [{ text: "History",
+             visually_hidden_text: "of provider statuses",
+             href: provider_changes_field_history_path(provider_id: provider.id, field: "status") }]
+        )
       end
     end
 

@@ -55,12 +55,13 @@ private
     periods = provider.inactive_periods.map(&:dup)
     period = periods
       .select { |candidate| candidate["end_date"].present? }
+      .select { |candidate| candidate["end_date"].to_date >= archive_change.effective_on - 1.day }
+      .select { |candidate| (candidate["offboarded"] == true) == (previous_status == ProviderStatusEnum::OFFBOARDED) }
       .max_by { |candidate| candidate["start_date"] }
     return if period.blank?
-    return unless period["end_date"].to_date >= archive_change.effective_on - 1.day
-    return unless (period["offboarded"] == true) == (previous_status == ProviderStatusEnum::OFFBOARDED)
 
     period["end_date"] = nil
+    period["restored_at"] = Date.current.to_s
     provider.inactive_periods = periods
   end
 end

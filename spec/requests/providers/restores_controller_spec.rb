@@ -135,6 +135,77 @@ RSpec.describe "Provider restoring", type: :request do
     end
   end
 
+  context "when an offboarded provider is restored after its automatic archive" do
+    let(:academic_year_start) { build_academic_year_start_date(current_academic_year) }
+    let(:provider) do
+      create(
+        :provider,
+        inactive_periods: [{
+          "start_date" => (academic_year_start - 1.year).to_s,
+          "end_date" => (academic_year_start - 1.day).to_s,
+          "offboarded" => true
+        }]
+      )
+    end
+
+    before do
+      provider.archive!
+      Providers::RecordStatusChange.call(
+        provider: provider,
+        status_value: "archived",
+        previous_status: "offboarded",
+        effective_on: academic_year_start
+      )
+    end
+
+    it "is not archived again by the offboarded sweep" do
+      put provider_restore_path(provider)
+      expect(response).to have_http_status(:redirect)
+
+      ArchiveOffboardedProviders.call
+
+      provider.reload
+
+      expect(provider).not_to be_archived
+      expect(provider.status).to eq("offboarded")
+      expect(provider.open_offboarded_period["restored_at"]).to eq(Date.current.to_s)
+    end
+  end
+
+  context "when an inactive provider is restored after its automatic archive" do
+    let(:provider) do
+      create(
+        :provider,
+        inactive_periods: [{
+          "start_date" => 4.years.ago.to_date.to_s,
+          "end_date" => Time.zone.yesterday.to_s
+        }]
+      )
+    end
+
+    before do
+      provider.archive!
+      Providers::RecordStatusChange.call(
+        provider: provider,
+        status_value: "archived",
+        previous_status: "inactive"
+      )
+    end
+
+    it "is not archived again by the inactive sweep" do
+      put provider_restore_path(provider)
+      expect(response).to have_http_status(:redirect)
+
+      ArchiveInactiveProviders.call
+
+      provider.reload
+
+      expect(provider).not_to be_archived
+      expect(provider.status).to eq("inactive")
+      expect(provider.current_inactive_period["restored_at"]).to eq(Date.current.to_s)
+    end
+  end
+
   context "when the archive has no previous status recorded" do
     let(:provider) { create(:provider, :archived) }
 

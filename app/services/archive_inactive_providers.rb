@@ -41,7 +41,7 @@ private
 
     return false if period.blank?
 
-    period["start_date"].to_date <= self.class.age_to_archive_inactive_providers
+    ProviderStatusEnum.effective_period_start(period) <= self.class.age_to_archive_inactive_providers
   end
 
   def log_archive_failure(provider, error)

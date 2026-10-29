@@ -601,6 +601,40 @@ RSpec.describe Provider, type: :model do
       end
     end
 
+    context "when an inactive period covers academic years inside its range" do
+      let(:provider) do
+        create(
+          :provider,
+          first_active_at: build_academic_year_start_date(current_academic_year - 5),
+          inactive_periods: [{
+            start_date: build_academic_year_start_date(current_academic_year - 3),
+            end_date: build_academic_year_end_date(current_academic_year - 1)
+          }]
+        )
+      end
+
+      before do
+        (current_academic_year - 4).upto(current_academic_year - 1) do |year|
+          create(:academic_year, academic_year: year)
+        end
+      end
+
+      it "excludes every academic year the period overlaps" do
+        active_years = provider.active_academic_years.map(&:start_year)
+
+        expect(active_years).not_to include(current_academic_year - 3)
+        expect(active_years).not_to include(current_academic_year - 2)
+        expect(active_years).not_to include(current_academic_year - 1)
+      end
+
+      it "keeps the academic years outside the period" do
+        active_years = provider.active_academic_years.map(&:start_year)
+
+        expect(active_years).to include(current_academic_year - 5)
+        expect(active_years).to include(current_academic_year - 4)
+      end
+    end
+
     context "when the provider is archived" do
       let(:archive_date) { build_academic_year_start_date(current_academic_year) }
       let(:provider) do

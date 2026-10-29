@@ -223,16 +223,22 @@ private
   end
 
   def academic_years_excluding(academic_years, period)
-    if period["end_date"].nil?
-      academic_years
+    end_date = period["end_date"].presence&.to_date
+
+    if end_date.blank?
+      return academic_years
         .where.not("duration @> ?::date", period["start_date"])
         .where.not("upper(duration) >= ?", period["start_date"])
-    else
-      academic_years.where.not(
-        "duration @> ANY (ARRAY[?]::date[])",
-        [period["start_date"], period["end_date"]]
-      )
     end
+
+    start_date = period["start_date"].to_date
+    return academic_years if end_date < start_date
+
+    academic_years.where.not(
+      "duration && daterange(?, ?, '[]')",
+      start_date,
+      end_date
+    )
   end
 
   def operational_academic_years

@@ -169,4 +169,16 @@ RSpec.describe Provider, type: :model do
       ).to eq(closed_period)
     end
   end
+
+  describe ".effective_period_start" do
+    it "uses the restore date when it is later than the period start" do
+      period = { "start_date" => "2020-01-01", "restored_at" => "2026-10-29" }
+
+      expect(ProviderStatusEnum.effective_period_start(period)).to eq(Date.new(2026, 10, 29))
+    end
+
+    it "uses the period start when the period has not been restored" do
+      expect(ProviderStatusEnum.effective_period_start({ "start_date" => "2020-01-01" })).to eq(Date.new(2020, 1, 1))
+    end
+  end
 end

@@ -37,7 +37,7 @@ private
 
     return false if period.blank?
 
-    period["start_date"].to_date < academic_year_start
+    ProviderStatusEnum.effective_period_start(period) < academic_year_start
   end
 
   def log_archive_failure(provider, error)

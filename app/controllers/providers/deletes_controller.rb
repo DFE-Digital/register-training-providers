@@ -10,13 +10,21 @@ class Providers::DeletesController < CheckController
     @provider = Provider.find(params[:provider_id])
     authorize @provider, :destroy?
 
-    @provider.with_lock do
-      next unless @provider.archived?
-      next if @provider.discarded?
+    deleted = @provider.with_lock do
+      next false unless @provider.archived?
+      next false if @provider.discarded?
 
       @provider.discard!
+      true
     end
 
-    redirect_to(providers_path, flash: { success: "Provider deleted" })
+    if deleted
+      redirect_to(providers_path, flash: { success: "Provider deleted" })
+    else
+      redirect_to(
+        providers_path,
+        flash: { alert: t("controllers.providers.deletes.update.status_changed") }
+      )
+    end
   end
 end

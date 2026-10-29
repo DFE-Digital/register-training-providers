@@ -235,8 +235,55 @@ RSpec.describe Providers::ApplyProviderChangeJob, type: :job do
         perform
 
         expect(provider_change.reload).to be_failed
-        expect(provider_change.error_message).to eq("Provider was archived before the change could be applied")
+        expect(provider_change.error_message).to eq("Provider is archived")
         expect(provider.reload.code).to eq("OLD")
+      end
+    end
+
+    context "when the change is edited before the worker acquires the row lock" do
+      let(:provider) { create(:provider) }
+      let(:provider_change) do
+        create(:provider_change, :status_change, provider: provider, value: { "status" => "inactive" })
+      end
+      let(:edited_status) { "offboarded" }
+      let(:edited_effective_on) { Date.current }
+
+      before do
+        provider_change # materialise before the stub
+        edited = false
+
+        allow_any_instance_of(Provider).to receive(:with_lock).and_wrap_original do |original, &block|
+          unless edited
+            edited = true
+            ProviderChange.where(id: provider_change.id)
+              .update_all(value: { "status" => edited_status }, effective_on: edited_effective_on)
+          end
+
+          original.call(&block)
+        end
+      end
+
+      it "applies the current value rather than the stale payload" do
+        perform
+
+        expect(provider.reload.status).to eq(edited_status)
+      end
+
+      it "completes the edited change" do
+        perform
+
+        expect(provider_change.reload).to be_completed
+      end
+
+      context "when the edit moves the change into the future" do
+        let(:edited_effective_on) { Date.current + 1.week }
+
+        it "leaves the change pending without applying it" do
+          expect { perform }.not_to(change { provider.reload.inactive_periods })
+
+          expect(provider_change.reload).to be_pending
+          expect(provider_change.effective_on).to eq(edited_effective_on)
+        end
       end
     end
 
