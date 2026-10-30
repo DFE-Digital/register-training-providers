@@ -30,6 +30,12 @@ module RouteConstraints
         effective-date
         new-provider-type
         check-your-answers
+      ],
+      "status" => %w[
+        new-status
+        reasons
+        effective-date
+        check-your-answers
       ]
     }.freeze
 

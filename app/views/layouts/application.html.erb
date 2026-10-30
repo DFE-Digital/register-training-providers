@@ -58,6 +58,10 @@
                   <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
                     <% nb.with_heading(text: message) %>
                   <% end %>
+                <% elsif key == "alert" %>
+                  <%= govuk_notification_banner(title_text: "Important") do |nb| %>
+                    <% nb.with_heading(text: message) %>
+                  <% end %>
                 <% end %>
               <% end %>
             <% end %>

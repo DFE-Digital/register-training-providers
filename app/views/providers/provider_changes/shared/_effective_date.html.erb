@@ -24,7 +24,7 @@
   <%= form.govuk_date_field :effective_on,
                             legend: { text: title },
                             caption: { text: @provider.operating_name },
-                            hint: { text: "For example, 31 7 2026" } %>
+                            hint: { text: local_assigns.fetch(:hint, "For example, 31 7 2026") } %>
 
   <%= form.govuk_submit %>
 <% end %>

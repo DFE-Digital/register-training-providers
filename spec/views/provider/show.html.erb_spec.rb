@@ -19,8 +19,36 @@ RSpec.describe "providers/show.html.erb", type: :view do
     expect(rendered).to have_heading("h2", "Provider details")
   end
 
-  it "renders the archive button" do
-    expect(rendered).to have_link("Archive provider", href: provider_archive_path(provider))
+  it "does not render the archive button for an active provider" do
+    expect(rendered).not_to have_link("Archive provider", href: provider_archive_path(provider))
+  end
+
+  context "when the provider is inactive" do
+    let(:provider) do
+      build_stubbed(:provider, :school, inactive_periods: [{ "start_date" => 1.month.ago.to_date.to_s,
+                                                             "end_date" => nil }])
+    end
+
+    it "renders the archive button" do
+      expect(rendered).to have_link("Archive provider", href: provider_archive_path(provider))
+    end
+  end
+
+  context "when the provider is offboarded" do
+    let(:provider) do
+      build_stubbed(:provider, :school, inactive_periods: [{ "start_date" => 1.month.ago.to_date.to_s,
+                                                             "end_date" => nil,
+                                                             "offboarded" => true }])
+    end
+
+    it "does not render the archive button" do
+      expect(rendered).not_to have_link("Archive provider", href: provider_archive_path(provider))
+    end
+
+    it "explains when the provider will be archived as hint text" do
+      expect(rendered).to have_css(".govuk-hint",
+                                   text: "Offboarded providers are archived automatically on 1 August.")
+    end
   end
 
   context "when the provider is archived" do

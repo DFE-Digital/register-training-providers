@@ -60,6 +60,7 @@ class Provider < ApplicationRecord
   has_associated_audits
 
   include ProviderTypeEnum
+  include ProviderStatusEnum
   include AccreditationStatusEnum
 
   scope :order_by_operating_name, -> { order(:operating_name) }
@@ -79,6 +80,7 @@ class Provider < ApplicationRecord
     ay_start = academic_year.duration.begin
     ay_end = academic_year.duration.end
 
+    return false if archived_as_of?(ay_start)
     return false if first_active_at.nil?
     return false if first_active_at > ay_end
 
@@ -126,9 +128,17 @@ class Provider < ApplicationRecord
     self.urn = urn.to_s.strip.presence
   end
 
-  def archive!
-    self.archived_at = Time.zone.now.utc
-    save!(validate: false)
+  def close_open_inactive_periods(ending_on:)
+    self.inactive_periods = inactive_periods.map { |period| close_inactive_period(period, ending_on:) }
+  end
+
+  def archive!(archived_at: Time.zone.now.utc)
+    ActiveRecord::Base.transaction do
+      fail_pending_changes("Provider was archived before the change took effect")
+
+      self.archived_at = archived_at
+      save!(validate: false)
+    end
   end
 
   def archived?
@@ -167,24 +177,8 @@ class Provider < ApplicationRecord
   end
 
   def active_academic_years
-    @active_academic_years ||= begin
-      academic_years = operational_academic_years
-
-      inactive_periods.each do |period|
-        academic_years =
-          if period["end_date"].nil?
-            academic_years
-              .where.not("duration @> ?::date", period["start_date"])
-              .where.not("upper(duration) >= ?", period["start_date"])
-          else
-            academic_years.where.not(
-              "duration @> ANY (ARRAY[?]::date[])",
-              [period["start_date"], period["end_date"]]
-            )
-          end
-      end
-
-      academic_years
+    @active_academic_years ||= inactive_periods.reduce(academic_years_before_archive) do |academic_years, period|
+      academic_years_excluding(academic_years, period)
     end
   end
 
@@ -200,11 +194,52 @@ class Provider < ApplicationRecord
     inactive_periods.find { |ip| ip if ip["end_date"].nil? }
   end
 
-  def latest_complete_inactive_period
-    inactive_periods.max_by { |ip| ip["end_date"] }
+private
+
+  def archived_as_of?(date)
+    archived? && archived_at.to_date <= date
   end
 
-private
+  def close_inactive_period(period, ending_on:)
+    return period if period["end_date"].present?
+
+    period.merge("end_date" => [ending_on.to_date - 1.day, period["start_date"].to_date].max)
+  end
+
+  def fail_pending_changes(message)
+    provider_changes.pending.find_each do |change|
+      change.update!(
+        status: :failed,
+        error_message: message,
+        processed_at: Time.current
+      )
+    end
+  end
+
+  def academic_years_before_archive
+    return operational_academic_years unless archived?
+
+    operational_academic_years.where("lower(duration) < ?", archived_at.to_date)
+  end
+
+  def academic_years_excluding(academic_years, period)
+    end_date = period["end_date"].presence&.to_date
+
+    if end_date.blank?
+      return academic_years
+        .where.not("duration @> ?::date", period["start_date"])
+        .where.not("upper(duration) >= ?", period["start_date"])
+    end
+
+    start_date = period["start_date"].to_date
+    return academic_years if end_date < start_date
+
+    academic_years.where.not(
+      "duration && daterange(?, ?, '[]')",
+      start_date,
+      end_date
+    )
+  end
 
   def operational_academic_years
     @operational_academic_years = if first_active_at <= Time.zone.today

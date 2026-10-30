@@ -64,11 +64,11 @@ RSpec.feature "Archive Provider" do
   end
 
   def providers_to_archive
-    @providers_to_archive ||= create_list(:provider, 3)
+    @providers_to_archive ||= create_list(:provider, 3, :with_current_inactive_period)
   end
 
   def provider_fails_to_be_archived
-    @provider_fails_to_be_archived ||= create(:provider)
+    @provider_fails_to_be_archived ||= create(:provider, :with_current_inactive_period)
   end
 
   def then_i_see_the_success_message

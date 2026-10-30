@@ -1,0 +1,14 @@
+digraph Provider_changes_status_wizard {
+  rankdir=LR;
+  bgcolor="#ffffff";
+  node [shape=box, style="rounded,filled", fillcolor="#e8f4f8", fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10];
+  new_status [label="New Status"];
+  reasons [label="Reasons"];
+  effective_date [label="Effective Date"];
+  check_your_answers [label="Check Your Answers"];
+  reasons -> effective_date [style=solid];
+  effective_date -> check_your_answers [style=solid];
+  new_status -> reasons [label="reason_capture_required?\nyes", style=dashed, color=blue];
+  new_status -> effective_date [label="reason_capture_required?\nno", style=dashed, color=blue];
+}

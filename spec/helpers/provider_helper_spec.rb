@@ -55,6 +55,37 @@ RSpec.describe ProviderHelper, type: :helper do
 
         expect(doc.text).to include("Archived")
       end
+
+      it "renders the archived tag in the same colour as the page header" do
+        result = helper.provider_summary_cards([provider]).first
+        doc = Nokogiri::HTML.fragment(result[:title])
+
+        expect(doc.at_css("strong")["class"]).to include("govuk-tag--grey")
+      end
+    end
+
+    context "when the provider is offboarded" do
+      let(:provider) { create(:provider, :with_current_offboarded_period, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
+
+      it "renders the offboarded tag in the title" do
+        result = helper.provider_summary_cards([provider]).first
+        doc = Nokogiri::HTML.fragment(result[:title])
+
+        expect(doc.text).to include("Offboarded")
+        expect(doc.at_css("strong")["class"]).to include("govuk-tag--orange")
+      end
+    end
+
+    context "when the provider is inactive" do
+      let(:provider) { create(:provider, :with_current_inactive_period, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
+
+      it "renders the inactive tag in the title" do
+        result = helper.provider_summary_cards([provider]).first
+        doc = Nokogiri::HTML.fragment(result[:title])
+
+        expect(doc.text).to include("Inactive")
+        expect(doc.at_css("strong")["class"]).to include("govuk-tag--yellow")
+      end
     end
 
     context "when debug mode is enabled" do
@@ -92,6 +123,67 @@ RSpec.describe ProviderHelper, type: :helper do
         link = doc.at_css("a")
 
         expect(link["href"]).to eq("/providers/#{provider.id}")
+      end
+    end
+  end
+
+  describe "#provider_status_tag" do
+    subject(:status_tag) { helper.provider_status_tag(provider) }
+
+    let(:provider) { build_stubbed(:provider, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
+
+    it "is nil for an active provider" do
+      expect(status_tag).to be_nil
+    end
+
+    context "when the provider is inactive" do
+      before do
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it { expect(status_tag).to eq(text: I18n.t("providers.statuses.inactive"), colour: "yellow") }
+    end
+
+    context "when the provider is offboarded" do
+      before do
+        allow(provider).to receive(:open_offboarded_period).and_return(
+          { "start_date" => 1.month.ago.to_date.to_s, "end_date" => nil, "offboarded" => true }
+        )
+      end
+
+      it { expect(status_tag).to eq(text: I18n.t("providers.statuses.offboarded"), colour: "orange") }
+    end
+
+    context "when the enum's status disagrees with a manual period check" do
+      before do
+        allow(provider).to receive(:status).and_return("offboarded")
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it "follows the enum's status" do
+        expect(status_tag).to eq(text: I18n.t("providers.statuses.offboarded"), colour: "orange")
+      end
+    end
+
+    context "when the provider is archived" do
+      let(:provider) { build_stubbed(:provider, :archived, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
+
+      it { expect(status_tag).to eq(text: I18n.t("providers.statuses.archived"), colour: "grey") }
+    end
+
+    context "when the provider is soft deleted" do
+      let(:provider) { build_stubbed(:provider, :discarded, onboarded_at: onboarded_at, first_active_at: onboarded_at) }
+
+      it { expect(status_tag).to eq(text: "Soft deleted", colour: "red") }
+    end
+
+    context "when the provider is both archived and soft deleted" do
+      let(:provider) do
+        build_stubbed(:provider, :archived, :discarded, onboarded_at: onboarded_at, first_active_at: onboarded_at)
+      end
+
+      it "prefers Soft deleted" do
+        expect(status_tag).to eq(text: "Soft deleted", colour: "red")
       end
     end
   end
@@ -196,6 +288,16 @@ RSpec.describe ProviderHelper, type: :helper do
           value: { text: provider.rotp_id }
         },
         {
+          key: { text: "Provider status" },
+          value: { text: "Active" },
+          actions: [{ text: "History",
+                      visually_hidden_text: "of provider statuses",
+                      href: provider_changes_field_history_path(provider_id: provider.id, field: "status") },
+                    { text: "Change",
+                      href: provider_change_step_path(provider_id: provider.id, field: "status", step: "new-status"),
+                      visually_hidden_text: "provider status" }],
+        },
+        {
           key: { text: "Provider type" },
           value: { text: provider.provider_type_label },
           actions: [{ text: "History",
@@ -280,6 +382,16 @@ RSpec.describe ProviderHelper, type: :helper do
           {
             key: { text: "RoTP Id" },
             value: { text: provider.rotp_id }
+          },
+          {
+            key: { text: "Provider status" },
+            value: { text: "Active" },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of provider statuses",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "status") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "status", step: "new-status"),
+                        visually_hidden_text: "provider status" }],
           },
           {
             key: { text: "Provider type" },
@@ -403,6 +515,16 @@ RSpec.describe ProviderHelper, type: :helper do
             value: { text: provider.rotp_id }
           },
           {
+            key: { text: "Provider status" },
+            value: { text: "Active" },
+            actions: [{ text: "History",
+                        visually_hidden_text: "of provider statuses",
+                        href: provider_changes_field_history_path(provider_id: provider.id, field: "status") },
+                      { text: "Change",
+                        href: provider_change_step_path(provider_id: provider.id, field: "status", step: "new-status"),
+                        visually_hidden_text: "provider status" }],
+          },
+          {
             key: { text: "Provider type" },
             value: { text: provider.provider_type_label },
             actions: [{ text: "History",
@@ -493,6 +615,74 @@ RSpec.describe ProviderHelper, type: :helper do
       end
     end
 
+    context "when the provider has an open offboarded period" do
+      let(:provider) { create(:provider, :scitt, :with_current_offboarded_period) }
+
+      it "reads the Provider status row as Offboarded" do
+        status_row = helper.provider_details_rows(provider).find { |row| row[:key][:text] == "Provider status" }
+
+        expect(status_row[:value][:text]).to eq("Offboarded")
+      end
+
+      it "drops the offboarded period out of the Inactive periods row" do
+        inactive_row = helper.provider_details_rows(provider).find { |row| row[:key][:text] == "Inactive periods" }
+
+        expect(inactive_row[:value][:text]).to eq("<p>No inactive periods</p>")
+      end
+
+      it "renders the Offboarded row with the offboarded period's start date" do
+        offboarded_row = helper.provider_details_rows(provider).find { |row| row[:key][:text] == "Offboarded" }
+
+        expect(offboarded_row[:value][:text]).to eq(1.month.ago.to_date.to_fs(:govuk))
+      end
+    end
+
+    context "when the provider was offboarded in the past and is active now" do
+      let(:provider) do
+        create(
+          :provider,
+          :scitt,
+          inactive_periods: [{
+            "start_date" => 1.year.ago.to_date.to_s,
+            "end_date" => 6.months.ago.to_date.to_s,
+            "offboarded" => true
+          }]
+        )
+      end
+
+      it "does not render the Offboarded row" do
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+
+        expect(keys).not_to include("Offboarded")
+      end
+    end
+
+    context "when the provider was offboarded in the past and is inactive now" do
+      let(:provider) do
+        create(
+          :provider,
+          :scitt,
+          inactive_periods: [
+            {
+              "start_date" => 2.years.ago.to_date.to_s,
+              "end_date" => 1.year.ago.to_date.to_s,
+              "offboarded" => true
+            },
+            {
+              "start_date" => 6.months.ago.to_date.to_s,
+              "end_date" => nil
+            }
+          ]
+        )
+      end
+
+      it "does not render the Offboarded row" do
+        keys = helper.provider_details_rows(provider).map { |row| row[:key][:text] }
+
+        expect(keys).not_to include("Offboarded")
+      end
+    end
+
     context "when the provider is accredited without an accreditation" do
       let(:provider) { create(:provider, :hei, with_accreditations: false) }
 
@@ -527,9 +717,16 @@ RSpec.describe ProviderHelper, type: :helper do
     context "when the provider is archived" do
       let(:provider) { build_stubbed(:provider, :archived) }
 
-      it "returns the expected rows without actions" do
+      it "returns only the status history action" do
         rows = helper.provider_details_rows(provider)
-        expect(rows).to all(satisfy { |row| !row.key?(:actions) })
+        rows_with_actions = rows.select { |row| row.key?(:actions) }
+
+        expect(rows_with_actions.map { |row| row[:key][:text] }).to eq(["Provider status"])
+        expect(rows_with_actions.sole[:actions]).to eq(
+          [{ text: "History",
+             visually_hidden_text: "of provider statuses",
+             href: provider_changes_field_history_path(provider_id: provider.id, field: "status") }]
+        )
       end
     end
 
