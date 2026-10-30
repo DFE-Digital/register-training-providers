@@ -168,6 +168,18 @@ RSpec.describe Provider, type: :model do
         ProviderStatusEnum.period_conflicting_with_date([open_period, closed_period], Date.new(2027, 3, 1))
       ).to eq(closed_period)
     end
+
+    it "conflicts with a date before a restored period became effective" do
+      periods = [{ "start_date" => "2025-01-01", "end_date" => nil, "restored_at" => "2026-10-29" }]
+
+      expect(ProviderStatusEnum.period_conflicting_with_date(periods, Date.new(2026, 10, 1))).to eq(periods.sole)
+    end
+
+    it "does not conflict with the date a period was restored" do
+      periods = [{ "start_date" => "2025-01-01", "end_date" => nil, "restored_at" => "2026-10-29" }]
+
+      expect(ProviderStatusEnum.period_conflicting_with_date(periods, Date.new(2026, 10, 29))).to be_nil
+    end
   end
 
   describe ".effective_period_start" do

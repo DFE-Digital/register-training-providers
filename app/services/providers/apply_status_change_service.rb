@@ -68,7 +68,7 @@ module Providers
 
       provider.errors.add(:base,
                           "The date cannot be within or before the period " \
-                          "(#{conflicting_period["start_date"].to_date.to_fs(:govuk)})")
+                          "(#{ProviderStatusEnum.effective_period_start(conflicting_period).to_fs(:govuk)})")
       false
     end
 

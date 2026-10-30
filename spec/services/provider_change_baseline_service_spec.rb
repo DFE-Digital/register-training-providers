@@ -55,6 +55,32 @@ RSpec.describe ProviderChangeBaselineService do
             .to eq("status" => "archived")
         end
       end
+
+      context "when the provider was onboarded before it became active" do
+        let(:provider) do
+          create(:provider, first_active_at: Date.new(2024, 5, 1), onboarded_at: Date.new(2024, 4, 1))
+        end
+
+        it "dates the baseline from the earliest date the provider existed" do
+          call_service
+
+          expect(provider.provider_changes.baseline.sole.effective_on).to eq(Date.new(2024, 4, 1))
+        end
+      end
+
+      context "when the provider has no lifecycle dates" do
+        let(:provider) do
+          create(:provider).tap do |created_provider|
+            created_provider.update_columns(first_active_at: nil, onboarded_at: nil)
+          end
+        end
+
+        it "dates the baseline from the creation date" do
+          call_service
+
+          expect(provider.provider_changes.baseline.sole.effective_on).to eq(provider.created_at.to_date)
+        end
+      end
     end
 
     it "records a baseline per attribute" do

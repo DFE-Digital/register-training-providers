@@ -40,7 +40,7 @@ module ProviderStatusEnum
   end
 
   def self.date_conflicts_with_period?(period, date)
-    return date < period["start_date"].to_date if period["end_date"].nil?
+    return date < effective_period_start(period) if period["end_date"].nil?
 
     date <= period["end_date"].to_date
   end

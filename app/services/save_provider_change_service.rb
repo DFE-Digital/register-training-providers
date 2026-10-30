@@ -23,11 +23,17 @@ private
   attr_reader :provider, :attribute_name, :attributes, :creator
 
   def recently_applied_duplicate
+    return if pending_change?
+
     duplicate = latest_identical_recent_change
     return if duplicate.blank?
     return if superseded_by_later_change?(duplicate)
 
     duplicate
+  end
+
+  def pending_change?
+    provider.provider_changes.pending.for_attribute(attribute_name).exists?
   end
 
   def latest_identical_recent_change

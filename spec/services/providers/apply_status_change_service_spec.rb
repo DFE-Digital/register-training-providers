@@ -347,6 +347,35 @@ RSpec.describe Providers::ApplyStatusChangeService, type: :service do
     end
   end
 
+  context "when a restored inactive provider is reactivated" do
+    let(:restored_at) { Date.current }
+    let(:provider) do
+      create(:provider,
+             first_active_at: Date.new(2024, 1, 1),
+             onboarded_at: Date.new(2024, 1, 1),
+             inactive_periods: [{
+               "start_date" => "2025-09-01",
+               "end_date" => nil,
+               "restored_at" => restored_at.to_s
+             }])
+    end
+    let(:new_status) { "active" }
+    let(:effective_on) { Date.new(2026, 1, 1) }
+
+    it "refuses an effective date before the restoration" do
+      expect(transition).to be(false)
+      expect(provider.errors[:base].join).to match(/cannot be within or before the period/)
+    end
+
+    it "accepts an effective date on the restoration date" do
+      result = described_class.call(provider: provider, new_status: new_status,
+                                    effective_on: restored_at, reasons: reasons)
+
+      expect(result).to be(true)
+      expect(periods.sole["end_date"]).to eq((restored_at - 1.day).to_s)
+    end
+  end
+
   context "when the effective date is before the provider existed" do
     let(:provider) do
       create(:provider, first_active_at: Date.new(2024, 5, 1), onboarded_at: Date.new(2024, 4, 1))

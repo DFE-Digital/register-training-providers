@@ -272,6 +272,35 @@ RSpec.describe SaveProviderChangeService do
       end
     end
 
+    context "when a pending change exists alongside an identical completed change" do
+      let(:provider) { create(:provider, legal_name: "Old name") }
+      let(:attribute_name) { :legal_name }
+
+      def save_legal_name(value, effective_on: Date.current)
+        described_class.call(
+          provider: provider,
+          attribute_name: attribute_name,
+          attributes: { attribute_name: "legal_name", effective_on: effective_on, value: value },
+          creator: creator
+        )
+      end
+
+      it "updates the pending change instead of reusing the completed row" do
+        save_legal_name("")
+        future_change = save_legal_name("Future name", effective_on: Date.current + 1.week)
+
+        save_legal_name("")
+
+        expect(provider.provider_changes.pending.for_attribute(:legal_name)).to be_empty
+        expect(future_change.reload).to have_attributes(
+          status: "completed",
+          value: "",
+          effective_on: Date.current
+        )
+        expect(provider.reload.legal_name).to be_blank
+      end
+    end
+
     context "when the identical status change is confirmed twice" do
       let(:provider) { create(:provider) }
       let(:attribute_name) { :status }

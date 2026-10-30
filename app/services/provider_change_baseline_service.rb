@@ -45,8 +45,16 @@ private
   end
 
   def effective_on
-    candidate_date = [provider.first_active_at, provider.onboarded_at, provider.created_at.to_date].compact.first
+    candidate_date = attribute_name == "status" ? status_baseline_date : attribute_baseline_date
 
     [candidate_date, Date.current].min
+  end
+
+  def status_baseline_date
+    [ProviderStatusEnum.earliest_valid_date(provider), provider.created_at.to_date].compact.min
+  end
+
+  def attribute_baseline_date
+    [provider.first_active_at, provider.onboarded_at, provider.created_at.to_date].compact.first
   end
 end
