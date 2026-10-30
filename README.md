@@ -16,7 +16,7 @@ This project depends on:
 
 ### asdf
 
-This project uses `asdf`, refer to [.tool-versions](.tool-versions) for the actual versions in use. Use the following to install the required tools:
+This project uses `asdf`; refer to [.tool-versions](.tool-versions) for the versions in use. For application development, only Ruby, Node.js, and Postgres are required:
 
 ```sh
 # The first time
@@ -25,19 +25,33 @@ asdf plugin add ruby
 asdf plugin add nodejs
 asdf plugin add postgres
 
-# To install (or update, following a change to .tool-versions)
+# Install the versions pinned in .tool-versions
+asdf install ruby
+asdf install nodejs
+asdf install postgres
+```
+
+The `.tool-versions` file also pins Terraform, Azure CLI, kubelogin, and kubectl
+for infrastructure work. To install those optional tools as well, add their
+plugins and run `asdf install` to install every pinned version:
+
+```sh
+asdf plugin add terraform
+asdf plugin add azure-cli
+asdf plugin add kubelogin
+asdf plugin add kubectl
 asdf install
 ```
 
 When installing the `pg` gem, bundle changes directory outside of this
-project directory, causing it lose track of which version of postgres has
+project directory, causing it to lose track of which version of postgres has
 been selected in the project's `.tool-versions` file. To ensure the `pg` gem
-installs correctly, you'll want to set the version of postgres that `asdf`
-will use:
+installs correctly, set `ASDF_POSTGRES_VERSION` to the version of Postgres
+pinned in `.tool-versions` (currently `17.5`):
 
 ```sh
 # Temporarily set the version of postgres to use to build the pg gem
-ASDF_POSTGRES_VERSION=17.2 bundle install
+ASDF_POSTGRES_VERSION=17.5 bundle install
 ```
 
 ### Intellisense
