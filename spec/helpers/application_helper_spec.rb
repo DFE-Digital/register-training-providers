@@ -197,7 +197,8 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       subject(:items) { helper.navigation_items(user:) }
 
-      context "for a support user" do
+      context "for a REG user" do
+        let(:user) { build_stubbed(:user, :reg) }
         let(:api_user) { false }
 
         it "returns an array of navigation hashes" do
@@ -243,12 +244,27 @@ RSpec.describe ApplicationHelper, type: :helper do
         end
       end
 
+      %i[mr bat ro].each do |role|
+        context "for a #{role} user" do
+          let(:user) { build_stubbed(:user, role) }
+
+          it "returns the operational links without admin links" do
+            expect(items.size).to eq(3)
+            expect(items.pluck(:text)).to contain_exactly("Providers", "Your account", "Sign out")
+          end
+        end
+      end
+
       context "for an api user" do
         let(:api_user) { true }
 
         it "returns an array of navigation hashes" do
           expect(items).to be_an(Array)
           expect(items.size).to eq(3)
+        end
+
+        it "does not include the Providers link" do
+          expect(items.map { |i| i[:text] }).not_to include("Providers")
         end
 
         it "includes the API clients link" do

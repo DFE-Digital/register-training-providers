@@ -69,7 +69,7 @@ RSpec.feature "User management" do
       expect(Rails.logger).to receive(:warn).with(
         event: "minimum_active_users_violation",
         user_id: current_user.id,
-        remaining_active_users: 4,
+        remaining_active_users: 3,
         total_users: 4,
         action: "update",
         controller: "check",
@@ -78,13 +78,15 @@ RSpec.feature "User management" do
 
       when_i_click_on("Save user")
 
-      and_i_can_see_the_page_title_for_you_cannot_complete_this_action
+      and_i_can_see_the_page_title_for_the_minimum_active_users_rule
       and_i_am_still_on("/users/#{user_to_deactivate.id}/check")
     end
   end
 
-  def and_i_can_see_the_page_title_for_you_cannot_complete_this_action
-    expect(page).to have_title("Sorry, you cannot complete this action - Register of training providers - GOV.UK")
+  def and_i_can_see_the_page_title_for_the_minimum_active_users_rule
+    expect(page).to have_title("This change would leave too few active users - Register of training providers - GOV.UK")
+    expect(page).to have_content("The Register must always have at least 4 active users who are not API users.")
+    expect(page).to have_content("Make another user active, or keep this user as an internal user, then try again.")
   end
 
   def and_i_have_additional_users(number_of_users:)

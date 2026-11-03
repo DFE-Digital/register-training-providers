@@ -28,6 +28,7 @@ RSpec.describe "users/index.html.erb", type: :view do
   it "renders the table headers" do
     expect(rendered).to have_selector("th", text: "Name")
     expect(rendered).to have_selector("th", text: "Email")
+    expect(rendered).to have_selector("th", text: "Role")
     expect(rendered).to have_selector("th", text: "Status")
   end
 
@@ -37,6 +38,8 @@ RSpec.describe "users/index.html.erb", type: :view do
       expect(rendered).to have_selector("td", text: user.email)
     end
 
+    expect(rendered).to have_selector("td", text: "Read-only")
+    expect(rendered).to have_selector("td", text: "Register")
     expect(rendered).to have_selector("strong", text: "Active")
     expect(rendered).to have_selector("strong", text: "Not active")
     expect(rendered).to have_selector("strong", text: "API user")
