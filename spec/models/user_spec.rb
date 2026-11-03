@@ -20,6 +20,119 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_many(:provider_changes).dependent(:nullify) }
   end
 
+  describe "role" do
+    it "defaults new internal users to REG" do
+      expect(create(:user, role: nil).role).to eq("reg")
+    end
+
+    it "assigns read-only to API users" do
+      user = build(:user, api_user: true, role: nil)
+      user.valid?
+
+      expect(user.role).to eq(UserRoleEnum::RO)
+    end
+
+    it "assigns read-only when an API user is converted into an internal user" do
+      user = create(:user, api_user: true)
+
+      user.update!(api_user: false)
+
+      expect(user.role).to eq("ro")
+    end
+
+    it "keeps an explicitly chosen role when an API user is converted into an internal user" do
+      user = create(:user, api_user: true)
+
+      user.update!(api_user: false, role: UserRoleEnum::MR)
+
+      expect(user.role).to eq("mr")
+    end
+
+    it "sets read-only when an internal user becomes an API user" do
+      user = create(:user, :mr)
+
+      user.update!(api_user: true)
+
+      expect(user.role).to eq(UserRoleEnum::RO)
+    end
+
+    it "sets read-only while an API conversion is only staged" do
+      user = create(:user, :mr)
+
+      user.api_user = true
+      user.valid?
+
+      expect(user.role).to eq(UserRoleEnum::RO)
+    end
+
+    it "stays read-only when a staged API conversion is reversed" do
+      user = create(:user, :mr)
+
+      user.api_user = true
+      user.valid?
+
+      user.api_user = false
+      user.valid?
+
+      expect(user.role).to eq(UserRoleEnum::RO)
+      expect(user.errors[:role]).to be_empty
+    end
+
+    it "requires a role for internal users" do
+      user = create(:user)
+      user.role = nil
+
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to include("Select a role")
+    end
+
+    it "rejects an unknown role without raising" do
+      user = create(:user)
+
+      expect { user.role = "invalid" }.not_to raise_error
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to include("Select a role")
+    end
+
+    it "exposes the four roles" do
+      expect(described_class.roles.keys).to eq(%w[reg mr bat ro])
+    end
+
+    %i[reg mr bat ro].each do |trait_name|
+      it "has a #{trait_name} trait" do
+        expect(build(:user, trait_name).role).to eq(trait_name.to_s)
+      end
+    end
+  end
+
+  describe ".temporary_purpose" do
+    it "returns the new user purpose when no id is given" do
+      expect(described_class.temporary_purpose).to eq(:new_user)
+    end
+
+    it "returns a purpose scoped to the user id" do
+      expect(described_class.temporary_purpose("123")).to eq(:user_123)
+    end
+  end
+
+  describe "#clear_temporary_records" do
+    it "deletes every temporary record for the record type, whatever the purpose" do
+      user = create(:user)
+      other_user = create(:user)
+      %w[check_your_answers new_user user_abc].each do |purpose|
+        create(:temporary_record, creator: user, record_type: "User", purpose: purpose)
+      end
+      create(:temporary_record, creator: user, record_type: "Provider", purpose: "edit_provider")
+      create(:temporary_record, creator: other_user, record_type: "User", purpose: "new_user")
+
+      user.clear_temporary_records(User)
+
+      expect(user.temporary_records.where(record_type: "User")).to be_empty
+      expect(user.temporary_records.where(record_type: "Provider")).to exist
+      expect(other_user.temporary_records.where(record_type: "User")).to exist
+    end
+  end
+
   describe "validations" do
     it { is_expected.to validate_presence_of(:first_name).with_message("Enter first name") }
     it { is_expected.to validate_presence_of(:last_name).with_message("Enter last name") }
@@ -296,6 +409,83 @@ RSpec.describe User, type: :model do
           )
         }.to raise_error(MinimumActiveUsersError)
       end
+    end
+
+    context "when there are active API users" do
+      let!(:active_users) { create_list(:user, 4, active: true) }
+      let!(:api_users) { create_list(:user, 2, active: true, api_user: true) }
+
+      it "does not count API users towards the floor" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: active_users.first.id
+          )
+        }.to raise_error(MinimumActiveUsersError)
+      end
+
+      it "does not raise simply because API users are present" do
+        expect {
+          described_class.ensure_minimum_active_users!(
+            users_id_to_exclude: api_users.first.id
+          )
+        }.not_to raise_error
+      end
+    end
+  end
+
+  describe ".ensure_minimum_reg_users!" do
+    context "when no other active REG remains" do
+      let!(:reg) { create(:user, :reg) }
+
+      it "raises MinimumRegUsersError" do
+        create_list(:user, 2, :ro)
+
+        expect {
+          described_class.ensure_minimum_reg_users!(users_id_to_exclude: reg.id)
+        }.to raise_error(MinimumRegUsersError)
+      end
+    end
+
+    context "when another active REG remains" do
+      let!(:reg) { create(:user, :reg) }
+      let!(:other_reg) { create(:user, :reg) }
+
+      it "does not raise" do
+        expect {
+          described_class.ensure_minimum_reg_users!(users_id_to_exclude: reg.id)
+        }.not_to raise_error
+      end
+    end
+
+    context "when the only other REG is inactive" do
+      let!(:reg) { create(:user, :reg) }
+      let!(:inactive_reg) { create(:user, :reg, active: false) }
+
+      it "raises MinimumRegUsersError" do
+        expect {
+          described_class.ensure_minimum_reg_users!(users_id_to_exclude: reg.id)
+        }.to raise_error(MinimumRegUsersError)
+      end
+    end
+  end
+
+  describe ".ensure_minimum_active_users!" do
+    it "does not raise when the excluded account is an API user" do
+      create_list(:user, 3, :reg)
+      api_user = create(:user, api_user: true)
+
+      expect {
+        described_class.ensure_minimum_active_users!(users_id_to_exclude: api_user.id)
+      }.not_to raise_error
+    end
+  end
+
+  describe ".active_reg" do
+    it "excludes API users that still carry a REG role" do
+      user = create(:user, api_user: true)
+      user.update_column(:role, UserRoleEnum::REG)
+
+      expect(described_class.active_reg).not_to include(user)
     end
   end
 
