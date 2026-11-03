@@ -7,6 +7,11 @@ RSpec.describe "providers/show.html.erb", type: :view do
   before do
     assign(:provider, provider)
     allow(view).to receive(:provider_page_data)
+    policy_user = build(:user, :reg)
+    policy_provider = provider
+    view.define_singleton_method(:policy) do |_record|
+      ProviderPolicy.new(policy_user, policy_provider)
+    end
 
     render
   end

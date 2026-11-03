@@ -4,7 +4,9 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <%= yield(:page_header) %>
-      <%= govuk_button_link_to("Add provider", new_provider_onboarding_path) %>
+      <% if policy(Provider.new).create? %>
+        <%= govuk_button_link_to("Add provider", new_provider_onboarding_path) %>
+      <% end %>
     </div>
   </div>
 
