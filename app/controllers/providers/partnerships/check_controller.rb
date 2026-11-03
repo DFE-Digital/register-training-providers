@@ -19,6 +19,8 @@ module Providers
       end
 
       def new
+        authorize provider, :manage_partnerships?
+
         partnership_data = partnership_session.load_partnership
 
         unless partnership_data
@@ -34,11 +36,11 @@ module Providers
         end
 
         setup_view_data(:new)
-
-        authorize provider, :update?
       end
 
       def create
+        authorize provider, :manage_partnerships?
+
         partnership_data = partnership_session.load_partnership
 
         unless partnership_data
