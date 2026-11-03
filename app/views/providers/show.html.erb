@@ -16,20 +16,29 @@
 
 <h2 class="govuk-heading-m">Provider details</h2>
 
-<div class="govuk-button-group">
-    <% if @provider.archived? %>
-        <%= govuk_button_link_to("Restore provider", provider_restore_path(@provider)) %>
-        <%= govuk_link_to("Delete provider", provider_delete_path(@provider)) %>
-
-    <% elsif @provider.status == ProviderStatusEnum::INACTIVE %>
-        <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
-    <% end %>
-</div>
-
-<% if @provider.status == ProviderStatusEnum::OFFBOARDED %>
-    <p class="govuk-hint">Offboarded providers are archived automatically on 1 August.</p>
+<% unless policy(@provider).any_write_access? %>
+  <%= govuk_inset_text(text: "You can view this provider's information and history but cannot make changes.") %>
 <% end %>
 
-<%= govuk_summary_list(rows: provider_details_rows(@provider)) %>
+<% if policy(@provider).any_action_buttons? %>
+  <div class="govuk-button-group">
+    <% if @provider.archived? %>
+      <% if policy(@provider).restore? %>
+        <%= govuk_button_link_to("Restore provider", provider_restore_path(@provider)) %>
+      <% end %>
+      <% if policy(@provider).destroy? %>
+        <%= govuk_link_to("Delete provider", provider_delete_path(@provider)) %>
+      <% end %>
+    <% elsif policy(@provider).archive? %>
+      <%= govuk_button_link_to("Archive provider", provider_archive_path(@provider)) %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @provider.status == ProviderStatusEnum::OFFBOARDED %>
+  <p class="govuk-hint">Offboarded providers are archived automatically on 1 August.</p>
+<% end %>
+
+<%= govuk_summary_list(rows: provider_details_rows(@provider, include_actions: policy(@provider).update?)) %>
 
 <%= debug_provider(@provider) %>
