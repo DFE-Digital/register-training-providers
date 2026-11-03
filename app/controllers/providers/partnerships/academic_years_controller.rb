@@ -6,7 +6,7 @@ module Providers
       def new
         partnership_data = partnership_session.load_partnership
 
-        authorize provider, :show?
+        authorize provider, :manage_partnerships?
 
         # Keep previous selections only when coming from confirm page to change them
         # Otherwise start fresh (dates may have changed, invalidating previous selections)
@@ -36,7 +36,7 @@ module Providers
 
         partnership_attributes = partnership_session.load_partnership
 
-        authorize provider, :update?
+        authorize provider, :manage_partnerships?
 
         unless partnership_attributes
           redirect_to provider_new_partnership_find_path(provider)

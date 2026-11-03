@@ -14,12 +14,31 @@ module Providers
       :activerecord
     end
 
-    def accreditation_status_options_for_radios
-      AccreditationStatusEnum::ACCREDITATION_STATUSES.keys.map do |key|
+    def accreditation_status_options_for_radios(user)
+      AccreditationStatusEnum::ACCREDITATION_STATUSES.keys.filter_map do |key|
+        next unless ProviderPolicy.new(user, self.class.new(accreditation_status: key)).create?
+
         SelectOption.new(
           key: key,
           value: I18n.t("forms.providers.is_the_provider_accredited.accreditation_status.#{key}"),
         )
+      end
+    end
+
+    def single_accreditation_status_for(user)
+      options = accreditation_status_options_for_radios(user)
+
+      options.one? ? options.first : nil
+    end
+
+    def accreditation_status_question_for(user)
+      option = single_accreditation_status_for(user)
+      return "Is the provider accredited?" if option.nil?
+
+      if option.key.to_s == AccreditationStatusEnum::ACCREDITED
+        "The provider is accredited"
+      else
+        "The provider is not accredited"
       end
     end
 

@@ -6,32 +6,36 @@ class PartnershipPolicy < ApplicationPolicy
   end
 
   def index?
-    provider_policy.show?
+    record.provider.present? && ProviderPolicy.new(user, record.provider).show?
+  end
+
+  def show?
+    index?
   end
 
   def new?
-    provider_policy.edit?
+    manage?
   end
 
   def create?
-    provider_policy.edit?
+    manage?
+  end
+
+  def edit?
+    manage?
   end
 
   def update?
-    provider_policy.edit?
+    manage?
   end
 
   def destroy?
-    provider_policy.edit?
+    manage?
   end
-
-  delegate :show?, to: :provider_policy
-
-  delegate :edit?, to: :provider_policy
 
 private
 
-  def provider_policy
-    @provider_policy ||= ProviderPolicy.new(user, record.provider)
+  def manage?
+    ProviderPolicy.new(user, record.provider).manage_partnerships?
   end
 end
