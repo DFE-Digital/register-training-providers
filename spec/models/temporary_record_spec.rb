@@ -17,13 +17,11 @@ RSpec.describe TemporaryRecord, type: :model do
     it { is_expected.to belong_to(:creator).class_name("User").with_foreign_key(:created_by) }
   end
 
-  describe "enum purpose" do
-    it do
-      expect(subject).to define_enum_for(:purpose)
-        .with_values(
-          check_your_answers: "check_your_answers",
-        )
-        .backed_by_column_of_type(:string)
+  describe "purpose" do
+    it "persists an arbitrary purpose and reads it back" do
+      record = create(:temporary_record, purpose: "user_#{SecureRandom.uuid}")
+
+      expect(record.reload.purpose).to start_with("user_")
     end
   end
 

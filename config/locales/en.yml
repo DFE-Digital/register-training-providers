@@ -24,6 +24,17 @@ en:
       otp:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
+  users:
+    roles:
+      reg: "Register"
+      mr: "Market Regulation"
+      bat: "BAT Support"
+      ro: "Read-only"
+    role_descriptions:
+      reg: "Service administration and full administrative access"
+      mr: "Operational management of accredited providers, accreditation and associated partnerships"
+      bat: "Operational management of non-accredited providers"
+      ro: "View-only access to authorised Register information"
   providers:
     statuses:
       active: "Active"
@@ -76,6 +87,9 @@ en:
               inclusion: "Select if the account is an API user"
             active:
               inclusion: "Select if the account is active"
+            role:
+              blank: "Select a role"
+              inclusion: "Select a role"
         accreditation:
           attributes:
             number:
