@@ -13,7 +13,7 @@ class ProvidersController < ApplicationController
     address_session = AddressJourney::SessionManager.new(session, context: :setup)
     address_session.clear!
 
-    provider_query = ProvidersQuery.call(filters: provider_filters, search_term: keywords)
+    provider_query = ProvidersQuery.call(policy_scope(Provider), filters: provider_filters, search_term: keywords)
     @pagy, @records = pagy(provider_query.order_by_operating_name, limit: 10)
 
     @academic_years = AcademicYear.next_and_older

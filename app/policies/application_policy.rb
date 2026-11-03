@@ -34,6 +34,16 @@ class ApplicationPolicy
     false
   end
 
+private
+
+  def can_read_register?
+    user.api_user? || user.reg? || user.mr? || user.bat? || user.ro?
+  end
+
+  def manage_accreditations_and_partnerships?
+    !user.api_user? && (user.reg? || user.mr?)
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user

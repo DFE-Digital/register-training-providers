@@ -3,7 +3,7 @@ module Accreditations
     before_action :load_accreditation
 
     def show
-      authorize @accreditation
+      authorize @accreditation, :destroy?
     end
 
     def destroy

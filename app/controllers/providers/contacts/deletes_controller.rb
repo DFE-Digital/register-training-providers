@@ -2,7 +2,7 @@ module Providers
   module Contacts
     class DeletesController < ApplicationController
       def show
-        authorize contact
+        authorize contact, :destroy?
       end
 
       def destroy

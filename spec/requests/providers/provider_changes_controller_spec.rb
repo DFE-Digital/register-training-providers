@@ -11,8 +11,6 @@ RSpec.describe "Provider changes", type: :request do
     get "/auth/dfe/callback"
   end
 
-  after { OmniAuth.config.mock_auth.clear }
-
   describe "PATCH /providers/:provider_id/changes/:field/:step" do
     it "redirects to the previous step without saving when the wizard path is invalid" do
       expect {

@@ -6,27 +6,31 @@ class AccreditationPolicy < ApplicationPolicy
   end
 
   def index?
-    provider_policy.show?
+    provider.present? && provider_policy.show?
   end
 
-  delegate :show?, to: :provider_policy
+  def show?
+    index?
+  end
 
   def new?
-    provider_policy.edit?
+    manage?
   end
 
   def create?
-    provider_policy.edit?
+    manage?
   end
 
-  delegate :edit?, to: :provider_policy
+  def edit?
+    manage?
+  end
 
   def update?
-    provider_policy.edit?
+    manage?
   end
 
   def destroy?
-    provider_policy.edit?
+    manage?
   end
 
 private
@@ -35,14 +39,23 @@ private
     @provider_policy ||= ProviderPolicy.new(user, provider)
   end
 
+  def manage?
+    return manage_accreditations_and_partnerships? if provider_creation_mode?
+
+    return false if provider.nil?
+
+    ProviderPolicy.new(user, provider).manage_accreditations?
+  end
+
+  def provider_creation_mode?
+    record.respond_to?(:provider_creation_mode?) && record.provider_creation_mode?
+  end
+
   def provider
-    # Handle both real accreditations and form objects
-    if record.respond_to?(:provider) && record.provider.present?
+    if record.respond_to?(:provider) && record.provider&.persisted?
       record.provider
     elsif record.respond_to?(:provider_id) && record.provider_id.present?
       Provider.find(record.provider_id)
-    else
-      raise "Unable to determine provider for accreditation authorization"
     end
   end
 end
