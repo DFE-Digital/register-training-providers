@@ -1,0 +1,15 @@
+<%= content_for :page_title, "This change would leave too few active users" %>
+
+<h1 class="govuk-heading-l">This change would leave too few active users</h1>
+
+<p class="govuk-body">
+  The Register must always have at least <%= User::MINIMUM_ACTIVE_INTERNAL_USERS %> active users who are not API users.
+</p>
+
+<p class="govuk-body">
+  Make another user active, or keep this user as an internal user, then try again.
+</p>
+
+<p class="govuk-body">
+  If you have any questions, email <%= support_email %>.
+</p>

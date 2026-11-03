@@ -37,6 +37,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
     expect(rendered).to have_selector("input[name='user[email]']")
     expect(rendered).to have_selector("input[name='user[api_user]']")
     expect(rendered).to have_selector("input[name='user[active]']")
+    expect(rendered).to have_selector("input[name='user[role]'][value='reg']")
   end
 
   it "renders the cancel link" do
@@ -81,6 +82,14 @@ RSpec.describe "users/edit.html.erb", type: :view do
     end
   end
 
+  context "when the user is an API user" do
+    let(:user) { create(:user, api_user: true) }
+
+    it "does not render the role select" do
+      expect(rendered).not_to have_selector("input[name='user[role]']")
+    end
+  end
+
   context "when a user has signed in" do
     let(:last_signed_in_at) { Time.zone.now }
 
@@ -91,6 +100,7 @@ RSpec.describe "users/edit.html.erb", type: :view do
       expect(rendered).not_to have_selector("input[name='user[email]']")
       expect(rendered).to have_selector("input[name='user[api_user]']")
       expect(rendered).to have_selector("input[name='user[active]']")
+      expect(rendered).to have_selector("input[name='user[role]'][value='reg']")
     end
 
     it "renders the uneditable fields" do

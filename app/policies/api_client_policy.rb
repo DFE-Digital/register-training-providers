@@ -3,14 +3,20 @@ class ApiClientPolicy < ApplicationPolicy
     def resolve
       if user.api_user?
         scope.where(created_by: user).kept
-      else
+      elsif user.reg?
         scope.kept
+      else
+        scope.none
       end
     end
   end
 
+  def index?
+    user.api_user? || user.reg?
+  end
+
   def confirm?
-    record.kept? && record.created_by == user
+    (user.api_user? || user.reg?) && record.kept? && record.created_by == user
   end
 
   def show?
@@ -30,12 +36,12 @@ class ApiClientPolicy < ApplicationPolicy
   end
 
   def create?
-    record.new_record?
+    record.new_record? && (user.api_user? || user.reg?)
   end
 
 private
 
   def user_can_access_record?
-    !user.api_user? || record.created_by == user
+    user.api_user? ? record.created_by == user : user.reg?
   end
 end
