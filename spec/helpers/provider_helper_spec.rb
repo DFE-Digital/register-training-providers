@@ -749,6 +749,14 @@ RSpec.describe ProviderHelper, type: :helper do
         expect(keys).not_to include("Accreditation number")
       end
     end
+
+    context "when actions are disabled" do
+      it "omits the Change actions but keeps History" do
+        operating_name_row = helper.provider_details_rows(provider, include_actions: false).find { |row| row[:key][:text] == "Operating name" }
+
+        expect(operating_name_row[:actions].pluck(:text)).to contain_exactly("History")
+      end
+    end
   end
 
   describe "#insert_accreditation_number_row" do

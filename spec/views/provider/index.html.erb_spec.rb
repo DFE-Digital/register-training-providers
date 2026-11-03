@@ -26,6 +26,11 @@ RSpec.describe "providers/index.html.erb", type: :view do
       {}
     end
 
+    policy_user = build(:user, :reg)
+    view.define_singleton_method(:policy) do |record|
+      ProviderPolicy.new(policy_user, record)
+    end
+
     render
   end
 
