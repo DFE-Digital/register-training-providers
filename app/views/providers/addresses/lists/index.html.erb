@@ -16,11 +16,11 @@
   Addresses<%= " (#{@addresses.count})" if @addresses.any? %>
 </h2>
 
-<% unless @provider.archived? %>
-  <div class="govuk-button-group">
+<div class="govuk-button-group">
+  <% if policy(@provider).update? %>
     <%= govuk_button_link_to("Add address", provider_new_address_path(@provider)) %>
-    <%= govuk_link_to("Historic addresses", provider_historic_addresses_path(@provider)) %>
-  </div>
-<% end %>
+  <% end %>
+  <%= govuk_link_to("Historic addresses", provider_historic_addresses_path(@provider)) %>
+</div>
 
 <%= render "addresses_list", addresses: @addresses, provider: @provider %>

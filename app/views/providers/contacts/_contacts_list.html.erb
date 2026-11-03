@@ -1,5 +1,5 @@
 <% if contacts.any? %>
-  <% contact_summary_cards(contacts, provider, include_actions: !provider.archived?).each do |summary_card| %>
+  <% contact_summary_cards(contacts, provider, include_actions: policy(provider).update?).each do |summary_card| %>
     <%= govuk_summary_card(title: summary_card[:title]) do |card|
           if summary_card[:actions].present?
             summary_card[:actions].each do |action|

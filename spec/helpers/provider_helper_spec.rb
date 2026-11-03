@@ -749,6 +749,14 @@ RSpec.describe ProviderHelper, type: :helper do
         expect(keys).not_to include("Accreditation number")
       end
     end
+
+    context "when actions are disabled" do
+      it "omits the Change actions but keeps History" do
+        operating_name_row = helper.provider_details_rows(provider, include_actions: false).find { |row| row[:key][:text] == "Operating name" }
+
+        expect(operating_name_row[:actions].pluck(:text)).to contain_exactly("History")
+      end
+    end
   end
 
   describe "#insert_accreditation_number_row" do
@@ -787,6 +795,27 @@ RSpec.describe ProviderHelper, type: :helper do
       result = helper.insert_accreditation_number_row(rows_without_anchor, provider)
 
       expect(result.map { |row| row[:key][:text] }.last).to eq("Accreditation number")
+    end
+  end
+
+  describe "#provider_read_only_message" do
+    it "asks read-only users to contact Market Regulation for an accredited provider" do
+      message = helper.provider_read_only_message(build(:provider, :accredited), build(:user, :ro))
+
+      expect(message).to include("Contact Market Regulation to request a change.")
+    end
+
+    it "asks read-only users to contact BAT Support for an unaccredited provider" do
+      message = helper.provider_read_only_message(build(:provider), build(:user, :ro))
+
+      expect(message).to include("Contact BAT Support to request a change.")
+    end
+
+    it "explains the accreditation restriction to BAT users" do
+      message = helper.provider_read_only_message(build(:provider, :accredited), build(:user, :bat))
+
+      expect(message).to start_with("Read-only access.")
+      expect(message).to include("Only authorised Market Regulation users can make changes.")
     end
   end
 end
