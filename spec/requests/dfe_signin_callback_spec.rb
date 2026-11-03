@@ -9,10 +9,6 @@ RSpec.describe "DfE Signin callback", type: :request do
     user_exists_in_dfe_sign_in(user:)
   end
 
-  after do
-    OmniAuth.config.mock_auth.clear
-  end
-
   describe "GET /auth/dfe/callback" do
     it "rotates the session cookie when signing in to prevent session fixation" do
       get root_path

@@ -2,10 +2,10 @@ class UsersController < ApplicationController
   include Pagy::Backend
 
   def index
-    current_user.clear_temporary(User, purpose: :check_your_answers)
+    current_user.clear_temporary_records(User)
+    authorize User
 
     @pagy, @records = pagy(policy_scope(scoped_user.order_by_first_then_last_name))
-    skip_authorization
     verify_policy_scoped
   end
 
@@ -15,12 +15,14 @@ class UsersController < ApplicationController
   end
 
   def new
-    @user = current_user.load_temporary(scoped_user, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, purpose: new_user_purpose)
+    @user.role ||= UserRoleEnum::REG unless @user.api_user?
     authorize @user
   end
 
   def edit
-    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
+    current_user.clear_temporary(User, purpose: user_purpose) if params[:goto] != "confirm"
+    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: user_purpose)
     authorize @user
   end
 
@@ -29,7 +31,7 @@ class UsersController < ApplicationController
     authorize @user
 
     if @user.valid?
-      @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
+      @user.save_as_temporary!(created_by: current_user, purpose: new_user_purpose)
       redirect_to new_user_confirm_path
     else
       render(:new)
@@ -37,13 +39,13 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: :check_your_answers)
+    @user = current_user.load_temporary(scoped_user, id: user_id, purpose: user_purpose)
     authorize @user
 
     @user.assign_attributes(params.expect(user: user_params))
 
     if @user.valid?
-      @user.save_as_temporary!(created_by: current_user, purpose: :check_your_answers)
+      @user.save_as_temporary!(created_by: current_user, purpose: user_purpose)
       redirect_to user_check_path(@user)
     else
       render(:edit)
@@ -60,10 +62,23 @@ private
     @scoped_user || policy_scope(User)
   end
 
-  def user_params
-    return [:first_name, :last_name, :email, :api_user] unless @user
-    return [:first_name, :last_name, :email, :api_user, :active] if @user.last_signed_in_at.nil?
+  def new_user_purpose
+    User.temporary_purpose
+  end
 
-    [:api_user, :active]
+  def user_purpose
+    User.temporary_purpose(user_id)
+  end
+
+  def user_params
+    permitted = if @user.nil?
+                  [:first_name, :last_name, :email, :api_user]
+                elsif @user.last_signed_in_at.nil?
+                  [:first_name, :last_name, :email, :api_user, :active]
+                else
+                  [:api_user, :active]
+                end
+    permitted << :role if current_user.reg?
+    permitted
   end
 end

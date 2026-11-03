@@ -1,35 +1,33 @@
 class UserPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.api_user?
-        scope.none
-      else
-        scope.kept
-      end
+      return scope.none unless user.reg?
+
+      scope.kept
     end
   end
 
   def index?
-    !user.api_user?
+    user.reg?
   end
 
   def show?
-    record.kept? && !user.api_user
+    user.reg? && record.kept?
   end
 
   def edit?
-    record.kept? && user != record && !user.api_user && !record.system_admin?
+    user.reg? && record.kept? && user != record && !record.system_admin?
   end
 
   def update?
-    record.kept? && user != record && !user.api_user && !record.system_admin?
+    edit?
   end
 
   def create?
-    record.new_record? && !user.api_user
+    user.reg? && record.new_record?
   end
 
   def destroy?
-    record.kept? && user != record && !user.api_user && !record.system_admin?
+    edit?
   end
 end

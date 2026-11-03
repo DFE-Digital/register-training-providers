@@ -9,10 +9,6 @@ RSpec.describe "DfE Sign out", type: :request do
     user_exists_in_dfe_sign_in(user:)
   end
 
-  after do
-    OmniAuth.config.mock_auth.clear
-  end
-
   describe "GET /auth/dfe/sign-out" do
     it "clears the session when signing out" do
       get "/auth/dfe/callback"

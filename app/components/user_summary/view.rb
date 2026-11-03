@@ -24,6 +24,9 @@ module UserSummary
         { key: { text: "Email address" },
           value: { text: @user.email },
           actions: fully_editable? ? [{ href: edit_user_path(user), visually_hidden_text: "email address" }] : [] },
+        { key: { text: "Role" },
+          value: { text: @user.role_label },
+          actions: role_actions },
         { key: { text: "Is the account an API user" },
           value: { text: @user.api_user? ? "Yes" : "No" },
           actions: if editable
@@ -52,6 +55,12 @@ module UserSummary
 
     def fully_editable?
       editable && user.last_signed_in_at.nil?
+    end
+
+    def role_actions
+      return [] unless editable && !user.api_user?
+
+      [{ href: edit_user_path(user), visually_hidden_text: "role" }]
     end
   end
 end
