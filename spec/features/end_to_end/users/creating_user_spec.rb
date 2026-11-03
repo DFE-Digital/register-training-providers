@@ -23,6 +23,7 @@ RSpec.feature "User management" do
 
     then_i_see_the_success_message
     and_i_can_see_the_page_title_users_with_the_count(count: 2)
+    and_the_new_user_has_the_selected_role
   end
 
   def and_i_can_see_the_page_title_users_with_the_count(count: 1)
@@ -69,5 +70,10 @@ RSpec.feature "User management" do
     page.fill_in "First name", with: user.first_name
     page.fill_in "Last name", with: user.first_name
     page.fill_in "Email", with: user.email
+    page.choose "Market Regulation"
+  end
+
+  def and_the_new_user_has_the_selected_role
+    expect(User.find_by("LOWER(email) = ?", user.email.downcase).role).to eq("mr")
   end
 end

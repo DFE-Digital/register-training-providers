@@ -79,11 +79,17 @@ module ApplicationHelper
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
       ]
-    else
+    elsif user.reg?
       [
         { text: "Providers", href: providers_path, active_when: providers_path },
         { text: "Users", href: users_path, active_when: users_path },
         { text: "API clients", href: api_clients_path, active_when: api_clients_path },
+        { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
+        { text: "Sign out", href: sign_out_path },
+      ]
+    else
+      [
+        { text: "Providers", href: providers_path, active_when: providers_path },
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
       ]

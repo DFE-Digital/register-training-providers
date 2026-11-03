@@ -53,6 +53,11 @@ RSpec.describe SummaryHelper, type: :helper do
             actions: [{ href: change_path, visually_hidden_text: "email address" }]
           },
           {
+            key: { text: "Role" },
+            value: { text: user.role_label },
+            actions: [{ href: change_path, visually_hidden_text: "role" }]
+          },
+          {
             key: { text: "Is the account an API user?" },
             value: { text: "No" },
             actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
@@ -78,6 +83,11 @@ RSpec.describe SummaryHelper, type: :helper do
             key: { text: "Email address" },
             value: { text: user.email },
             actions: [{ href: change_path, visually_hidden_text: "email address" }]
+          },
+          {
+            key: { text: "Role" },
+            value: { text: user.role_label },
+            actions: [{ href: change_path, visually_hidden_text: "role" }]
           },
           {
             key: { text: "Is the account an API user?" },
@@ -111,8 +121,51 @@ RSpec.describe SummaryHelper, type: :helper do
             value: { text: user.email }
           },
           {
+            key: { text: "Role" },
+            value: { text: user.role_label },
+            actions: [{ href: change_path, visually_hidden_text: "role" }]
+          },
+          {
             key: { text: "Is the account an API user?" },
             value: { text: "No" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+          },
+          {
+            key: { text: "Is the account active?" },
+            value: { text: "Yes" },
+            actions: [{ href: change_path, visually_hidden_text: "is the account active" }]
+          }
+        ])
+      end
+    end
+
+    context "for an API user" do
+      let(:user) { build_stubbed(:user, api_user: true) }
+
+      it "shows no role and no role change action" do
+        expect(helper.user_rows(user, change_path)).to eq([
+          {
+            key: { text: "First name" },
+            value: { text: user.first_name },
+            actions: [{ href: change_path, visually_hidden_text: "first name" }]
+          },
+          {
+            key: { text: "Last name" },
+            value: { text: user.last_name },
+            actions: [{ href: change_path, visually_hidden_text: "last name" }]
+          },
+          {
+            key: { text: "Email address" },
+            value: { text: user.email },
+            actions: [{ href: change_path, visually_hidden_text: "email address" }]
+          },
+          {
+            key: { text: "Role" },
+            value: { text: "Read-only" }
+          },
+          {
+            key: { text: "Is the account an API user?" },
+            value: { text: "Yes" },
             actions: [{ href: change_path, visually_hidden_text: "is the account an api user" }]
           },
           {
