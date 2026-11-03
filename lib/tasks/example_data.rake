@@ -5,16 +5,7 @@ namespace :example_data do
   task generate: :environment do
     raise "THIS TASK CANNOT BE RUN IN PRODUCTION" if Rails.env.production?
 
-    PERSONAS.each do |persona_attributes|
-      persona = Persona.find_or_initialize_by(email: persona_attributes[:email])
-      persona.first_name = persona_attributes[:first_name]
-      persona.last_name = persona_attributes[:last_name]
-      persona.system_admin = persona_attributes[:system_admin?]
-      persona.api_user = persona_attributes[:api_user?]
-      persona.save!
-
-      persona.discard! if persona_attributes[:discarded?] && persona.kept?
-    end
+    SeedPersonas.call(include_system_admin: true)
 
     ["generate:academic_years",
      "import:providers",
