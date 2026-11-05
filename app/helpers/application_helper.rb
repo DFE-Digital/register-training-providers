@@ -1,13 +1,13 @@
 module ApplicationHelper
+  include ProviderHelper
+
   include DfE::Autocomplete::ApplicationHelper
 
   def provider_page_data(provider)
     tag = []
-    tag = [" ", govuk_tag(text: "Archived", classes: "govuk-tag__heading")] if provider.archived?
-
-    tag = [" ", govuk_tag(text: "Soft deleted", colour: "red", classes: "govuk-tag__heading")] if provider.discarded?
-
-    tag = [" ", govuk_tag(text: "Inactive", colour: "yellow", classes: "govuk-tag__heading")] if provider.inactive?
+    if (status_tag = provider_status_tag(provider))
+      tag = [" ", govuk_tag(**status_tag, classes: "govuk-tag__heading")]
+    end
 
     page_data(title: provider.operating_name, caption: "Provider", subtitle: "Provider",
               header: safe_join([provider.operating_name] + tag))

@@ -20,8 +20,6 @@ class ProvidersController < ApplicationController
   end
 
   def show
-    current_user.clear_temporary(scoped_provider, purpose: :edit_provider)
-
     @provider = scoped_provider.find(provider_id)
     authorize @provider
   end

@@ -1,9 +1,10 @@
 class ProviderChangeBaselineService
   include ServicePattern
 
-  def initialize(provider:, attribute_name:)
+  def initialize(provider:, attribute_name:, status_before_change: nil)
     @provider = provider
     @attribute_name = attribute_name.to_s
+    @status_before_change = status_before_change
   end
 
   def call
@@ -15,7 +16,7 @@ class ProviderChangeBaselineService
     ActiveRecord::Base.transaction(requires_new: true) do
       provider.provider_changes.create!(
         attribute_name: attribute_name,
-        value: provider.public_send(attribute_name),
+        value: baseline_value,
         effective_on: effective_on,
         status: :completed,
         source: :baseline
@@ -27,15 +28,33 @@ class ProviderChangeBaselineService
 
 private
 
-  attr_reader :provider, :attribute_name
+  attr_reader :provider, :attribute_name, :status_before_change
+
+  def baseline_value
+    return status_baseline_value if attribute_name == "status"
+
+    provider.public_send(attribute_name)
+  end
+
+  def status_baseline_value
+    { "status" => status_before_change.presence || provider.status }
+  end
 
   def original_value_already_lost?
     provider.provider_changes.completed.for_attribute(attribute_name).exists?
   end
 
   def effective_on
-    candidate_date = [provider.first_active_at, provider.onboarded_at, provider.created_at.to_date].compact.first
+    candidate_date = attribute_name == "status" ? status_baseline_date : attribute_baseline_date
 
     [candidate_date, Date.current].min
+  end
+
+  def status_baseline_date
+    [ProviderStatusEnum.earliest_valid_date(provider), provider.created_at.to_date].compact.min
+  end
+
+  def attribute_baseline_date
+    [provider.first_active_at, provider.onboarded_at, provider.created_at.to_date].compact.first
   end
 end

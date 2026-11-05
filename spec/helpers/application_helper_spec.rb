@@ -16,6 +16,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "includes the Archived tag" do
         result = helper.provider_page_data(provider)
         expect(result[:page_header]).to include("Archived")
+        expect(result[:page_header]).to include("govuk-tag--grey")
       end
     end
 
@@ -35,6 +36,41 @@ RSpec.describe ApplicationHelper, type: :helper do
         result = helper.provider_page_data(provider)
         expect(result[:page_header]).to include("Soft deleted")
         expect(result[:page_header]).not_to include("Archived")
+      end
+    end
+
+    context "when provider has an open offboarded period" do
+      let(:provider) { build_stubbed(:provider) }
+
+      before do
+        allow(provider).to receive(:open_offboarded_period).and_return(
+          { "start_date" => 1.month.ago.to_date.to_s, "end_date" => nil, "offboarded" => true }
+        )
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it "includes the Offboarded tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Offboarded")
+      end
+
+      it "takes precedence over the Inactive tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).not_to include(">Inactive")
+      end
+    end
+
+    context "when provider is inactive" do
+      let(:provider) { build_stubbed(:provider) }
+
+      before do
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it "includes the Inactive tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Inactive")
+        expect(result[:page_header]).not_to include("Offboarded")
       end
     end
   end

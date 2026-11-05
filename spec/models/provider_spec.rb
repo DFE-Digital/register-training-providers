@@ -309,6 +309,24 @@ RSpec.describe Provider, type: :model do
         be_within(1.second).of(Time.zone.now.utc)
       )
     end
+
+    it "fails the queued pending status change instead of deleting it" do
+      change = create(:provider_change, :status_change, provider: provider, value: { "status" => "active" })
+
+      expect { provider.archive! }.to change { provider.provider_changes.pending.count }.from(1).to(0)
+
+      expect(change.reload).to be_failed
+      expect(change.error_message).to eq("Provider was archived before the change took effect")
+      expect(change.processed_at).to be_present
+    end
+
+    it "fails queued pending changes for other attributes as well" do
+      create(:provider_change, :code_change, provider: provider, value: "NEW")
+      create(:provider_change, :ukprn_change, provider: provider, value: "10000001")
+
+      expect { provider.archive! }.to change { provider.provider_changes.pending.count }.from(2).to(0)
+      expect(provider.provider_changes.failed.count).to eq(2)
+    end
   end
 
   describe "#archived?" do
@@ -359,6 +377,18 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  describe "#active_in_academic_year?" do
+    it "reports a provider archived inside the year as active for that year" do
+      provider = create(
+        :provider,
+        first_active_at: build_academic_year_start_date(current_academic_year) - 1.year,
+        archived_at: build_academic_year_start_date(current_academic_year) + 1.month
+      )
+
+      expect(provider.active_in_academic_year?(AcademicYear.for_year(current_academic_year))).to be true
+    end
+  end
+
   describe ".for_active_academic_years" do
     let!(:provider_current_only) do
       create(:provider)
@@ -403,6 +433,24 @@ RSpec.describe Provider, type: :model do
       result = described_class.for_active_academic_years([current_academic_year])
 
       expect(result).not_to include(inactive_provider)
+    end
+
+    it "does not include a provider archived on the first day of the academic year" do
+      academic_year_start = build_academic_year_start_date(current_academic_year)
+      provider = create(
+        :provider,
+        first_active_at: academic_year_start - 1.year,
+        archived_at: academic_year_start.to_time,
+        inactive_periods: [{
+          start_date: academic_year_start - 1.year,
+          end_date: academic_year_start - 1.day,
+          offboarded: true
+        }]
+      )
+
+      result = described_class.for_active_academic_years([current_academic_year])
+
+      expect(result).not_to include(provider)
     end
 
     it "does not return duplicates when a provider matches multiple years" do
@@ -552,6 +600,59 @@ RSpec.describe Provider, type: :model do
         expect(provider.active_academic_years).to be_empty
       end
     end
+
+    context "when an inactive period covers academic years inside its range" do
+      let(:provider) do
+        create(
+          :provider,
+          first_active_at: build_academic_year_start_date(current_academic_year - 5),
+          inactive_periods: [{
+            start_date: build_academic_year_start_date(current_academic_year - 3),
+            end_date: build_academic_year_end_date(current_academic_year - 1)
+          }]
+        )
+      end
+
+      before do
+        (current_academic_year - 4).upto(current_academic_year - 1) do |year|
+          create(:academic_year, academic_year: year)
+        end
+      end
+
+      it "excludes every academic year the period overlaps" do
+        active_years = provider.active_academic_years.map(&:start_year)
+
+        expect(active_years).not_to include(current_academic_year - 3)
+        expect(active_years).not_to include(current_academic_year - 2)
+        expect(active_years).not_to include(current_academic_year - 1)
+      end
+
+      it "keeps the academic years outside the period" do
+        active_years = provider.active_academic_years.map(&:start_year)
+
+        expect(active_years).to include(current_academic_year - 5)
+        expect(active_years).to include(current_academic_year - 4)
+      end
+    end
+
+    context "when the provider is archived" do
+      let(:archive_date) { build_academic_year_start_date(current_academic_year) }
+      let(:provider) do
+        create(
+          :provider,
+          first_active_at: build_academic_year_start_date(current_academic_year - 2),
+          archived_at: archive_date.to_time,
+          inactive_periods: [{
+            start_date: build_academic_year_start_date(current_academic_year - 1),
+            end_date: (archive_date - 1.day).to_s
+          }]
+        )
+      end
+
+      it "excludes academic years starting on or after the archive date" do
+        expect(provider.active_academic_years.map(&:start_year)).to eq([current_academic_year - 2])
+      end
+    end
   end
 
   describe "rotp_id" do
@@ -629,16 +730,6 @@ RSpec.describe Provider, type: :model do
 
     it "returns the inactive period that ended most recently" do
       expect(provider.current_inactive_period).to eq(current_inactive_period)
-    end
-  end
-
-  describe "#latest_complete_inactive_period" do
-    let(:inactive_period_1) { { "start_date" => 1.year.ago.to_date.to_s, "end_date" => 6.months.ago.to_date.to_s } }
-    let(:inactive_period_2) { { "start_date" => 1.month.ago.to_date.to_s, "end_date" => 1.month.ago.to_date.to_s } }
-    let(:provider) { create(:provider, inactive_periods: [inactive_period_2, inactive_period_1]) }
-
-    it "returns the inactive period that ended most recently" do
-      expect(provider.latest_complete_inactive_period).to eq(inactive_period_2)
     end
   end
 end

@@ -1,7 +1,7 @@
 # Wizard Documentation
 
 **Structure Type:** `graph`
-**Generated:** 2026-09-11T14:18:01Z
+**Generated:** 2026-10-26T10:32:50Z
 **Processor:** DfE::Wizard::StepsProcessor
 
 ## Overview
@@ -9,11 +9,11 @@
 | Metric                           | Value |
 | -------------------------------- | ----- |
 | Total Steps                      | 3     |
-| Simple Transitions               | 0     |
+| Simple Transitions               | 2     |
 | Conditional Transitions          | 0     |
 | Multiple Conditional Transitions | 0     |
 | Custom Branching Transitions     | 0     |
-| **Total Transitions**            | **0** |
+| **Total Transitions**            | **2** |
 
 ## Root Entry Point (Fixed)
 
@@ -149,7 +149,7 @@ Simple transitions allow linear, unconditional progression from one step to the 
 | Metric                           | Count |
 | -------------------------------- | ----- |
 | Total Steps                      | 3     |
-| Simple Transitions               | 0     |
+| Simple Transitions               | 2     |
 | Conditional Transitions          | 0     |
 | Multiple Conditional Transitions | 0     |
 | Custom Branching Transitions     | 0     |
@@ -290,10 +290,10 @@ Simple transitions allow linear, unconditional progression from one step to the 
   ],
   :counts: {
     :steps: 3,
-    :simple_edges: 2,
-    :conditional_edges: 0,
-    :multiple_conditional_edges: 0,
-    :custom_branching_edges: 0
+    :simple_transitions: 2,
+    :conditional_transitions: 0,
+    :multiple_conditional_transitions: 0,
+    :custom_branching_transitions: 0
   },
   :wizard_name: "Provider changes/ukprn wizard"
 }

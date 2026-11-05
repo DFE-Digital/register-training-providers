@@ -15,7 +15,7 @@ RSpec.describe ProviderPolicy do
     end
   end
 
-  permissions :edit?, :update?, :destroy? do
+  permissions :edit?, :update? do
     it "permits access if the provider is kept and not archived" do
       provider = create(:provider)
       expect(subject).to permit(build(:user), provider)
@@ -25,11 +25,63 @@ RSpec.describe ProviderPolicy do
       provider = create(:provider, :discarded)
       expect(subject).not_to permit(build(:user), provider)
     end
-  end
 
-  permissions :edit?, :update? do
     it "denies access if the provider is archived" do
       provider = create(:provider, :archived)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+  end
+
+  permissions :archive? do
+    it "permits access if the provider is inactive" do
+      provider = create(:provider, :with_current_inactive_period)
+      expect(subject).to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is active" do
+      provider = create(:provider)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is offboarded" do
+      provider = create(:provider, :with_current_offboarded_period)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is archived" do
+      provider = create(:provider, :archived)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is discarded" do
+      provider = create(:provider, :with_current_inactive_period, :discarded)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+  end
+
+  permissions :destroy? do
+    it "permits access if the provider is archived" do
+      provider = create(:provider, :archived)
+      expect(subject).to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is active" do
+      provider = create(:provider)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is inactive" do
+      provider = create(:provider, :with_current_inactive_period)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is offboarded" do
+      provider = create(:provider, :with_current_offboarded_period)
+      expect(subject).not_to permit(build(:user), provider)
+    end
+
+    it "denies access if the provider is discarded" do
+      provider = create(:provider, :archived, :discarded)
       expect(subject).not_to permit(build(:user), provider)
     end
   end

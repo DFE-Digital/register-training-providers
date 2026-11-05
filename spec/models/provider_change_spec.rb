@@ -20,7 +20,8 @@ RSpec.describe ProviderChange, type: :model do
     it do
       expect(described_class.sources).to eq(
         "requested" => "requested",
-        "baseline" => "baseline"
+        "baseline" => "baseline",
+        "system" => "system"
       )
     end
   end

@@ -9,6 +9,10 @@ class Providers::CheckController < CheckController
 
 private
 
+  def model_id
+    nil
+  end
+
   def model
     @model ||= provider_session.load_provider || Provider.new
   end
@@ -53,7 +57,6 @@ private
     base_path = journey_coordinator.address_entry_path
     return nil unless base_path
 
-    # Add goto parameter to return to check answers page
     uri = URI.parse(base_path)
     params = Rack::Utils.parse_query(uri.query)
     params["goto"] = "confirm"
@@ -64,11 +67,7 @@ private
   def save
     authorize model
 
-    # A duplicate creation confirmation arrives after the provider_creation
-    # session has been cleared, so there is nothing left to save. The edit
-    # provider flow has no creation session at all and always saves, so guard
-    # on the create purpose only.
-    return redirect_to success_path, flash: flash_message if model_id.nil? && provider_session.load_provider.nil?
+    return redirect_to success_path, flash: flash_message if duplicate_creation_confirmation?
 
     ActiveRecord::Base.transaction do
       ::SaveProviderWithRotpIdService.call(model)
@@ -80,6 +79,10 @@ private
     redirect_to success_path, flash: flash_message
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, PG::UniqueViolation
     redirect_to back_path
+  end
+
+  def duplicate_creation_confirmation?
+    model_id.nil? && provider_session.load_provider.nil?
   end
 
   def save_accreditation_if_present
