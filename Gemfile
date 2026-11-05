@@ -159,7 +159,7 @@ gem "pundit", "~> 2.5"
 # Rate limiting and throttling middleware
 gem "rack-attack"
 
-gem "roo", "~> 3.0.0"
+gem "roo", "~> 4.0.0"
 gem "write_xlsx"
 
 gem "dfe-wizard", require: "dfe/wizard", github: "DFE-Digital/dfe-wizard", branch: "main"
