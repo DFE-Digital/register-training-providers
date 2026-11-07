@@ -16,6 +16,7 @@ module SummaryHelper
       { key: { text: "First name" }, value: { text: user.first_name } },
       { key: { text: "Last name" }, value: { text: user.last_name } },
       { key: { text: "Email address" }, value: { text: user.email } },
+      { key: { text: "Role" }, value: { text: user.role_label } },
       { key: { text: "Is the account an API user?" }, value: { text: boolean_value(user.api_user) } },
     ]
 
@@ -27,8 +28,9 @@ module SummaryHelper
         rows[1][:actions] = [{ href: change_path, visually_hidden_text: "last name" }]
         rows[2][:actions] = [{ href: change_path, visually_hidden_text: "email address" }]
       end
-      rows[3][:actions] = [{ href: change_path, visually_hidden_text: "is the account an api user" }]
-      rows[4][:actions] = [{ href: change_path, visually_hidden_text: "is the account active" }] if user.persisted?
+      rows[3][:actions] = [{ href: change_path, visually_hidden_text: "role" }] unless user.api_user?
+      rows[4][:actions] = [{ href: change_path, visually_hidden_text: "is the account an api user" }]
+      rows[5][:actions] = [{ href: change_path, visually_hidden_text: "is the account active" }] if user.persisted?
     end
 
     rows
