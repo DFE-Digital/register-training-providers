@@ -5,14 +5,7 @@ namespace :seed_data do
   task import: :environment do
     unless Rails.env.production?
 
-      PERSONAS.each do |persona_attributes|
-        persona = Persona.find_or_initialize_by(email: persona_attributes[:email])
-        persona.first_name = persona_attributes[:first_name]
-        persona.last_name = persona_attributes[:last_name]
-        persona.save!
-
-        persona.discard! if persona_attributes[:discarded?] && persona.kept?
-      end
+      SeedPersonas.call(include_system_admin: false)
     end
 
     ["generate:academic_years",
