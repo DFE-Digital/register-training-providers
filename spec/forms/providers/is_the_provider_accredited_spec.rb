@@ -50,7 +50,7 @@ RSpec.describe Providers::IsTheProviderAccredited, type: :model do
     subject { described_class.new }
 
     it "returns SelectOption objects with correct keys and values" do
-      options = subject.accreditation_status_options_for_radios
+      options = subject.accreditation_status_options_for_radios(build(:user, :reg))
 
       expect(options.size).to eq(AccreditationStatusEnum::ACCREDITATION_STATUSES.keys.size)
 
@@ -61,6 +61,14 @@ RSpec.describe Providers::IsTheProviderAccredited, type: :model do
           I18n.t("forms.providers.is_the_provider_accredited.accreditation_status.#{option.key}")
         )
       end
+    end
+
+    it "filters the options by what the user may create" do
+      mr_options = subject.accreditation_status_options_for_radios(build(:user, :mr))
+      bat_options = subject.accreditation_status_options_for_radios(build(:user, :bat))
+
+      expect(mr_options.map(&:key)).to eq([:accredited])
+      expect(bat_options.map(&:key)).to eq([:unaccredited])
     end
   end
 end

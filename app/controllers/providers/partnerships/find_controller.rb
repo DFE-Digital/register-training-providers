@@ -19,7 +19,7 @@ module Providers
           provider_accredited: provider.accredited?
         )
 
-        authorize provider, :update?
+        authorize provider, :manage_partnerships?
 
         @partners = load_eligible_partners
 
@@ -27,6 +27,8 @@ module Providers
       end
 
       def create
+        authorize provider, :manage_partnerships?
+
         @form = ::Partnerships::FindForm.new(
           partner_id: params.dig(:find, :partner_id),
           provider_accredited: provider.accredited?
@@ -46,8 +48,6 @@ module Providers
           setup_view_data
           render :new
         end
-
-        authorize provider, :update?
       end
 
     private

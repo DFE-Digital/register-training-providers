@@ -6,15 +6,24 @@
 <% end %>
 
 <%= form_for @form, url: new_provider_is_the_provider_accredited_path do |form| %>
-  <% page_data(title: "Is the provider accredited?", subtitle: "Add provider", header: false, error: @form.errors.present?) %>
+  <% page_data(title: @form.accreditation_status_question_for(current_user), subtitle: "Add provider", header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
 
-  <%= form.govuk_fieldset legend: { text: "Is the provider accredited?" }, caption: { text: "Add provider" } do %>
+  <%= form.govuk_fieldset legend: { text: @form.accreditation_status_question_for(current_user) }, caption: { text: "Add provider" } do %>
+    <% if @form.single_accreditation_status_for(current_user) %>
+      <%= form.hidden_field :accreditation_status, value: @form.single_accreditation_status_for(current_user).key %>
 
-    <%= form.govuk_collection_radio_buttons(:accreditation_status, form.object.accreditation_status_options_for_radios,
-                                            :key,
-                                            :value, legend: nil) %>
+      <p class="govuk-body">
+        Your role can only add
+        <%= @form.single_accreditation_status_for(current_user).key.to_s == AccreditationStatusEnum::ACCREDITED ? "accredited" : "unaccredited" %>
+        providers.
+      </p>
+    <% else %>
+      <%= form.govuk_collection_radio_buttons(:accreditation_status, @form.accreditation_status_options_for_radios(current_user),
+                                              :key,
+                                              :value, legend: nil) %>
+    <% end %>
 
     <%= form.govuk_submit %>
   <% end %>
