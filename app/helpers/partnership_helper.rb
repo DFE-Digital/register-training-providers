@@ -9,7 +9,7 @@ module PartnershipHelper
         rows: partnership_rows(partnership, change_paths: {}, provider_accredited: nil)
       }
 
-      if include_actions && !provider.archived?
+      if include_actions && policy(partnership).update?
         card[:actions] = [
           { text: "Change",
             href: provider_edit_partnership_dates_path(partnership, provider_id: provider.id) },
