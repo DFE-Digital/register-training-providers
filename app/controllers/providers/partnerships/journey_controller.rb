@@ -6,6 +6,8 @@ module Providers
       def new
         authorize provider, :manage_partnerships?
 
+        wizard.clear_state if current_step.nil?
+
         redirect_to(step_path(:find_partner)) unless wizard.valid_path_to_current_step?
 
         return if performed?

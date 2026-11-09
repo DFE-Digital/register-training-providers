@@ -196,4 +196,20 @@ RSpec.describe "Provider partnership add journey", type: :request do
       expect(response).to redirect_to(step_path("find-partner"))
     end
   end
+
+  describe "restarting the journey" do
+    before do
+      choose_partner
+      submit_dates
+      submit_academic_years
+    end
+
+    it "discards the answers from an abandoned journey" do
+      get provider_new_partnership_step_path(accredited_provider)
+
+      get step_path("check-your-answers")
+
+      expect(response).to redirect_to(step_path("find-partner"))
+    end
+  end
 end
