@@ -149,6 +149,34 @@ RSpec.describe Partnership, type: :model do
     end
   end
 
+  describe ".ended" do
+    let(:accredited_provider) { create(:provider, :accredited) }
+
+    let!(:ended_partnership) do
+      create(:partnership, accredited_provider: accredited_provider, duration: Date.new(2020, 1, 1)...Date.new(2021, 1, 1))
+    end
+    let!(:open_ended_partnership) do
+      create(:partnership, accredited_provider: accredited_provider, duration: Date.new(2020, 1, 1)..)
+    end
+
+    it "includes partnerships that have ended" do
+      expect(described_class.ended).to include(ended_partnership)
+    end
+
+    it "excludes open ended partnerships" do
+      expect(described_class.ended).not_to include(open_ended_partnership)
+    end
+
+    it "puts a partnership ending today in exactly one list" do
+      boundary = create(:partnership,
+                        accredited_provider: accredited_provider,
+                        duration: Date.new(2020, 1, 1)...Time.zone.today)
+
+      expect(described_class.ended).to include(boundary)
+      expect(described_class.current_or_scheduled).not_to include(boundary)
+    end
+  end
+
   describe ".current_or_scheduled" do
     let(:accredited_provider) { create(:provider, :accredited) }
 

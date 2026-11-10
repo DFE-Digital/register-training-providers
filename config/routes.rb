@@ -203,6 +203,8 @@ Rails.application.routes.draw do
     post "partnerships/:partnership_id/edit/end-date-removal",
          to: "providers/partnerships/end_date_removals#create"
 
+    get "partnerships/historic", to: "providers/partnerships/historic#index", as: :historic_partnerships
+
     # Edit journey
     get "partnerships/:partnership_id/edit(/:step)",
         to: "providers/partnerships/edit_journey#new",

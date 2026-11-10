@@ -93,18 +93,31 @@ module PartnershipHelper
     rows
   end
 
+  def historic_partnership_rows(partnerships, provider)
+    partnerships.map do |partnership|
+      [
+        { text: partnership.other_partner(provider).operating_name.to_s },
+        { text: partnership_types_list(partnership_types_for(partnership)) },
+        { text: partnership.duration.begin&.to_fs(:govuk).to_s },
+        { text: partnership_end_date_text(partnership.duration) }
+      ]
+    end
+  end
+
+  def partnership_types_list(types)
+    return tag.span("Not entered", class: "govuk-hint") if types.empty?
+
+    tag.ul(class: "govuk-list govuk-list--bullet") do
+      safe_join(types.map { |type| tag.li(PartnershipTypeEnum.label_for(type)) })
+    end
+  end
+
   def partnership_types_for(partnership)
     partnership.partnership_types.reject(&:discarded?).map(&:partnership_type)
   end
 
   def partnership_types_row(partnership_types, change_path)
-    value = if partnership_types.present?
-              tag.ul(class: "govuk-list govuk-list--bullet") do
-                safe_join(partnership_types.map { |type| tag.li(PartnershipTypeEnum.label_for(type)) })
-              end
-            else
-              tag.span("Not entered", class: "govuk-hint")
-            end
+    value = partnership_types_list(Array(partnership_types))
 
     row = { key: { text: "Partnership types" }, value: { text: value } }
     row[:actions] = [{ href: change_path, visually_hidden_text: "partnership types" }] if change_path.present?
@@ -117,14 +130,17 @@ module PartnershipHelper
     row
   end
 
+  def partnership_end_date_text(duration)
+    duration.end.is_a?(Date) ? duration.end.to_fs(:govuk) : "No end date"
+  end
+
   def partnership_end_row(duration, change_path)
-    end_date = duration.end
-    has_end_date = end_date.present? && end_date.is_a?(Date)
+    has_end_date = duration.end.is_a?(Date)
 
     row = {
       key: { text: "Ends" },
       value: {
-        text: has_end_date ? end_date.to_fs(:govuk) : "No end date",
+        text: partnership_end_date_text(duration),
         classes: has_end_date ? nil : "govuk-hint"
       }
     }
