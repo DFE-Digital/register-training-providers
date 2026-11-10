@@ -186,8 +186,14 @@ RSpec.describe "Creating partnership", type: :feature do
 private
 
   def select_partner(name)
-    # The autocomplete enhances the select - find the underlying select and set its value
-    find("select[name='find_partner[partner_id]']", visible: false).find("option", text: name, visible: false).select_option
+    if page.has_css?(".autocomplete__input", visible: true)
+      find(".autocomplete__input").fill_in(with: name)
+      find(".autocomplete__option", text: name).click
+    else
+      find("select[name='find_partner[partner_id]']", visible: :all)
+        .find("option", text: name, visible: :all)
+        .select_option
+    end
   end
 
   def fill_in_start_date
