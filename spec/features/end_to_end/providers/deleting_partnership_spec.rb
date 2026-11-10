@@ -33,7 +33,7 @@ RSpec.describe "Deleting partnership", type: :feature do
       expect(page).to have_content("Partnership deleted")
 
       expect(page).not_to have_content(accredited_provider.operating_name)
-      expect(page).to have_content("There are no partnerships for #{provider.operating_name}")
+      expect(page).to have_content("There are no current partnerships for #{provider.operating_name}")
 
       expect(provider.partnerships.kept.count).to eq(0)
       expect(provider.partnerships.count).to eq(1)
@@ -115,7 +115,8 @@ RSpec.describe "Deleting partnership", type: :feature do
 
       expect(page).not_to have_content(accredited_provider.operating_name)
       expect(page).to have_content(other_accredited_provider.operating_name)
-      expect(page).to have_content("Partnerships (1)")
+      expect(page).to have_content("Current partnerships")
+      expect(page).not_to have_content("View historic partnerships")
 
       expect(provider.partnerships.kept.count).to eq(1)
       expect(provider.partnerships.count).to eq(2)

@@ -40,7 +40,11 @@ class Partnership < ApplicationRecord
   validate :partnership_types_remain_available, if: -> { persisted? && will_save_change_to_duration? }
 
   scope :current_or_scheduled, lambda {
-    where("upper(duration) IS NULL OR upper(duration) > ?", Time.zone.today)
+    where("upper(duration) > ?", Time.zone.today)
+  }
+
+  scope :ended, lambda {
+    where("upper(duration) <= ?", Time.zone.today)
   }
 
   scope :ordered_by_partner_and_date, ->(viewing_provider) {
@@ -66,27 +70,12 @@ class Partnership < ApplicationRecord
     duration.begin.present? && duration.begin > Time.zone.today
   end
 
-  def ended?
-    duration.end.is_a?(Date) && duration.end <= Time.zone.today
-  end
-
   def status_label
-    return "Scheduled" if scheduled?
-    return "Ended" if ended?
-
-    "Active"
+    scheduled? ? "Scheduled" : "Active"
   end
 
   def status_tag
-    colour = if scheduled?
-               "blue"
-             elsif ended?
-               "grey"
-             else
-               "green"
-             end
-
-    { text: status_label, colour: colour }
+    { text: status_label, colour: scheduled? ? "blue" : "green" }
   end
 
   def sync_partnership_types(types)

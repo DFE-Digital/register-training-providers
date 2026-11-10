@@ -1,0 +1,30 @@
+<% content_for(:full_width, true) %>
+
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: provider_partnerships_path(@provider)) %>
+<% end %>
+
+<% provider_page_data(@provider) %>
+
+<%= content_for(:secondary_navigation) do %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Partnerships",
+                                              debug_mode: debug_mode?) %>
+    </div>
+  </div>
+<% end %>
+
+<h2 class="govuk-heading-m">Historic partnerships</h2>
+
+<p class="govuk-body">Previous partnerships for this provider.</p>
+
+<% if @partnerships.any? %>
+  <%= govuk_table(
+        head: ["Partner", "Partnership type", "Starts", "Ends"],
+        rows: historic_partnership_rows(@partnerships, @provider),
+        first_cell_is_header: true
+      ) %>
+<% else %>
+  <p class="govuk-body">There are no historic partnerships for <%= @provider.operating_name %>.</p>
+<% end %>
