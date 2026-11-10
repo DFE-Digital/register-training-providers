@@ -4,11 +4,20 @@
 
 <% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
 
-<% if @partnership.duration.end.infinite? %>
-  <p class="govuk-body">If you do not want to delete the partnership, but update that it has ended, <%= govuk_link_to "add the partnership end date.", provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: @partnership.id, step: "end-date-question") %></p>
+<p class="govuk-body">
+  Deleting this partnership will permanently remove it from the provider record.
+  It may still be retained for audit purposes.
+</p>
+
+<% if @partnership.can_be_ended? %>
+  <p class="govuk-body">
+    Only delete a partnership if the record was created incorrectly. If the partnership has ended, use
+    <%= govuk_link_to "End partnership", provider_partnership_end_path(@partnership, provider_id: provider.id) %>
+    instead.
+  </p>
 <% end %>
 
-<%= govuk_warning_text(text: "Deleting a partnership is permanent – you cannot undo it.") %>
+<%= govuk_warning_text(text: "You cannot undo this action.") %>
 
 <%= govuk_button_to("Delete partnership", @delete_path, method: :delete, warning: true) %>
 
