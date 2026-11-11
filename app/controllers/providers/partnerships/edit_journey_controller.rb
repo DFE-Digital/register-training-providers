@@ -6,9 +6,9 @@ module Providers
       def new
         authorize partnership
 
-        return redirect_to(first_step_path) unless wizard.valid_path_to_current_step?
-
         seed_state if wizard.state_store.read.blank?
+
+        return redirect_to(first_step_path) unless wizard.valid_path_to_current_step?
 
         prepare_step
         render template_for_step
@@ -61,7 +61,14 @@ module Providers
           return render(template_for_step, status: :unprocessable_content)
         end
 
-        unless partnership.update(form.to_partnership_attributes)
+        updated = false
+        Partnership.transaction do
+          partnership.sync_partnership_types(wizard.selected_partnership_types)
+          updated = partnership.update(form.to_partnership_attributes)
+          raise ActiveRecord::Rollback unless updated
+        end
+
+        unless updated
           prepare_step
           flash.now[:alert] = partnership_save_failure_message(partnership)
           return render(template_for_step, status: :unprocessable_content)
@@ -84,6 +91,7 @@ module Providers
         @page_subtitle = provider.operating_name.to_s
         @page_title = page_title_for_step
         @provider_accredited = provider.accredited?
+        @editing = true
 
         @academic_years = eligible_academic_years if wizard.current_step_name == :academic_years
 
@@ -92,10 +100,11 @@ module Providers
 
       def prepare_check_your_answers
         @form = wizard.partnership_form
-        @partnership_types = partnership.partnership_types.kept.pluck(:partnership_type)
+        @partnership_types = wizard.selected_partnership_types
         @save_path = wizard.current_step_path
         @save_button_text = "Save partnership"
         @change_paths = {
+          types: change_step_path(:types),
           start_date: change_step_path(:start_date),
           end_date: change_step_path(:end_date_question),
           academic_years: change_step_path(:academic_years)

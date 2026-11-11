@@ -28,15 +28,19 @@ class PartnershipType < ApplicationRecord
 
   belongs_to :partnership
 
-  scope :used_for, lambda { |accredited_provider_id:, provider_id:|
-    kept
+  scope :used_for, lambda { |accredited_provider_id:, provider_id:, except_partnership_id: nil|
+    scope = kept
       .joins(:partnership)
       .where(partnerships: { accredited_provider_id:, provider_id: })
       .merge(Partnership.kept.current_or_scheduled)
+
+    except_partnership_id.present? ? scope.where.not(partnership_id: except_partnership_id) : scope
   }
 
-  def self.used_between(accredited_provider_id:, provider_id:)
-    used_for(accredited_provider_id:, provider_id:).distinct.pluck(:partnership_type)
+  def self.used_between(accredited_provider_id:, provider_id:, except_partnership_id: nil)
+    used_for(accredited_provider_id:, provider_id:, except_partnership_id:)
+      .distinct
+      .pluck(:partnership_type)
   end
 
   validates :partnership_type, presence: true

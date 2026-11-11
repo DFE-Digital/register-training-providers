@@ -86,6 +86,7 @@ module Providers
         @page_subtitle = provider.operating_name.to_s
         @page_title = page_title_for_step
         @provider_accredited = provider.accredited?
+        @editing = false
 
         @partners = load_eligible_partners if wizard.current_step_name == :find_partner
         @academic_years = eligible_academic_years if wizard.current_step_name == :academic_years

@@ -9,8 +9,9 @@ module Partnerships
 
     def steps_processor
       build_steps_processor(
-        root: :start_date,
+        root: :types,
         edges: [
+          [:types, :start_date],
           [:start_date, :end_date_question],
           [:end_date, :academic_years],
           [:academic_years, :check_your_answers]
@@ -48,8 +49,37 @@ module Partnerships
         end_date_day: ending&.day,
         end_date_month: ending&.month,
         end_date_year: ending&.year,
-        academic_year_ids: partnership.academic_year_ids.uniq
+        academic_year_ids: partnership.academic_year_ids.uniq,
+        partnership_types: partnership.partnership_types.kept.pluck(:partnership_type)
       )
+    end
+
+    def used_partnership_types
+      @used_partnership_types ||= PartnershipType.used_between(
+        accredited_provider_id: partnership.accredited_provider_id,
+        provider_id: partnership.provider_id,
+        except_partnership_id: partnership.id
+      )
+    end
+
+    def available_partnership_types
+      @available_partnership_types ||= begin
+        selected = selected_partnership_types
+        available = PartnershipTypeEnum::PARTNERSHIP_TYPES.values - used_partnership_types
+        unless placement_available? || selected.include?(PartnershipTypeEnum::PLACEMENT)
+          available.delete(PartnershipTypeEnum::PLACEMENT)
+        end
+
+        available
+      end
+    end
+
+    def placement_available?
+      partnership.provider.school?
+    end
+
+    def selected_partnership_types
+      Array(wizard_state[:partnership_types]).compact_blank
     end
 
     delegate :accredited_provider_id, to: :partnership
@@ -62,6 +92,7 @@ module Partnerships
 
     def steps
       {
+        types: Steps::TypesStep,
         start_date: Steps::StartDateStep,
         end_date_question: Steps::EndDateQuestionStep,
         end_date: Steps::EndDateStep,
