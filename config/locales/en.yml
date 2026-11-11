@@ -189,7 +189,7 @@ en:
           attributes:
             academic_year_ids:
               blank: Select academic year
-        partnerships/dates_form:
+        partnerships/dates_step:
           attributes:
             start_date:
               blank: "Enter date the partnership started"

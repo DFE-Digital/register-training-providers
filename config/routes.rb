@@ -195,14 +195,13 @@ Rails.application.routes.draw do
     get "partnerships/new(/:step)", to: "providers/partnerships/journey#new", as: :new_partnership_step
     post "partnerships/new(/:step)", to: "providers/partnerships/journey#update", as: :partnership_step
 
-    # Edit partnership flow - entry point is dates#edit
-    get "partnerships/:id/dates", to: "providers/partnerships/dates#edit", as: :edit_partnership_dates
-    patch "partnerships/:id/dates", to: "providers/partnerships/dates#update"
-    get "partnerships/:id/academic_years", to: "providers/partnerships/academic_years#edit",
-                                           as: :edit_partnership_academic_years
-    patch "partnerships/:id/academic_years", to: "providers/partnerships/academic_years#update"
-    get "partnerships/:id/check", to: "providers/partnerships/check#show", as: :partnership_check
-    patch "partnerships/:id/check", to: "providers/partnerships/check#update"
+    # Edit journey
+    get "partnerships/:partnership_id/edit(/:step)",
+        to: "providers/partnerships/edit_journey#new",
+        as: :edit_partnership_step
+    patch "partnerships/:partnership_id/edit(/:step)",
+          to: "providers/partnerships/edit_journey#update",
+          as: :partnership_edit_step
     # Delete
     get "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#show", as: :partnership_delete
     delete "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#destroy"

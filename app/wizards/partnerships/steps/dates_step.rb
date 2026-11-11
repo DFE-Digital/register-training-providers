@@ -17,7 +17,7 @@ module Partnerships
       end
 
       def self.model_name
-        ActiveModel::Name.new(self, nil, "Partnerships::DatesForm")
+        ActiveModel::Name.new(self, nil, "Partnerships::DatesStep")
       end
 
       def self.i18n_scope
