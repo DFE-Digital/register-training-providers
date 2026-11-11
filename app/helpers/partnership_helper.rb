@@ -13,7 +13,7 @@ module PartnershipHelper
         card[:actions] = [
           { text: "Change",
             href: provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id,
-                                                      step: "dates") },
+                                                      step: "start-date") },
           { text: "Delete",
             href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
         ]
@@ -42,11 +42,8 @@ module PartnershipHelper
 
     rows << partnership_types_row(partnership_types, change_paths[:types]) unless partnership_types.nil?
 
-    dates_row = partnership_dates_row(partnership.duration)
-    if change_paths[:dates].present?
-      dates_row[:actions] = [{ href: change_paths[:dates], visually_hidden_text: "partnership dates" }]
-    end
-    rows << dates_row
+    rows << partnership_start_row(partnership.duration, change_paths[:start_date])
+    rows << partnership_end_row(partnership.duration, change_paths[:end_date])
 
     years_row = academic_years_row(partnership.academic_years, false, false)
     if change_paths[:academic_years].present?
@@ -71,26 +68,24 @@ module PartnershipHelper
     row
   end
 
-  def partnership_dates_row(duration)
+  def partnership_start_row(duration, change_path)
+    row = { key: { text: "Starts" }, value: { text: duration.begin&.to_fs(:govuk) } }
+    row[:actions] = [{ href: change_path, visually_hidden_text: "partnership start date" }] if change_path.present?
+    row
+  end
+
+  def partnership_end_row(duration, change_path)
     end_date = duration.end
     has_end_date = end_date.present? && end_date.is_a?(Date)
-    end_date_text = has_end_date ? end_date.to_fs(:govuk) : "Not entered"
-    end_date_class = has_end_date ? "govuk-summary-list__value" : "govuk-summary-list__value govuk-hint"
 
-    dates_html = tag.dl(class: "govuk-summary-list") do
-      safe_join([
-        tag.div(class: "govuk-summary-list__row") do
-          tag.dt("Starts on", class: "govuk-summary-list__key") +
-          tag.dd(duration.begin&.to_fs(:govuk), class: "govuk-summary-list__value")
-        end,
-        tag.div(class: "govuk-summary-list__row govuk-summary-list__row--no-border") do
-          tag.dt("Ends on", class: "govuk-summary-list__key") +
-          tag.dd(end_date_text, class: end_date_class)
-        end
-      ])
-    end
-
-    { key: { text: "Partnership dates" },
-      value: { text: dates_html } }
+    row = {
+      key: { text: "Ends" },
+      value: {
+        text: has_end_date ? end_date.to_fs(:govuk) : "No end date",
+        classes: has_end_date ? nil : "govuk-hint"
+      }
+    }
+    row[:actions] = [{ href: change_path, visually_hidden_text: "partnership end date" }] if change_path.present?
+    row
   end
 end

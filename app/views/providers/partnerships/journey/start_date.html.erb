@@ -1,0 +1,31 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
+
+<%= form_for @form, url: @form_url, method: @form_method, as: @wizard.current_step_name do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_radio_buttons_fieldset :start_today,
+                                        legend: { text: @page_title, size: "l" },
+                                        caption: { text: @page_caption, size: "l" },
+                                        hint: { text: "Today is #{Time.zone.today.to_fs(:govuk)}" } do %>
+    <%= form.govuk_radio_button :start_today, "true", label: { text: "Yes" }, link_errors: true %>
+
+    <%= form.govuk_radio_button :start_today, "false", label: { text: "No" } do %>
+      <%= form.govuk_date_field :start_date,
+                                legend: { text: "What is the partnership start date?", size: "s" },
+                                hint: { text: "For example, 1 8 2024" } %>
+    <% end %>
+  <% end %>
+
+  <%= form.govuk_submit "Continue" %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

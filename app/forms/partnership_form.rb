@@ -7,7 +7,7 @@ class PartnershipForm
 
   has_date_components :start_date, :end_date
 
-  attr_accessor :academic_year_ids
+  attr_accessor :academic_year_ids, :eligible_academic_year_ids
 
   attribute :provider_id, :string
   attribute :accredited_provider_id, :string
@@ -16,6 +16,7 @@ class PartnershipForm
   validates :provider_id, presence: true
   validates :start_date, presence: true
   validate :academic_year_ids_must_not_be_empty
+  validate :academic_year_ids_must_be_eligible
 
   def self.from_dates(dates)
     form = new
@@ -80,5 +81,14 @@ private
     return true unless academic_year_ids.empty?
 
     errors.add(:academic_year_ids, :blank)
+  end
+
+  def academic_year_ids_must_be_eligible
+    return if eligible_academic_year_ids.nil?
+
+    selected_ids = Array(academic_year_ids).compact_blank.map(&:to_s)
+    return if (selected_ids - eligible_academic_year_ids.map(&:to_s)).empty?
+
+    errors.add(:academic_year_ids, :inclusion)
   end
 end
