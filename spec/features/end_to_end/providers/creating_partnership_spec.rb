@@ -10,7 +10,7 @@ RSpec.describe "Creating partnership", type: :feature do
     let!(:unaccredited_partner) { create(:provider, :hei_without_accreditation, operating_name: "Test Training Partner") }
     let!(:academic_year) { create(:academic_year) }
 
-    scenario "successfully creates a partnership" do
+    scenario "successfully creates a partnership", js: true do
       visit provider_partnerships_path(accredited_provider)
 
       expect(page).to have_content("Partnerships")
@@ -26,7 +26,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       expect(page).to have_content("Select partnership types")
 
-      check "Recruitment"
+      check "Recruitment", allow_label_click: true
       click_button "Continue"
 
       expect(page).to have_content("Does the partnership start today?")
@@ -39,7 +39,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       expect(page).to have_content("Select academic years")
 
-      check display_academic_year(academic_year)
+      check display_academic_year(academic_year), allow_label_click: true
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -79,7 +79,7 @@ RSpec.describe "Creating partnership", type: :feature do
       select_partner(accredited_partner.operating_name)
       click_button "Continue"
 
-      check "Recruitment"
+      check "Recruitment", allow_label_click: true
       click_button "Continue"
 
       fill_in_start_date
@@ -87,7 +87,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       choose_no_end_date
 
-      check display_academic_year(academic_year)
+      check display_academic_year(academic_year), allow_label_click: true
       click_button "Continue"
 
       expect(page).to have_content("Check your answers")
@@ -136,10 +136,10 @@ RSpec.describe "Creating partnership", type: :feature do
       select_partner(partner.operating_name)
       click_button "Continue"
 
-      check "Recruitment"
+      check "Recruitment", allow_label_click: true
       click_button "Continue"
 
-      choose "No"
+      choose "No", allow_label_click: true
       click_button "Continue"
 
       expect(page).to have_content("Error")
@@ -152,7 +152,7 @@ RSpec.describe "Creating partnership", type: :feature do
       select_partner(partner.operating_name)
       click_button "Continue"
 
-      check "Recruitment"
+      check "Recruitment", allow_label_click: true
       click_button "Continue"
 
       fill_in_start_date
@@ -198,7 +198,7 @@ private
 
   def fill_in_start_date
     current_year = AcademicYearCalculator.current_academic_year
-    choose "No"
+    choose "No", allow_label_click: true
     within_fieldset("What is the partnership start date?") do
       fill_in "Day", with: "1"
       fill_in "Month", with: "9"
@@ -207,7 +207,7 @@ private
   end
 
   def choose_no_end_date
-    choose "No"
+    choose "No", allow_label_click: true
     click_button "Continue"
   end
 
