@@ -18,7 +18,7 @@
 
 <% if policy(@provider).manage_partnerships? %>
   <div class="govuk-button-group">
-    <%= govuk_button_link_to("Add partnership", provider_new_partnership_find_path(@provider)) %>
+    <%= govuk_button_link_to("Add partnership", provider_new_partnership_step_path(@provider)) %>
   </div>
 <% end %>
 

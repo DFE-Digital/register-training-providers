@@ -191,18 +191,9 @@ Rails.application.routes.draw do
 
     # === Partnerships ===
 
-    # Finder flow
-    get "partnerships/find/new", to: "providers/partnerships/find#new", as: :new_partnership_find
-    post "partnerships/find", to: "providers/partnerships/find#create", as: :partnership_find
-    get "partnerships/dates/new", to: "providers/partnerships/dates#new", as: :new_partnership_dates
-    post "partnerships/dates", to: "providers/partnerships/dates#create", as: :partnership_dates
-    get "partnerships/academic_years/new", to: "providers/partnerships/academic_years#new",
-                                           as: :new_partnership_academic_years
-    post "partnerships/academic_years", to: "providers/partnerships/academic_years#create",
-                                        as: :partnership_academic_years
-    # Check/confirm
-    get "partnerships/check/new", to: "providers/partnerships/check#new", as: :new_partnership_confirm
-    post "partnerships/check", to: "providers/partnerships/check#create", as: :partnership_confirm
+    # Add journey
+    get "partnerships/new(/:step)", to: "providers/partnerships/journey#new", as: :new_partnership_step
+    post "partnerships/new(/:step)", to: "providers/partnerships/journey#update", as: :partnership_step
 
     # Edit partnership flow - entry point is dates#edit
     get "partnerships/:id/dates", to: "providers/partnerships/dates#edit", as: :edit_partnership_dates
