@@ -27,17 +27,20 @@ module Generators
       accredited_providers.order("RANDOM()").limit(5).each do |accredited_provider|
         accredited_period_start = accredited_provider.accreditations.pluck(:start_date).min&.to_time
         next if accredited_period_start.blank?
+        next if provider.partnerships.kept.current_or_scheduled.exists?(accredited_provider:)
 
         accredited_period_end = accredited_period_start + 2.years
 
         academic_years = AcademicYear.where("duration && daterange(?, ?)", accredited_period_start,
                                             accredited_period_end)
 
-        partnership = Partnership.create!(
+        partnership = Partnership.new(
           provider: provider,
           accredited_provider: accredited_provider,
           duration: accredited_period_start...accredited_period_end
         )
+        partnership.apply_default_partnership_type(source: "generated")
+        partnership.save!
 
         academic_years.each { |ac| PartnershipAcademicYear.create(academic_year: ac, partnership: partnership) }
       end

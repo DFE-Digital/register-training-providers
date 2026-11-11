@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -186,6 +186,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120000) do
     t.datetime "updated_at", null: false
     t.index ["academic_year_id"], name: "index_partnership_academic_years_on_academic_year_id"
     t.index ["partnership_id"], name: "index_partnership_academic_years_on_partnership_id"
+  end
+
+  create_table "partnership_types", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "partnership_id", null: false
+    t.string "partnership_type", null: false
+    t.string "source", default: "user", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["partnership_id", "partnership_type"], name: "index_partnership_types_on_partnership_id_and_partnership_type", unique: true, where: "(discarded_at IS NULL)"
   end
 
   create_table "partnerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -428,6 +438,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120000) do
   add_foreign_key "contacts", "providers"
   add_foreign_key "partnership_academic_years", "academic_years"
   add_foreign_key "partnership_academic_years", "partnerships"
+  add_foreign_key "partnership_types", "partnerships", on_delete: :cascade
   add_foreign_key "partnerships", "providers"
   add_foreign_key "partnerships", "providers", column: "accredited_provider_id"
   add_foreign_key "provider_academic_years", "academic_years"

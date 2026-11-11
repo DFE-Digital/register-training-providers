@@ -51,15 +51,19 @@ module Providers
         @form = build_form_from_session(partnership_data)
 
         partnership = provider.partnerships.build(@form.to_partnership_attributes)
+        partnership.apply_default_partnership_type
         authorize partnership
 
-        if partnership.save
+        unless partnership.save
           partnership_session.clear!
-          redirect_to provider_partnerships_path(provider),
-                      flash: { success: I18n.t("flash_message.success.check.partnership.add") }
-        else
-          redirect_to provider_new_partnership_find_path(provider, goto: "confirm")
+          redirect_to provider_new_partnership_find_path(provider),
+                      flash: { alert: partnership_save_failure_message(partnership) }
+          return
         end
+
+        partnership_session.clear!
+        redirect_to provider_partnerships_path(provider),
+                    flash: { success: I18n.t("flash_message.success.check.partnership.add") }
       end
 
       def update
@@ -74,12 +78,20 @@ module Providers
           redirect_to provider_partnerships_path(provider),
                       flash: { success: I18n.t("flash_message.success.check.partnership.update") }
         else
-          setup_view_data(:edit)
-          render :new
+          redirect_to provider_edit_partnership_dates_path(@partnership, provider_id: provider.id),
+                      flash: { alert: partnership_save_failure_message(@partnership) }
         end
       end
 
     private
+
+      def partnership_save_failure_message(partnership)
+        type_messages = partnership.partnership_types.flat_map { |type| type.errors[:partnership_type] }
+        messages = type_messages.presence || partnership.errors.full_messages
+
+        messages.to_sentence.presence ||
+          I18n.t("flash_message.alert.check.partnership.save_failed")
+      end
 
       def edit_context?
         params[:id].present?
