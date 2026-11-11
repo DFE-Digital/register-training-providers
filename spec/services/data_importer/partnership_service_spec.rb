@@ -42,6 +42,22 @@ RSpec.describe DataImporter::PartnershipService do
       expect(years).to match_array([2024, 2025, 2026])
     end
 
+    it "defaults the partnership to a recruitment type" do
+      call_importer
+
+      partnership_types = Partnership.last.partnership_types
+
+      expect(partnership_types.map(&:partnership_type)).to eq([PartnershipTypeEnum::RECRUITMENT])
+      expect(partnership_types.first.source).to eq("import")
+    end
+
+    it "does not add another partnership type on re-import" do
+      call_importer
+
+      expect { call_importer }
+        .not_to change(PartnershipType, :count)
+    end
+
     it "does not create duplicate academic cycles on re-import" do
       call_importer
 
