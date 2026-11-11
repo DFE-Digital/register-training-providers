@@ -205,6 +205,13 @@ Rails.application.routes.draw do
 
     get "partnerships/historic", to: "providers/partnerships/historic#index", as: :historic_partnerships
 
+    # Confirm changing a partnership type
+    get "partnerships/:partnership_id/edit/type-change",
+        to: "providers/partnerships/type_changes#show",
+        as: :partnership_type_change
+    post "partnerships/:partnership_id/edit/type-change",
+         to: "providers/partnerships/type_changes#create"
+
     # Edit journey
     get "partnerships/:partnership_id/edit(/:step)",
         to: "providers/partnerships/edit_journey#new",
@@ -212,6 +219,10 @@ Rails.application.routes.draw do
     patch "partnerships/:partnership_id/edit(/:step)",
           to: "providers/partnerships/edit_journey#update",
           as: :partnership_edit_update_step
+    # End
+    get "partnerships/:partnership_id/end", to: "providers/partnerships/ends#show", as: :partnership_end
+    patch "partnerships/:partnership_id/end", to: "providers/partnerships/ends#update"
+
     # Delete
     get "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#show", as: :partnership_delete
     delete "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#destroy"

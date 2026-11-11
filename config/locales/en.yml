@@ -213,6 +213,9 @@ en:
           attributes:
             start_date:
               blank: "Enter date the partnership started"
+              must_be_before_today: "Start date must be before %{date}, when the partnership types are also changing"
+            end_date:
+              must_be_after_today: "End date must be after %{date}"
             academic_year_ids:
               inclusion: Select an academic year available for these partnership dates
         types:
@@ -294,6 +297,8 @@ en:
         partnership:
           save_failed: "The partnership could not be saved. Select a different training partner and try again."
           types_unavailable: "A partnership type you selected is no longer available. Check the partnership types and try again."
+      partnership:
+        end_failed: "The partnership could not be ended. Check it has started and has not already ended."
     success:
       accreditation:
         remove: "Accreditation deleted"
@@ -338,6 +343,7 @@ en:
         deleted: "Contact deleted"
       partnership:
         deleted: "Partnership deleted"
+        ended: "Partnership with %{name} ended"
       provider_change:
         code:
           updated: "Provider code change request submitted successfully"
