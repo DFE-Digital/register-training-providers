@@ -24,6 +24,11 @@ RSpec.describe "Creating partnership", type: :feature do
       select_partner(unaccredited_partner.operating_name)
       click_button "Continue"
 
+      expect(page).to have_content("Select partnership types")
+
+      check "Recruitment"
+      click_button "Continue"
+
       expect(page).to have_content("Partnership dates")
 
       fill_in_start_date
@@ -71,6 +76,9 @@ RSpec.describe "Creating partnership", type: :feature do
       select_partner(accredited_partner.operating_name)
       click_button "Continue"
 
+      check "Recruitment"
+      click_button "Continue"
+
       fill_in_start_date
       click_button "Continue"
 
@@ -98,7 +106,7 @@ RSpec.describe "Creating partnership", type: :feature do
     let!(:academic_year) { create(:academic_year) }
 
     scenario "shows error when no partner selected" do
-      visit provider_new_partnership_step_path(provider)
+      visit provider_partnership_step_path(provider)
 
       click_button "Continue"
 
@@ -106,10 +114,24 @@ RSpec.describe "Creating partnership", type: :feature do
       expect(page).to have_content("Enter training partner name, code, UKPRN or URN")
     end
 
-    scenario "shows error when no start date entered" do
-      visit provider_new_partnership_step_path(provider)
+    scenario "shows error when no partnership type selected" do
+      visit provider_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
+      click_button "Continue"
+
+      click_button "Continue"
+
+      expect(page).to have_content("Select at least one partnership type")
+    end
+
+    scenario "shows error when no start date entered" do
+      visit provider_partnership_step_path(provider)
+
+      select_partner(partner.operating_name)
+      click_button "Continue"
+
+      check "Recruitment"
       click_button "Continue"
 
       click_button "Continue"
@@ -119,9 +141,12 @@ RSpec.describe "Creating partnership", type: :feature do
     end
 
     scenario "shows error when no academic year selected" do
-      visit provider_new_partnership_step_path(provider)
+      visit provider_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
+      click_button "Continue"
+
+      check "Recruitment"
       click_button "Continue"
 
       fill_in_start_date
@@ -139,7 +164,7 @@ RSpec.describe "Creating partnership", type: :feature do
     let!(:partner) { create(:provider, :hei_without_accreditation) }
 
     scenario "can cancel and return to partnerships" do
-      visit provider_new_partnership_step_path(provider)
+      visit provider_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
 

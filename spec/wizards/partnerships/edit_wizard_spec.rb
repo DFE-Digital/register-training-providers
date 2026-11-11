@@ -46,19 +46,19 @@ RSpec.describe Partnerships::EditWizard do
   describe "routes" do
     it "routes dates" do
       expect(wizard).to resolve_step(:dates).to(
-        provider_edit_partnership_step_path(provider, partnership, step: "dates")
+        provider_partnership_edit_step_path(provider, partnership, step: "dates")
       )
     end
 
     it "routes academic_years" do
       expect(wizard).to resolve_step(:academic_years).to(
-        provider_edit_partnership_step_path(provider, partnership, step: "academic-years")
+        provider_partnership_edit_step_path(provider, partnership, step: "academic-years")
       )
     end
 
     it "routes check_your_answers" do
       expect(wizard).to resolve_step(:check_your_answers).to(
-        provider_edit_partnership_step_path(provider, partnership, step: "check-your-answers")
+        provider_partnership_edit_step_path(provider, partnership, step: "check-your-answers")
       )
     end
   end

@@ -185,7 +185,7 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "shows error when start date is cleared" do
-      visit provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
 
       within_fieldset("Partnership start date") do
         fill_in "Day", with: ""
@@ -200,7 +200,7 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "shows error when no academic year selected" do
-      visit provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
 
       fill_in_new_dates
       click_button "Continue"
@@ -233,7 +233,7 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "can cancel and return to partnerships list" do
-      visit provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
 
       fill_in_new_dates
 
