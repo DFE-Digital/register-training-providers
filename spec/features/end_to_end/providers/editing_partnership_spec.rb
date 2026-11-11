@@ -31,9 +31,7 @@ RSpec.describe "Editing partnership", type: :feature do
       expect(page).to have_content("Partnerships")
       expect(page).to have_content(training_partner.operating_name)
 
-      within(".govuk-summary-card", text: training_partner.operating_name) do
-        click_link "Change"
-      end
+      click_change_for("Starts")
 
       expect(page).to have_content("Does the partnership start today?")
       expect(page).to have_content(accredited_provider.operating_name)
@@ -67,9 +65,7 @@ RSpec.describe "Editing partnership", type: :feature do
     scenario "can change dates from check your answers page" do
       visit provider_partnerships_path(accredited_provider)
 
-      within(".govuk-summary-card", text: training_partner.operating_name) do
-        click_link "Change"
-      end
+      click_change_for("Starts")
 
       fill_in_new_dates
       click_button "Continue"
@@ -82,7 +78,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       expect(page).to have_content("Check your answers")
 
-      click_link "Change", match: :first
+      click_change_for("Starts")
 
       expect(page).to have_content("Does the partnership start today?")
       within_fieldset("What is the partnership start date?") do
@@ -110,9 +106,7 @@ RSpec.describe "Editing partnership", type: :feature do
     scenario "partner cannot be changed in edit flow" do
       visit provider_partnerships_path(accredited_provider)
 
-      within(".govuk-summary-card", text: training_partner.operating_name) do
-        click_link "Change"
-      end
+      click_change_for("Starts")
 
       fill_in_new_dates
       click_button "Continue"
@@ -134,9 +128,7 @@ RSpec.describe "Editing partnership", type: :feature do
     scenario "clicking back from dates page returns to check page when coming via change link" do
       visit provider_partnerships_path(accredited_provider)
 
-      within(".govuk-summary-card", text: training_partner.operating_name) do
-        click_link "Change"
-      end
+      click_change_for("Starts")
 
       fill_in_new_dates
       click_button "Continue"
@@ -149,7 +141,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       expect(page).to have_content("Check your answers")
 
-      click_link "Change", match: :first
+      click_change_for("Starts")
 
       expect(page).to have_content("Does the partnership start today?")
 
@@ -161,9 +153,7 @@ RSpec.describe "Editing partnership", type: :feature do
     scenario "clicking back from academic years page returns to check page when coming via change link" do
       visit provider_partnerships_path(accredited_provider)
 
-      within(".govuk-summary-card", text: training_partner.operating_name) do
-        click_link "Change"
-      end
+      click_change_for("Starts")
 
       fill_in_new_dates
       click_button "Continue"
@@ -265,6 +255,10 @@ RSpec.describe "Editing partnership", type: :feature do
   end
 
 private
+
+  def click_change_for(field)
+    within(".govuk-summary-list__row", text: field) { click_link "Change" }
+  end
 
   def fill_in_new_dates
     current_year = AcademicYearCalculator.current_academic_year

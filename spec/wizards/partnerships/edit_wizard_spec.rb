@@ -22,7 +22,13 @@ RSpec.describe Partnerships::EditWizard do
   let(:state_store) { Partnerships::StateStores::PartnershipStore.new(repository:) }
 
   describe "step graph" do
-    it { is_expected.to have_root_step(:start_date) }
+    it { is_expected.to have_root_step(:types) }
+
+    it do
+      expect(wizard)
+        .to have_next_step(:start_date)
+        .from(:types)
+    end
 
     it do
       expect(wizard)
@@ -50,6 +56,12 @@ RSpec.describe Partnerships::EditWizard do
   end
 
   describe "routes" do
+    it "routes types" do
+      expect(wizard).to resolve_step(:types).to(
+        provider_partnership_edit_step_path(provider, partnership, step: "types")
+      )
+    end
+
     it "routes start_date" do
       expect(wizard).to resolve_step(:start_date).to(
         provider_partnership_edit_step_path(provider, partnership, step: "start-date")
@@ -101,6 +113,7 @@ RSpec.describe Partnerships::EditWizard do
       expect(state[:end_date_month]).to eq(7)
       expect(state[:end_date_year]).to eq(2026)
       expect(state[:academic_year_ids]).to eq([academic_year.id])
+      expect(state[:partnership_types]).to eq([PartnershipTypeEnum::RECRUITMENT])
     end
 
     it "leaves the end date blank for an open ended partnership" do
@@ -110,6 +123,31 @@ RSpec.describe Partnerships::EditWizard do
       expect(state[:end_date]).to be_nil
       expect(state[:end_date_day]).to be_nil
       expect(state[:end_date_year]).to be_nil
+    end
+  end
+
+  describe "type availability" do
+    it "keeps the partnership's own types selectable" do
+      expect(wizard.available_partnership_types).to include(PartnershipTypeEnum::RECRUITMENT)
+    end
+
+    it "excludes a type used by another current partnership for the pair" do
+      create(:partnership,
+             accredited_provider: provider,
+             provider: partner,
+             partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+
+      expect(wizard.available_partnership_types).not_to include(PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+    end
+
+    it "does not offer placement when the training partner is not a school" do
+      expect(wizard.available_partnership_types).not_to include(PartnershipTypeEnum::PLACEMENT)
+    end
+
+    it "offers placement when the training partner is a school" do
+      partnership.update!(provider: create(:provider, :school))
+
+      expect(wizard.available_partnership_types).to include(PartnershipTypeEnum::PLACEMENT)
     end
   end
 
