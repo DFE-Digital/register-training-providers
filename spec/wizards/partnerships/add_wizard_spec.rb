@@ -16,7 +16,7 @@ RSpec.describe Partnerships::AddWizard do
   let(:current_step) { :find_partner }
   let(:current_step_params) { {} }
   let(:repository) { DfE::Wizard::Repository::InMemory.new }
-  let(:state_store) { Partnerships::StateStores::AddStore.new(repository:) }
+  let(:state_store) { Partnerships::StateStores::PartnershipStore.new(repository:) }
 
   describe "step graph" do
     it { is_expected.to have_root_step(:find_partner) }

@@ -16,16 +16,16 @@ RSpec.describe "Provider partnership add journey", type: :request do
   let!(:partner) { create(:provider, :hei_without_accreditation, operating_name: "Partner College") }
   let!(:academic_year) { create(:academic_year) }
 
-  def step_path(step)
-    provider_new_partnership_step_path(accredited_provider, step:)
+  def step_path(step, **)
+    provider_new_partnership_step_path(accredited_provider, step:, **)
   end
 
-  def choose_partner(partner_id = partner.id)
-    post step_path("find-partner"), params: { find_partner: { partner_id: } }
+  def choose_partner(partner_id = partner.id, **)
+    post step_path("find-partner", **), params: { find_partner: { partner_id: } }
   end
 
-  def submit_dates(day: "1", month: "8", year: "2024")
-    post step_path("dates"), params: {
+  def submit_dates(day: "1", month: "8", year: "2024", **)
+    post step_path("dates", **), params: {
       dates: {
         "start_date(3i)" => day,
         "start_date(2i)" => month,
@@ -99,6 +99,15 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       expect(response).to redirect_to(step_path("dates"))
     end
+
+    it "returns to check your answers when the partner is changed from there" do
+      choose_partner
+      submit_dates
+      submit_academic_years
+      choose_partner(partner.id, return_to_review: "true")
+
+      expect(response).to redirect_to(step_path("check-your-answers", return_to_review: "true"))
+    end
   end
 
   describe "POST the dates step" do
@@ -115,6 +124,12 @@ RSpec.describe "Provider partnership add journey", type: :request do
       submit_dates
 
       expect(response).to redirect_to(step_path("academic-years"))
+    end
+
+    it "re-picks the academic years when the dates change from check your answers" do
+      submit_dates(day: "2", return_to_review: "true")
+
+      expect(response).to redirect_to(step_path("academic-years", return_to_review: "true"))
     end
   end
 
