@@ -98,7 +98,7 @@ RSpec.describe "Creating partnership", type: :feature do
     let!(:academic_year) { create(:academic_year) }
 
     scenario "shows error when no partner selected" do
-      visit provider_new_partnership_find_path(provider)
+      visit provider_new_partnership_step_path(provider)
 
       click_button "Continue"
 
@@ -107,7 +107,7 @@ RSpec.describe "Creating partnership", type: :feature do
     end
 
     scenario "shows error when no start date entered" do
-      visit provider_new_partnership_find_path(provider)
+      visit provider_new_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
       click_button "Continue"
@@ -119,7 +119,7 @@ RSpec.describe "Creating partnership", type: :feature do
     end
 
     scenario "shows error when no academic year selected" do
-      visit provider_new_partnership_find_path(provider)
+      visit provider_new_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
       click_button "Continue"
@@ -139,7 +139,7 @@ RSpec.describe "Creating partnership", type: :feature do
     let!(:partner) { create(:provider, :hei_without_accreditation) }
 
     scenario "can cancel and return to partnerships" do
-      visit provider_new_partnership_find_path(provider)
+      visit provider_new_partnership_step_path(provider)
 
       select_partner(partner.operating_name)
 
@@ -154,7 +154,7 @@ private
 
   def select_partner(name)
     # The autocomplete enhances the select - find the underlying select and set its value
-    find("select[name='find[partner_id]']", visible: false).find("option", text: name, visible: false).select_option
+    find("select[name='find_partner[partner_id]']", visible: false).find("option", text: name, visible: false).select_option
   end
 
   def fill_in_start_date
