@@ -1,6 +1,8 @@
 module Providers
   module Partnerships
     class JourneyController < ApplicationController
+      include PartnershipSteps
+
       PartnerOption = Struct.new(:name, :value, :hint, :search_text)
 
       def new
@@ -34,7 +36,7 @@ module Providers
 
         return save_partnership if wizard.check_your_answers?
 
-        redirect_to wizard.next_step_path
+        redirect_to wizard.next_step_path(return_to_review: params[:return_to_review])
       end
 
     private
@@ -107,11 +109,7 @@ module Providers
       def page_title_for_step
         return partner_step_title if wizard.current_step_name == :find_partner
 
-        {
-          dates: "Partnership dates",
-          academic_years: "Academic year",
-          check_your_answers: "Check your answers"
-        }.fetch(wizard.current_step_name)
+        super
       end
 
       def partner_step_title
@@ -120,15 +118,6 @@ module Providers
         else
           "Enter accredited provider name, code, UKPRN or URN"
         end
-      end
-
-      def template_for_step
-        {
-          find_partner: "providers/partnerships/journey/find_partner",
-          dates: "providers/partnerships/journey/dates",
-          academic_years: "providers/partnerships/journey/academic_years",
-          check_your_answers: "providers/partnerships/journey/check_your_answers"
-        }.fetch(wizard.current_step_name)
       end
 
       def load_eligible_partners
@@ -154,35 +143,6 @@ module Providers
         parts.join(" | ")
       end
 
-      def eligible_academic_years
-        start_date = wizard_state[:start_date]
-
-        return AcademicYear.none if start_date.blank?
-
-        end_date = wizard_state[:end_date] || default_end_date
-
-        AcademicYear.where("duration && daterange(?, ?)", start_date, end_date).order(duration: :desc)
-      end
-
-      def default_end_date
-        next_year = Time.zone.today + 1.year
-        fallback = Time.zone.today + 2.years
-
-        AcademicYear.find_by("duration @> ?::date", next_year)&.duration&.end || fallback
-      end
-
-      def wizard_state
-        wizard.state_store.read.with_indifferent_access
-      end
-
-      def partnership_save_failure_message(partnership)
-        type_messages = partnership.partnership_types.flat_map { |type| type.errors[:partnership_type] }
-        messages = type_messages.presence || partnership.errors.full_messages
-
-        messages.to_sentence.presence ||
-          I18n.t("flash_message.alert.check.partnership.save_failed")
-      end
-
       def provider
         @provider ||= Provider.kept.find(params[:provider_id])
       end
@@ -195,7 +155,7 @@ module Providers
       end
 
       def state_store
-        @state_store ||= ::Partnerships::StateStores::AddStore.new(repository:)
+        @state_store ||= ::Partnerships::StateStores::PartnershipStore.new(repository:)
       end
 
       def wizard

@@ -1,6 +1,6 @@
 module Partnerships
   module StateStores
-    class AddStore
+    class PartnershipStore
       include DfE::Wizard::StateStore
     end
   end
