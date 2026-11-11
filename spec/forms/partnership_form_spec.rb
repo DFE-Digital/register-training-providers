@@ -33,6 +33,20 @@ RSpec.describe PartnershipForm, type: :model do
       expect(form).not_to be_valid
       expect(form.errors[:academic_year_ids]).to be_present
     end
+
+    it "rejects an academic year outside the eligible window" do
+      form = described_class.new(valid_attributes.merge(eligible_academic_year_ids: []))
+
+      expect(form).not_to be_valid
+      expect(form.errors[:academic_year_ids])
+        .to include("Select an academic year available for these partnership dates")
+    end
+
+    it "accepts an eligible academic year" do
+      form = described_class.new(valid_attributes.merge(eligible_academic_year_ids: [academic_year.id.to_s]))
+
+      expect(form).to be_valid
+    end
   end
 
   describe "#to_partnership_attributes" do

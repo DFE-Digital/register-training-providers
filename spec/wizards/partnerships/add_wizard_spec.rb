@@ -29,14 +29,20 @@ RSpec.describe Partnerships::AddWizard do
 
     it do
       expect(wizard)
-        .to have_next_step(:dates)
+        .to have_next_step(:start_date)
         .from(:types)
     end
 
     it do
       expect(wizard)
+        .to have_next_step(:end_date_question)
+        .from(:start_date)
+    end
+
+    it do
+      expect(wizard)
         .to have_next_step(:academic_years)
-        .from(:dates)
+        .from(:end_date)
     end
 
     it do
@@ -65,9 +71,21 @@ RSpec.describe Partnerships::AddWizard do
       )
     end
 
-    it "routes dates" do
-      expect(wizard).to resolve_step(:dates).to(
-        provider_partnership_step_path(provider, step: "dates")
+    it "routes start_date" do
+      expect(wizard).to resolve_step(:start_date).to(
+        provider_partnership_step_path(provider, step: "start-date")
+      )
+    end
+
+    it "routes end_date_question" do
+      expect(wizard).to resolve_step(:end_date_question).to(
+        provider_partnership_step_path(provider, step: "end-date-question")
+      )
+    end
+
+    it "routes end_date" do
+      expect(wizard).to resolve_step(:end_date).to(
+        provider_partnership_step_path(provider, step: "end-date")
       )
     end
 

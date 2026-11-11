@@ -16,18 +16,24 @@ RSpec.describe Partnerships::EditWizard do
   let(:provider) { create(:provider, :accredited) }
   let(:partner) { create(:provider, :hei_without_accreditation) }
   let(:partnership) { create(:partnership, accredited_provider: provider, provider: partner) }
-  let(:current_step) { :dates }
+  let(:current_step) { :start_date }
   let(:current_step_params) { {} }
   let(:repository) { DfE::Wizard::Repository::InMemory.new }
   let(:state_store) { Partnerships::StateStores::PartnershipStore.new(repository:) }
 
   describe "step graph" do
-    it { is_expected.to have_root_step(:dates) }
+    it { is_expected.to have_root_step(:start_date) }
+
+    it do
+      expect(wizard)
+        .to have_next_step(:end_date_question)
+        .from(:start_date)
+    end
 
     it do
       expect(wizard)
         .to have_next_step(:academic_years)
-        .from(:dates)
+        .from(:end_date)
     end
 
     it do
@@ -44,9 +50,21 @@ RSpec.describe Partnerships::EditWizard do
   end
 
   describe "routes" do
-    it "routes dates" do
-      expect(wizard).to resolve_step(:dates).to(
-        provider_partnership_edit_step_path(provider, partnership, step: "dates")
+    it "routes start_date" do
+      expect(wizard).to resolve_step(:start_date).to(
+        provider_partnership_edit_step_path(provider, partnership, step: "start-date")
+      )
+    end
+
+    it "routes end_date_question" do
+      expect(wizard).to resolve_step(:end_date_question).to(
+        provider_partnership_edit_step_path(provider, partnership, step: "end-date-question")
+      )
+    end
+
+    it "routes end_date" do
+      expect(wizard).to resolve_step(:end_date).to(
+        provider_partnership_edit_step_path(provider, partnership, step: "end-date")
       )
     end
 
@@ -72,6 +90,8 @@ RSpec.describe Partnerships::EditWizard do
       wizard.seed_from_partnership
 
       state = state_store.read.with_indifferent_access
+      expect(state[:has_end_date]).to eq("true")
+      expect(state[:start_today]).to eq("false")
       expect(state[:start_date]).to eq(Date.new(2024, 9, 1))
       expect(state[:end_date]).to eq(Date.new(2026, 7, 31))
       expect(state[:start_date_day]).to eq(1)
