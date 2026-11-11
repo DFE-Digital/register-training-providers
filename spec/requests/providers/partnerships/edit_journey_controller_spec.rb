@@ -25,13 +25,26 @@ RSpec.describe "Provider partnership edit journey", type: :request do
     provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id)
   end
 
-  def submit_dates(day: "1", month: "9", year: "2024", **)
-    patch step_path("dates", **), params: {
-      dates: {
-        "start_date(3i)" => day,
-        "start_date(2i)" => month,
-        "start_date(1i)" => year
-      }
+  def submit_start_date(day: "1", month: "9", year: "2024", today: false, **)
+    attributes = { start_today: today ? "true" : "false" }
+
+    unless today
+      attributes["start_date(3i)"] = day
+      attributes["start_date(2i)"] = month
+      attributes["start_date(1i)"] = year
+    end
+
+    patch step_path("start-date", **), params: { start_date: attributes }
+  end
+
+  def submit_end_date_question(has_end_date: false, **)
+    patch step_path("end-date-question", **),
+          params: { end_date_question: { has_end_date: has_end_date ? "true" : "false" } }
+  end
+
+  def submit_end_date(day: "31", month: "7", year: "2026", **)
+    patch step_path("end-date", **), params: {
+      end_date: { "end_date(3i)" => day, "end_date(2i)" => month, "end_date(1i)" => year }
     }
   end
 
@@ -45,22 +58,20 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       get root_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Partnership dates")
+      expect(response.body).to include("Does the partnership start today?")
       expect(response.body).to include(provider.operating_name)
     end
 
-    it "pre-fills the partnership's current dates on the entry URL the Change link uses" do
+    it "pre-fills the partnership's current start date on the entry URL the Change link uses" do
       partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
 
-      get step_path("dates")
+      get step_path("start-date")
 
-      document = response.parsed_body
-      expect(document.at_css("#dates_start_date_3i")["value"]).to eq("1")
-      expect(document.at_css("#dates_start_date_2i")["value"]).to eq("9")
-      expect(document.at_css("#dates_start_date_1i")["value"]).to eq("2024")
-      expect(document.at_css("#dates_end_date_3i")["value"]).to eq("31")
-      expect(document.at_css("#dates_end_date_2i")["value"]).to eq("7")
-      expect(document.at_css("#dates_end_date_1i")["value"]).to eq("2026")
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css("input[name='start_date[start_today]'][value='false']")["checked"]).to eq("checked")
+      expect(document.at_css("input[id$='start_date_3i']")["value"]).to eq("1")
+      expect(document.at_css("input[id$='start_date_2i']")["value"]).to eq("9")
+      expect(document.at_css("input[id$='start_date_1i']")["value"]).to eq("2024")
     end
 
     it "pre-ticks the partnership's current academic years" do
@@ -68,12 +79,13 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       partnership.academic_years << overlapping_year
       partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
 
-      get step_path("dates")
-      submit_dates
+      get step_path("start-date")
+      submit_start_date
+      submit_end_date_question
 
       get step_path("academic-years")
 
-      document = response.parsed_body
+      document = Nokogiri::HTML(response.body)
       checkbox = document.at_css("input[type='checkbox'][value='#{overlapping_year.id}']")
       expect(checkbox["checked"]).to eq("checked")
     end
@@ -89,7 +101,8 @@ RSpec.describe "Provider partnership edit journey", type: :request do
     before { get root_path }
 
     it "moves on to the academic year step" do
-      submit_dates
+      submit_start_date
+      submit_end_date_question
 
       expect(response).to redirect_to(step_path("academic-years"))
     end
@@ -98,7 +111,8 @@ RSpec.describe "Provider partnership edit journey", type: :request do
   describe "PATCH the academic years step" do
     before do
       get root_path
-      submit_dates
+      submit_start_date
+      submit_end_date_question
     end
 
     it "rejects an empty selection" do
@@ -118,11 +132,25 @@ RSpec.describe "Provider partnership edit journey", type: :request do
   describe "an edit with an existing end date" do
     let!(:overlapping_year) { create(:academic_year, academic_year: 2024) }
 
+    it "clears the end date when the user says there is none" do
+      partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
+
+      get step_path("start-date")
+      submit_start_date
+      submit_end_date_question(has_end_date: false)
+      submit_academic_years([overlapping_year.id])
+      patch step_path("check-your-answers")
+
+      expect(partnership.reload.duration.end).to eq(Float::INFINITY)
+    end
+
     it "keeps the end date when the pre-filled dates are submitted unchanged" do
       partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
 
-      get step_path("dates")
-      submit_dates(end_day: "31", end_month: "7", end_year: "2026")
+      get step_path("start-date")
+      submit_start_date
+      submit_end_date_question(has_end_date: true)
+      submit_end_date
       submit_academic_years([overlapping_year.id])
       patch step_path("check-your-answers")
 
@@ -133,7 +161,8 @@ RSpec.describe "Provider partnership edit journey", type: :request do
   describe "the complete edit journey" do
     before do
       get root_path
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
     end
 
@@ -149,7 +178,7 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       patch step_path("check-your-answers")
 
       expect(response).to redirect_to(provider_partnerships_path(provider))
-      expect(flash[:success]).to eq(I18n.t("flash_message.success.check.partnership.update"))
+      expect(flash[:success]).to eq(I18n.t("flash_message.success.check.partnership.update", name: partner.operating_name))
 
       partnership.reload
       expect(partnership.duration.begin).to eq(Date.new(2024, 9, 1))
@@ -159,17 +188,31 @@ RSpec.describe "Provider partnership edit journey", type: :request do
     end
   end
 
+  describe "changing dates after selecting academic years" do
+    it "rejects a stale academic-year selection on save" do
+      get step_path("start-date")
+      submit_start_date(year: "2040")
+      submit_end_date_question
+
+      patch step_path("check-your-answers")
+
+      expect(response).to redirect_to(root_path)
+      expect(partnership.reload.duration.begin).not_to eq(Date.new(2040, 9, 1))
+    end
+  end
+
   describe "changing a single answer from check your answers" do
     before do
       get root_path
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
     end
 
-    it "re-picks the academic years when the dates change" do
-      submit_dates(day: "2", return_to_review: "true")
+    it "moves on to the end date question" do
+      submit_start_date
 
-      expect(response).to redirect_to(step_path("academic-years", return_to_review: "true"))
+      expect(response).to redirect_to(step_path("end-date-question"))
     end
 
     it "returns to check your answers after the academic years step" do

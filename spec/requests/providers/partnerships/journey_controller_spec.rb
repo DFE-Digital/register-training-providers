@@ -28,12 +28,29 @@ RSpec.describe "Provider partnership add journey", type: :request do
     post step_path("types", **), params: { types: { partnership_types: types } }
   end
 
-  def submit_dates(day: "1", month: "8", year: "2024", **)
-    post step_path("dates", **), params: {
-      dates: {
-        "start_date(3i)" => day,
-        "start_date(2i)" => month,
-        "start_date(1i)" => year
+  def submit_start_date(day: "1", month: "8", year: "2024", today: false, **)
+    attributes = { start_today: today ? "true" : "false" }
+
+    unless today
+      attributes["start_date(3i)"] = day
+      attributes["start_date(2i)"] = month
+      attributes["start_date(1i)"] = year
+    end
+
+    post step_path("start-date", **), params: { start_date: attributes }
+  end
+
+  def submit_end_date_question(has_end_date: false, **)
+    post step_path("end-date-question", **),
+         params: { end_date_question: { has_end_date: has_end_date ? "true" : "false" } }
+  end
+
+  def submit_end_date(day: "31", month: "7", year: "2026", **)
+    post step_path("end-date", **), params: {
+      end_date: {
+        "end_date(3i)" => day,
+        "end_date(2i)" => month,
+        "end_date(1i)" => year
       }
     }
   end
@@ -100,13 +117,15 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
     it "moves on to the types step" do
       choose_partner
+
       expect(response).to redirect_to(step_path("types"))
     end
 
     it "returns to check your answers when the partner is changed from there" do
       choose_partner
       submit_types
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
       choose_partner(partner.id, return_to_review: "true")
 
@@ -124,16 +143,17 @@ RSpec.describe "Provider partnership add journey", type: :request do
       expect(response.body).to include("Select at least one partnership type")
     end
 
-    it "moves on to the dates step" do
+    it "moves on to the start date step" do
       submit_types
 
-      expect(response).to redirect_to(step_path("dates"))
+      expect(response).to redirect_to(step_path("start-date"))
     end
 
     it "returns to check your answers when types change from there" do
       choose_partner
       submit_types
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
 
       submit_types([PartnershipTypeEnum::TRAINING_AND_DELIVERY], return_to_review: "true")
@@ -154,7 +174,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
       get step_path("types")
 
       expect(response.body).to include("cannot be added")
-      expect(response.parsed_body.css("input[type='checkbox']")).to be_empty
+      expect(Nokogiri::HTML(response.body).css("input[type='checkbox']")).to be_empty
     end
 
     it "rejects a type that is already used with this partner" do
@@ -171,7 +191,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       get step_path("types")
 
-      document = response.parsed_body
+      document = Nokogiri::HTML(response.body)
       expect(document.css("input[name='types[partnership_types][]']").pluck("value"))
         .not_to include(PartnershipTypeEnum::RECRUITMENT)
       expect(document.css("ul.govuk-list--bullet li").map(&:text)).to eq(["Recruitment"])
@@ -185,14 +205,14 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       expect(response.body).to include("Placement is not available")
       expect(response.body).to include("Available partnership types")
-      expect(response.parsed_body.css("input[name='types[partnership_types][]']").pluck("value"))
+      expect(Nokogiri::HTML(response.body).css("input[name='types[partnership_types][]']").pluck("value"))
         .not_to include(PartnershipTypeEnum::PLACEMENT)
     end
 
     it "renders the supporting content inside the types fieldset" do
       get step_path("types")
 
-      fieldset = response.parsed_body.at_css("fieldset.govuk-fieldset")
+      fieldset = Nokogiri::HTML(response.body).at_css("fieldset.govuk-fieldset")
       content = fieldset.inner_html
 
       expect(content.index("Select partnership types")).to be < content.index("All selected partnership types")
@@ -207,35 +227,92 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       get step_path("types")
 
-      expect(response.parsed_body.css("input[name='types[partnership_types][]']").pluck("value"))
+      expect(Nokogiri::HTML(response.body).css("input[name='types[partnership_types][]']").pluck("value"))
         .to include(PartnershipTypeEnum::PLACEMENT)
       expect(response.body).not_to include("Placement is not available")
     end
   end
 
-  describe "POST the dates step" do
+  describe "POST the start date step" do
     before do
       choose_partner
       submit_types
     end
 
+    it "accepts today as the start date" do
+      submit_start_date(today: true)
+
+      expect(response).to redirect_to(step_path("end-date-question"))
+    end
+
     it "rejects a missing start date" do
-      submit_dates(day: "", month: "", year: "")
+      submit_start_date(day: "", month: "", year: "")
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Enter date the partnership started")
     end
 
-    it "moves on to the academic year step" do
-      submit_dates
+    it "moves on to the end date question" do
+      submit_start_date
+
+      expect(response).to redirect_to(step_path("end-date-question"))
+    end
+
+    it "keeps the review flag when the start date is changed from check your answers" do
+      submit_start_date(return_to_review: "true")
+
+      expect(response).to redirect_to(step_path("end-date-question", return_to_review: "true"))
+    end
+  end
+
+  describe "POST the end date question step" do
+    before do
+      choose_partner
+      submit_types
+      submit_start_date
+    end
+
+    it "requires an answer" do
+      post step_path("end-date-question"), params: { end_date_question: { has_end_date: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Select if the partnership has an end date")
+    end
+
+    it "moves on to the end date when there is one" do
+      submit_end_date_question(has_end_date: true)
+
+      expect(response).to redirect_to(step_path("end-date"))
+    end
+
+    it "skips to the academic years when there is no end date" do
+      submit_end_date_question(has_end_date: false)
 
       expect(response).to redirect_to(step_path("academic-years"))
     end
+  end
 
-    it "re-picks the academic years when the dates change from check your answers" do
-      submit_dates(day: "2", return_to_review: "true")
+  describe "POST the end date step" do
+    before do
+      choose_partner
+      submit_types
+      submit_start_date
+      submit_end_date_question(has_end_date: true)
+    end
 
-      expect(response).to redirect_to(step_path("academic-years", return_to_review: "true"))
+    it "requires a date" do
+      post step_path("end-date"), params: {
+        end_date: { "end_date(3i)" => "", "end_date(2i)" => "", "end_date(1i)" => "" }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Enter date the partnership ended")
+    end
+
+    it "moves on to the academic years" do
+      submit_end_date
+
+      expect(response).to redirect_to(step_path("academic-years"))
     end
   end
 
@@ -243,7 +320,8 @@ RSpec.describe "Provider partnership add journey", type: :request do
     before do
       choose_partner
       submit_types
-      submit_dates
+      submit_start_date
+      submit_end_date_question
     end
 
     it "rejects an empty selection" do
@@ -253,6 +331,14 @@ RSpec.describe "Provider partnership add journey", type: :request do
       expect(response.body).to include("Select academic year")
     end
 
+    it "rejects academic years outside the partnership dates" do
+      unrelated_year = create(:academic_year, academic_year: 2040)
+
+      submit_academic_years([unrelated_year.id])
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it "moves on to check your answers" do
       submit_academic_years
 
@@ -260,11 +346,28 @@ RSpec.describe "Provider partnership add journey", type: :request do
     end
   end
 
+  describe "adding a partnership with an end date" do
+    it "saves the end date" do
+      overlapping_year = create(:academic_year, academic_year: 2025)
+
+      choose_partner
+      submit_types
+      submit_start_date
+      submit_end_date_question(has_end_date: true)
+      submit_end_date
+      submit_academic_years([overlapping_year.id])
+      post step_path("check-your-answers")
+
+      expect(Partnership.last.duration.end).to eq(Date.new(2026, 7, 31))
+    end
+  end
+
   describe "the complete journey" do
     before do
       choose_partner
       submit_types
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
     end
 
@@ -285,7 +388,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
         .and change(PartnershipType, :count).by(1)
 
       expect(response).to redirect_to(provider_partnerships_path(accredited_provider))
-      expect(flash[:success]).to eq(I18n.t("flash_message.success.check.partnership.add"))
+      expect(flash[:success]).to eq(I18n.t("flash_message.success.check.partnership.add", name: partner.operating_name))
 
       partnership = Partnership.last
       expect(partnership.provider).to eq(partner)
@@ -294,6 +397,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
         .to eq([PartnershipTypeEnum::RECRUITMENT])
       expect(partnership.academic_years).to include(academic_year)
       expect(partnership.duration.begin).to eq(Date.new(2024, 8, 1))
+      expect(partnership.duration.end).to eq(Float::INFINITY)
     end
 
     it "clears the journey state after saving" do
@@ -326,7 +430,8 @@ RSpec.describe "Provider partnership add journey", type: :request do
     before do
       choose_partner
       submit_types
-      submit_dates
+      submit_start_date
+      submit_end_date_question
       submit_academic_years
     end
 
@@ -336,6 +441,64 @@ RSpec.describe "Provider partnership add journey", type: :request do
       get step_path("check-your-answers")
 
       expect(response).to redirect_to(step_path("find-partner"))
+    end
+  end
+
+  describe "adding every type to a school partner" do
+    it "saves placement along with the other types" do
+      school_partner = create(:provider, :school, operating_name: "Placement School")
+
+      choose_partner(school_partner.id)
+      submit_types(%w[recruitment
+                      training_and_delivery
+                      student_fee_management
+                      academic_award_making
+                      placement])
+      submit_start_date
+      submit_end_date_question
+      submit_academic_years
+      post step_path("check-your-answers")
+
+      expect(response).to redirect_to(provider_partnerships_path(accredited_provider))
+
+      saved = Partnership.kept.find_by(provider_id: school_partner.id)
+      expect(saved.partnership_types.kept.map(&:partnership_type).sort)
+        .to eq(%w[academic_award_making
+                  placement
+                  recruitment
+                  student_fee_management
+                  training_and_delivery])
+    end
+  end
+
+  describe "as a school provider adding an accredited provider" do
+    let(:school) { create(:provider, :school, operating_name: "Acting School") }
+    let(:accredited_partner) { create(:provider, :accredited, operating_name: "Accredited University") }
+
+    def school_step_path(step)
+      provider_partnership_step_path(school, step:)
+    end
+
+    it "creates the partnership with the accredited provider" do
+      post school_step_path("find-partner"), params: { find_partner: { partner_id: accredited_partner.id } }
+      post school_step_path("types"), params: { types: { partnership_types: ["recruitment"] } }
+      post school_step_path("start-date"), params: {
+        start_date: {
+          start_today: "false",
+          "start_date(3i)" => "1",
+          "start_date(2i)" => "9",
+          "start_date(1i)" => "2024"
+        }
+      }
+      post school_step_path("end-date-question"), params: { end_date_question: { has_end_date: "false" } }
+      post school_step_path("academic-years"), params: { academic_years: { academic_year_ids: [academic_year.id] } }
+      post school_step_path("check-your-answers")
+
+      expect(response).to redirect_to(provider_partnerships_path(school))
+
+      saved = Partnership.kept.find_by(provider_id: school.id)
+      expect(saved.accredited_provider_id).to eq(accredited_partner.id)
+      expect(saved.partnership_types.kept.map(&:partnership_type)).to eq(["recruitment"])
     end
   end
 end

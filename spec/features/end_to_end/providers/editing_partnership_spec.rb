@@ -35,14 +35,17 @@ RSpec.describe "Editing partnership", type: :feature do
         click_link "Change"
       end
 
-      expect(page).to have_content("Partnership dates")
+      expect(page).to have_content("Does the partnership start today?")
       expect(page).to have_content(accredited_provider.operating_name)
       expect(page).not_to have_content("Add partnership")
 
       fill_in_new_dates
       click_button "Continue"
 
-      expect(page).to have_content("Academic year")
+      choose "No"
+      click_button "Continue"
+
+      expect(page).to have_content("Select academic years")
 
       check display_academic_year(academic_year_current)
       check display_academic_year(academic_year_next)
@@ -54,7 +57,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       click_button "Save partnership"
 
-      expect(page).to have_content("Partnership updated")
+      expect(page).to have_content("Partnership with #{training_partner.operating_name} updated")
       expect(page).to have_current_path(provider_partnerships_path(accredited_provider))
 
       partnership.reload
@@ -71,6 +74,9 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
+      choose "No"
+      click_button "Continue"
+
       check display_academic_year(academic_year_current)
       click_button "Continue"
 
@@ -78,15 +84,18 @@ RSpec.describe "Editing partnership", type: :feature do
 
       click_link "Change", match: :first
 
-      expect(page).to have_content("Partnership dates")
-      within_fieldset("Partnership start date") do
+      expect(page).to have_content("Does the partnership start today?")
+      within_fieldset("What is the partnership start date?") do
         expect(find_field("Day").value).to eq("15")
       end
 
       fill_in_different_dates
       click_button "Continue"
 
-      expect(page).to have_content("Academic year")
+      choose "No"
+      click_button "Continue"
+
+      expect(page).to have_content("Select academic years")
 
       check display_academic_year(academic_year_current)
       click_button "Continue"
@@ -95,7 +104,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       click_button "Save partnership"
 
-      expect(page).to have_content("Partnership updated")
+      expect(page).to have_content("Partnership with #{training_partner.operating_name} updated")
     end
 
     scenario "partner cannot be changed in edit flow" do
@@ -106,6 +115,9 @@ RSpec.describe "Editing partnership", type: :feature do
       end
 
       fill_in_new_dates
+      click_button "Continue"
+
+      choose "No"
       click_button "Continue"
 
       check display_academic_year(academic_year_current)
@@ -129,6 +141,9 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
+      choose "No"
+      click_button "Continue"
+
       check display_academic_year(academic_year_current)
       click_button "Continue"
 
@@ -136,7 +151,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       click_link "Change", match: :first
 
-      expect(page).to have_content("Partnership dates")
+      expect(page).to have_content("Does the partnership start today?")
 
       click_link "Back"
 
@@ -153,6 +168,9 @@ RSpec.describe "Editing partnership", type: :feature do
       fill_in_new_dates
       click_button "Continue"
 
+      choose "No"
+      click_button "Continue"
+
       check display_academic_year(academic_year_current)
       click_button "Continue"
 
@@ -160,7 +178,7 @@ RSpec.describe "Editing partnership", type: :feature do
 
       click_link "Change academic years"
 
-      expect(page).to have_content("Academic year")
+      expect(page).to have_content("Select academic years")
 
       click_link "Back"
 
@@ -185,9 +203,9 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "shows error when start date is cleared" do
-      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "start-date")
 
-      within_fieldset("Partnership start date") do
+      within_fieldset("What is the partnership start date?") do
         fill_in "Day", with: ""
         fill_in "Month", with: ""
         fill_in "Year", with: ""
@@ -200,9 +218,12 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "shows error when no academic year selected" do
-      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "start-date")
 
       fill_in_new_dates
+      click_button "Continue"
+
+      choose "No"
       click_button "Continue"
 
       # Uncheck pre-selected academic years
@@ -233,7 +254,7 @@ RSpec.describe "Editing partnership", type: :feature do
     end
 
     scenario "can cancel and return to partnerships list" do
-      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "dates")
+      visit provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: "start-date")
 
       fill_in_new_dates
 
@@ -247,7 +268,8 @@ private
 
   def fill_in_new_dates
     current_year = AcademicYearCalculator.current_academic_year
-    within_fieldset("Partnership start date") do
+    choose "No"
+    within_fieldset("What is the partnership start date?") do
       fill_in "Day", with: "15"
       fill_in "Month", with: "8"
       fill_in "Year", with: current_year.to_s
@@ -256,7 +278,8 @@ private
 
   def fill_in_different_dates
     current_year = AcademicYearCalculator.current_academic_year
-    within_fieldset("Partnership start date") do
+    choose "No"
+    within_fieldset("What is the partnership start date?") do
       fill_in "Day", with: "1"
       fill_in "Month", with: "9"
       fill_in "Year", with: current_year.to_s

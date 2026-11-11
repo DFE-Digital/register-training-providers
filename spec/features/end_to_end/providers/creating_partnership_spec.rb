@@ -29,12 +29,15 @@ RSpec.describe "Creating partnership", type: :feature do
       check "Recruitment"
       click_button "Continue"
 
-      expect(page).to have_content("Partnership dates")
+      expect(page).to have_content("Does the partnership start today?")
 
       fill_in_start_date
       click_button "Continue"
 
-      expect(page).to have_content("Academic year")
+      expect(page).to have_content("Does the partnership have an end date?")
+      choose_no_end_date
+
+      expect(page).to have_content("Select academic years")
 
       check display_academic_year(academic_year)
       click_button "Continue"
@@ -45,7 +48,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       click_button "Save partnership"
 
-      expect(page).to have_content("Partnership added")
+      expect(page).to have_content("Partnership with #{unaccredited_partner.operating_name} added")
       expect(page).to have_current_path(provider_partnerships_path(accredited_provider))
 
       accredited_provider.reload
@@ -82,6 +85,8 @@ RSpec.describe "Creating partnership", type: :feature do
       fill_in_start_date
       click_button "Continue"
 
+      choose_no_end_date
+
       check display_academic_year(academic_year)
       click_button "Continue"
 
@@ -89,7 +94,7 @@ RSpec.describe "Creating partnership", type: :feature do
 
       click_button "Save partnership"
 
-      expect(page).to have_content("Partnership added")
+      expect(page).to have_content("Partnership with #{accredited_partner.operating_name} added")
 
       unaccredited_provider.reload
       expect(unaccredited_provider.partnerships.count).to eq(1)
@@ -134,6 +139,7 @@ RSpec.describe "Creating partnership", type: :feature do
       check "Recruitment"
       click_button "Continue"
 
+      choose "No"
       click_button "Continue"
 
       expect(page).to have_content("Error")
@@ -151,6 +157,8 @@ RSpec.describe "Creating partnership", type: :feature do
 
       fill_in_start_date
       click_button "Continue"
+
+      choose_no_end_date
 
       click_button "Continue"
 
@@ -184,11 +192,17 @@ private
 
   def fill_in_start_date
     current_year = AcademicYearCalculator.current_academic_year
-    within_fieldset("Partnership start date") do
+    choose "No"
+    within_fieldset("What is the partnership start date?") do
       fill_in "Day", with: "1"
       fill_in "Month", with: "9"
       fill_in "Year", with: current_year.to_s
     end
+  end
+
+  def choose_no_end_date
+    choose "No"
+    click_button "Continue"
   end
 
   def display_academic_year(academic_year)
