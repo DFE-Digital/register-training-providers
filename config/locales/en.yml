@@ -135,6 +135,11 @@ en:
           attributes:
             partnership_types:
               blank: "Select at least one partnership type"
+        partnerships/types_step:
+          attributes:
+            partnership_types:
+              blank: "Select at least one partnership type"
+              inclusion: "Select a valid partnership type"
         partnership_type:
           attributes:
             partnership_type:
@@ -275,6 +280,7 @@ en:
       check:
         partnership:
           save_failed: "The partnership could not be saved. Select a different training partner and try again."
+          types_unavailable: "A partnership type you selected is no longer available. Check the partnership types and try again."
     success:
       accreditation:
         remove: "Accreditation deleted"

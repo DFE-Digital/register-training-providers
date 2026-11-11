@@ -19,7 +19,7 @@ module Partnerships
 
     def route_strategy
       build_route_strategy(
-        :provider_edit_partnership_step_path,
+        :provider_partnership_edit_step_path,
         { provider_id: provider.id, partnership_id: partnership.id }
       )
     end

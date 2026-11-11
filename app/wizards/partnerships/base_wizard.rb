@@ -29,14 +29,14 @@ module Partnerships
 
     def previous_step_override
       return unless return_to_review?
-      return unless %i[find_partner dates academic_years].include?(current_step_name)
+      return unless %i[find_partner types dates academic_years].include?(current_step_name)
 
       :check_your_answers if valid_path_to?(:check_your_answers)
     end
 
     def next_step_override
       return unless return_to_review?
-      return unless current_step_name == :find_partner
+      return unless %i[find_partner types].include?(current_step_name)
 
       :check_your_answers if valid_path_to?(:check_your_answers)
     end

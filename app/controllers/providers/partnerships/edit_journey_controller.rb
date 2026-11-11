@@ -32,7 +32,7 @@ module Providers
     private
 
       def first_step_path
-        provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id)
+        provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id)
       end
 
       def seed_state
@@ -71,6 +71,7 @@ module Providers
 
       def prepare_check_your_answers
         @form = wizard.partnership_form
+        @partnership_types = partnership.partnership_types.kept.pluck(:partnership_type)
         @save_path = wizard.current_step_path
         @save_button_text = "Save partnership"
         @change_paths = {
@@ -80,7 +81,7 @@ module Providers
       end
 
       def change_step_path(step)
-        provider_edit_partnership_step_path(
+        provider_partnership_edit_step_path(
           provider_id: provider.id,
           partnership_id: partnership.id,
           step: step.to_s.tr("_", "-"),

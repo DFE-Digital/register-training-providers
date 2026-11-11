@@ -2,6 +2,7 @@ module PartnershipSteps
   extend ActiveSupport::Concern
 
   STEP_TITLES = {
+    types: "Select partnership types",
     dates: "Partnership dates",
     academic_years: "Academic year",
     check_your_answers: "Check your answers"
