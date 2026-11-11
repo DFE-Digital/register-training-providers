@@ -1,0 +1,56 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
+
+<%= form_for @form, url: @form_url, method: @form_method, as: @wizard.current_step_name do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <% if @form.available_partnership_types.empty? %>
+    <% content_for(:page_header) { tag.h1(@page_title, class: "govuk-heading-l") } %>
+
+    <p class="govuk-body">No partnership type is available with this partner, so a new partnership cannot be added.</p>
+    <p class="govuk-body"><%= govuk_link_to("Return to partnerships", @cancel_path) %></p>
+  <% else %>
+    <%= form.govuk_collection_check_boxes :partnership_types,
+                                          @form.available_partnership_types,
+                                          :to_s,
+                                          ->(type) { PartnershipTypeEnum.label_for(type) },
+                                          legend: { text: @page_title, size: "l" },
+                                          caption: { text: @page_caption, size: "l" },
+                                          hint: { text: "Select all that apply" } do %>
+      <p class="govuk-body">All selected partnership types will use the same start and end dates. Create a separate partnership if a type needs different dates.</p>
+
+      <% if @form.used_partnership_types.present? %>
+        <h2 class="govuk-heading-s">Partnership types already used</h2>
+        <p class="govuk-body">These partnership types are already part of another current or scheduled partnership with this <%= @provider_accredited ? "training partner" : "accredited provider" %>:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <% @form.used_partnership_types.each do |type| %>
+            <li><%= PartnershipTypeEnum.label_for(type) %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <% unless @form.placement_available? %>
+        <%= govuk_inset_text do %>
+          <p class="govuk-body"><strong>Placement is not available</strong></p>
+          <p class="govuk-body"><%= I18n.t("activerecord.errors.models.partnership_type.attributes.partnership_type.placement_requires_school") %>. This training partner is not a school.</p>
+        <% end %>
+      <% end %>
+
+      <% if @form.used_partnership_types.present? || !@form.placement_available? %>
+        <h2 class="govuk-heading-s">Available partnership types</h2>
+      <% end %>
+    <% end %>
+
+    <%= form.govuk_submit "Continue" %>
+  <% end %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

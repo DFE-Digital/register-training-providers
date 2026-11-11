@@ -28,6 +28,17 @@ class PartnershipType < ApplicationRecord
 
   belongs_to :partnership
 
+  scope :used_for, lambda { |accredited_provider_id:, provider_id:|
+    kept
+      .joins(:partnership)
+      .where(partnerships: { accredited_provider_id:, provider_id: })
+      .merge(Partnership.kept.current_or_scheduled)
+  }
+
+  def self.used_between(accredited_provider_id:, provider_id:)
+    used_for(accredited_provider_id:, provider_id:).distinct.pluck(:partnership_type)
+  end
+
   validates :partnership_type, presence: true
   validates :partnership_type,
             uniqueness: { scope: :partnership_id, conditions: -> { kept } }
@@ -41,11 +52,8 @@ private
     return if partnership.blank? || partnership_type.blank?
 
     scope = self.class
-      .kept
-      .joins(:partnership)
+      .used_for(**partner_pair)
       .where(partnership_type:)
-      .where(partnerships: partner_pair)
-      .merge(Partnership.kept.current_or_scheduled)
 
     scope = scope.where.not(partnership_id: partnership.id) if partnership.persisted?
 

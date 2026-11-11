@@ -12,7 +12,7 @@ module PartnershipHelper
       if include_actions && policy(partnership).update?
         card[:actions] = [
           { text: "Change",
-            href: provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id,
+            href: provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id,
                                                       step: "dates") },
           { text: "Delete",
             href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
@@ -23,7 +23,7 @@ module PartnershipHelper
     end
   end
 
-  def partnership_rows(partnership, change_paths: {}, provider_accredited: nil)
+  def partnership_rows(partnership, change_paths: {}, provider_accredited: nil, partnership_types: nil)
     rows = []
 
     ap_row = { key: { text: "Accredited provider" },
@@ -40,6 +40,8 @@ module PartnershipHelper
     end
     rows << tp_row
 
+    rows << partnership_types_row(partnership_types, change_paths[:types]) unless partnership_types.nil?
+
     dates_row = partnership_dates_row(partnership.duration)
     if change_paths[:dates].present?
       dates_row[:actions] = [{ href: change_paths[:dates], visually_hidden_text: "partnership dates" }]
@@ -53,6 +55,20 @@ module PartnershipHelper
     rows << years_row
 
     rows
+  end
+
+  def partnership_types_row(partnership_types, change_path)
+    value = if partnership_types.present?
+              tag.ul(class: "govuk-list govuk-list--bullet") do
+                safe_join(partnership_types.map { |type| tag.li(PartnershipTypeEnum.label_for(type)) })
+              end
+            else
+              tag.span("Not entered", class: "govuk-hint")
+            end
+
+    row = { key: { text: "Partnership types" }, value: { text: value } }
+    row[:actions] = [{ href: change_path, visually_hidden_text: "partnership types" }] if change_path.present?
+    row
   end
 
   def partnership_dates_row(duration)

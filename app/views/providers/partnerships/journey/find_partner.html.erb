@@ -26,11 +26,9 @@
         ) %>
   <% end %>
 
-  <% partner_type = @provider_accredited ? "training_partner" : "accredited_provider" %>
-
   <%= govuk_details(
-        summary_text: t("providers.partnerships.find.new.#{partner_type}.details.summary_text"),
-        text: t("providers.partnerships.find.new.#{partner_type}.details.text_html")
+        summary_text: t("providers.partnerships.find.new.#{@provider_accredited ? 'training_partner' : 'accredited_provider'}.details.summary_text"),
+        text: t("providers.partnerships.find.new.#{@provider_accredited ? 'training_partner' : 'accredited_provider'}.details.text_html")
       ) %>
   <%= form.govuk_submit "Continue" %>
 <% end %>
