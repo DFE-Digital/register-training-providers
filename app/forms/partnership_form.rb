@@ -9,6 +9,11 @@ class PartnershipForm
 
   attr_accessor :academic_year_ids, :eligible_academic_year_ids
 
+  # Set by the edit journey when saving will revise the partnership (end it
+  # today and start a replacement), so the dates can be validated against the
+  # record the save will actually write.
+  attr_accessor :revision_on
+
   attribute :provider_id, :string
   attribute :accredited_provider_id, :string
 
@@ -17,6 +22,8 @@ class PartnershipForm
   validates :start_date, presence: true
   validate :academic_year_ids_must_not_be_empty
   validate :academic_year_ids_must_be_eligible
+  validate :end_date_must_be_after_the_replacement_start, if: -> { revision_on.present? }
+  validate :start_date_must_be_before_the_revision, if: -> { revision_on.present? }
 
   def self.from_dates(dates)
     form = new
@@ -90,5 +97,22 @@ private
     return if (selected_ids - eligible_academic_year_ids.map(&:to_s)).empty?
 
     errors.add(:academic_year_ids, :inclusion)
+  end
+
+  # A revision starts a replacement partnership today, so an end date today or
+  # earlier would leave it with no days at all (and an impossible duration for
+  # Postgres to store).
+  def end_date_must_be_after_the_replacement_start
+    return if end_date.blank? || end_date > revision_on
+
+    errors.add(:end_date, :must_be_after_today, date: revision_on.to_fs(:govuk))
+  end
+
+  # A revision only carries the partnership types from today, so the start date
+  # it is given has to leave the current record at least one day to end on.
+  def start_date_must_be_before_the_revision
+    return if start_date.blank? || start_date < revision_on
+
+    errors.add(:start_date, :must_be_before_today, date: revision_on.to_fs(:govuk))
   end
 end

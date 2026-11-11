@@ -1,0 +1,16 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: @back_path) %>
+<% end %>
+
+<% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
+
+<p class="govuk-body">
+  Ending this partnership will end all partnership types today, <%= Time.zone.today.to_fs(:govuk) %>.
+  The partnership will then appear in historic partnerships.
+</p>
+
+<%= govuk_button_to("End partnership", @end_path, method: :patch) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

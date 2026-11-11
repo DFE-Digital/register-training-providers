@@ -29,11 +29,16 @@ module DataImporter
 
     attr_reader :row
 
+    # A type revision leaves two kept rows for the same pair: the row it ended
+    # and the replacement it started. `implicit_order_column` is `created_at`,
+    # so an unordered lookup finds the ended row and the import would rewrite
+    # history by moving those dates onto it; prefer the partnership that is
+    # current now.
     def find_or_initialize_partnership
-      Partnership.find_or_initialize_by(
-        accredited_provider:,
-        provider:
-      )
+      Partnership.kept
+                 .current_or_scheduled
+                 .find_by(accredited_provider:, provider:) ||
+        Partnership.find_or_initialize_by(accredited_provider:, provider:)
     end
 
     def assign_duration(partnership)

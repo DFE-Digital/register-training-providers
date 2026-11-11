@@ -35,9 +35,8 @@ module Partnerships
       eligible_academic_years.pluck(:id).map(&:to_s)
     end
 
-    def eligible_academic_years
+    def eligible_academic_years(start_date: wizard_state[:start_date])
       state = wizard_state
-      start_date = state[:start_date]
       return AcademicYear.none if start_date.blank?
 
       end_date = if state[:has_end_date].to_s == "false"

@@ -31,4 +31,9 @@ private
     messages.to_sentence.presence ||
       I18n.t("flash_message.alert.check.partnership.save_failed")
   end
+
+  def form_errors_message(form)
+    form.errors.map(&:message).to_sentence.presence ||
+      I18n.t("flash_message.alert.check.partnership.save_failed")
+  end
 end

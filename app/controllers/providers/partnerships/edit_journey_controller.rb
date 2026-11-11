@@ -34,6 +34,14 @@ module Providers
           )
         end
 
+        if wizard.current_step_name == :types && wizard.revises_partnership?
+          return redirect_to provider_partnership_type_change_path(
+            partnership,
+            provider_id: provider.id,
+            return_to_review: params[:return_to_review]
+          )
+        end
+
         redirect_to wizard.next_step_path(return_to_review: params[:return_to_review])
       end
 
@@ -58,17 +66,23 @@ module Providers
         unless form.valid?
           prepare_step
           @form = form
+          flash.now[:alert] = form_errors_message(form)
           return render(template_for_step, status: :unprocessable_content)
         end
 
-        updated = false
-        Partnership.transaction do
-          partnership.sync_partnership_types(wizard.selected_partnership_types)
-          updated = partnership.update(form.to_partnership_attributes)
-          raise ActiveRecord::Rollback unless updated
+        saved = false
+
+        if wizard.revises_partnership?
+          saved = revision_saved?(form)
+        else
+          Partnership.transaction do
+            partnership.sync_partnership_types(wizard.selected_partnership_types)
+            saved = partnership.update(form.to_partnership_attributes)
+            raise ActiveRecord::Rollback unless saved
+          end
         end
 
-        unless updated
+        unless saved
           prepare_step
           flash.now[:alert] = partnership_save_failure_message(partnership)
           return render(template_for_step, status: :unprocessable_content)
@@ -78,6 +92,16 @@ module Providers
         redirect_to provider_partnerships_path(provider),
                     flash: { success: I18n.t("flash_message.success.check.partnership.update",
                                              name: partnership.other_partner(provider).operating_name) }
+      end
+
+      def revision_saved?(form)
+        revision = partnership.revise_types!(wizard.selected_partnership_types,
+                                             academic_years: form.academic_years,
+                                             end_date: form.end_date,
+                                             start_date: form.start_date)
+
+        revision.present? ||
+          partnership.same_day_replacement(wizard.selected_partnership_types).present?
       end
 
       def prepare_step
