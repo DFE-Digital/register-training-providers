@@ -23,8 +23,14 @@ RSpec.describe Partnerships::AddWizard do
 
     it do
       expect(wizard)
-        .to have_next_step(:dates)
+        .to have_next_step(:types)
         .from(:find_partner)
+    end
+
+    it do
+      expect(wizard)
+        .to have_next_step(:dates)
+        .from(:types)
     end
 
     it do
@@ -49,25 +55,31 @@ RSpec.describe Partnerships::AddWizard do
   describe "routes" do
     it "routes find_partner" do
       expect(wizard).to resolve_step(:find_partner).to(
-        provider_new_partnership_step_path(provider, step: "find-partner")
+        provider_partnership_step_path(provider, step: "find-partner")
+      )
+    end
+
+    it "routes types" do
+      expect(wizard).to resolve_step(:types).to(
+        provider_partnership_step_path(provider, step: "types")
       )
     end
 
     it "routes dates" do
       expect(wizard).to resolve_step(:dates).to(
-        provider_new_partnership_step_path(provider, step: "dates")
+        provider_partnership_step_path(provider, step: "dates")
       )
     end
 
     it "routes academic_years" do
       expect(wizard).to resolve_step(:academic_years).to(
-        provider_new_partnership_step_path(provider, step: "academic-years")
+        provider_partnership_step_path(provider, step: "academic-years")
       )
     end
 
     it "routes check_your_answers" do
       expect(wizard).to resolve_step(:check_your_answers).to(
-        provider_new_partnership_step_path(provider, step: "check-your-answers")
+        provider_partnership_step_path(provider, step: "check-your-answers")
       )
     end
   end
