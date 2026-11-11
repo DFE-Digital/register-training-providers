@@ -1,0 +1,23 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
+
+<%= form_for @form, url: @form_url, method: @form_method, as: @wizard.current_step_name do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_date_field :end_date,
+                            legend: { text: @page_title, size: "l" },
+                            caption: { text: @page_caption, size: "l" },
+                            hint: { text: "For example, 31 7 2027" } %>
+
+  <%= form.govuk_submit "Continue" %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

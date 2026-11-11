@@ -1,0 +1,13 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= govuk_back_link(text: "Back", href: @back_path) %>
+<% end %>
+
+<% page_data(title: @page_title, subtitle: @page_subtitle, caption: @page_caption) %>
+
+<p class="govuk-body">This partnership will no longer have an end date.</p>
+
+<%= govuk_button_to("Remove end date", @remove_path) %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

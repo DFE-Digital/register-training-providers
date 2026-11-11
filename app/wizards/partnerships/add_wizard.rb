@@ -5,9 +5,18 @@ module Partnerships
         root: :find_partner,
         edges: [
           [:find_partner, :types],
-          [:types, :dates],
-          [:dates, :academic_years],
+          [:types, :start_date],
+          [:start_date, :end_date_question],
+          [:end_date, :academic_years],
           [:academic_years, :check_your_answers]
+        ],
+        conditional_edges: [
+          {
+            from: :end_date_question,
+            when: :has_end_date?,
+            then: :end_date,
+            else: :academic_years
+          }
         ]
       )
     end
@@ -79,7 +88,9 @@ module Partnerships
       {
         find_partner: Steps::FindPartnerStep,
         types: Steps::TypesStep,
-        dates: Steps::DatesStep,
+        start_date: Steps::StartDateStep,
+        end_date_question: Steps::EndDateQuestionStep,
+        end_date: Steps::EndDateStep,
         academic_years: Steps::AcademicYearsStep,
         check_your_answers: Steps::CheckYourAnswersStep
       }

@@ -196,6 +196,13 @@ Rails.application.routes.draw do
     post "partnerships/new(/:step)", to: "providers/partnerships/journey#update",
                                      as: :partnership_update_step
 
+    # Confirm removing a partnership end date
+    get "partnerships/:partnership_id/edit/end-date-removal",
+        to: "providers/partnerships/end_date_removals#show",
+        as: :partnership_end_date_removal
+    post "partnerships/:partnership_id/edit/end-date-removal",
+         to: "providers/partnerships/end_date_removals#create"
+
     # Edit journey
     get "partnerships/:partnership_id/edit(/:step)",
         to: "providers/partnerships/edit_journey#new",

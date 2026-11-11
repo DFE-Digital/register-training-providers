@@ -9,10 +9,19 @@ module Partnerships
 
     def steps_processor
       build_steps_processor(
-        root: :dates,
+        root: :start_date,
         edges: [
-          [:dates, :academic_years],
+          [:start_date, :end_date_question],
+          [:end_date, :academic_years],
           [:academic_years, :check_your_answers]
+        ],
+        conditional_edges: [
+          {
+            from: :end_date_question,
+            when: :has_end_date?,
+            then: :end_date,
+            else: :academic_years
+          }
         ]
       )
     end
@@ -30,6 +39,8 @@ module Partnerships
 
       state_store.write(
         start_date: duration.begin,
+        start_today: duration.begin == Time.zone.today ? "true" : "false",
+        has_end_date: ending.present? ? "true" : "false",
         end_date: ending,
         start_date_day: duration.begin.day,
         start_date_month: duration.begin.month,
@@ -51,7 +62,9 @@ module Partnerships
 
     def steps
       {
-        dates: Steps::DatesStep,
+        start_date: Steps::StartDateStep,
+        end_date_question: Steps::EndDateQuestionStep,
+        end_date: Steps::EndDateStep,
         academic_years: Steps::AcademicYearsStep,
         check_your_answers: Steps::CheckYourAnswersStep
       }

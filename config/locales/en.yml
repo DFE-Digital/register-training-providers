@@ -194,14 +194,27 @@ en:
           attributes:
             academic_year_ids:
               blank: Select academic year
-        partnerships/dates_step:
+              inclusion: Select an academic year available for these partnership dates
+        partnerships/start_date_step:
           attributes:
             start_date:
               blank: "Enter date the partnership started"
+            start_today:
+              inclusion: "Select if the partnership starts today"
+        partnerships/end_date_question_step:
+          attributes:
+            has_end_date:
+              inclusion: "Select if the partnership has an end date"
+        partnerships/end_date_step:
+          attributes:
+            end_date:
+              blank: "Enter date the partnership ended"
         partnership_form:
           attributes:
             start_date:
               blank: "Enter date the partnership started"
+            academic_year_ids:
+              inclusion: Select an academic year available for these partnership dates
         types:
           attributes:
             types:
@@ -312,8 +325,8 @@ en:
           add: "Contact added"
           update: "Contact updated"
         partnership:
-          add: "Partnership added"
-          update: "Partnership updated"
+          add: "Partnership with %{name} added"
+          update: "Partnership with %{name} updated"
           deleted: "Partnership deleted"
       address:
         add: "Address added"
@@ -367,15 +380,6 @@ en:
         label: Email address
       telephone_number:
         label: Phone number
-    partnerships:
-      dates:
-        start_date:
-          label: Partnership start date
-          details:
-            summary_text: I do not know the start date
-            text: If you do not know the start date, use today's date, or the date the academic year starts, for example, 1 August 2024.
-        end_date:
-          label: Partnership end date (optional)
   provider_types_labels:
     hei: "Higher education institution (HEI)"
     scitt: "School-centred initial teacher training (SCITT)"
