@@ -33,6 +33,15 @@ class Partnership < ApplicationRecord
   belongs_to :accredited_provider, class_name: "Provider"
   has_many :partnership_academic_years, dependent: :destroy
   has_many :academic_years, through: :partnership_academic_years
+  has_many :partnership_types
+
+  validate :partnership_types_present
+
+  validate :partnership_types_remain_available, if: -> { persisted? && will_save_change_to_duration? }
+
+  scope :current_or_scheduled, lambda {
+    where("upper(duration) IS NULL OR upper(duration) > ?", Time.zone.today)
+  }
 
   scope :ordered_by_partner_and_date, ->(viewing_provider) {
     joins(
@@ -51,5 +60,28 @@ class Partnership < ApplicationRecord
     return accredited_provider if partner == provider
 
     provider
+  end
+
+  def apply_default_partnership_type(source: "user")
+    partnership_types.build(
+      partnership_type: PartnershipTypeEnum::RECRUITMENT,
+      source: source
+    )
+  end
+
+private
+
+  def partnership_types_present
+    return if partnership_types.reject(&:discarded?).any?
+
+    errors.add(:partnership_types, :blank)
+  end
+
+  def partnership_types_remain_available
+    partnership_types.reject(&:discarded?).each do |type|
+      next if type.valid?
+
+      type.errors[:partnership_type].each { |message| errors.add(:base, message) }
+    end
   end
 end

@@ -35,6 +35,12 @@ en:
       mr: "Operational management of accredited providers, accreditation and associated partnerships"
       bat: "Operational management of non-accredited providers"
       ro: "View-only access to authorised Register information"
+  partnership_types:
+    recruitment: "Recruitment"
+    training_and_delivery: "Training and Delivery"
+    student_fee_management: "Student Fee Management"
+    academic_award_making: "Academic Award Making"
+    placement: "Placement"
   providers:
     statuses:
       active: "Active"
@@ -127,6 +133,16 @@ en:
               taken: "Email address is already associated with a user, use a different one"
             telephone_number:
               blank: "Enter phone number"
+        partnership:
+          attributes:
+            partnership_types:
+              blank: "Select at least one partnership type"
+        partnership_type:
+          attributes:
+            partnership_type:
+              taken: "This partnership type has already been added to the partnership"
+              already_used: "This partnership type is already part of another current or scheduled partnership with this training partner"
+              placement_requires_school: "Placement partnerships can only be recorded with a school"
         find:
           attributes:
             postcode:
@@ -257,6 +273,10 @@ en:
               within_existing_period: "Enter a date that is not within or before an existing period"
               before_the_provider_existed: "Enter a date that is not before the provider was onboarded"
   flash_message:
+    alert:
+      check:
+        partnership:
+          save_failed: "The partnership could not be saved. Select a different training partner and try again."
     success:
       accreditation:
         remove: "Accreditation deleted"
