@@ -173,7 +173,7 @@ RSpec.describe "Role restrictions", type: :request do
     it "denies BAT creating a partnership" do
       sign_in_as(create(:user, :bat))
 
-      post provider_partnership_find_path(unaccredited_provider), params: { find: { partner_id: accredited_provider.id } }
+      post provider_partnership_step_path(unaccredited_provider, step: "find-partner"), params: { find_partner: { partner_id: accredited_provider.id } }
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -181,7 +181,7 @@ RSpec.describe "Role restrictions", type: :request do
     it "denies RO creating a partnership" do
       sign_in_as(create(:user, :ro))
 
-      post provider_partnership_find_path(unaccredited_provider), params: { find: { partner_id: accredited_provider.id } }
+      post provider_partnership_step_path(unaccredited_provider, step: "find-partner"), params: { find_partner: { partner_id: accredited_provider.id } }
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -189,7 +189,7 @@ RSpec.describe "Role restrictions", type: :request do
     it "permits MR creating a partnership on an unaccredited provider" do
       sign_in_as(create(:user, :mr))
 
-      post provider_partnership_find_path(unaccredited_provider), params: { find: { partner_id: accredited_provider.id } }
+      post provider_partnership_step_path(unaccredited_provider, step: "find-partner"), params: { find_partner: { partner_id: accredited_provider.id } }
 
       expect(response).to have_http_status(:redirect)
     end
@@ -197,7 +197,7 @@ RSpec.describe "Role restrictions", type: :request do
     it "permits MR opening the new partnership form" do
       sign_in_as(create(:user, :mr))
 
-      get provider_new_partnership_find_path(unaccredited_provider)
+      get provider_partnership_step_path(unaccredited_provider, step: "find-partner")
 
       expect(response).to have_http_status(:ok)
     end
@@ -375,7 +375,7 @@ RSpec.describe "Role restrictions", type: :request do
       post accreditations_path(provider_id: unaccredited_provider.id), params: { accreditation: { number: "1234" } }
       expect(response).to have_http_status(:forbidden)
 
-      post provider_partnership_find_path(unaccredited_provider), params: { find: { partner_id: accredited_provider.id } }
+      post provider_partnership_step_path(unaccredited_provider, step: "find-partner"), params: { find_partner: { partner_id: accredited_provider.id } }
       expect(response).to have_http_status(:forbidden)
     end
 
