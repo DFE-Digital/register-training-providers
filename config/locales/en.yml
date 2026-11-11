@@ -62,16 +62,14 @@ en:
             details:
               summary_text: I cannot find the accredited provider
               text_html:
-                <p class="govuk-body">Make sure you've spelt the accredited provider name correctly.</p>
-                <p class="govuk-body">If you still cannot find it, check that the accredited provider is already listed in the register.</p>
-                <p class="govuk-body">You may need to add the accredited provider first.</p>
+                <p class="govuk-body">If you cannot find the accredited provider, check that the provider name, code, UKPRN or URN is correct.</p>
+                <p class="govuk-body">If you still cannot find the partner, contact the Register support team.</p>
           training_partner:
             details:
               summary_text: I cannot find the training partner
               text_html:
-                <p class="govuk-body">Make sure you've spelt the training partner name correctly.</p>
-                <p class="govuk-body">If you still cannot find it, check that the training partner is already listed in the register.</p>
-                <p class="govuk-body">You may need to add the training partner first.</p>
+                <p class="govuk-body">If you cannot find the training partner, check that the provider name, code, UKPRN or URN is correct.</p>
+                <p class="govuk-body">If you still cannot find the partner, contact the Register support team.</p>
   unauthoriseds:
     show:
       heading: Your account is not authorised
