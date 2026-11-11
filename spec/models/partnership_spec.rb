@@ -149,6 +149,212 @@ RSpec.describe Partnership, type: :model do
     end
   end
 
+  describe "#end!" do
+    it "ends an open ended partnership today and keeps its start date" do
+      starts_on = 1.year.ago.to_date
+      partnership.update!(duration: starts_on..)
+
+      expect(partnership.end!).to be(true)
+
+      partnership.reload
+      expect(partnership.duration.begin).to eq(starts_on)
+      expect(partnership.duration.end).to eq(Time.zone.today)
+      expect(described_class.ended).to include(partnership)
+      expect(described_class.current_or_scheduled).not_to include(partnership)
+    end
+
+    it "shortens a partnership that has an end date in the future and keeps its start date" do
+      starts_on = 1.year.ago.to_date
+      partnership.update!(duration: starts_on...1.month.from_now)
+
+      partnership.end!
+
+      partnership.reload
+      expect(partnership.duration.begin).to eq(starts_on)
+      expect(partnership.duration.end).to eq(Time.zone.today)
+    end
+
+    it "refuses a partnership that has not started yet" do
+      starts_on = 1.month.from_now.to_date
+      partnership.update!(duration: starts_on..)
+
+      expect(partnership.end!).to be(false)
+
+      partnership.reload
+      expect(partnership.duration.begin).to eq(starts_on)
+      expect(partnership.duration.end).not_to be_a(Date)
+    end
+
+    it "refuses a partnership with no start date instead of raising" do
+      partnership.update_columns(duration: nil...1.month.from_now)
+
+      expect(partnership.end!).to be(false)
+      expect(partnership.reload.duration.end).to eq(1.month.from_now.to_date)
+    end
+
+    it "refuses a partnership that starts today rather than writing an empty duration" do
+      partnership.update!(duration: Time.zone.today..)
+
+      expect(partnership.end!).to be(false)
+
+      partnership.reload
+      expect(partnership.duration.begin).to eq(Time.zone.today)
+      expect(partnership.duration.end).not_to be_a(Date)
+      expect(described_class.current_or_scheduled).to include(partnership)
+      expect(partnership).not_to be_ended_on
+    end
+
+    it "frees its partnership types for a replacement partnership" do
+      partnership.update!(duration: 1.year.ago..)
+      pair = { accredited_provider_id: partnership.accredited_provider_id,
+               provider_id: partnership.provider_id }
+
+      expect(PartnershipType.used_between(**pair)).to be_present
+
+      partnership.end!
+
+      expect(PartnershipType.used_between(**pair)).to be_empty
+    end
+
+    it "refuses a partnership that has already ended" do
+      partnership.update!(duration: 1.year.ago...1.month.ago)
+      ends_on = partnership.duration.end.to_date
+
+      expect(partnership.end!).to be(false)
+
+      expect(partnership.reload.duration.end).to eq(ends_on)
+    end
+  end
+
+  describe "#revise_types!" do
+    let(:types) { [PartnershipTypeEnum::RECRUITMENT] }
+
+    before { partnership.update!(duration: 1.year.ago..) }
+
+    it "ends the current partnership today and starts a replacement with the new types" do
+      replacement = partnership.revise_types!(
+        types,
+        academic_years: partnership.academic_years,
+        end_date: nil
+      )
+
+      expect(replacement).to be_persisted
+      expect(replacement.duration.begin).to eq(Time.zone.today)
+      expect(replacement.partnership_types.kept.map(&:partnership_type)).to match_array(types)
+
+      partnership.reload
+      expect(partnership.duration.end).to eq(Time.zone.today)
+      expect(described_class.ended).to include(partnership)
+    end
+
+    it "refuses a partnership that has not started yet instead of adding a second current partnership" do
+      partnership.update!(duration: 1.month.from_now..)
+      pair = { accredited_provider_id: partnership.accredited_provider_id,
+               provider_id: partnership.provider_id }
+
+      expect(partnership.revise_types!(types, academic_years: [], end_date: nil)).to be_nil
+      expect(described_class.kept.current_or_scheduled.where(**pair).count).to eq(1)
+    end
+
+    it "refuses a partnership that started today, which is edited in place instead" do
+      partnership.update!(duration: Time.zone.today..)
+
+      expect(partnership.revise_types!(types,
+                                       academic_years: partnership.academic_years,
+                                       end_date: nil)).to be_nil
+      expect(partnership.reload.duration.end).not_to be_a(Date)
+    end
+
+    it "refuses an end date that would leave the replacement with no days" do
+      expect(partnership.revise_types!(types,
+                                       academic_years: partnership.academic_years,
+                                       end_date: 1.day.ago.to_date)).to be_nil
+
+      expect(partnership.reload.duration.end).not_to be_a(Date)
+    end
+
+    it "leaves the original partnership alone when the replacement cannot be saved" do
+      original = partnership
+
+      allow_any_instance_of(Partnership).to receive(:save).and_wrap_original do |method, *args|
+        method.receiver == original ? method.call(*args) : false
+      end
+
+      expect(original.revise_types!(types,
+                                    academic_years: original.academic_years,
+                                    end_date: nil)).to be_nil
+
+      expect(original.duration.end).not_to be_a(Date)
+      expect(original).not_to be_changed
+
+      expect(original.reload.duration.end).not_to be_a(Date)
+    end
+  end
+
+  describe "#same_day_replacement" do
+    let(:types) { [PartnershipTypeEnum::TRAINING_AND_DELIVERY] }
+
+    before { partnership.update!(duration: 1.year.ago..) }
+
+    it "is the partnership created for the same pair today with the same types" do
+      replacement = partnership.revise_types!(
+        types,
+        academic_years: partnership.academic_years,
+        end_date: nil
+      )
+
+      expect(partnership.same_day_replacement(types)).to eq(replacement)
+    end
+
+    it "is nil when no replacement exists" do
+      expect(partnership.same_day_replacement(types)).to be_nil
+    end
+
+    it "ignores another partnership for the pair created today with different types" do
+      create(:partnership,
+             accredited_provider: partnership.accredited_provider,
+             provider: partnership.provider,
+             duration: Time.zone.today..,
+             partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+
+      expect(partnership.same_day_replacement([PartnershipTypeEnum::RECRUITMENT,
+                                               PartnershipTypeEnum::TRAINING_AND_DELIVERY]))
+        .to be_nil
+    end
+  end
+
+  describe "#can_be_ended?" do
+    it "is true once the partnership has started and has not ended" do
+      partnership.update!(duration: 1.year.ago...)
+
+      expect(partnership).to be_can_be_ended
+    end
+
+    it "is false on the start date, when there is no day before today to end it on" do
+      partnership.update!(duration: Time.zone.today..)
+
+      expect(partnership).not_to be_can_be_ended
+    end
+
+    it "is false when the partnership has only a start date in the future" do
+      partnership.update!(duration: 1.month.from_now..)
+
+      expect(partnership).not_to be_can_be_ended
+    end
+
+    it "is false when the partnership has already ended" do
+      partnership.update!(duration: 1.year.ago...1.month.ago)
+
+      expect(partnership).not_to be_can_be_ended
+    end
+
+    it "is false when the partnership has no dates" do
+      undated = build(:partnership, duration: nil)
+
+      expect(undated).not_to be_can_be_ended
+    end
+  end
+
   describe ".ended" do
     let(:accredited_provider) { create(:provider, :accredited) }
 

@@ -53,6 +53,13 @@ RSpec.describe "Provider partnership edit journey", type: :request do
           params: { academic_years: { academic_year_ids: ids } }
   end
 
+  def replacement_partnership
+    Partnership.kept
+      .where(accredited_provider: provider, provider: partner)
+      .where.not(id: partnership.id)
+      .first
+  end
+
   describe "GET the first step" do
     it "seeds the journey from the partnership" do
       get root_path
@@ -154,7 +161,7 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       expect(partnership.reload.duration.end).to eq(Float::INFINITY)
     end
 
-    it "keeps the existing types when the save fails" do
+    it "does not end the partnership when the replacement cannot be saved" do
       partnership.partnership_types.create!(partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
 
       get root_path
@@ -164,12 +171,17 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       patch step_path("types"),
             params: { types: { partnership_types: [PartnershipTypeEnum::TRAINING_AND_DELIVERY] } }
 
-      allow_any_instance_of(Partnership).to receive(:update).and_return(false)
+      allow_any_instance_of(Partnership).to receive(:save).and_wrap_original do |method, *args|
+        method.receiver == partnership ? method.call(*args) : false
+      end
 
       patch step_path("check-your-answers")
 
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(partnership.reload.duration.end).to eq(Float::INFINITY)
       expect(partnership.partnership_types.kept.map(&:partnership_type))
         .to match_array([PartnershipTypeEnum::RECRUITMENT, PartnershipTypeEnum::TRAINING_AND_DELIVERY])
+      expect(replacement_partnership).to be_nil
     end
 
     it "keeps the end date when the pre-filled dates are submitted unchanged" do
@@ -183,6 +195,238 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       patch step_path("check-your-answers")
 
       expect(partnership.reload.duration.end).to eq(Date.new(2026, 7, 31))
+    end
+  end
+
+  describe "changing the partnership types" do
+    before do
+      partnership.partnership_types.create!(partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+    end
+
+    def complete_journey(types, has_end_date: false, end_year: nil, start_year: "2024",
+                         start_month: "9", start_day: "1", academic_year_ids: nil)
+      get root_path
+      submit_start_date(day: start_day, month: start_month, year: start_year)
+      submit_end_date_question(has_end_date:)
+      submit_end_date(year: end_year) if has_end_date
+      submit_academic_years(academic_year_ids || [academic_year.id])
+      patch step_path("types"), params: { types: { partnership_types: types } }
+      patch step_path("check-your-answers")
+    end
+
+    it "ends the current partnership and starts a replacement when a type is removed" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT])
+
+      expect(response).to redirect_to(provider_partnerships_path(provider))
+
+      expect(partnership.reload.duration.end).to eq(Time.zone.today)
+      expect(partnership.partnership_types.kept.map(&:partnership_type))
+        .to match_array([PartnershipTypeEnum::RECRUITMENT, PartnershipTypeEnum::TRAINING_AND_DELIVERY])
+
+      replacement = replacement_partnership
+      expect(replacement.duration.begin).to eq(Time.zone.today)
+      expect(replacement.partnership_types.kept.map(&:partnership_type))
+        .to match_array([PartnershipTypeEnum::RECRUITMENT])
+      expect(replacement.academic_years).to include(academic_year)
+    end
+
+    it "starts a replacement when a type is added" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT,
+                        PartnershipTypeEnum::TRAINING_AND_DELIVERY,
+                        PartnershipTypeEnum::STUDENT_FEE_MANAGEMENT])
+
+      expect(partnership.reload.duration.end).to eq(Time.zone.today)
+      expect(replacement_partnership.partnership_types.kept.map(&:partnership_type))
+        .to match_array([PartnershipTypeEnum::RECRUITMENT,
+                         PartnershipTypeEnum::TRAINING_AND_DELIVERY,
+                         PartnershipTypeEnum::STUDENT_FEE_MANAGEMENT])
+    end
+
+    it "carries the end date to the replacement" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT], has_end_date: true, end_year: "2028")
+
+      expect(partnership.reload.duration.end).to eq(Time.zone.today)
+      expect(replacement_partnership.duration.end).to eq(Date.new(2028, 7, 31))
+    end
+
+    it "refuses an end date before today instead of building an impossible replacement" do
+      past_year = create(:academic_year, academic_year: 2024)
+
+      complete_journey([PartnershipTypeEnum::RECRUITMENT], has_end_date: true, end_year: "2025",
+                                                           academic_year_ids: [past_year.id])
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("End date must be after #{Time.zone.today.to_fs(:govuk)}")
+      expect(partnership.reload.duration.end).not_to be_a(Date)
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "refuses a start date that leaves nothing to end on" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT],
+                       start_year: Time.zone.today.year.to_s,
+                       start_month: Time.zone.today.month.to_s,
+                       start_day: Time.zone.today.day.to_s)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Start date must be before #{Time.zone.today.to_fs(:govuk)}")
+      expect(partnership.reload.duration.begin).to eq(Date.new(Time.zone.today.year, 1, 1))
+      expect(partnership.reload.duration.end).not_to be_a(Date)
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "refuses an academic year that overlaps neither the replacement nor the partnership" do
+      past_year = create(:academic_year, academic_year: 2024)
+      partnership.update!(duration: Date.new(2024, 9, 1)..)
+
+      complete_journey([PartnershipTypeEnum::RECRUITMENT], academic_year_ids: [past_year.id])
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Select an academic year available for these partnership dates")
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "reports the failure instead of calling another same-pair partnership the replacement" do
+      create(:partnership,
+             accredited_provider: provider,
+             provider: partner,
+             duration: Time.zone.today..,
+             partnership_type: PartnershipTypeEnum::ACADEMIC_AWARD_MAKING)
+
+      allow_any_instance_of(Partnership).to receive(:save).and_wrap_original do |method, *args|
+        method.receiver == partnership ? method.call(*args) : false
+      end
+
+      complete_journey([PartnershipTypeEnum::STUDENT_FEE_MANAGEMENT])
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(partnership.reload.duration.end).not_to be_a(Date)
+      expect(Partnership.kept.where.not(id: partnership.id).count).to eq(1)
+    end
+
+    it "keeps the start date submitted with the type change on the record that is ended" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT], start_year: "2025")
+
+      expect(response).to redirect_to(provider_partnerships_path(provider))
+      expect(partnership.reload.duration.begin).to eq(Date.new(2025, 9, 1))
+      expect(partnership.reload.duration.end).to eq(Time.zone.today)
+    end
+
+    it "updates in place when the types are unchanged" do
+      complete_journey([PartnershipTypeEnum::RECRUITMENT, PartnershipTypeEnum::TRAINING_AND_DELIVERY])
+
+      expect(partnership.reload.duration.end).to eq(Float::INFINITY)
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "keeps an existing academic year that ended before the revision" do
+      past_year = create(:academic_year, academic_year: 2025)
+      partnership.update!(academic_years: [past_year])
+
+      complete_journey([PartnershipTypeEnum::RECRUITMENT], academic_year_ids: [past_year.id])
+
+      expect(response).to redirect_to(provider_partnerships_path(provider))
+      expect(replacement_partnership.academic_years).to include(past_year)
+    end
+
+    it "rejects removing every type" do
+      get root_path
+      submit_start_date
+      submit_end_date_question
+      submit_academic_years
+
+      patch step_path("types"), params: { types: { partnership_types: [] } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Select at least one partnership type")
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "does not revise when a removed type is added back in the same journey" do
+      get root_path
+      submit_start_date
+      submit_end_date_question
+      submit_academic_years
+
+      patch step_path("types"),
+            params: { types: { partnership_types: [PartnershipTypeEnum::RECRUITMENT] } }
+      expect(response).to redirect_to(
+        provider_partnership_type_change_path(partnership, provider_id: provider.id)
+      )
+
+      patch step_path("types"),
+            params: { types: { partnership_types: [PartnershipTypeEnum::RECRUITMENT,
+                                                   PartnershipTypeEnum::TRAINING_AND_DELIVERY] } }
+      expect(response).to redirect_to(step_path("start-date"))
+
+      patch step_path("check-your-answers")
+
+      expect(partnership.reload.duration.end).to eq(Float::INFINITY)
+      expect(replacement_partnership).to be_nil
+    end
+
+    it "adds an end date without versioning the partnership" do
+      get root_path
+      submit_start_date(day: "1", month: "1", year: "2026")
+      submit_end_date_question(has_end_date: true)
+      submit_end_date(year: "2028")
+      submit_academic_years
+      patch step_path("check-your-answers")
+
+      expect(response).to redirect_to(provider_partnerships_path(provider))
+      expect(partnership.reload.duration.end).to eq(Date.new(2028, 7, 31))
+      expect(replacement_partnership).to be_nil
+    end
+
+    describe "a partnership that starts today" do
+      let!(:partnership) do
+        create(:partnership, accredited_provider: provider, provider: partner,
+                             duration: Time.zone.today..)
+      end
+
+      it "changes the types in place, because there is no history to end" do
+        get root_path
+        submit_start_date(today: true)
+        submit_end_date_question
+        submit_academic_years
+        patch step_path("types"),
+              params: { types: { partnership_types: [PartnershipTypeEnum::RECRUITMENT] } }
+
+        expect(response).to redirect_to(step_path("start-date"))
+
+        patch step_path("check-your-answers")
+
+        expect(response).to redirect_to(provider_partnerships_path(provider))
+        expect(partnership.reload.duration.end).to eq(Float::INFINITY)
+        expect(partnership.partnership_types.kept.map(&:partnership_type))
+          .to match_array([PartnershipTypeEnum::RECRUITMENT])
+        expect(replacement_partnership).to be_nil
+      end
+    end
+
+    describe "a scheduled partnership" do
+      let!(:partnership) do
+        create(:partnership, accredited_provider: provider, provider: partner,
+                             duration: Date.new(2027, 9, 1)..)
+      end
+      let!(:future_year) { create(:academic_year, academic_year: 2027) }
+
+      it "updates the types in place without a historic record" do
+        get root_path
+        submit_start_date(year: "2027")
+        submit_end_date_question
+        submit_academic_years([future_year.id])
+        patch step_path("types"),
+              params: { types: { partnership_types: [PartnershipTypeEnum::RECRUITMENT] } }
+
+        expect(response).to redirect_to(step_path("start-date"))
+
+        patch step_path("check-your-answers")
+
+        expect(partnership.reload.duration.begin).to eq(Date.new(2027, 9, 1))
+        expect(partnership.partnership_types.kept.map(&:partnership_type))
+          .to match_array([PartnershipTypeEnum::RECRUITMENT])
+        expect(replacement_partnership).to be_nil
+      end
     end
   end
 
@@ -202,6 +446,12 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       expect(response.body).to include(partner.operating_name)
     end
 
+    it "offers to enter an end date when the partnership has none" do
+      get step_path("check-your-answers")
+
+      expect(response.body).to include("Enter end date")
+    end
+
     it "updates the partnership" do
       patch step_path("check-your-answers")
 
@@ -217,15 +467,23 @@ RSpec.describe "Provider partnership edit journey", type: :request do
   end
 
   describe "changing dates after selecting academic years" do
-    it "rejects a stale academic-year selection on save" do
-      get step_path("start-date")
-      submit_start_date(year: "2040")
+    it "sends the user back through the steps rather than saving a stale academic-year selection" do
+      get root_path
+      submit_start_date
       submit_end_date_question
+      submit_academic_years
+
+      # Move the dates out from under the selection, the way the Change link on
+      # check your answers does. The academic year no longer overlaps, so the
+      # wizard walks the user back rather than letting the save through.
+      submit_start_date(year: "2040", return_to_review: "true")
+
+      expect(response).to redirect_to(step_path("end-date-question", return_to_review: "true"))
 
       patch step_path("check-your-answers")
 
       expect(response).to redirect_to(root_path)
-      expect(partnership.reload.duration.begin).not_to eq(Date.new(2040, 9, 1))
+      expect(partnership.reload.duration.begin).to eq(Date.new(2026, 1, 1))
     end
   end
 

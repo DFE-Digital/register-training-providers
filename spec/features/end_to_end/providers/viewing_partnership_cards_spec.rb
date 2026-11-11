@@ -22,6 +22,7 @@ RSpec.describe "Viewing partnership cards", type: :feature do
       expect(page).to have_content("Starts")
       expect(page).to have_content("Ends")
       expect(page).to have_content("No end date")
+      expect(page).to have_link("Enter end date")
       expect(page).to have_content("Status")
       expect(page).to have_content("Active")
     end
@@ -50,6 +51,23 @@ RSpec.describe "Viewing partnership cards", type: :feature do
     expect(page).to have_content("Recruitment")
   end
 
+  scenario "ends a partnership from the card" do
+    visit provider_partnerships_path(provider)
+
+    within(".govuk-summary-card", text: partner.operating_name) do
+      click_link "End partnership"
+    end
+
+    expect(page).to have_content("End partnership with #{partner.operating_name}?")
+    click_button "End partnership"
+
+    expect(page).to have_content("Partnership with #{partner.operating_name} ended")
+    expect(page).not_to have_css(".govuk-summary-card", text: partner.operating_name)
+    expect(page).to have_content("View historic partnerships (1)")
+
+    expect(partnership.reload).to be_kept
+  end
+
   scenario "shows a scheduled partnership" do
     partnership.update!(duration: (Time.zone.today + 1.month)..)
 
@@ -57,6 +75,8 @@ RSpec.describe "Viewing partnership cards", type: :feature do
 
     within(".govuk-summary-card", text: partner.operating_name) do
       expect(page).to have_content("Scheduled")
+      expect(page).to have_link("Delete")
+      expect(page).not_to have_link("End partnership")
     end
   end
 
@@ -73,16 +93,30 @@ RSpec.describe "Viewing partnership cards", type: :feature do
     check "Training and Delivery"
     click_button "Continue"
 
+    expect(page).to have_content("Are you sure you want to change the partnership types?")
+    expect(page).to have_content("Changing these partnership types will end the current partnership today, " \
+                                 "#{Time.zone.today.to_fs(:govuk)}")
+    click_button "Change"
+
     expect(page).to have_content("Check your answers")
     expect(page).to have_content("Training and Delivery")
 
     click_button "Save partnership"
 
     expect(page).to have_content("Partnership with #{partner.operating_name} updated")
+    expect(page).to have_content("Training and Delivery")
 
-    partnership.reload
-    expect(partnership.partnership_types.kept.map(&:partnership_type))
+    replacement = Partnership.kept
+      .where(provider: partner, accredited_provider: provider)
+      .where.not(id: partnership.id)
+      .first
+
+    expect(replacement.partnership_types.kept.map(&:partnership_type))
       .to eq([PartnershipTypeEnum::TRAINING_AND_DELIVERY])
-    expect(partnership.partnership_types.count).to eq(2)
+    expect(replacement.duration.begin).to eq(Time.zone.today)
+
+    expect(partnership.reload.duration.end).to eq(Time.zone.today)
+    expect(partnership.partnership_types.kept.map(&:partnership_type))
+      .to eq([PartnershipTypeEnum::RECRUITMENT])
   end
 end
