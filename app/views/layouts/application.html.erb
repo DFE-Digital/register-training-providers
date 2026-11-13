@@ -52,6 +52,10 @@
       <main class="govuk-main-wrapper" id="main-content" role="main">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-full">
+            <%= govuk_notification_banner(title_text: "Important") do |nb| %>
+              <% nb.with_heading(text: "We cannot currently send or receive support emails") %>
+              <%= content_tag(:p, "Due to a Microsoft outage affecting Outlook, emails to the Register trainee teachers team are temporarily unavailable. We will respond to any emails once the issue is resolved. The rest of this service is unaffected.", class: "govuk-body") %>
+            <% end %>
             <% if flash.any? %>
               <% flash.each do |key, message| %>
                 <% if key == "success" %>
