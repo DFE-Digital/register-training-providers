@@ -2,7 +2,7 @@ module Providers
   module Partnerships
     class DeletesController < ApplicationController
       def show
-        authorize partnership
+        authorize partnership, :destroy?
 
         setup_view_data
       end
