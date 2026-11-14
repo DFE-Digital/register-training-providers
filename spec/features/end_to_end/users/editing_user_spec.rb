@@ -59,10 +59,12 @@ RSpec.feature "User management" do
 
   def and_i_fill_in_the_first_name
     page.fill_in "First name", with: new_first_name
+    page.choose "BAT Support"
   end
 
   def and_the_user_to_edit_is_edited
     expect(user_to_edit.reload.first_name).to eq(new_first_name)
+    expect(user_to_edit.role).to eq("bat")
   end
 
   def new_first_name

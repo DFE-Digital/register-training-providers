@@ -33,6 +33,7 @@ RSpec.describe "users/new.html.erb", type: :view do
     expect(rendered).to have_selector("input[name='user[last_name]']")
     expect(rendered).to have_selector("input[name='user[email]']")
     expect(rendered).to have_selector("input[name='user[api_user]']")
+    expect(rendered).to have_selector("input[name='user[role]'][value='reg']")
   end
 
   it "renders the cancel link" do
@@ -40,6 +41,14 @@ RSpec.describe "users/new.html.erb", type: :view do
   end
   it "renders the back link" do
     expect(view.content_for(:breadcrumbs)).to have_back_link(users_path)
+  end
+
+  context "when the user is an API user" do
+    let(:user) { User.new(api_user: true) }
+
+    it "does not render the role select" do
+      expect(rendered).not_to have_selector("input[name='user[role]']")
+    end
   end
 
   context "with validation errors" do

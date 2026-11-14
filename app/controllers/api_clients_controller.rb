@@ -4,8 +4,9 @@ class ApiClientsController < ApplicationController
   def index
     current_user.clear_temporary(ApiClient, purpose: :check_your_answers)
 
+    authorize ApiClient
+
     @pagy, @records = pagy(policy_scope(scoped_api_client), limit: 15)
-    skip_authorization # All users can access this but records will be scoped depending on user type
     verify_policy_scoped
   end
 
