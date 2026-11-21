@@ -32,6 +32,7 @@
     - updated_at
     - active
     - api_user
+    - role
   :partnership_academic_years:
     - id
     - academic_year_id

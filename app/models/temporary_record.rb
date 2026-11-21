@@ -23,10 +23,6 @@
 class TemporaryRecord < ApplicationRecord
   belongs_to :creator, class_name: "User", foreign_key: :created_by
 
-  enum :purpose, {
-    check_your_answers: "check_your_answers"
-  }
-
   scope :expired, -> { where(expires_at: ..Time.current) }
 
   validates :record_type, presence: true
