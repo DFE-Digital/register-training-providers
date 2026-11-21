@@ -40,21 +40,43 @@ class ApplicationController < ActionController::Base
     render "errors/too_many_requests", status: :too_many_requests, formats: [:html]
   end
 
-  rescue_from MinimumActiveUsersError do
+  rescue_from MinimumActiveUsersError do |exception|
     Rails.logger.warn(
       event: "minimum_active_users_violation",
       user_id: current_user&.id,
-      remaining_active_users: User.kept.where(active: true).count,
+      remaining_active_users: remaining_active_users_after(exception),
       total_users: User.count,
       controller: controller_name,
       action: action_name,
       path: request.path
     )
 
-    render "errors/conflict", status: :conflict, formats: [:html]
+    render "errors/minimum_active_users", status: :conflict, formats: [:html]
+  end
+
+  rescue_from MinimumRegUsersError do |exception|
+    Rails.logger.warn(
+      event: "minimum_reg_users_violation",
+      user_id: current_user&.id,
+      remaining_active_reg_users: remaining_active_regs_after(exception),
+      total_users: User.count,
+      controller: controller_name,
+      action: action_name,
+      path: request.path
+    )
+
+    render "errors/minimum_reg_users", status: :conflict, formats: [:html]
   end
 
 private
+
+  def remaining_active_users_after(exception)
+    User.active_internal.where.not(id: exception.user_id).count
+  end
+
+  def remaining_active_regs_after(exception)
+    User.active_reg.where.not(id: exception.user_id).count
+  end
 
   # dfe and otp objects can both be instantiated as `.begin_session!` will always create
   # a session with a dfe/otp_sign_in_user hash regardless of there being a user/email.

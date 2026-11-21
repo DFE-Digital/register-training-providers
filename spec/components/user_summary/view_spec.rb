@@ -8,7 +8,8 @@ RSpec.describe UserSummary::View, type: :component do
       [
         { label: "First name", value: user.first_name, link_text: "Change first name", href: "/users/#{user.id}/edit" },
         { label: "Last name", value: user.last_name, link_text: "Change last name", href: "/users/#{user.id}/edit" },
-        { label: "Email address", value: user.email, link_text: "Change email address", href: "/users/#{user.id}/edit" }
+        { label: "Email address", value: user.email, link_text: "Change email address", href: "/users/#{user.id}/edit" },
+        { label: "Role", value: user.role_label, link_text: "Change role", href: "/users/#{user.id}/edit" }
       ]
     end
 
@@ -39,6 +40,18 @@ RSpec.describe UserSummary::View, type: :component do
 
       it "renders last signed in information" do
         expect(subject).to have_css("p.govuk-hint", text: "User has never signed in")
+      end
+    end
+
+    context "when the user is an API user" do
+      let(:user) { build_stubbed(:user, api_user: true) }
+
+      it "shows no role and no change role action" do
+        render_inline(described_class.new(title: "View user", back_path: "/users", user: user, editable: true))
+
+        expect(page).to have_css("dt", text: "Role")
+        expect(page).to have_css("dd", text: "Read-only")
+        expect(page).not_to have_link("Change role")
       end
     end
 
