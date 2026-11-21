@@ -260,11 +260,15 @@ RSpec.describe ApplicationHelper, type: :helper do
 
         it "returns an array of navigation hashes" do
           expect(items).to be_an(Array)
-          expect(items.size).to eq(3)
+          expect(items.size).to eq(4)
         end
 
-        it "does not include the Providers link" do
-          expect(items.map { |i| i[:text] }).not_to include("Providers")
+        it "includes the Providers link" do
+          providers = items.find { |i| i[:text] == "Providers" }
+          expect(providers).to include(
+            href: providers_path,
+            active_when: providers_path
+          )
         end
 
         it "includes the API clients link" do

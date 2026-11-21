@@ -29,11 +29,11 @@ RSpec.feature "Sign in and_out flow" do
     and_i_have_a_dfe_sign_in_account_and_am_an_api_user
     and_i_sign_in_via_dfe_sign_in
 
-    and_i_am_redirected_to_api_clients_page
+    and_i_am_redirected_to_provider_page
     and_i_click_on("Your account")
     and_i_go_to_the_account_page
     and_i_click_on("Register of training providers")
-    and_i_am_taken_to("/api_clients")
+    and_i_am_taken_to("/providers")
 
     when_i_click_on("Sign out")
     then_i_logout_via_sso

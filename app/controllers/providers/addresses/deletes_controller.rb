@@ -2,7 +2,7 @@ module Providers
   module Addresses
     class DeletesController < ApplicationController
       def show
-        authorize address
+        authorize address, :destroy?
 
         setup_view_data
       end

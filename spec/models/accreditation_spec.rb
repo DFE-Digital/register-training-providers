@@ -10,6 +10,19 @@ RSpec.describe Accreditation, type: :model do
     it { is_expected.to belong_to(:provider) }
   end
 
+  describe "provider accreditation status" do
+    it "marks the provider unaccredited when the last current accreditation is discarded" do
+      provider = create(:provider, :accredited, with_accreditations: false)
+      accreditation = create(:accreditation, :current, provider:)
+
+      expect(provider.reload).to be_accredited
+
+      accreditation.discard!
+
+      expect(provider.reload).to be_unaccredited
+    end
+  end
+
   describe "validations" do
     it "is valid with valid attributes" do
       accreditation = build(:accreditation)
