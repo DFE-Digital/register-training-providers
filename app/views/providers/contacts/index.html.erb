@@ -16,7 +16,7 @@
   Contacts<%= " (#{@contacts.count})" if @contacts.any? %>
 </h2>
 
-<% unless @provider.archived? %>
+<% if policy(@provider).update? %>
   <div class="govuk-button-group">
     <%= govuk_button_link_to("Add contact", new_provider_contact_path(@provider)) %>
   </div>

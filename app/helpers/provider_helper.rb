@@ -5,6 +5,18 @@ module ProviderHelper
     "inactive" => "yellow"
   }.freeze
 
+  def provider_read_only_message(provider, user)
+    if user.bat? && provider.accredited?
+      return "Read-only access. This provider holds an active accreditation. " \
+             "Only authorised Market Regulation users can make changes. " \
+             "You can view this provider's information and history. " \
+             "Contact Market Regulation to request a change."
+    end
+
+    "You can view this provider's information and history but cannot make changes. " \
+      "#{provider_contact_team_request(provider)}"
+  end
+
   def provider_status_tag(provider)
     return { text: "Soft deleted", colour: "red" } if provider.discarded?
 
@@ -171,7 +183,7 @@ module ProviderHelper
   end
 
   # Provider show page with edit actions (unless archived).
-  def provider_details_rows(provider)
+  def provider_details_rows(provider, include_actions: true)
     rows = provider_summary_card_rows(provider)
 
     if provider.archived?
@@ -187,7 +199,8 @@ module ProviderHelper
     editable_fields = {
       "Provider status" => [
         status_history_action(provider),
-        { text: "Change",
+        { key: :change,
+          text: "Change",
           visually_hidden_text: "provider status",
           href: provider_change_step_path(
             provider_id: provider.id,
@@ -201,7 +214,8 @@ module ProviderHelper
                               provider_id: provider.id,
                               field: "provider_type"
                             ) },
-                          { text: "Change",
+                          { key: :change,
+                            text: "Change",
                             visually_hidden_text: "provider type",
                             href: provider_change_step_path(
                               provider_id: provider.id,
@@ -214,7 +228,8 @@ module ProviderHelper
                                provider_id: provider.id,
                                field: "operating_name"
                              ) },
-                           { text: "Change",
+                           { key: :change,
+                             text: "Change",
                              visually_hidden_text: "operating name",
                              href: provider_change_step_path(
                                provider_id: provider.id,
@@ -227,7 +242,8 @@ module ProviderHelper
                            provider_id: provider.id,
                            field: "legal_name"
                          ) },
-                       { text: "Change",
+                       { key: :change,
+                         text: "Change",
                          visually_hidden_text: "legal name",
                          href: provider_change_step_path(
                            provider_id: provider.id,
@@ -240,7 +256,8 @@ module ProviderHelper
                                                      provider_id: provider.id,
                                                      field: "ukprn"
                                                    ) },
-                                                 { text: "Change",
+                                                 { key: :change,
+                                                   text: "Change",
                                                    visually_hidden_text: "UK provider reference number (UKPRN)",
                                                    href: provider_change_step_path(
                                                      provider_id: provider.id,
@@ -253,7 +270,8 @@ module ProviderHelper
                                               provider_id: provider.id,
                                               field: "urn"
                                             ) },
-                                          { text: "Change",
+                                          { key: :change,
+                                            text: "Change",
                                             visually_hidden_text: "unique reference number (URN)",
                                             href: provider_change_step_path(
                                               provider_id: provider.id,
@@ -266,7 +284,8 @@ module ProviderHelper
                               provider_id: provider.id,
                               field: "code"
                             ) },
-                          { text: "Change",
+                          { key: :change,
+                            text: "Change",
                             visually_hidden_text: "provider code",
                             href: provider_change_step_path(
                               provider_id: provider.id,
@@ -274,6 +293,10 @@ module ProviderHelper
                               step: "effective-academic-year"
                             ) }],
     }.with_indifferent_access
+
+    unless include_actions
+      editable_fields.transform_values! { |actions| actions.reject { |action| action[:key] == :change } }
+    end
 
     rows.each do |row|
       key_text = row[:key][:text]
@@ -285,6 +308,14 @@ module ProviderHelper
     end
 
     rows
+  end
+
+  def provider_contact_team_request(provider)
+    if provider.accredited?
+      "Contact Market Regulation to request a change."
+    else
+      "Contact BAT Support to request a change."
+    end
   end
 
   def status_history_action(provider)
