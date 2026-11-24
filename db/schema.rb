@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_093000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -411,10 +411,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_093000) do
     t.string "first_name", null: false
     t.string "last_name", null: false
     t.datetime "last_signed_in_at"
+    t.string "role", null: false
     t.boolean "system_admin", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.check_constraint "role::text = ANY (ARRAY['reg'::character varying, 'mr'::character varying, 'bat'::character varying, 'ro'::character varying]::text[])", name: "users_role_is_known"
   end
 
   add_foreign_key "accreditations", "providers"
