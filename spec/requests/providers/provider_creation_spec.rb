@@ -10,8 +10,6 @@ RSpec.describe "Provider creation", type: :request do
     get "/auth/dfe/callback"
   end
 
-  after { OmniAuth.config.mock_auth.clear }
-
   def provider_details_params
     {
       operating_name: "Test Provider",

@@ -10,10 +10,6 @@ RSpec.describe "Provider archiving rate limit", type: :request do
     get "/auth/dfe/callback"
   end
 
-  after do
-    OmniAuth.config.mock_auth.clear
-  end
-
   it "allows 3 archives within 3 minutes but blocks the 4th" do
     Timecop.freeze(Time.zone.now) do
       providers_to_archive.each do |provider_to_archive|

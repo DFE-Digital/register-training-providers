@@ -10,8 +10,6 @@ RSpec.describe "Provider partnership find", type: :request do
     get "/auth/dfe/callback"
   end
 
-  after { OmniAuth.config.mock_auth.clear }
-
   context "when the provider is accredited" do
     let(:accredited_provider) { create(:provider, :accredited, operating_name: "Accredited Provider") }
     let!(:unaccredited_scitt) { create(:provider, :scitt_without_accreditation, operating_name: "Unaccredited SCITT") }

@@ -10,10 +10,6 @@ RSpec.describe "Provider deletion rate limit", type: :request do
     get "/auth/dfe/callback"
   end
 
-  after do
-    OmniAuth.config.mock_auth.clear
-  end
-
   it "allows 3 deletes within 3 minutes but blocks the 4th" do
     Timecop.freeze(Time.zone.now) do
       providers_to_delete.each do |provider_to_delete|

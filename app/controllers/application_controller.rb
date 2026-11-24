@@ -126,8 +126,6 @@ private
   end
 
   def landing_page_path
-    return api_clients_path if current_user.api_user?
-
     providers_path
   end
 
