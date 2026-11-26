@@ -1,11 +1,11 @@
 class ApiClients::RevokesController < CheckController
   def show
-    @api_client = ApiClient.find(params[:api_client_id])
+    @api_client = ApiClient.find(params.expect(:api_client_id))
     authorize @api_client
   end
 
   def destroy
-    api_client = ApiClient.find(params[:api_client_id])
+    api_client = ApiClient.find(params.expect(:api_client_id))
     authorize api_client
 
     Api::Clients::RevokeToken.call(api_client:)

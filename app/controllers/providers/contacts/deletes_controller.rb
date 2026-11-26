@@ -17,11 +17,11 @@ module Providers
     private
 
       def contact
-        @contact ||= provider.contacts.kept.find(params[:contact_id])
+        @contact ||= provider.contacts.kept.find(params.expect(:contact_id))
       end
 
       def provider
-        @provider ||= Provider.find(params[:provider_id])
+        @provider ||= Provider.find(params.expect(:provider_id))
       end
     end
   end

@@ -12,7 +12,7 @@ module ApiClients
   private
 
     def api_client
-      @api_client ||= ApiClient.find(params[:api_client_id])
+      @api_client ||= ApiClient.find(params.expect(:api_client_id))
     end
 
     def api_client_form

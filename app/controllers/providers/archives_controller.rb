@@ -2,12 +2,12 @@ class Providers::ArchivesController < CheckController
   rate_limit to: 3, within: 3.minutes, only: :update, by: -> { current_user.id }
 
   def show
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :archive?
   end
 
   def update
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :archive?
 
     archived = @provider.with_lock do

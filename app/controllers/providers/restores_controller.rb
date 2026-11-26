@@ -1,11 +1,11 @@
 class Providers::RestoresController < CheckController
   def show
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :restore?
   end
 
   def update
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :restore?
 
     restored = @provider.with_lock do

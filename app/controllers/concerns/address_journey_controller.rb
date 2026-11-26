@@ -6,7 +6,7 @@ private
 
   def provider
     @provider ||= if params[:provider_id]
-                    Provider.find(params[:provider_id])
+                    Provider.find(params.expect(:provider_id))
                   else
                     provider_session.load_provider || Provider.new
                   end

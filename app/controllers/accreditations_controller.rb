@@ -17,7 +17,7 @@ class AccreditationsController < ApplicationController
 
   def edit
     @provider = provider
-    @accreditation = provider.accreditations.kept.find(params[:id])
+    @accreditation = provider.accreditations.kept.find(params.expect(:id))
     authorize @accreditation
 
     stored_form = current_user.load_temporary(
@@ -49,7 +49,7 @@ class AccreditationsController < ApplicationController
   end
 
   def update
-    @accreditation = provider.accreditations.kept.find(params[:id])
+    @accreditation = provider.accreditations.kept.find(params.expect(:id))
     authorize @accreditation
 
     @form = AccreditationForm.new(accreditation_form_params)

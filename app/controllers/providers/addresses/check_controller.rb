@@ -4,7 +4,7 @@ module Providers
       include AddressJourneyController
 
       def show
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address
 
         address_data = address_session.load_address
@@ -89,7 +89,7 @@ module Providers
       end
 
       def update
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address
 
         address_data = address_session.load_address

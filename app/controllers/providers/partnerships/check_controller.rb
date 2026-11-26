@@ -4,7 +4,7 @@ module Providers
       include PartnershipJourneyController
 
       def show
-        @partnership = provider.partnerships.kept.find(params[:id])
+        @partnership = provider.partnerships.kept.find(params.expect(:id))
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership
@@ -63,7 +63,7 @@ module Providers
       end
 
       def update
-        @partnership = provider.partnerships.kept.find(params[:id])
+        @partnership = provider.partnerships.kept.find(params.expect(:id))
         authorize @partnership
 
         partnership_data = partnership_session.load_partnership

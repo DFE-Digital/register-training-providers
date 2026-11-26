@@ -16,7 +16,7 @@ class Providers::ContactsController < ApplicationController
   end
 
   def edit
-    @contact = provider.contacts.kept.find(params[:id])
+    @contact = provider.contacts.kept.find(params.expect(:id))
     authorize @contact
 
     stored_form = current_user.load_temporary(
@@ -53,7 +53,7 @@ class Providers::ContactsController < ApplicationController
   end
 
   def update
-    @contact = provider.contacts.kept.find(params[:id])
+    @contact = provider.contacts.kept.find(params.expect(:id))
     authorize @contact
 
     @form = ContactForm.new(contact_form_params)
@@ -77,7 +77,7 @@ class Providers::ContactsController < ApplicationController
 private
 
   def provider
-    @provider ||= Provider.find(params[:provider_id])
+    @provider ||= Provider.find(params.expect(:provider_id))
   end
 
   def contact_form_params

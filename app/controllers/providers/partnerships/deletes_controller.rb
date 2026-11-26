@@ -19,11 +19,11 @@ module Providers
     private
 
       def partnership
-        @partnership ||= provider.partnerships.kept.find(params[:partnership_id])
+        @partnership ||= provider.partnerships.kept.find(params.expect(:partnership_id))
       end
 
       def provider
-        @provider ||= Provider.find(params[:provider_id])
+        @provider ||= Provider.find(params.expect(:provider_id))
       end
 
       def other_partner

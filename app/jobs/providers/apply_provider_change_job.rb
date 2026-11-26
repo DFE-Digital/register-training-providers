@@ -49,9 +49,7 @@ module Providers
         next :archived if change.provider.archived?
         next :discarded if change.provider.discarded?
 
-        # rubocop:disable Rails/SaveBang
         change.provider.update(change.attribute_name => change.value)
-        # rubocop:enable Rails/SaveBang
       end
     end
 
