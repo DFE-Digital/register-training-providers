@@ -38,7 +38,23 @@ module DataImporter
       Partnership.kept
                  .current_or_scheduled
                  .find_by(accredited_provider:, provider:) ||
-        Partnership.find_or_initialize_by(accredited_provider:, provider:)
+        reimportable_historical_partnership ||
+        Partnership.new(accredited_provider:, provider:)
+    end
+
+    # An import that describes a live partnership must never reopen one that
+    # somebody ended: that erases the recorded ending and lets the ended row
+    # reserve its partnership types again. Only reuse an ended row when the
+    # imported period has ended too, so re-importing history stays idempotent.
+    def reimportable_historical_partnership
+      imported = duration_range
+      return if imported.begin.nil? || imported.end.nil? || imported.end > Time.zone.today
+
+      Partnership.kept
+                 .ended
+                 .where(accredited_provider:, provider:)
+                 .where("lower(duration) = ?", imported.begin)
+                 .first
     end
 
     def assign_duration(partnership)

@@ -108,6 +108,38 @@ RSpec.describe DataImporter::PartnershipService do
       end
     end
 
+    context "when the only partnership for the pair has been ended" do
+      let!(:ended_partnership) do
+        create(:partnership,
+               accredited_provider: accredited_provider,
+               provider: provider,
+               duration: Date.new(2019, 9, 1)...Date.new(2020, 8, 1))
+      end
+
+      it "leaves the ended partnership alone and creates a new one" do
+        expect { call_importer }.to change(Partnership, :count).by(1)
+
+        expect(ended_partnership.reload.duration).to eq(Date.new(2019, 9, 1)...Date.new(2020, 8, 1))
+
+        created = Partnership.where.not(id: ended_partnership.id).sole
+        expect(created.duration.begin).to eq(Date.new(2024, 8, 1))
+        expect(created.duration.end).to eq(Float::INFINITY)
+      end
+    end
+
+    context "when re-importing a historical row" do
+      let(:historical_row) do
+        row.merge("partnership__start_date" => Date.new(2019, 9, 1),
+                  "partnership__end_date" => Date.new(2020, 8, 1))
+      end
+
+      it "updates that historical partnership instead of duplicating it" do
+        described_class.call(historical_row)
+
+        expect { described_class.call(historical_row) }.not_to change(Partnership, :count)
+      end
+    end
+
     context "when the same provider appears in multiple partnerships" do
       let!(:other_provider) { create(:provider, code: "2CG") }
 
