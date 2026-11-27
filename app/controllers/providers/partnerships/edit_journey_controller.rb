@@ -4,6 +4,7 @@ module Providers
       include PartnershipSteps
 
       def new
+        authorize provider, :manage_partnerships?
         authorize partnership
 
         seed_state if wizard.state_store.read.blank?
@@ -15,6 +16,7 @@ module Providers
       end
 
       def update
+        authorize provider, :manage_partnerships?
         authorize partnership
 
         return redirect_to(first_step_path) unless wizard.valid_path_to_current_step?
