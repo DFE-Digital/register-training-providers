@@ -8,7 +8,7 @@ module Providers
 
       def new
         accreditation_data = accreditation_session.load_accreditation
-        @form = ::Accreditations::StartDateForm.new
+        @form = ::Accreditations::StartDateForm.new((accreditation_data || {}).slice(:start_date, :start_date_day, :start_date_month, :start_date_year))
         @form.provider_id = accreditation_data[:provider_id]
         @provider = provider
         authorize @form
