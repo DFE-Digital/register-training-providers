@@ -67,7 +67,7 @@ RSpec.describe "Provider partnership edit journey", type: :request do
 
       get step_path("start-date")
 
-      document = Nokogiri::HTML(response.body)
+      document = response.parsed_body
       expect(document.at_css("input[name='start_date[start_today]'][value='false']")["checked"]).to eq("checked")
       expect(document.at_css("input[id$='start_date_3i']")["value"]).to eq("1")
       expect(document.at_css("input[id$='start_date_2i']")["value"]).to eq("9")
@@ -85,7 +85,7 @@ RSpec.describe "Provider partnership edit journey", type: :request do
 
       get step_path("academic-years")
 
-      document = Nokogiri::HTML(response.body)
+      document = response.parsed_body
       checkbox = document.at_css("input[type='checkbox'][value='#{overlapping_year.id}']")
       expect(checkbox["checked"]).to eq("checked")
     end

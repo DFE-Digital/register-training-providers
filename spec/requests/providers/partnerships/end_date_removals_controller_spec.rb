@@ -73,7 +73,7 @@ RSpec.describe "Provider partnership end date removal confirmation", type: :requ
     submit_no_end_date
     follow_redirect!
 
-    cancel = Nokogiri::HTML(response.body).css("a").find { |a| a.text.strip == "Cancel" }
+    cancel = response.parsed_body.css("a").find { |a| a.text.strip == "Cancel" }
     expect(cancel["href"]).to eq(step_path("end-date-question"))
   end
 
