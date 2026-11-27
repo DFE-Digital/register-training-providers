@@ -168,6 +168,10 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
+      expect(page).to have_field("Day", with: "1")
+      expect(page).to have_field("Month", with: "1")
+      expect(page).to have_field("Year", with: start_year.to_s)
+
       click_button "Continue"
 
       click_button "Continue"

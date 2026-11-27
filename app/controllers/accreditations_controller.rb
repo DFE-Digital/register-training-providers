@@ -47,7 +47,11 @@ class AccreditationsController < ApplicationController
     authorize @form
 
     if @form.valid?
-      accreditation_session.store_accreditation(@form.attributes)
+      if params[:goto] == "confirm"
+        accreditation_session.add_attributes(@form.attributes)
+      else
+        accreditation_session.store_accreditation(@form.attributes)
+      end
       redirect_to success_path
     else
       @provider = provider
