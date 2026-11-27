@@ -6,7 +6,7 @@
 #  created_by  :uuid             not null
 #  data        :jsonb            not null
 #  expires_at  :datetime         not null
-#  purpose     :string           default(NULL), not null
+#  purpose     :string           default("0"), not null
 #  record_type :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
