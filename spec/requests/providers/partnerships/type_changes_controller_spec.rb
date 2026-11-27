@@ -90,7 +90,7 @@ RSpec.describe "Provider partnership type change confirmation", type: :request d
     patch step_path("types"), params: { types: { partnership_types: [PartnershipTypeEnum::TRAINING_AND_DELIVERY] } }
     follow_redirect!
 
-    cancel = Nokogiri::HTML(response.body).css("a").find { |a| a.text.strip == "Cancel" }
+    cancel = response.parsed_body.css("a").find { |a| a.text.strip == "Cancel" }
     expect(cancel["href"]).to eq(step_path("types"))
   end
 

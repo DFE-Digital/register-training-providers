@@ -18,11 +18,11 @@ module Providers
     private
 
       def partnership
-        @partnership ||= provider.partnerships.kept.find(params[:partnership_id])
+        @partnership ||= provider.partnerships.kept.find(params.expect(:partnership_id))
       end
 
       def provider
-        @provider ||= Provider.kept.find(params[:provider_id])
+        @provider ||= Provider.kept.find(params.expect(:provider_id))
       end
 
       def selected_types
