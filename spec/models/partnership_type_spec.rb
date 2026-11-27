@@ -69,6 +69,16 @@ RSpec.describe PartnershipType, type: :model do
         expect(other).to be_valid
       end
 
+      it "allows a historical partnership to reuse a type held by a current one" do
+        historical = build(:partnership,
+                           accredited_provider: accredited_provider,
+                           provider: partner,
+                           duration: Date.new(2020, 1, 1)...Date.new(2021, 1, 1),
+                           partnership_type: PartnershipTypeEnum::RECRUITMENT)
+
+        expect(historical).to be_valid
+      end
+
       it "allows the type against a different partner" do
         other = build(:partnership,
                       accredited_provider: accredited_provider,
