@@ -37,8 +37,13 @@ class PartnershipType < ApplicationRecord
 
 private
 
+  # The type rules are about live partnerships, so a partnership that has
+  # already ended must not be validated against today's live ones. Without
+  # this, the same pair could add a historical partnership after a live one
+  # but not the other way round.
   def partnership_type_must_not_be_used_by_another_partnership
     return if partnership.blank? || partnership_type.blank?
+    return if historical_partnership?
 
     scope = self.class
       .kept
@@ -65,5 +70,10 @@ private
       accredited_provider_id: partnership.accredited_provider_id || partnership.accredited_provider&.id,
       provider_id: partnership.provider_id || partnership.provider&.id
     }
+  end
+
+  def historical_partnership?
+    ended_on = partnership.duration&.end
+    ended_on.is_a?(Date) && ended_on <= Time.zone.today
   end
 end
