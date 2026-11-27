@@ -9,7 +9,7 @@ RSpec.describe "Deleting partnership", type: :feature do
     let(:provider) { create(:provider, :unaccredited) }
     let(:accredited_provider) { create(:provider, :accredited) }
     let!(:partnership) do
-      create(:partnership, provider:, accredited_provider:, duration: (Time.zone.today - 1.month)..)
+      create(:partnership, provider: provider, accredited_provider: accredited_provider, duration: (Time.zone.today - 1.month)..)
     end
 
     scenario "deletes partnership for provider" do
