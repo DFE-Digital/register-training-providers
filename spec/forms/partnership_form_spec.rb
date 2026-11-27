@@ -47,6 +47,48 @@ RSpec.describe PartnershipForm, type: :model do
 
       expect(form).to be_valid
     end
+
+    context "when the save will revise the partnership" do
+      let(:revision_attributes) { valid_attributes.merge(revision_on: Time.zone.today) }
+
+      it "rejects an end date that is not after the day the replacement starts" do
+        form = described_class.new(revision_attributes.merge(
+                                     end_date_day: Time.zone.today.day,
+                                     end_date_month: Time.zone.today.month,
+                                     end_date_year: Time.zone.today.year
+                                   ))
+
+        expect(form).not_to be_valid
+        expect(form.errors[:end_date])
+          .to include("End date must be after #{Time.zone.today.to_fs(:govuk)}")
+      end
+
+      it "rejects a start date that leaves no day to end the current record on" do
+        form = described_class.new(revision_attributes.merge(
+                                     start_date_day: Time.zone.today.day,
+                                     start_date_month: Time.zone.today.month,
+                                     start_date_year: Time.zone.today.year
+                                   ))
+
+        expect(form).not_to be_valid
+        expect(form.errors[:start_date])
+          .to include("Start date must be before #{Time.zone.today.to_fs(:govuk)}, " \
+                      "when the partnership types are also changing")
+      end
+
+      it "accepts dates that bracket today" do
+        form = described_class.new(revision_attributes.merge(
+                                     start_date_day: 1,
+                                     start_date_month: 9,
+                                     start_date_year: Time.zone.today.year - 1,
+                                     end_date_day: 31,
+                                     end_date_month: 7,
+                                     end_date_year: Time.zone.today.year + 1
+                                   ))
+
+        expect(form).to be_valid
+      end
+    end
   end
 
   describe "#to_partnership_attributes" do

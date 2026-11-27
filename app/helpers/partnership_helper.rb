@@ -19,14 +19,23 @@ module PartnershipHelper
                                change_paths: change_paths,
                                provider_accredited: provider.accredited?,
                                partnership_types: partnership_types_for(partnership),
-                               show_status: true)
+                               show_status: true,
+                               enter_end_date: true)
       }
 
-      if actions_allowed
-        card[:actions] = [
-          { text: "Delete",
-            href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
-        ]
+      # Ending is authorised against the provider whose page is being viewed,
+      # which is what EndsController checks. Changing and deleting also need
+      # the partner itself to be editable.
+      if include_actions && policy(provider).manage_partnerships?
+        card[:actions] = []
+        if partnership.can_be_ended?
+          card[:actions] << { text: "End partnership",
+                              href: provider_partnership_end_path(partnership, provider_id: provider.id) }
+        end
+        if policy(partnership).update?
+          card[:actions] << { text: "Delete",
+                              href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
+        end
       end
 
       card
@@ -56,7 +65,7 @@ module PartnershipHelper
   end
 
   def partnership_rows(partnership, change_paths: {}, provider_accredited: nil, partnership_types: nil,
-                       show_status: false)
+                       show_status: false, enter_end_date: false)
     rows = []
 
     ap_row = { key: { text: "Accredited provider" },
@@ -76,7 +85,7 @@ module PartnershipHelper
     rows << partnership_types_row(partnership_types, change_paths[:types]) unless partnership_types.nil?
 
     rows << partnership_start_row(partnership.duration, change_paths[:start_date])
-    rows << partnership_end_row(partnership.duration, change_paths[:end_date])
+    rows << partnership_end_row(partnership.duration, change_paths[:end_date], enter_end_date:)
 
     if show_status
       tag_details = partnership.status_tag
@@ -134,7 +143,7 @@ module PartnershipHelper
     duration.end.is_a?(Date) ? duration.end.to_fs(:govuk) : "No end date"
   end
 
-  def partnership_end_row(duration, change_path)
+  def partnership_end_row(duration, change_path, enter_end_date: false)
     has_end_date = duration.end.is_a?(Date)
 
     row = {
@@ -144,7 +153,13 @@ module PartnershipHelper
         classes: has_end_date ? nil : "govuk-hint"
       }
     }
-    row[:actions] = [{ href: change_path, visually_hidden_text: "partnership end date" }] if change_path.present?
+
+    if change_path.present?
+      action = { href: change_path, visually_hidden_text: "partnership end date" }
+      action[:text] = "Enter end date" if enter_end_date && !has_end_date
+      row[:actions] = [action]
+    end
+
     row
   end
 end

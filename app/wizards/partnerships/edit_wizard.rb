@@ -50,7 +50,8 @@ module Partnerships
         end_date_month: ending&.month,
         end_date_year: ending&.year,
         academic_year_ids: partnership.academic_year_ids.uniq,
-        partnership_types: partnership.partnership_types.kept.pluck(:partnership_type)
+        partnership_types: partnership.partnership_types.kept.pluck(:partnership_type),
+        seeded_ended: partnership.ended_on?
       )
     end
 
@@ -60,6 +61,30 @@ module Partnerships
         provider_id: partnership.provider_id,
         except_partnership_id: partnership.id
       )
+    end
+
+    # Saving a type change on a partnership that is already running ends it
+    # today and starts a replacement, so the answers have to be valid for that
+    # replacement rather than for the existing record.
+    def revises_partnership?(on: Time.zone.today)
+      return false unless partnership.can_be_ended?(on:)
+
+      selected_types = Array(selected_partnership_types).map(&:to_s).uniq.sort
+      selected_types != partnership.partnership_types.kept.map(&:partnership_type).sort
+    end
+
+    def partnership_form
+      form = super
+      return form unless revises_partnership?
+
+      # The replacement starts today, so the years it can carry are the ones that
+      # overlap it, plus the years already attached to the partnership — those were
+      # chosen for the record being ended and are carried over to its replacement.
+      form.revision_on = Time.zone.today
+      form.eligible_academic_year_ids =
+        (eligible_academic_years(start_date: Time.zone.today).pluck(:id).map(&:to_s) +
+         partnership.academic_year_ids.map(&:to_s)).uniq
+      form
     end
 
     def available_partnership_types

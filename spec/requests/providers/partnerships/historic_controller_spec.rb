@@ -61,6 +61,28 @@ RSpec.describe "Provider partnership history", type: :request do
       expect(response.body).not_to include(current_partner.operating_name)
     end
 
+    it "lists the previous version when a partnership's types change" do
+      current_partnership.sync_partnership_types([PartnershipTypeEnum::TRAINING_AND_DELIVERY])
+      current_partnership.save!
+
+      current_partnership.revise_types!(
+        [PartnershipTypeEnum::RECRUITMENT],
+        academic_years: current_partnership.academic_years,
+        end_date: nil
+      )
+
+      get provider_historic_partnerships_path(provider)
+
+      expect(response.body).to include(current_partner.operating_name)
+      expect(response.body).to include("Training and Delivery")
+      expect(response.body).to include(Time.zone.today.to_fs(:govuk))
+
+      get provider_partnerships_path(provider)
+
+      expect(response.body).to include(current_partner.operating_name)
+      expect(response.body).to include("Recruitment")
+    end
+
     it "shows an empty state when there is no history" do
       historic_partnership.destroy!
 
