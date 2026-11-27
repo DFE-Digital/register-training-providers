@@ -27,7 +27,7 @@ module Providers
         end
       end
 
-      private
+    private
 
       def back_path
         provider = provider_session.load_provider

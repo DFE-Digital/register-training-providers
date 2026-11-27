@@ -12,7 +12,7 @@ class AccreditationsController < ApplicationController
     @provider = provider
     accreditation_data = accreditation_session.load_accreditation
     @form = if accreditation_data
-              Accreditations::NumberForm.new({number: accreditation_data[:number]})
+              Accreditations::NumberForm.new({ number: accreditation_data[:number] })
             else
               Accreditations::NumberForm.new
             end

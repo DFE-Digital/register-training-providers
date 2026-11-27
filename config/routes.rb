@@ -89,8 +89,8 @@ Rails.application.routes.draw do
     get "details", to: "details#new", as: :details
     post "details", to: "details#create"
 
-    #get "accreditation", to: "accreditation#new", as: :accreditation
-    #post "accreditation", to: "accreditation#create"
+    # get "accreditation", to: "accreditation#new", as: :accreditation
+    # post "accreditation", to: "accreditation#create"
   end
 
   # Provider setup - addresses flow (reuses main address controllers)

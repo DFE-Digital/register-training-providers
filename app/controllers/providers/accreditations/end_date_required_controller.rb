@@ -7,7 +7,7 @@ module Providers
       helper_method :back_path, :form_url, :cancel_path
 
       def new
-        accreditation_data = accreditation_session.load_accreditation
+        accreditation_session.load_accreditation
         @form = ::Accreditations::EndDateRequiredForm.new
         @provider = provider
         authorize provider, :update?
@@ -30,10 +30,6 @@ module Providers
       end
 
     private
-
-      def accreditation_form_params
-        params.expect(accreditation: [:end_date_required])
-      end
 
       def back_path
         provider = provider_session.load_provider

@@ -114,7 +114,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     scenario "invalid number format for HEI" do
       visit new_accreditation_path(provider_id: provider.id)
 
-      start_year = Date.current.year
+      Date.current.year
       fill_in "What is the accreditation number?", with: "5678"
 
       click_button "Continue"
@@ -126,7 +126,7 @@ RSpec.describe "Creating accreditation", type: :feature do
       scitt_provider = create(:provider, :scitt, :accredited)
       visit new_accreditation_path(provider_id: scitt_provider.id)
 
-      start_year = Date.current.year
+      Date.current.year
       fill_in "What is the accreditation number?", with: "1678"
 
       click_button "Continue"
