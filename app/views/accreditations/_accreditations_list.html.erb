@@ -1,7 +1,7 @@
 <% if accreditations.any? %>
   <% if policy(provider).manage_accreditations? %>
     <div class="govuk-button-group">
-      <%= govuk_button_link_to("Add accreditation", new_accreditation_path(provider_id: provider.id)) %>
+      <%= govuk_button_link_to("Add accreditation", provider_new_accreditation_path(provider_id: provider.id)) %>
     </div>
   <% end %>
 
@@ -19,7 +19,7 @@
   <% end %>
 <% else %>
   <% if policy(provider).manage_accreditations? %>
-    <%= govuk_button_link_to("Add accreditation", new_accreditation_path(provider_id: provider.id)) %>
+    <%= govuk_button_link_to("Add accreditation", provider_new_accreditation_path(provider_id: provider.id)) %>
   <% end %>
 
   <p class="govuk-body">There are no accreditations for <%= provider.operating_name %></p>

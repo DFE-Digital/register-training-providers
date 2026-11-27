@@ -3,12 +3,13 @@ module ProviderCreation
     include Rails.application.routes.url_helpers
 
     def initialize(current_step:, session_manager:, provider: nil, from_check: false, address_session: nil,
-                   from_select: false)
+                   accreditation_session: nil, from_select: false)
       @current_step = current_step.to_sym
       @session_manager = session_manager
       @provider = provider
       @from_check = from_check
       @address_session = address_session
+      @accreditation_session = accreditation_session
       @from_select = from_select
     end
 
@@ -31,11 +32,17 @@ module ProviderCreation
       when :details
         provider = load_provider
         if provider&.accredited?
-          new_provider_accreditation_path
+          providers_setup_accreditations_accreditation_path
         else
           providers_setup_addresses_address_path
         end
       when :accreditation
+        providers_setup_accreditations_start_date_path
+      when :start_date
+        providers_setup_accreditations_end_date_required_path
+      when :end_date_required
+        providers_setup_accreditations_end_date_path
+      when :end_date
         providers_setup_addresses_find_path
       when :address, :address_find, :address_select, :address_manual_entry
         providers_setup_addresses_types_path
@@ -75,6 +82,12 @@ module ProviderCreation
         new_provider_type_path
       when :accreditation
         new_provider_details_path
+      when :start_date
+        providers_setup_accreditations_accreditation_path
+      when :end_date_required
+        providers_setup_accreditations_start_date_path
+      when :end_date
+        providers_setup_accreditations_end_date_required_path
       when :address_find
         # Back from find page goes to previous provider step
         back_to_previous_provider_step
@@ -117,7 +130,7 @@ module ProviderCreation
     def back_to_previous_provider_step
       provider = load_provider
       if provider&.accredited?
-        new_provider_accreditation_path
+        providers_setup_accreditations_end_date_required_path
       else
         new_provider_details_path
       end

@@ -40,10 +40,12 @@ private
   def accreditation_form
     return nil unless model.accredited?
 
-    accreditation_data = provider_session.load_accreditation
+    accreditation_data = accreditation_session.load_accreditation
     return nil unless accreditation_data
 
-    @accreditation_form ||= AccreditationForm.new(accreditation_data)
+    accreditation_data[:provider_creation_mode] = true
+
+    @accreditation_form ||= ::AccreditationForm.new(accreditation_data)
   end
 
   def address_form
@@ -109,7 +111,8 @@ private
       current_step: :check_answers,
       session_manager: provider_session,
       provider: model,
-      address_session: address_session
+      address_session: address_session,
+      accreditation_session: accreditation_session,
     )
   end
 
@@ -119,5 +122,9 @@ private
 
   def address_session
     @address_session ||= AddressJourney::SessionManager.new(session, context: :setup)
+  end
+
+  def accreditation_session
+    @accreditation_session ||= AccreditationJourney::SessionManager.new(session, context: :setup)
   end
 end

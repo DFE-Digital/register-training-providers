@@ -15,14 +15,14 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_link "Add accreditation"
 
-      expect(page).to have_content(provider.operating_name)
-      expect(page).to have_content("Accreditation details")
-
-      expect(TemporaryRecord.count).to eq(0)
+      expect(page).to have_content("What is the accreditation number?")
 
       start_year = Date.current.year
-      fill_in "Accredited provider number", with: "1234"
-      within_fieldset("Accreditation start date") do
+      fill_in "What is the accreditation number?", with: "1234"
+
+      click_button "Continue"
+
+      within_fieldset("When does the accreditation start?") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -30,7 +30,9 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
-      expect(TemporaryRecord.count).to eq(1)
+      choose "No"
+      click_button "Continue"
+
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("1234")
       expect(page).to have_content("1 January #{start_year}")
@@ -38,7 +40,6 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Save accreditation"
 
-      expect(TemporaryRecord.count).to eq(0)
       expect(page).to have_content("Accreditation added")
       expect(page).to have_content("Accreditation 1234")
 
@@ -54,13 +55,21 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       start_year = Date.current.year
       end_year = Date.current.year + 1
-      fill_in "Accredited provider number", with: "5678"
-      within_fieldset("Accreditation start date") do
+      fill_in "What is the accreditation number?", with: "5678"
+      click_button "Continue"
+
+      within_fieldset("When does the accreditation start?") do
         fill_in "Day", with: "15"
         fill_in "Month", with: "6"
         fill_in "Year", with: start_year.to_s
       end
-      within_fieldset("Accreditation end date") do
+
+      click_button "Continue"
+
+      choose "Yes"
+      click_button "Continue"
+
+      within_fieldset("When does the accreditation end?") do
         fill_in "Day", with: "31"
         fill_in "Month", with: "12"
         fill_in "Year", with: end_year.to_s
@@ -84,13 +93,6 @@ RSpec.describe "Creating accreditation", type: :feature do
     scenario "missing accreditation number" do
       visit new_accreditation_path(provider_id: provider.id)
 
-      start_year = Date.current.year
-      within_fieldset("Accreditation start date") do
-        fill_in "Day", with: "1"
-        fill_in "Month", with: "1"
-        fill_in "Year", with: start_year.to_s
-      end
-
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter an accredited provider number")
@@ -100,47 +102,36 @@ RSpec.describe "Creating accreditation", type: :feature do
     scenario "missing start date" do
       visit new_accreditation_path(provider_id: provider.id)
 
-      fill_in "Accredited provider number", with: "1234"
+      fill_in "What is the accreditation number?", with: "1234"
+
+      click_button "Continue"
 
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter accreditation start date")
-      expect(TemporaryRecord.count).to eq(0)
     end
 
     scenario "invalid number format for HEI" do
       visit new_accreditation_path(provider_id: provider.id)
 
-      start_year = Date.current.year
-      fill_in "Accredited provider number", with: "5678"
-      within_fieldset("Accreditation start date") do
-        fill_in "Day", with: "1"
-        fill_in "Month", with: "1"
-        fill_in "Year", with: start_year.to_s
-      end
+      Date.current.year
+      fill_in "What is the accreditation number?", with: "5678"
 
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter accredited provider number in the correct format, like 1234")
-      expect(TemporaryRecord.count).to eq(0)
     end
 
     scenario "invalid number format for SCITT" do
       scitt_provider = create(:provider, :scitt, :accredited)
       visit new_accreditation_path(provider_id: scitt_provider.id)
 
-      start_year = Date.current.year
-      fill_in "Accredited provider number", with: "1678"
-      within_fieldset("Accreditation start date") do
-        fill_in "Day", with: "1"
-        fill_in "Month", with: "1"
-        fill_in "Year", with: start_year.to_s
-      end
+      Date.current.year
+      fill_in "What is the accreditation number?", with: "1678"
 
       click_button "Continue"
 
       expect(page).to have_error_summary("Enter accredited provider number in the correct format, like 5678")
-      expect(TemporaryRecord.count).to eq(0)
     end
   end
 
@@ -151,8 +142,11 @@ RSpec.describe "Creating accreditation", type: :feature do
       visit new_accreditation_path(provider_id: provider.id)
 
       start_year = Date.current.year
-      fill_in "Accredited provider number", with: "1234"
-      within_fieldset("Accreditation start date") do
+      fill_in "What is the accreditation number?", with: "1234"
+
+      click_button "Continue"
+
+      within_fieldset("When does the accreditation start?") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
@@ -160,14 +154,25 @@ RSpec.describe "Creating accreditation", type: :feature do
 
       click_button "Continue"
 
+      choose "No"
+      click_button "Continue"
+
       expect(page).to have_content("Check your answers")
       expect(page).to have_content("1234")
 
       click_link "Change", match: :first
 
-      expect(page).to have_field("Accredited provider number", with: "1234")
+      expect(page).to have_field("What is the accreditation number?", with: "1234")
 
-      fill_in "Accredited provider number", with: "1999"
+      fill_in "What is the accreditation number?", with: "1999"
+
+      click_button "Continue"
+
+      expect(page).to have_field("Day", with: "1")
+      expect(page).to have_field("Month", with: "1")
+      expect(page).to have_field("Year", with: start_year.to_s)
+
+      click_button "Continue"
 
       click_button "Continue"
 
@@ -182,7 +187,7 @@ RSpec.describe "Creating accreditation", type: :feature do
     scenario "can cancel and return to index" do
       visit new_accreditation_path(provider_id: provider.id)
 
-      fill_in "Accredited provider number", with: "1234"
+      fill_in "What is the accreditation number?", with: "1234"
 
       click_link "Cancel"
 

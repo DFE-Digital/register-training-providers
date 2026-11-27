@@ -328,7 +328,7 @@ en:
       start_date:
         label: "Accreditation start date"
       end_date:
-        label: "Accreditation end date (optional)"
+        label: "Accreditation end date"
     api_client:
       name:
         label: "Client name"

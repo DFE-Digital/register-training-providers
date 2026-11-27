@@ -123,8 +123,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
       # Test back from Address to Accreditation
       when_i_click_the_back_link
-      then_i_should_be_on_the_accreditation_page
-      and_my_accreditation_details_should_be_filled
+      then_i_should_be_on_the_accreditation_end_date_required_page
 
       # Go forward
       when_i_click_on("Continue")
@@ -416,10 +415,15 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
 
   def and_i_fill_in_accreditation_details
     @accreditation_number = @provider.hei? ? "1234" : "5678"
-    fill_in "Accredited provider number", with: @accreditation_number
+    fill_in "What is the accreditation number?", with: @accreditation_number
+    click_on("Continue")
+
     fill_in "accreditation_start_date_3i", with: "1"
     fill_in "accreditation_start_date_2i", with: "1"
     fill_in "accreditation_start_date_1i", with: Date.current.year.to_s
+    click_on("Continue")
+
+    choose "No"
     click_on("Continue")
   end
 
@@ -466,7 +470,11 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def then_i_should_be_on_the_accreditation_page
-    expect(page).to have_current_path("/providers/new/accreditation", ignore_query: true)
+    expect(page).to have_current_path("/providers/new/accreditations", ignore_query: true)
+  end
+
+  def then_i_should_be_on_the_accreditation_end_date_required_page
+    expect(page).to have_current_path("/providers/new/accreditations/end_date_required", ignore_query: true)
   end
 
   def then_i_should_be_on_the_address_page
@@ -511,7 +519,7 @@ RSpec.feature "Provider Creation - Back Button Navigation" do
   end
 
   def and_my_accreditation_details_should_be_filled
-    expect(find_field("Accredited provider number").value).to eq(@accreditation_number)
+    expect(find_field("What is the accreditation number?").value).to eq(@accreditation_number)
   end
 
   def and_my_address_should_be_filled

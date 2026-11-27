@@ -89,8 +89,8 @@ Rails.application.routes.draw do
     get "details", to: "details#new", as: :details
     post "details", to: "details#create"
 
-    get "accreditation", to: "accreditation#new", as: :accreditation
-    post "accreditation", to: "accreditation#create"
+    # get "accreditation", to: "accreditation#new", as: :accreditation
+    # post "accreditation", to: "accreditation#create"
   end
 
   # Provider setup - addresses flow (reuses main address controllers)
@@ -113,6 +113,25 @@ Rails.application.routes.draw do
           get "", to: "/providers/addresses/types#new"
           post "", to: "/providers/addresses/types#create"
         end
+      end
+    end
+  end
+
+  # Provider setup - accreditations flow (reuses main accreditation controllers)
+  namespace :providers do
+    namespace :setup, path: "new" do
+      namespace :accreditations do
+        get "", to: "/providers/accreditation#new", as: :accreditation
+        post "", to: "/providers/accreditation#create"
+
+        get "start_date", to: "/providers/accreditations/start_date#new", as: :start_date
+        post "start_date", to: "/providers/accreditations/start_date#create"
+
+        get "end_date_required", to: "/providers/accreditations/end_date_required#new", as: :end_date_required
+        post "end_date_required", to: "/providers/accreditations/end_date_required#create"
+
+        get "end_date", to: "/providers/accreditations/end_date#new", as: :end_date
+        post "end_date", to: "/providers/accreditations/end_date#create"
       end
     end
   end
@@ -215,7 +234,25 @@ Rails.application.routes.draw do
     # Delete
     get "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#show", as: :partnership_delete
     delete "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#destroy"
+
+    # === Accreditations ===
+
+    get "accreditations/new", to: "accreditations#new", as: :new_accreditation
+    get "accreditations/start_date", to: "accreditations/start_date#new", as: :new_accreditation_start_date
+    post "accreditations/start_date", to: "accreditations/start_date#create"
+    get "accreditations/end_date_required", to: "accreditations/end_date_required#new",
+                                            as: :new_accreditation_end_date_required
+    post "accreditations/end_date_required", to: "accreditations/end_date_required#create"
+    get "accreditations/end_date", to: "accreditations/end_date#new", as: :new_accreditation_end_date
+    post "accreditations/end_date", to: "accreditations/end_date#create"
   end
+
+  # === Accreditations ===
+
+  get "accreditations/start_date", to: "accreditations/start_date#new", as: :new_accreditation_start_date
+  get "accreditations/end_date_required", to: "accreditations/end_date_required#new",
+                                          as: :new_accreditation_end_date_required
+  get "accreditations/end_date", to: "accreditations/end_date#new", as: :new_accreditation_end_date
 
   resources :accreditations, except: [:index, :show] do
     checkable(:accreditations)
