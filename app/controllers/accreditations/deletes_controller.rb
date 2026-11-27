@@ -18,7 +18,7 @@ module Accreditations
   private
 
     def load_accreditation
-      @accreditation = provider.accreditations.kept.find(params[:accreditation_id])
+      @accreditation = provider.accreditations.kept.find(params.expect(:accreditation_id))
     end
   end
 end

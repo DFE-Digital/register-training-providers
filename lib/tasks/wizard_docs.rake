@@ -13,9 +13,8 @@ namespace :wizard do
 
       ProviderChanges::Registry.fields.each do |field|
         wizard_class = ProviderChanges::Registry.wizard_for(field)
-        # rubocop:disable Style/OpenStructUse
+        # rubocop:disable-next Style/OpenStructUse
         wizard = wizard_class.new(state_store: OpenStruct.new, provider: Provider.new)
-        # rubocop:enable Style/OpenStructUse
 
         wizard.documentation.generate_all(output_dir)
         puts "Generated docs for #{wizard_class.name}"

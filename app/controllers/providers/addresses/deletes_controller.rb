@@ -19,11 +19,11 @@ module Providers
     private
 
       def address
-        @address ||= provider.addresses.kept.find(params[:address_id])
+        @address ||= provider.addresses.kept.find(params.expect(:address_id))
       end
 
       def provider
-        @provider ||= Provider.find(params[:provider_id])
+        @provider ||= Provider.find(params.expect(:provider_id))
       end
 
       def setup_view_data

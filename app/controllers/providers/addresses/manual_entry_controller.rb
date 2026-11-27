@@ -35,7 +35,7 @@ module Providers
         # Edit only available in manage context
         redirect_to provider_addresses_path(provider) if setup_context?
 
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address
 
         # Load from session if user is returning from check page with temporary changes
@@ -73,7 +73,7 @@ module Providers
         authorize provider, :update?
         redirect_to provider_addresses_path(provider) if setup_context?
 
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address
 
         @form = ::AddressForm.new(address_params)
@@ -137,7 +137,7 @@ module Providers
         # Edit mode
         if params[:id]
           if params[:goto] == "confirm"
-            address = provider.addresses.kept.find(params[:id])
+            address = provider.addresses.kept.find(params.expect(:id))
             provider_address_check_path(address, provider_id: provider.id)
           else
             provider_addresses_path(provider)

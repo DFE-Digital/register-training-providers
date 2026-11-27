@@ -92,7 +92,7 @@ private
   end
 
   def provider
-    @provider ||= policy_scope(Provider).find(params[:provider_id])
+    @provider ||= policy_scope(Provider).find(params.expect(:provider_id))
   end
 
   def authenticated?

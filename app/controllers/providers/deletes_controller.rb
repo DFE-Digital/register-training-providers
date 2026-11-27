@@ -2,12 +2,12 @@ class Providers::DeletesController < CheckController
   rate_limit to: 3, within: 3.minutes, only: :destroy, by: -> { current_user.id }
 
   def show
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :destroy?
   end
 
   def destroy
-    @provider = Provider.find(params[:provider_id])
+    @provider = Provider.find(params.expect(:provider_id))
     authorize @provider, :destroy?
 
     deleted = @provider.with_lock do

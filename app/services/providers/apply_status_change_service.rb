@@ -27,9 +27,7 @@ module Providers
       provider.close_open_inactive_periods(ending_on: effective_on)
       add_new_period if new_status != ProviderStatusEnum::ACTIVE
 
-      # rubocop:disable Rails/SaveBang
       provider.save
-      # rubocop:enable Rails/SaveBang
     end
 
     def discarded?

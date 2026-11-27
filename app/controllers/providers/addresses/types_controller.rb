@@ -19,7 +19,7 @@ module Providers
       end
 
       def edit
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address
 
         @form = ::Addresses::TypesForm.from_address(@address)
@@ -42,7 +42,7 @@ module Providers
 
       def update
         @form = ::Addresses::TypesForm.new(types: params[:types][:types].compact_blank!)
-        @address = provider.addresses.kept.find(params[:id])
+        @address = provider.addresses.kept.find(params.expect(:id))
         authorize @address, :update?
 
         if @form.valid?

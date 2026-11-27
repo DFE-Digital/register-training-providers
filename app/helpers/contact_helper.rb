@@ -24,7 +24,7 @@ module ContactHelper
       { key: { text: "First name" },
         value: { text: contact.first_name }, },
       { key: { text: "Last name" },
-        value: { text: contact.last_name },  },
+        value: { text: contact.last_name }, },
       { key: { text: "Email address" },
         value: { text: contact.email }, },
       { key: { text: "Phone number" },

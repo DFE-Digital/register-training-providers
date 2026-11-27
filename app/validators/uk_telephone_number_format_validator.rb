@@ -1,7 +1,6 @@
 class UkTelephoneNumberFormatValidator
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable-next Layout/LineLength
   UK_TELEPHONE_NUMBER_REGEX = /^(?:(?:\(?(?:0(?:0|11)\)?[\s-]?\(?|\+)44\)?[\s-]?(?:\(?0\)?[\s-]?)?)|(?:\(?0))(?:(?:\d{5}\)?[\s-]?\d{4,5})|(?:\d{4}\)?[\s-]?(?:\d{5}|\d{3}[\s-]?\d{3}))|(?:\d{3}\)?[\s-]?\d{3}[\s-]?\d{3,4})|(?:\d{2}\)?[\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$/
-  # rubocop:enable Layout/LineLength
 
   def initialize(record)
     @record = record

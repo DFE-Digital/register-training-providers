@@ -3,7 +3,7 @@ module Providers
     helper_method :provider
 
     def show
-      @provider = Provider.kept.find(params[:provider_id])
+      @provider = Provider.kept.find(params.expect(:provider_id))
       authorize @provider, :show?
     end
 

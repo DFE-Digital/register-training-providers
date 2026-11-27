@@ -104,7 +104,7 @@ module Providers
     end
 
     def provider
-      @provider ||= Provider.kept.find(params[:provider_id])
+      @provider ||= Provider.kept.find(params.expect(:provider_id))
     end
 
     def repository
@@ -134,11 +134,11 @@ module Providers
     end
 
     def current_step
-      @current_step ||= params[:step].tr("-", "_").to_sym
+      @current_step ||= params.expect(:step).tr("-", "_").to_sym
     end
 
     def field
-      @field ||= params[:field].to_sym
+      @field ||= params.expect(:field).to_sym
     end
 
     def template_path
