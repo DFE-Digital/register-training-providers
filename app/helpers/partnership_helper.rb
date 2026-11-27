@@ -8,11 +8,9 @@ module PartnershipHelper
     return [] if partnerships.empty?
 
     partnerships.map do |partnership|
-      change_paths = if include_actions && !provider.archived?
-                       partnership_card_change_paths(partnership, provider)
-                     else
-                       {}
-                     end
+      actions_allowed = include_actions && partnership_actions_allowed?(provider, partnership)
+
+      change_paths = actions_allowed ? partnership_card_change_paths(partnership, provider) : {}
 
       card = {
         title: link_to(partnership.other_partner(provider).operating_name.to_s,
@@ -24,7 +22,7 @@ module PartnershipHelper
                                show_status: true)
       }
 
-      if include_actions && policy(partnership).update?
+      if actions_allowed
         card[:actions] = [
           { text: "Delete",
             href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
@@ -33,6 +31,14 @@ module PartnershipHelper
 
       card
     end
+  end
+
+  # Both sides of a partnership have to be manageable: the provider whose page
+  # is being viewed and the partner the partnership belongs to. Checking only
+  # one of them shows actions for archived providers and for roles that cannot
+  # change partnerships.
+  def partnership_actions_allowed?(provider, partnership)
+    policy(provider).manage_partnerships? && policy(partnership).update?
   end
 
   def partnership_card_change_paths(partnership, provider)
