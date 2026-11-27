@@ -192,16 +192,17 @@ Rails.application.routes.draw do
     # === Partnerships ===
 
     # Add journey
-    get "partnerships/new(/:step)", to: "providers/partnerships/journey#new", as: :new_partnership_step
-    post "partnerships/new(/:step)", to: "providers/partnerships/journey#update", as: :partnership_step
+    get "partnerships/new(/:step)", to: "providers/partnerships/journey#new", as: :partnership_step
+    post "partnerships/new(/:step)", to: "providers/partnerships/journey#update",
+                                     as: :partnership_update_step
 
     # Edit journey
     get "partnerships/:partnership_id/edit(/:step)",
         to: "providers/partnerships/edit_journey#new",
-        as: :edit_partnership_step
+        as: :partnership_edit_step
     patch "partnerships/:partnership_id/edit(/:step)",
           to: "providers/partnerships/edit_journey#update",
-          as: :partnership_edit_step
+          as: :partnership_edit_update_step
     # Delete
     get "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#show", as: :partnership_delete
     delete "partnerships/:partnership_id/delete", to: "providers/partnerships/deletes#destroy"

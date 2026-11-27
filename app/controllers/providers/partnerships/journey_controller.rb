@@ -10,9 +10,7 @@ module Providers
 
         wizard.clear_state if current_step.nil?
 
-        redirect_to(step_path(:find_partner)) unless wizard.valid_path_to_current_step?
-
-        return if performed?
+        return unless valid_journey_path?
 
         redirect_to(step_path(:find_partner)) and return if answers_incomplete?
 
@@ -23,9 +21,7 @@ module Providers
       def update
         authorize provider, :manage_partnerships?
 
-        redirect_to(step_path(:find_partner)) unless wizard.valid_path_to_current_step?
-
-        return if performed?
+        return unless valid_journey_path?
 
         redirect_to(step_path(:find_partner)) and return if answers_incomplete?
 
@@ -41,6 +37,19 @@ module Providers
 
     private
 
+      def valid_journey_path?
+        return true if wizard.valid_path_to_current_step?
+
+        if wizard.state_store.read.blank?
+          redirect_to(step_path(:find_partner))
+        else
+          flash[:alert] = I18n.t("flash_message.alert.check.partnership.types_unavailable")
+          redirect_to(step_path(:types))
+        end
+
+        false
+      end
+
       def answers_incomplete?
         return false unless wizard.check_your_answers?
 
@@ -50,7 +59,7 @@ module Providers
       def save_partnership
         form = wizard.partnership_form
         partnership = provider.partnerships.build(form.to_partnership_attributes)
-        partnership.apply_default_partnership_type
+        partnership.apply_partnership_types(wizard.selected_partnership_types)
         authorize partnership
 
         unless partnership.save
@@ -85,21 +94,23 @@ module Providers
 
       def prepare_check_your_answers
         @form = wizard.partnership_form
+        @partnership_types = wizard.selected_partnership_types
         @save_path = wizard.current_step_path
         @save_button_text = "Save partnership"
         @change_paths = {
           partner: change_step_path(:find_partner),
+          types: change_step_path(:types),
           dates: change_step_path(:dates),
           academic_years: change_step_path(:academic_years)
         }
       end
 
       def step_path(step)
-        provider_new_partnership_step_path(provider, step: step.to_s.tr("_", "-"))
+        provider_partnership_step_path(provider, step: step.to_s.tr("_", "-"))
       end
 
       def change_step_path(step)
-        provider_new_partnership_step_path(
+        provider_partnership_step_path(
           provider,
           step: step.to_s.tr("_", "-"),
           return_to_review: "true"

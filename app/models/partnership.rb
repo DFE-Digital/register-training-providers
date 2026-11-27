@@ -62,6 +62,12 @@ class Partnership < ApplicationRecord
     provider
   end
 
+  def apply_partnership_types(types, source: "user")
+    types.each do |type|
+      partnership_types.build(partnership_type: type, source: source)
+    end
+  end
+
   def apply_default_partnership_type(source: "user")
     partnership_types.build(
       partnership_type: PartnershipTypeEnum::RECRUITMENT,

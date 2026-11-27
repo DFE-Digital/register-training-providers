@@ -18,11 +18,11 @@ RSpec.describe "Provider partnership edit journey", type: :request do
   let!(:partnership) { create(:partnership, accredited_provider: provider, provider: partner) }
 
   def step_path(step, **)
-    provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id, step: step, **)
+    provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id, step: step, **)
   end
 
   def root_path
-    provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id)
+    provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id)
   end
 
   def submit_dates(day: "1", month: "9", year: "2024", **)
