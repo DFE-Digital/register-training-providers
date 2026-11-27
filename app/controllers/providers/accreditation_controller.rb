@@ -31,7 +31,7 @@ class Providers::AccreditationController < CheckController
     end
 
     accreditation_data = accreditation_session.load_accreditation
-    @form = Accreditations::NumberForm.new(accreditation_data || {})
+    @form = Accreditations::NumberForm.new((accreditation_data || {}).slice(:number))
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
 
