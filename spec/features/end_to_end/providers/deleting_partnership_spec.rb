@@ -8,7 +8,9 @@ RSpec.describe "Deleting partnership", type: :feature do
   context "with an existing partnership" do
     let(:provider) { create(:provider, :unaccredited) }
     let(:accredited_provider) { create(:provider, :accredited) }
-    let!(:partnership) { create(:partnership, provider:, accredited_provider:) }
+    let!(:partnership) do
+      create(:partnership, provider: provider, accredited_provider: accredited_provider, duration: (Time.zone.today - 1.month)..)
+    end
 
     scenario "deletes partnership for provider" do
       visit provider_partnerships_path(provider)
@@ -19,10 +21,14 @@ RSpec.describe "Deleting partnership", type: :feature do
 
       click_link "Delete", match: :first
 
-      expect(page).to have_content("Confirm you want to delete the partnership with #{accredited_provider.operating_name}")
+      expect(page).to have_content("Are you sure you want to delete the partnership with #{accredited_provider.operating_name}?")
       expect(page).to have_content("Delete partnership")
 
-      expect(page).to have_content("Deleting a partnership is permanent – you cannot undo it.")
+      expect(page).to have_content(
+        "Deleting this partnership will permanently remove it from the provider record. " \
+        "It may still be retained for audit purposes."
+      )
+      expect(page).to have_warning_text("You cannot undo this action.")
 
       expect(page).to have_link("Cancel", href: provider_partnerships_path(provider))
 
@@ -45,7 +51,7 @@ RSpec.describe "Deleting partnership", type: :feature do
 
       click_link "Delete", match: :first
 
-      expect(page).to have_content("Confirm you want to delete the partnership with #{accredited_provider.operating_name}")
+      expect(page).to have_content("Are you sure you want to delete the partnership with #{accredited_provider.operating_name}?")
 
       click_link "Cancel"
 
@@ -56,23 +62,31 @@ RSpec.describe "Deleting partnership", type: :feature do
       expect(partnership.reload.discarded?).to be false
     end
 
-    scenario "when there is no end date" do
+    scenario "offers the end journey instead of deleting" do
       visit provider_partnerships_path(provider)
       click_link "Delete", match: :first
 
-      expect(page).to have_content("If you do not want to delete the partnership, but update that it has ended, add the partnership end date.")
+      expect(page).to have_content("Only delete a partnership if the record was created incorrectly.")
+      expect(page).to have_link("End partnership",
+                                href: provider_partnership_end_path(partnership, provider_id: provider.id))
+    end
+  end
+
+  context "with a partnership that cannot be ended" do
+    let(:provider) { create(:provider, :unaccredited) }
+    let(:accredited_provider) { create(:provider, :accredited) }
+    let!(:partnership) do
+      create(:partnership, provider: provider, accredited_provider: accredited_provider,
+                           duration: 1.month.from_now..)
     end
 
-    scenario "when there is an end date" do
-      t = Time.zone.now
-      partnership.duration = (t...(t + 1.year))
-      partnership.save!
-      partnership.reload
+    scenario "does not offer the end journey from the delete page" do
+      visit provider_partnership_delete_path(partnership, provider_id: provider.id)
 
-      visit provider_partnerships_path(provider)
-      click_link "Delete", match: :first
-
-      expect(page).not_to have_content("If you do not want to delete the partnership, but update that it has ended, add the partnership end date.")
+      expect(page).to have_content("Are you sure you want to delete the partnership with #{accredited_provider.operating_name}?")
+      expect(page).not_to have_content("Only delete a partnership if the record was created incorrectly.")
+      expect(page).not_to have_link("End partnership")
+      expect(page).to have_button("Delete partnership")
     end
   end
 
@@ -104,7 +118,7 @@ RSpec.describe "Deleting partnership", type: :feature do
         click_link "Delete"
       end
 
-      expect(page).to have_content("Confirm you want to delete the partnership with #{accredited_provider.operating_name}")
+      expect(page).to have_content("Are you sure you want to delete the partnership with #{accredited_provider.operating_name}?")
       expect(page).to have_content("Delete partnership")
 
       click_button "Delete partnership"

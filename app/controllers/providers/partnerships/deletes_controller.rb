@@ -33,7 +33,7 @@ module Providers
       def setup_view_data
         @provider = provider
         @partnership = partnership
-        @page_title = "Confirm you want to delete the partnership with #{other_partner.operating_name}"
+        @page_title = "Are you sure you want to delete the partnership with #{other_partner.operating_name}?"
         @page_subtitle = "Delete partnership - #{@provider.operating_name}"
         @page_caption = "Delete partnership - #{@provider.operating_name}"
         @back_path = provider_partnerships_path(@provider)
