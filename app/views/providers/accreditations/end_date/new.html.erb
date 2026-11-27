@@ -1,0 +1,8 @@
+<%= render "form",
+           page_title: "Add accreditation - #{@provider.operating_name}",
+           caption: "Add accreditation - #{@provider.operating_name}",
+           form_url: form_url,
+           form_method: :post,
+           back_path: back_path,
+           cancel_path: cancel_path,
+           provider_type: @provider.provider_type %>

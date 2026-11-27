@@ -1,7 +1,8 @@
 class Providers::AccreditationController < CheckController
   include DebuggerParamHelper
+  include AccreditationJourneyController
 
-  helper_method :back_path
+  helper_method :back_path, :form_url, :cancel_path
 
   def new
     provider_type_data = provider_session.load_provider_type
@@ -29,9 +30,8 @@ class Providers::AccreditationController < CheckController
       return
     end
 
-    accreditation_data = provider_session.load_accreditation
-    @form = AccreditationForm.new(accreditation_data || {})
-    @form.provider_creation_mode = true
+    accreditation_data = accreditation_session.load_accreditation
+    @form = Accreditations::NumberForm.new(accreditation_data || {})
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
 
@@ -41,9 +41,7 @@ class Providers::AccreditationController < CheckController
   end
 
   def create
-    @form = AccreditationForm.new(create_accreditation_params)
-    @form.provider_creation_mode = true
-
+    @form = Accreditations::NumberForm.new(create_accreditation_params)
     provider = provider_session.load_provider
     @form.provider_id = provider&.id
     @form.provider_type = provider&.provider_type
@@ -64,6 +62,22 @@ private
   def back_path
     provider = provider_session.load_provider
     journey_coordinator(:accreditation, provider).back_path
+  end
+
+  def form_url
+    if setup_context?
+      providers_setup_accreditations_path
+    else
+      provider_new_accreditation_path
+    end
+  end
+
+  def cancel_path
+    if setup_context?
+      root_path
+    else
+      provider_accreditations_path(@provider)
+    end
   end
 
   def create_accreditation_params

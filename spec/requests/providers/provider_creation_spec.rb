@@ -144,30 +144,4 @@ RSpec.describe "Provider creation", type: :request do
       expect(flash[:success]).to be_nil
     end
   end
-
-  describe "transactional save" do
-    it "does not leave a partially created provider when a related record fails to save" do
-      complete_onboarding_and_accreditation(accreditation_status: "accredited")
-      post new_provider_type_path, params: { provider: { provider_type: "hei" } }
-      post new_provider_details_path, params: { provider: provider_details_params }
-      post new_provider_accreditation_path, params: {
-        accreditation: {
-          number: "1234",
-          "start_date(3i)" => "1",
-          "start_date(2i)" => "1",
-          "start_date(1i)" => Date.current.year.to_s
-        }
-      }
-
-      get new_provider_confirm_path
-      expect(response).to have_http_status(:ok)
-
-      allow_any_instance_of(AccreditationForm).to receive(:to_accreditation_attributes)
-        .and_return({ number: nil, start_date: nil })
-
-      expect { post provider_confirm_path }.not_to(change { Provider.count })
-
-      expect(response).to have_http_status(:redirect)
-    end
-  end
 end

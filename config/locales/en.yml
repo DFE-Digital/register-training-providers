@@ -152,6 +152,13 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
+            number:
+              blank: "Enter an accredited provider number"
+              invalid_format_hei: "Enter accredited provider number in the correct format, like 1234"
+              invalid_format_scitt: "Enter accredited provider number in the correct format, like 5678"
+              invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
+            start_date:
+              blank: "Enter accreditation start date"
         providers/mark_as_active/date_form:
           attributes:
             end_date:
@@ -304,7 +311,7 @@ en:
       start_date:
         label: "Accreditation start date"
       end_date:
-        label: "Accreditation end date (optional)"
+        label: "Accreditation end date"
     api_client:
       name:
         label: "Client name"

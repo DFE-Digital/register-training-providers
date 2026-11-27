@@ -1,6 +1,39 @@
 module Accreditations
   class CheckController < ::CheckController
     include FormObjectSavePattern
+    include AccreditationJourneyController
+
+    def new
+      @form = ::AccreditationForm.new(accreditation_data)
+      @form.provider_id = provider.id
+
+      authorize @form
+
+      if @form.invalid?
+        redirect_to provider_new_accreditation_path(provider)
+      else
+
+        render :new
+      end
+    end
+
+    def create
+      @form = ::AccreditationForm.new(accreditation_data)
+      @form.provider_id = provider.id
+
+      accreditation = provider.accreditations.build(@form.to_accreditation_attributes)
+
+      authorize accreditation
+
+      if accreditation.save
+        accreditation_session.clear!
+
+        redirect_to provider_accreditations_path(provider),
+                    flash: { success: I18n.t("flash_message.success.check.accreditation.add") }
+      else
+        redirect_to provider_new_accreditation_path(provider)
+      end
+    end
 
   private
 
@@ -18,6 +51,10 @@ module Accreditations
 
     def model
       @model ||= current_user.load_temporary(model_class, purpose:)
+    end
+
+    def accreditation_data
+      accreditation_session.load_accreditation
     end
 
     def success_path

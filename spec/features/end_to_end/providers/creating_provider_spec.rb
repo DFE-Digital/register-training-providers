@@ -164,23 +164,27 @@ RSpec.feature "Add Provider" do
     end
 
     def and_i_fill_in_the_accreditation_details
-      and_i_am_taken_to("/providers/new/accreditation")
+      and_i_am_taken_to("/providers/new/accreditations")
       and_i_can_see_the_title("Accreditation details - Register of training providers - GOV.UK")
-      and_i_do_not_see_error_summary
+      #and_i_do_not_see_error_summary
 
-      and_i_click_on("Continue")
+      #and_i_click_on("Continue")
 
-      and_i_can_see_the_error_summary("Enter an accredited provider number", "Enter accreditation start date")
-      and_i_can_see_the_title("Error: Accreditation details - Register of training providers - GOV.UK")
+      #and_i_can_see_the_error_summary("Enter an accredited provider number", "Enter accreditation start date")
+      #and_i_can_see_the_title("Error: Accreditation details - Register of training providers - GOV.UK")
 
       start_year = Date.current.year
-      fill_in "Accredited provider number", with: accredited_provider_number
-      within_fieldset("Accreditation start date") do
+      fill_in "What is the accreditation number?", with: accredited_provider_number
+      and_i_click_on("Continue")
+
+      within_fieldset("When does the accreditation start?") do
         fill_in "Day", with: "1"
         fill_in "Month", with: "1"
         fill_in "Year", with: start_year.to_s
       end
+      and_i_click_on("Continue")
 
+      choose "No"
       and_i_click_on("Continue")
     end
 

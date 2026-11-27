@@ -10,12 +10,8 @@
   <% page_data(title: page_title, header: false, error: @form.errors.present?) %>
 
   <%= content_for(:page_alerts) { form.govuk_error_summary } %>
-  <%= form.govuk_fieldset legend: { text: "Accreditation details" }, caption: { text: caption } do %>
-    <%= form.govuk_text_field :number, label: { text: I18n.t("forms.accreditation.number.label"), size: "s" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(provider_type) } %>
-
-    <%= form.govuk_date_field :start_date, legend: { text: I18n.t("forms.accreditation.start_date.label"), size: "s" }, hint: { text: "For example, 1 9 2024" } %>
-
-    <%= form.govuk_date_field :end_date, legend: { text: I18n.t("forms.accreditation.end_date.label"), size: "s" }, hint: { text: "For example, 31 8 2026" } %>
+  <%= form.govuk_fieldset legend: { text: "" }, caption: { text: caption } do %>
+    <%= form.govuk_text_field :number, label: { text: "What is the accreditation number?", size: "l", tag: "h1" }, width: "one-quarter", hint: { text: accreditation_number_hint_text(provider_type) } %>
   <% end %>
   <%= form.govuk_submit %>
 

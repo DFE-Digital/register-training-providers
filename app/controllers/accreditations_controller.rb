@@ -1,5 +1,7 @@
 class AccreditationsController < ApplicationController
-  helper_method :back_path
+  include AccreditationJourneyController
+
+  helper_method :back_path, :cancel_path
 
   def index
     authorize provider.accreditations.build
@@ -8,10 +10,15 @@ class AccreditationsController < ApplicationController
 
   def new
     @provider = provider
-    current_user.clear_temporary(AccreditationForm, purpose: create_purpose) if params[:goto] != "confirm"
-    @form = current_user.load_temporary(AccreditationForm, purpose: create_purpose, reset: false)
+    accreditation_data = accreditation_session.load_accreditation
+    @form = if accreditation_data
+              Accreditations::NumberForm.new({number: accreditation_data[:number]})
+            else
+              Accreditations::NumberForm.new
+            end
+
     @form.provider_id = provider.id
-    @form.provider_type = provider.provider_type
+
     authorize @form
   end
 
@@ -34,14 +41,14 @@ class AccreditationsController < ApplicationController
   end
 
   def create
-    @form = AccreditationForm.new(accreditation_form_params)
+    @form = Accreditations::NumberForm.new(accreditation_form_params)
     @form.provider_id = provider.id
     @form.provider_type = provider.provider_type
     authorize @form
 
     if @form.valid?
-      @form.save_as_temporary!(created_by: current_user, purpose: create_purpose)
-      redirect_to new_accreditation_confirm_path(provider_id: provider.id)
+      accreditation_session.store_accreditation(@form.attributes)
+      redirect_to success_path
     else
       @provider = provider
       render :new
@@ -68,8 +75,7 @@ class AccreditationsController < ApplicationController
 private
 
   def accreditation_form_params
-    params.expect(accreditation: [:number, *AccreditationForm::PARAM_CONVERSION.keys])
-      .transform_keys { |k| AccreditationForm::PARAM_CONVERSION.fetch(k, k) }
+    params.expect(accreditation: [:number])
   end
 
   def edit_purpose(accreditation)
@@ -81,6 +87,14 @@ private
   end
 
   def back_path
+    provider_accreditations_path(provider)
+  end
+
+  def success_path
+    provider_new_accreditation_start_date_path(provider_id: provider.id)
+  end
+
+  def cancel_path
     provider_accreditations_path(provider)
   end
 end
