@@ -25,7 +25,7 @@ RSpec.describe Partnerships::Steps::DatesStep do
     it "is invalid" do
       expect(step).not_to be_valid
       expect(step.errors[:start_date]).to include(
-        I18n.t("activerecord.errors.models.partnerships/dates_form.attributes.start_date.blank")
+        I18n.t("activerecord.errors.models.partnerships/dates_step.attributes.start_date.blank")
       )
     end
   end

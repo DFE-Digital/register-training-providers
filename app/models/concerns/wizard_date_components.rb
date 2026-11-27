@@ -38,7 +38,7 @@ module WizardDateComponents
 
       const_get(:DATE_FIELDS).each do |field|
         date = params[field]
-        next if date.blank? || params[:"#{field}_day"].present?
+        next if date.blank? || !params[:"#{field}_day"].nil?
 
         params[:"#{field}_day"] = date.day
         params[:"#{field}_month"] = date.month

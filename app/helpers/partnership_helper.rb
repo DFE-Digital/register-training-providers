@@ -17,7 +17,8 @@ module PartnershipHelper
       if include_actions && policy(partnership).update?
         card[:actions] = [
           { text: "Change",
-            href: provider_edit_partnership_dates_path(partnership, provider_id: provider.id) },
+            href: provider_edit_partnership_step_path(provider_id: provider.id, partnership_id: partnership.id,
+                                                      step: "dates") },
           { text: "Delete",
             href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
         ]
