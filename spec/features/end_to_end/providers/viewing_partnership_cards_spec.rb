@@ -28,6 +28,18 @@ RSpec.describe "Viewing partnership cards", type: :feature do
     end
   end
 
+  scenario "does not offer edit or end actions when the accredited provider is archived" do
+    provider.update!(archived_at: Time.zone.now)
+
+    visit provider_partnerships_path(provider)
+
+    within(".govuk-summary-card", text: partner.operating_name) do
+      expect(page).to have_content("Recruitment")
+      expect(page).not_to have_link("Change")
+      expect(page).not_to have_link("End partnership")
+    end
+  end
+
   scenario "does not list an ended partnership as current" do
     partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2025, 7, 31))
 

@@ -69,6 +69,16 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       expect(response.body).to include(provider.operating_name)
     end
 
+    context "when the accredited provider is archived" do
+      before { provider.update!(archived_at: Time.zone.now) }
+
+      it "forbids the edit journey even though the training partner is active" do
+        get root_path
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
     it "pre-fills the partnership's current start date on the entry URL the Change link uses" do
       partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
 

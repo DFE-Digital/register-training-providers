@@ -3,7 +3,7 @@ module PartnershipHelper
     return [] if partnerships.empty?
 
     partnerships.map do |partnership|
-      change_paths = if include_actions && policy(partnership).update?
+      change_paths = if include_actions && policy(provider).manage_partnerships?
                        partnership_card_change_paths(partnership, provider)
                      else
                        {}
@@ -20,7 +20,7 @@ module PartnershipHelper
                                enter_end_date: true)
       }
 
-      if include_actions && policy(partnership).update?
+      if include_actions && policy(provider).manage_partnerships?
         card[:actions] = []
         if partnership.can_be_ended?
           card[:actions] << { text: "End partnership",
