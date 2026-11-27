@@ -112,6 +112,12 @@ erDiagram
 		datetime discarded_at
 		uuid partnership_id FK
 	}
+	PartnershipType {
+		datetime discarded_at
+		uuid partnership_id FK
+		string partnership_type
+		string source
+	}
 	Provider {
 		string accreditation_status
 		datetime archived_at
@@ -176,6 +182,7 @@ erDiagram
 	Contact o|--}o "Audited::Audit" : ""
 	Partnership o|--}o "Audited::Audit" : ""
 	PartnershipAcademicYear o|--}o "Audited::Audit" : ""
+	PartnershipType o|--}o "Audited::Audit" : ""
 	Provider o|--}o "Audited::Audit" : ""
 	ProviderAcademicYear o|--}o "Audited::Audit" : ""
 	ProviderChange o|--}o "Audited::Audit" : ""
@@ -196,6 +203,7 @@ erDiagram
 	Provider ||--}o Contact : ""
 	Provider ||--}o Partnership : ""
 	Partnership ||--}o PartnershipAcademicYear : ""
+	Partnership ||--}o PartnershipType : ""
 	User ||--}o TemporaryRecord : ""
 	User o|--}o ProviderChange : ""
 	Provider o|--}o TemporaryRecord : ""

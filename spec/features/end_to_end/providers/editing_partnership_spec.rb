@@ -16,7 +16,7 @@ RSpec.describe "Editing partnership", type: :feature do
     end
     let!(:partnership) do
       # Build without default academic cycle from factory callback
-      p = Partnership.create!(
+      p = create_partnership(
         provider: training_partner,
         accredited_provider: accredited_provider,
         duration: academic_year_current.duration.to_a.sample..
@@ -175,7 +175,7 @@ RSpec.describe "Editing partnership", type: :feature do
       create(:academic_year, :current)
     end
     let!(:partnership) do
-      p = Partnership.create!(
+      p = create_partnership(
         provider: partner,
         accredited_provider: provider,
         duration: academic_year.duration.to_a.sample..
@@ -223,7 +223,7 @@ RSpec.describe "Editing partnership", type: :feature do
       create(:academic_year, :current)
     end
     let!(:partnership) do
-      p = Partnership.create!(
+      p = create_partnership(
         provider: partner,
         accredited_provider: provider,
         duration: Date.new(current_year, 1, 1)..
@@ -261,6 +261,13 @@ private
       fill_in "Month", with: "9"
       fill_in "Year", with: current_year.to_s
     end
+  end
+
+  def create_partnership(provider:, accredited_provider:, duration:)
+    partnership = Partnership.new(provider:, accredited_provider:, duration:)
+    partnership.partnership_types.build(partnership_type: PartnershipTypeEnum::RECRUITMENT)
+    partnership.save!
+    partnership
   end
 
   def display_academic_year(academic_year)

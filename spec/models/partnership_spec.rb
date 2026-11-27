@@ -43,7 +43,10 @@ RSpec.describe Partnership, type: :model do
     let(:partner_123) { create(:provider, :hei, :unaccredited, operating_name: "123 Academy") }
 
     let!(:partnership_zebra_old) do
-      create(:partnership, accredited_provider: accredited_provider, provider: partner_zebra, duration: Date.new(2020, 1, 1)..)
+      create(:partnership,
+             accredited_provider: accredited_provider,
+             provider: partner_zebra,
+             duration: Date.new(2020, 1, 1)...Date.new(2021, 1, 1))
     end
     let!(:partnership_alpha) do
       create(:partnership, accredited_provider: accredited_provider, provider: partner_alpha, duration: Date.new(2022, 1, 1)..)
@@ -83,6 +86,53 @@ RSpec.describe Partnership, type: :model do
 
         expect(ordered.to_a).to eq([partnership_with_alpha, partnership_with_zebra])
       end
+    end
+  end
+
+  describe "partnership types" do
+    it "is valid with at least one partnership type" do
+      expect(build(:partnership)).to be_valid
+    end
+
+    it "requires at least one partnership type" do
+      partnership = build(:partnership, partnership_type: nil)
+
+      expect(partnership).not_to be_valid
+      expect(partnership.errors[:partnership_types]).to be_present
+    end
+
+    it "does not count a discarded type towards the requirement" do
+      partnership = create(:partnership)
+      partnership.partnership_types.sole.discard
+
+      expect(partnership.reload).not_to be_valid
+      expect(partnership.errors[:partnership_types]).to be_present
+    end
+  end
+
+  describe ".current_or_scheduled" do
+    let(:accredited_provider) { create(:provider, :accredited) }
+
+    let!(:open_ended) do
+      create(:partnership, accredited_provider: accredited_provider, duration: Date.new(2020, 1, 1)..)
+    end
+    let!(:ends_in_the_future) do
+      create(:partnership,
+             accredited_provider: accredited_provider,
+             duration: Date.new(2020, 1, 1)...(Time.zone.today + 1.year))
+    end
+    let!(:ended) do
+      create(:partnership,
+             accredited_provider: accredited_provider,
+             duration: Date.new(2020, 1, 1)...Date.new(2021, 1, 1))
+    end
+
+    it "includes open ended and not yet ended partnerships" do
+      expect(described_class.current_or_scheduled).to include(open_ended, ends_in_the_future)
+    end
+
+    it "excludes ended partnerships" do
+      expect(described_class.current_or_scheduled).not_to include(ended)
     end
   end
 end

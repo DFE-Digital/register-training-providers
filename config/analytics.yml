@@ -48,6 +48,14 @@
     - duration
     - provider_id
     - updated_at
+  :partnership_types:
+    - id
+    - partnership_id
+    - partnership_type
+    - source
+    - discarded_at
+    - created_at
+    - updated_at
   :contacts:
     - id
     - created_at

@@ -9,10 +9,13 @@ module DataImporter
     def call
       ActiveRecord::Base.transaction do
         partnership = find_or_initialize_partnership
+        created = partnership.new_record?
 
         assign_duration(partnership)
 
         partnership.save!(validate: false)
+
+        partnership.apply_default_partnership_type(source: "import").save! if created
 
         attach_academic_years(partnership)
 

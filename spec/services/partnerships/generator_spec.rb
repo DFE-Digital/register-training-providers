@@ -29,4 +29,31 @@ RSpec.describe Generators::Partnerships, type: :service do
       expect(target_ids).not_to include(previously_accredited_scitt.id)
     end
   end
+
+  describe ".call" do
+    before do
+      create(:provider, :scitt_without_accreditation)
+      create(:provider, :hei)
+    end
+
+    it "creates a recruitment partnership type for every generated partnership" do
+      described_class.call(percentage: 1.0)
+
+      expect(Partnership.count).to be_positive
+      expect(PartnershipType.where(partnership_type: PartnershipTypeEnum::RECRUITMENT).count)
+        .to eq(Partnership.count)
+    end
+
+    it "skips a partner that already has a current partnership with the accredited provider" do
+      already_partnered = create(:provider, :scitt_without_accreditation)
+      unpartnered = create(:provider, :scitt_without_accreditation)
+      accredited_provider = Provider.accredited.sole
+      existing = create(:partnership, provider: already_partnered, accredited_provider: accredited_provider)
+
+      expect { described_class.call(percentage: 1.0) }.not_to raise_error
+
+      expect(Partnership.where(provider: already_partnered).pluck(:id)).to eq([existing.id])
+      expect(Partnership.where(provider: unpartnered).count).to eq(1)
+    end
+  end
 end
