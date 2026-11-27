@@ -75,7 +75,12 @@ class AccreditationsController < ApplicationController
 private
 
   def accreditation_form_params
-    params.expect(accreditation: [:number])
+    if action_name == "update"
+      params.expect(accreditation: [:number, *AccreditationForm::PARAM_CONVERSION.keys])
+        .transform_keys { |k| AccreditationForm::PARAM_CONVERSION.fetch(k, k) }
+    else
+      params.expect(accreditation: [:number])
+    end
   end
 
   def edit_purpose(accreditation)
