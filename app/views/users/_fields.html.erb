@@ -30,6 +30,20 @@
         value: !@user.api_user?
       ) %>
 <% end %>
+<% unless @user.api_user? %>
+  <%= form.govuk_radio_buttons_fieldset(:role,
+                                        legend: { size: "s", text: "Role", tag: "h2" },
+                                        hint: { text: "The role determines what the user can view and change in the Register." }) do %>
+    <% UserRoleEnum::USER_ROLES.each_key do |role| %>
+      <%= form.govuk_radio_button(
+            :role,
+            role,
+            label: { text: UserRoleEnum.label_for(role) },
+            hint: { text: UserRoleEnum.description_for(role) }
+          ) %>
+    <% end %>
+  <% end %>
+<% end %>
 <% if @user.persisted? %>
   <%= form.govuk_radio_buttons_fieldset(:active, inline: true, legend: { size: "s", text: "Is the account active?", tag: "h2" }) do %>
     <%= form.govuk_radio_button(

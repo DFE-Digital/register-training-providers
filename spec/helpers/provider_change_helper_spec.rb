@@ -351,4 +351,207 @@ RSpec.describe ProviderChangeHelper, type: :helper do
       expect(helper.display_change_date(nil)).to eq("")
     end
   end
+
+  describe "#provider_field_level_history with status changes" do
+    let(:provider) { create(:provider, *provider_traits) }
+    let(:provider_traits) { [:archived] }
+    let(:creator) { create(:user) }
+
+    let(:baseline) do
+      create(:provider_change,
+             :baseline,
+             provider: provider,
+             attribute_name: "status",
+             value: { "status" => "active" },
+             effective_on: 2.years.ago.to_date)
+    end
+    let(:archive_change) do
+      create(:provider_change,
+             provider: provider,
+             attribute_name: "status",
+             value: { "status" => "archived" },
+             effective_on: 1.year.ago.to_date,
+             status: :completed,
+             creator: creator)
+    end
+
+    it "renders the status label for a status change" do
+      row = helper.provider_field_level_history([archive_change]).first
+
+      expect(row[0]).to eq("Archived")
+      expect(row[4]).to eq(creator.name)
+      expect(row[5]).to include("Current")
+    end
+
+    context "when the status change captured reasons" do
+      let(:inactive_change) do
+        create(:provider_change,
+               :status_change,
+               provider: provider,
+               value: { "status" => "inactive",
+                        "reason_ids" => %w[no_current_cohorts other],
+                        "other_reason" => "Lost the building" },
+               effective_on: 1.month.ago.to_date,
+               status: :completed,
+               creator: creator)
+      end
+
+      it "renders the captured reasons in the second column" do
+        row = helper.provider_field_level_history([inactive_change]).first
+
+        expect(row[1]).to eq("No current cohorts, Lost the building")
+      end
+
+      it "keeps every cell aligned with the header columns it declares" do
+        header = ["Provider status", "Reason", "Start date", "End date", "Changed by", "Current"]
+        rows = helper.provider_field_level_history([inactive_change, baseline])
+
+        rows.each { |row| expect(row.size).to eq(header.size) }
+
+        inactive_row = rows[0]
+        expect(inactive_row[0]).to eq("Inactive") # Provider status value
+        expect(inactive_row[1]).to eq("No current cohorts, Lost the building") # Reason
+        expect(inactive_row[2]).to eq(inactive_change.effective_on.to_fs(:govuk)) # Start date
+        expect(inactive_row[3]).to eq("") # Latest change, so no end date
+        expect(inactive_row[4]).to eq(creator.name) # Changed by
+        expect(inactive_row[5]).to include("govuk-tag") # Status tag
+
+        baseline_row = rows[1]
+        expect(baseline_row[3]).to eq((inactive_change.effective_on - 1.day).to_fs(:govuk))
+      end
+
+      it "leaves the reason column blank for changes without reasons" do
+        row = helper.provider_field_level_history([archive_change]).first
+
+        expect(row[1]).to eq("")
+      end
+    end
+
+    context "when a system change has no creator" do
+      let(:system_change) do
+        create(:provider_change,
+               :status_change,
+               provider: provider,
+               value: { "status" => "archived" },
+               effective_on: 1.year.ago.to_date,
+               status: :completed,
+               source: :system,
+               creator: nil)
+      end
+
+      it "credits the system rather than a deleted user" do
+        row = helper.provider_field_level_history([system_change]).first
+
+        expect(row[4]).to eq("System")
+      end
+    end
+
+    context "when the provider currently holds a different status" do
+      let(:non_archive_change) do
+        create(:provider_change,
+               provider: provider,
+               attribute_name: "status",
+               value: { "status" => "inactive" },
+               effective_on: 1.year.ago.to_date,
+               status: :completed,
+               creator: creator)
+      end
+
+      it "marks the change as superseded" do
+        row = helper.provider_field_level_history([non_archive_change]).first
+
+        expect(row[5]).to include("Superseded")
+      end
+    end
+
+    context "when consecutive status changes share an effective date" do
+      let(:provider) do
+        create(:provider, inactive_periods: [{ "start_date" => 1.month.ago.to_date.to_s, "end_date" => nil }])
+      end
+
+      it "marks only the latest completed change as current" do
+        build_change = lambda do |status|
+          create(:provider_change,
+                 :status_change,
+                 provider: provider,
+                 value: { "status" => status },
+                 effective_on: Date.current,
+                 status: :completed,
+                 creator: creator)
+        end
+
+        earlier_inactive_change = build_change.call("inactive")
+        archive_change = build_change.call("archived")
+        current_inactive_change = build_change.call("inactive")
+
+        rows = helper.provider_field_level_history(
+          [current_inactive_change, archive_change, earlier_inactive_change]
+        )
+
+        expect(rows[0][5]).to include("Current")
+        expect(rows[2][5]).to include("Superseded")
+      end
+    end
+
+    context "when a status change is scheduled for the future" do
+      let(:scheduled_change) do
+        create(:provider_change,
+               :status_change,
+               provider: provider,
+               value: { "status" => "active" },
+               effective_on: 1.week.from_now.to_date,
+               status: :pending,
+               creator: creator)
+      end
+
+      it "marks the change as scheduled rather than superseded" do
+        row = helper.provider_field_level_history([scheduled_change]).first
+
+        expect(row[5]).to include("Scheduled")
+        expect(row[5]).not_to include("Inactive")
+      end
+    end
+
+    it "credits the baseline with the status the provider held" do
+      row = helper.provider_field_level_history([archive_change, baseline]).last
+
+      expect(row[0]).to eq("Active")
+    end
+  end
+
+  describe "#status_reason_legend" do
+    it "asks the off-board wording when off-boarding" do
+      expect(helper.status_reason_legend("offboarded")).to eq("Why was the provider offboarded?")
+    end
+
+    it "asks the inactive wording otherwise" do
+      expect(helper.status_reason_legend("inactive")).to eq("Why did the provider become inactive?")
+    end
+  end
+
+  describe "#status_effective_date_legend" do
+    it "uses the off-board wording when off-boarding" do
+      expect(helper.status_effective_date_legend("offboarded")).to eq("When was the provider offboarded?")
+    end
+
+    it "names the status being adopted" do
+      expect(helper.status_effective_date_legend("active")).to eq("When did the provider become active?")
+      expect(helper.status_effective_date_legend("inactive")).to eq("When did the provider become inactive?")
+    end
+  end
+
+  describe "#status_effective_date_hint" do
+    it "names the earliest date the wizard will accept" do
+      provider = build_stubbed(:provider, onboarded_at: Date.new(2025, 3, 1), first_active_at: nil)
+
+      expect(helper.status_effective_date_hint(provider))
+        .to eq("For example, 31 7 2026. The provider has existed since 1 March 2025, so the date cannot be earlier.")
+    end
+
+    it "falls back to the example when the provider has no known start date" do
+      provider = build_stubbed(:provider, onboarded_at: nil, first_active_at: nil)
+
+      expect(helper.status_effective_date_hint(provider)).to eq("For example, 31 7 2026")
+    end
+  end
 end

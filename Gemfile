@@ -9,7 +9,7 @@ gem "pg", "~> 1.7"
 gem "pg_search"
 
 # for sending analytics data to the analytics platform
-gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.16.1"
+gem "dfe-analytics", github: "DFE-Digital/dfe-analytics", tag: "v1.16.4"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
@@ -159,7 +159,7 @@ gem "pundit", "~> 2.5"
 # Rate limiting and throttling middleware
 gem "rack-attack"
 
-gem "roo", "~> 3.0.0"
+gem "roo", "~> 4.0.0"
 gem "write_xlsx"
 
 gem "dfe-wizard", require: "dfe/wizard", github: "DFE-Digital/dfe-wizard", branch: "main"

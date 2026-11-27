@@ -1,0 +1,9 @@
+flowchart TD
+  new_status["New Status"]
+  reasons["Reasons"]
+  effective_date["Effective Date"]
+  check_your_answers["Check Your Answers"]
+  reasons --> effective_date
+  effective_date --> check_your_answers
+  new_status -->|reason_capture_required?: ✓ yes| reasons
+  new_status -->|reason_capture_required?: ✗ no| effective_date

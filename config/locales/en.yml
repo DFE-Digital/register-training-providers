@@ -24,7 +24,23 @@ en:
       otp:
         body: Sign in using your email address and a one-time password.
         button: Sign in using your email
+  users:
+    roles:
+      reg: "Register"
+      mr: "Market Regulation"
+      bat: "BAT Support"
+      ro: "Read-only"
+    role_descriptions:
+      reg: "Service administration and full administrative access"
+      mr: "Operational management of accredited providers, accreditation and associated partnerships"
+      bat: "Operational management of non-accredited providers"
+      ro: "View-only access to authorised Register information"
   providers:
+    statuses:
+      active: "Active"
+      inactive: "Inactive"
+      offboarded: "Offboarded"
+      archived: "Archived"
     accreditation_statuses:
       accredited: "Accredited"
       unaccredited: "Not accredited"
@@ -71,6 +87,9 @@ en:
               inclusion: "Select if the account is an API user"
             active:
               inclusion: "Select if the account is active"
+            role:
+              blank: "Select a role"
+              inclusion: "Select a role"
         accreditation:
           attributes:
             number:
@@ -152,28 +171,6 @@ en:
               taken: "Enter a unique provider code"
             postcode:
               invalid_postcode_format: "Enter a valid UK postcode"
-            number:
-              blank: "Enter an accredited provider number"
-              invalid_format_hei: "Enter accredited provider number in the correct format, like 1234"
-              invalid_format_scitt: "Enter accredited provider number in the correct format, like 5678"
-              invalid_format_generic: "Enter a valid accredited provider number - it must be 4 digits starting with a 1 or a 5"
-            start_date:
-              blank: "Enter accreditation start date"
-        providers/mark_as_active/date_form:
-          attributes:
-            end_date:
-              blank: "Enter the date that inactivity ended"
-              greater_than: "Enter a valid end date"
-        providers/mark_as_inactive/date_form:
-          attributes:
-            start_date:
-              blank: "Enter the date that inactivity started"
-        providers/mark_as_inactive/reasons_form:
-          attributes:
-            reasons:
-              blank: "Select at least one reason"
-            other_reason:
-              blank: "Enter a reason"
         academic_years:
           attributes:
             academic_year_ids:
@@ -241,6 +238,24 @@ en:
               blank: "Select provider type"
               inclusion: "Select a valid provider type"
               same: "Select a different provider type"
+        provider_changes/steps/status_step:
+          attributes:
+            new_status:
+              blank: "Select the new provider status"
+              inclusion: "Select a valid provider status"
+        provider_changes/steps/reasons_step:
+          attributes:
+            reasons:
+              blank: "Select at least one reason"
+              inclusion: "Select a valid reason"
+            other_reason:
+              blank: "Enter a reason"
+              too_long: "The reason must be 255 characters or fewer"
+        provider_changes/steps/status_effective_date_step:
+          attributes:
+            effective_on:
+              within_existing_period: "Enter a date that is not within or before an existing period"
+              before_the_provider_existed: "Enter a date that is not before the provider was onboarded"
   flash_message:
     success:
       accreditation:
@@ -299,6 +314,8 @@ en:
           updated: "Operating name change request submitted successfully"
         provider_type:
           updated: "Provider type change request submitted successfully"
+        status:
+          updated: "Provider status change request submitted successfully"
   forms:
     providers:
       is_the_provider_accredited:
@@ -355,6 +372,15 @@ en:
         select:
           no_search_data: "Please search for an address first"
           invalid_index: "Please select a valid address"
+      archives:
+        update:
+          status_changed: "The provider could not be archived because its status changed"
+      deletes:
+        update:
+          status_changed: "The provider could not be deleted because its status changed"
+      restores:
+        update:
+          status_changed: "The provider could not be restored because its status changed"
   imported_data:
     fields:
       provider:

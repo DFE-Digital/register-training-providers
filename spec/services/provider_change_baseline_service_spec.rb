@@ -37,6 +37,52 @@ RSpec.describe ProviderChangeBaselineService do
       ).to be_empty
     end
 
+    context "when the attribute is the provider status" do
+      let(:attribute_name) { "status" }
+
+      it "records the current status as a structured value" do
+        call_service
+
+        expect(provider.provider_changes.baseline.sole.value)
+          .to eq("status" => "active")
+      end
+
+      context "when a status value is supplied" do
+        it "records the supplied status instead of the provider's current one" do
+          described_class.call(provider: provider, attribute_name: "status", status_before_change: "archived")
+
+          expect(provider.provider_changes.baseline.sole.value)
+            .to eq("status" => "archived")
+        end
+      end
+
+      context "when the provider was onboarded before it became active" do
+        let(:provider) do
+          create(:provider, first_active_at: Date.new(2024, 5, 1), onboarded_at: Date.new(2024, 4, 1))
+        end
+
+        it "dates the baseline from the earliest date the provider existed" do
+          call_service
+
+          expect(provider.provider_changes.baseline.sole.effective_on).to eq(Date.new(2024, 4, 1))
+        end
+      end
+
+      context "when the provider has no lifecycle dates" do
+        let(:provider) do
+          create(:provider).tap do |created_provider|
+            created_provider.update_columns(first_active_at: nil, onboarded_at: nil)
+          end
+        end
+
+        it "dates the baseline from the creation date" do
+          call_service
+
+          expect(provider.provider_changes.baseline.sole.effective_on).to eq(provider.created_at.to_date)
+        end
+      end
+    end
+
     it "records a baseline per attribute" do
       described_class.call(provider: provider, attribute_name: "code")
       described_class.call(provider: provider, attribute_name: "ukprn")

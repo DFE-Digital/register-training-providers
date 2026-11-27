@@ -1,13 +1,13 @@
 module ApplicationHelper
+  include ProviderHelper
+
   include DfE::Autocomplete::ApplicationHelper
 
   def provider_page_data(provider)
     tag = []
-    tag = [" ", govuk_tag(text: "Archived", classes: "govuk-tag__heading")] if provider.archived?
-
-    tag = [" ", govuk_tag(text: "Soft deleted", colour: "red", classes: "govuk-tag__heading")] if provider.discarded?
-
-    tag = [" ", govuk_tag(text: "Inactive", colour: "yellow", classes: "govuk-tag__heading")] if provider.inactive?
+    if (status_tag = provider_status_tag(provider))
+      tag = [" ", govuk_tag(**status_tag, classes: "govuk-tag__heading")]
+    end
 
     page_data(title: provider.operating_name, caption: "Provider", subtitle: "Provider",
               header: safe_join([provider.operating_name] + tag))
@@ -75,6 +75,15 @@ module ApplicationHelper
   def signed_in_navigation_items(user:)
     if user.api_user?
       [
+        { text: "Providers", href: providers_path, active_when: providers_path },
+        { text: "API clients", href: api_clients_path, active_when: api_clients_path },
+        { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
+        { text: "Sign out", href: sign_out_path },
+      ]
+    elsif user.reg?
+      [
+        { text: "Providers", href: providers_path, active_when: providers_path },
+        { text: "Users", href: users_path, active_when: users_path },
         { text: "API clients", href: api_clients_path, active_when: api_clients_path },
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
@@ -82,8 +91,6 @@ module ApplicationHelper
     else
       [
         { text: "Providers", href: providers_path, active_when: providers_path },
-        { text: "Users", href: users_path, active_when: users_path },
-        { text: "API clients", href: api_clients_path, active_when: api_clients_path },
         { text: "Your account", href: account_path, classes: "app-service-navigation__align-right" },
         { text: "Sign out", href: sign_out_path },
       ]

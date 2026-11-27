@@ -16,6 +16,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "includes the Archived tag" do
         result = helper.provider_page_data(provider)
         expect(result[:page_header]).to include("Archived")
+        expect(result[:page_header]).to include("govuk-tag--grey")
       end
     end
 
@@ -35,6 +36,41 @@ RSpec.describe ApplicationHelper, type: :helper do
         result = helper.provider_page_data(provider)
         expect(result[:page_header]).to include("Soft deleted")
         expect(result[:page_header]).not_to include("Archived")
+      end
+    end
+
+    context "when provider has an open offboarded period" do
+      let(:provider) { build_stubbed(:provider) }
+
+      before do
+        allow(provider).to receive(:open_offboarded_period).and_return(
+          { "start_date" => 1.month.ago.to_date.to_s, "end_date" => nil, "offboarded" => true }
+        )
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it "includes the Offboarded tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Offboarded")
+      end
+
+      it "takes precedence over the Inactive tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).not_to include(">Inactive")
+      end
+    end
+
+    context "when provider is inactive" do
+      let(:provider) { build_stubbed(:provider) }
+
+      before do
+        allow(provider).to receive(:inactive?).and_return(true)
+      end
+
+      it "includes the Inactive tag" do
+        result = helper.provider_page_data(provider)
+        expect(result[:page_header]).to include("Inactive")
+        expect(result[:page_header]).not_to include("Offboarded")
       end
     end
   end
@@ -161,7 +197,8 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       subject(:items) { helper.navigation_items(user:) }
 
-      context "for a support user" do
+      context "for a REG user" do
+        let(:user) { build_stubbed(:user, :reg) }
         let(:api_user) { false }
 
         it "returns an array of navigation hashes" do
@@ -207,12 +244,31 @@ RSpec.describe ApplicationHelper, type: :helper do
         end
       end
 
+      %i[mr bat ro].each do |role|
+        context "for a #{role} user" do
+          let(:user) { build_stubbed(:user, role) }
+
+          it "returns the operational links without admin links" do
+            expect(items.size).to eq(3)
+            expect(items.pluck(:text)).to contain_exactly("Providers", "Your account", "Sign out")
+          end
+        end
+      end
+
       context "for an api user" do
         let(:api_user) { true }
 
         it "returns an array of navigation hashes" do
           expect(items).to be_an(Array)
-          expect(items.size).to eq(3)
+          expect(items.size).to eq(4)
+        end
+
+        it "includes the Providers link" do
+          providers = items.find { |i| i[:text] == "Providers" }
+          expect(providers).to include(
+            href: providers_path,
+            active_when: providers_path
+          )
         end
 
         it "includes the API clients link" do

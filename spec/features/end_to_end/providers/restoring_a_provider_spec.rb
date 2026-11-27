@@ -6,10 +6,25 @@ RSpec.feature "Restore Provider" do
     and_i_confirm_archiving_the_provider
     then_i_should_be_redirected_to_the_provider_details_page
     and_i_should_see_a_success_message
+    and_the_restoration_is_recorded_in_the_provider_status_history
   end
 
   def and_i_should_see_a_success_message
     expect(page).to have_notification_banner("Success", "Provider restored")
+  end
+
+  def and_the_restoration_is_recorded_in_the_provider_status_history
+    provider.reload
+
+    restore_change = provider.provider_changes.requested.for_attribute("status").sole
+    expect(restore_change).to have_attributes(
+      value: { "status" => "active", "previous_status" => "archived" },
+      status: "completed",
+      creator: current_user
+    )
+    expect(
+      provider.provider_changes.baseline.for_attribute("status").sole.value
+    ).to eq("status" => "archived")
   end
 
   def then_i_should_be_redirected_to_the_provider_details_page
