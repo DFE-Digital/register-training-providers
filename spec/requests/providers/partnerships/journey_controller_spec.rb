@@ -98,8 +98,8 @@ RSpec.describe "Provider partnership add journey", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "moves on to the types step" do      choose_partner
-
+    it "moves on to the types step" do
+      choose_partner
       expect(response).to redirect_to(step_path("types"))
     end
 
@@ -154,7 +154,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
       get step_path("types")
 
       expect(response.body).to include("cannot be added")
-      expect(Nokogiri::HTML(response.body).css("input[type='checkbox']")).to be_empty
+      expect(response.parsed_body.css("input[type='checkbox']")).to be_empty
     end
 
     it "rejects a type that is already used with this partner" do
@@ -171,7 +171,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       get step_path("types")
 
-      document = Nokogiri::HTML(response.body)
+      document = response.parsed_body
       expect(document.css("input[name='types[partnership_types][]']").pluck("value"))
         .not_to include(PartnershipTypeEnum::RECRUITMENT)
       expect(document.css("ul.govuk-list--bullet li").map(&:text)).to eq(["Recruitment"])
@@ -185,14 +185,14 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       expect(response.body).to include("Placement is not available")
       expect(response.body).to include("Available partnership types")
-      expect(Nokogiri::HTML(response.body).css("input[name='types[partnership_types][]']").pluck("value"))
+      expect(response.parsed_body.css("input[name='types[partnership_types][]']").pluck("value"))
         .not_to include(PartnershipTypeEnum::PLACEMENT)
     end
 
     it "renders the supporting content inside the types fieldset" do
       get step_path("types")
 
-      fieldset = Nokogiri::HTML(response.body).at_css("fieldset.govuk-fieldset")
+      fieldset = response.parsed_body.at_css("fieldset.govuk-fieldset")
       content = fieldset.inner_html
 
       expect(content.index("Select partnership types")).to be < content.index("All selected partnership types")
@@ -207,7 +207,7 @@ RSpec.describe "Provider partnership add journey", type: :request do
 
       get step_path("types")
 
-      expect(Nokogiri::HTML(response.body).css("input[name='types[partnership_types][]']").pluck("value"))
+      expect(response.parsed_body.css("input[name='types[partnership_types][]']").pluck("value"))
         .to include(PartnershipTypeEnum::PLACEMENT)
       expect(response.body).not_to include("Placement is not available")
     end
