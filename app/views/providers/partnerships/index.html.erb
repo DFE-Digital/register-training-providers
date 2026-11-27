@@ -1,3 +1,5 @@
+<% content_for(:full_width, true) %>
+
 <%= content_for(:breadcrumbs) do %>
   <%= govuk_back_link(text: "Back", href: providers_path) %>
 <% end %>
@@ -7,19 +9,25 @@
 <%= content_for(:secondary_navigation) do %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Partnerships") %>
+      <%= render ProviderNavigation::View.new(provider: @provider, active_tab: "Partnerships",
+                                              debug_mode: debug_mode?) %>
     </div>
   </div>
 <% end %>
 
-<h2 class="govuk-heading-m">
-  Partnerships<%= " (#{@partnerships.count})" if @partnerships.any? %>
-</h2>
+<% if @historic_partnerships_count.positive? %>
+  <p class="govuk-body">
+    <%= govuk_link_to("View historic partnerships (#{@historic_partnerships_count})",
+                      provider_historic_partnerships_path(@provider)) %>
+  </p>
+<% end %>
 
 <% if policy(@provider).manage_partnerships? %>
   <div class="govuk-button-group">
     <%= govuk_button_link_to("Add partnership", provider_partnership_step_path(@provider)) %>
   </div>
 <% end %>
+
+<h2 class="govuk-heading-m">Current partnerships</h2>
 
 <%= render "partnerships_list", partnerships: @partnerships, provider: @provider %>

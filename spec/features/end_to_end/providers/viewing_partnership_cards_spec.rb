@@ -27,14 +27,27 @@ RSpec.describe "Viewing partnership cards", type: :feature do
     end
   end
 
-  scenario "shows an ended partnership" do
-    partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2026, 7, 31))
+  scenario "does not list an ended partnership as current" do
+    partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2025, 7, 31))
 
     visit provider_partnerships_path(provider)
 
-    within(".govuk-summary-card", text: partner.operating_name) do
-      expect(page).to have_content("Ended")
-    end
+    expect(page).not_to have_content(partner.operating_name)
+    expect(page).to have_content("View historic partnerships (1)")
+  end
+
+  scenario "links to the historic partnerships" do
+    partnership.update!(duration: Date.new(2024, 9, 1)...Date.new(2025, 7, 31))
+
+    visit provider_partnerships_path(provider)
+
+    expect(page).to have_content("Current partnerships")
+    click_link "View historic partnerships (1)"
+
+    expect(page).to have_content("Historic partnerships")
+    expect(page).to have_content("Previous partnerships for this provider.")
+    expect(page).to have_content(partner.operating_name)
+    expect(page).to have_content("Recruitment")
   end
 
   scenario "shows a scheduled partnership" do
