@@ -184,7 +184,7 @@ module Providers
       end
 
       def provider
-        @provider ||= Provider.kept.find(params[:provider_id])
+        @provider ||= Provider.kept.find(params.expect(:provider_id))
       end
 
       def repository
