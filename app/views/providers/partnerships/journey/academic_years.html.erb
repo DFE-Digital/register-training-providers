@@ -1,0 +1,30 @@
+<%= content_for(:breadcrumbs) do %>
+  <%= render GovukComponent::BackLinkComponent.new(
+        text: "Back",
+        href: @back_path
+      ) %>
+<% end %>
+
+<% page_data(title: @page_title, header: false, error: @form.errors.present?) %>
+
+<%= form_for @form, url: @form_url, method: @form_method, as: @wizard.current_step_name do |form| %>
+  <%= content_for(:page_alerts) { form.govuk_error_summary } %>
+
+  <%= form.govuk_check_boxes_fieldset :academic_year_ids,
+                                      legend: { text: @page_title, size: "l" },
+                                      caption: { text: @page_caption, size: "l" },
+                                      hint: { text: "Select all that apply" } do %>
+    <% @academic_years.each do |academic_year| %>
+      <%= form.govuk_check_box :academic_year_ids, academic_year.id,
+                               label: { text: display_academic_year(academic_year) },
+                               hint: { text: academic_year_helper_text(academic_year) },
+                               checked: Array(@form.academic_year_ids).map(&:to_s).include?(academic_year.id.to_s) %>
+    <% end %>
+  <% end %>
+
+  <%= form.govuk_submit "Continue" %>
+<% end %>
+
+<p class="govuk-body">
+  <%= govuk_link_to("Cancel", @cancel_path) %>
+</p>

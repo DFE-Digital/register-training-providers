@@ -1,4 +1,9 @@
 module PartnershipHelper
+  # Which side of the pair the current user is adding a partnership for.
+  def partnership_partner_type(provider_accredited)
+    provider_accredited ? "training_partner" : "accredited_provider"
+  end
+
   def partnership_summary_cards(partnerships, provider, include_actions: true)
     return [] if partnerships.empty?
 

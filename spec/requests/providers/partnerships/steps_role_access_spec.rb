@@ -5,65 +5,39 @@ RSpec.describe "Provider partnership step role access", type: :request do
 
   let(:accredited_provider) { create(:provider, :accredited) }
 
-  describe "dates step" do
+  describe "a journey step" do
     it "denies RO" do
       sign_in_as(create(:user, :ro))
 
-      get provider_new_partnership_dates_path(accredited_provider)
+      get provider_partnership_step_path(accredited_provider, step: "start-date")
       expect(response).to have_http_status(:forbidden)
 
-      post provider_partnership_dates_path(accredited_provider),
-           params: {
-             partnerships_dates_form: {
-               "start_date(3i)" => "1",
-               "start_date(2i)" => "9",
-               "start_date(1i)" => "2025",
-               "end_date(3i)" => "1",
-               "end_date(2i)" => "9",
-               "end_date(1i)" => "2026",
-             },
-           }
+      post provider_partnership_step_path(accredited_provider, step: "start-date"),
+           params: { start_date: { start_today: "true" } }
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "denies BAT" do
+    it "denies BAT on an accredited provider" do
       sign_in_as(create(:user, :bat))
 
-      get provider_new_partnership_dates_path(accredited_provider)
+      get provider_partnership_step_path(accredited_provider, step: "start-date")
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "permits MR" do
+    it "permits MR, who is redirected into the journey" do
       sign_in_as(create(:user, :mr))
 
-      get provider_new_partnership_dates_path(accredited_provider)
-      expect(response).to have_http_status(:ok)
-    end
-  end
+      get provider_partnership_step_path(accredited_provider, step: "start-date")
 
-  describe "academic years step" do
-    it "denies RO" do
-      sign_in_as(create(:user, :ro))
-
-      get provider_new_partnership_academic_years_path(accredited_provider)
-      expect(response).to have_http_status(:forbidden)
-
-      post provider_partnership_academic_years_path(accredited_provider), params: { select: { academic_year_ids: [] } }
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:redirect)
     end
 
-    it "denies BAT" do
-      sign_in_as(create(:user, :bat))
-
-      get provider_new_partnership_academic_years_path(accredited_provider)
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "permits MR" do
+    it "permits MR on the academic years step" do
       sign_in_as(create(:user, :mr))
 
-      get provider_new_partnership_academic_years_path(accredited_provider)
-      expect(response).to have_http_status(:ok)
+      get provider_partnership_step_path(accredited_provider, step: "academic-years")
+
+      expect(response).to have_http_status(:redirect)
     end
   end
 end
