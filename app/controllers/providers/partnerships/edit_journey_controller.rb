@@ -26,10 +26,23 @@ module Providers
 
         return save_partnership if wizard.check_your_answers?
 
+        if wizard.current_step_name == :end_date_question && removing_end_date?
+          return redirect_to provider_partnership_end_date_removal_path(
+            partnership,
+            provider_id: provider.id,
+            return_to_review: params[:return_to_review]
+          )
+        end
+
         redirect_to wizard.next_step_path(return_to_review: params[:return_to_review])
       end
 
     private
+
+      def removing_end_date?
+        partnership.duration.end.is_a?(Date) &&
+          wizard.state_store.read.with_indifferent_access[:has_end_date].to_s == "false"
+      end
 
       def first_step_path
         provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id)
@@ -41,7 +54,14 @@ module Providers
       end
 
       def save_partnership
-        unless partnership.update(wizard.partnership_form.to_partnership_attributes)
+        form = wizard.partnership_form
+        unless form.valid?
+          prepare_step
+          @form = form
+          return render(template_for_step, status: :unprocessable_content)
+        end
+
+        unless partnership.update(form.to_partnership_attributes)
           prepare_step
           flash.now[:alert] = partnership_save_failure_message(partnership)
           return render(template_for_step, status: :unprocessable_content)
@@ -49,7 +69,8 @@ module Providers
 
         wizard.clear_state
         redirect_to provider_partnerships_path(provider),
-                    flash: { success: I18n.t("flash_message.success.check.partnership.update") }
+                    flash: { success: I18n.t("flash_message.success.check.partnership.update",
+                                             name: partnership.other_partner(provider).operating_name) }
       end
 
       def prepare_step
@@ -75,7 +96,8 @@ module Providers
         @save_path = wizard.current_step_path
         @save_button_text = "Save partnership"
         @change_paths = {
-          dates: change_step_path(:dates),
+          start_date: change_step_path(:start_date),
+          end_date: change_step_path(:end_date_question),
           academic_years: change_step_path(:academic_years)
         }
       end

@@ -71,7 +71,8 @@ module Providers
 
         wizard.clear_state
         redirect_to provider_partnerships_path(provider),
-                    flash: { success: I18n.t("flash_message.success.check.partnership.add") }
+                    flash: { success: I18n.t("flash_message.success.check.partnership.add",
+                                             name: partnership.other_partner(provider).operating_name) }
       end
 
       def prepare_step
@@ -100,7 +101,8 @@ module Providers
         @change_paths = {
           partner: change_step_path(:find_partner),
           types: change_step_path(:types),
-          dates: change_step_path(:dates),
+          start_date: change_step_path(:start_date),
+          end_date: change_step_path(:end_date_question),
           academic_years: change_step_path(:academic_years)
         }
       end

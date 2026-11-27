@@ -6,6 +6,7 @@ module Partnerships
       attribute :academic_year_ids, default: -> { [] }
 
       validate :academic_year_ids_must_not_be_empty
+      validate :academic_year_ids_must_be_available
 
       def self.permitted_params
         [{ academic_year_ids: [] }]
@@ -25,6 +26,15 @@ module Partnerships
         return if Array(academic_year_ids).compact_blank.present?
 
         errors.add(:academic_year_ids, :blank)
+      end
+
+      def academic_year_ids_must_be_available
+        selected_ids = Array(academic_year_ids).compact_blank.map(&:to_s)
+        return if selected_ids.empty?
+        return if wizard.blank?
+        return if (selected_ids - wizard.eligible_academic_year_ids).empty?
+
+        errors.add(:academic_year_ids, :inclusion)
       end
     end
   end
