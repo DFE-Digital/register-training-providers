@@ -25,7 +25,7 @@ module Accreditations
 
       authorize accreditation
 
-      if accreditation.save
+      if @form.valid? && accreditation.save
         accreditation_session.clear!
 
         redirect_to provider_accreditations_path(provider),
