@@ -21,6 +21,7 @@ module Accreditations
         if @form.end_date_required?
           redirect_to provider_new_accreditation_end_date_path(provider_id: provider.id)
         else
+          accreditation_session.add_attributes({ "end_date" => nil, "end_date_day" => nil, "end_date_month" => nil, "end_date_year" => nil })
           redirect_to new_accreditation_confirm_path(provider_id: provider.id)
         end
       else
