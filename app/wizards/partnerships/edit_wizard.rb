@@ -50,7 +50,8 @@ module Partnerships
         end_date_month: ending&.month,
         end_date_year: ending&.year,
         academic_year_ids: partnership.academic_year_ids.uniq,
-        partnership_types: partnership.partnership_types.kept.pluck(:partnership_type)
+        partnership_types: partnership.partnership_types.kept.pluck(:partnership_type),
+        seeded_ended: partnership.ended_on?
       )
     end
 

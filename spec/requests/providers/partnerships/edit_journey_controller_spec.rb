@@ -476,6 +476,26 @@ RSpec.describe "Provider partnership edit journey", type: :request do
     end
   end
 
+  describe "when the partnership ends while the edit is open" do
+    before do
+      get root_path
+      submit_start_date
+      submit_end_date_question
+      submit_academic_years
+
+      # Somebody else ends the partnership after this edit was seeded.
+      partnership.update_columns(duration: Date.new(2024, 9, 1)...Date.new(2024, 12, 31))
+    end
+
+    it "does not reopen the ended partnership" do
+      patch step_path("check-your-answers")
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(partnership.reload.duration.end).to eq(Date.new(2024, 12, 31))
+      expect(flash[:alert]).to eq(I18n.t("flash_message.alert.check.partnership.ended_while_editing"))
+    end
+  end
+
   describe "changing dates after selecting academic years" do
     it "sends the user back through the steps rather than saving a stale academic-year selection" do
       get root_path

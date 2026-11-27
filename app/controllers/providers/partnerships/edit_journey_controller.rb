@@ -74,7 +74,9 @@ module Providers
 
         saved = false
 
-        if wizard.revises_partnership?
+        if partnership_ended_since_edit?
+          partnership.errors.add(:base, I18n.t("flash_message.alert.check.partnership.ended_while_editing"))
+        elsif wizard.revises_partnership?
           saved = revision_saved?(form)
         else
           Partnership.transaction do
@@ -94,6 +96,19 @@ module Providers
         redirect_to provider_partnerships_path(provider),
                     flash: { success: I18n.t("flash_message.success.check.partnership.update",
                                              name: partnership.other_partner(provider).operating_name) }
+      end
+
+      # The edit is seeded from the partnership as it was. If somebody ends it
+      # while the answers are being filled in, saving would write the seeded
+      # open-ended duration back onto the ended row and reopen it. A partnership
+      # that was already ended when the edit started is left alone: its dates
+      # can still be corrected.
+      def partnership_ended_since_edit?
+        partnership.ended_on? && !seeded_as_ended?
+      end
+
+      def seeded_as_ended?
+        wizard.state_store.read[:seeded_ended] == true
       end
 
       def revision_saved?(form)

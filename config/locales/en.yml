@@ -297,6 +297,7 @@ en:
         partnership:
           save_failed: "The partnership could not be saved. Select a different training partner and try again."
           types_unavailable: "A partnership type you selected is no longer available. Check the partnership types and try again."
+          ended_while_editing: "This partnership ended while you were editing it. Your changes have not been saved."
       partnership:
         end_failed: "The partnership could not be ended. Check it has started and has not already ended."
     success:
