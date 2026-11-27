@@ -8,19 +8,24 @@ module PartnershipHelper
     return [] if partnerships.empty?
 
     partnerships.map do |partnership|
+      actions_allowed = include_actions && partnership_actions_allowed?(provider, partnership)
+
+      change_paths = actions_allowed ? partnership_card_change_paths(partnership, provider) : {}
+
       card = {
         title: link_to(partnership.other_partner(provider).operating_name.to_s,
                        provider_partnerships_path(partnership.other_partner(provider))),
-        rows: partnership_rows(partnership, change_paths: {}, provider_accredited: nil)
+        rows: partnership_rows(partnership,
+                               change_paths: change_paths,
+                               provider_accredited: provider.accredited?,
+                               partnership_types: partnership_types_for(partnership),
+                               show_status: true)
       }
 
-      if include_actions && policy(partnership).update?
+      if actions_allowed
         card[:actions] = [
-          { text: "Change",
-            href: provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id,
-                                                      step: "start-date") },
           { text: "Delete",
-            href: provider_partnership_delete_path(partnership, provider_id: provider.id) },
+            href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
         ]
       end
 
@@ -28,7 +33,30 @@ module PartnershipHelper
     end
   end
 
-  def partnership_rows(partnership, change_paths: {}, provider_accredited: nil, partnership_types: nil)
+  # Both sides of a partnership have to be manageable: the provider whose page
+  # is being viewed and the partner the partnership belongs to. Checking only
+  # one of them shows actions for archived providers and for roles that cannot
+  # change partnerships.
+  def partnership_actions_allowed?(provider, partnership)
+    policy(provider).manage_partnerships? && policy(partnership).update?
+  end
+
+  def partnership_card_change_paths(partnership, provider)
+    {
+      types: partnership_edit_step_path(provider, partnership, "types"),
+      start_date: partnership_edit_step_path(provider, partnership, "start-date"),
+      end_date: partnership_edit_step_path(provider, partnership, "end-date-question"),
+      academic_years: partnership_edit_step_path(provider, partnership, "academic-years")
+    }
+  end
+
+  def partnership_edit_step_path(provider, partnership, step)
+    provider_partnership_edit_step_path(provider_id: provider.id, partnership_id: partnership.id,
+                                        step: step, return_to_review: "true")
+  end
+
+  def partnership_rows(partnership, change_paths: {}, provider_accredited: nil, partnership_types: nil,
+                       show_status: false)
     rows = []
 
     ap_row = { key: { text: "Accredited provider" },
@@ -50,6 +78,12 @@ module PartnershipHelper
     rows << partnership_start_row(partnership.duration, change_paths[:start_date])
     rows << partnership_end_row(partnership.duration, change_paths[:end_date])
 
+    if show_status
+      tag_details = partnership.status_tag
+      rows << { key: { text: "Status" },
+                value: { text: govuk_tag(text: tag_details[:text], colour: tag_details[:colour]) } }
+    end
+
     years_row = academic_years_row(partnership.academic_years, false, false)
     if change_paths[:academic_years].present?
       years_row[:actions] = [{ href: change_paths[:academic_years], visually_hidden_text: "academic years" }]
@@ -57,6 +91,10 @@ module PartnershipHelper
     rows << years_row
 
     rows
+  end
+
+  def partnership_types_for(partnership)
+    partnership.partnership_types.reject(&:discarded?).map(&:partnership_type)
   end
 
   def partnership_types_row(partnership_types, change_path)

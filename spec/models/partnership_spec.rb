@@ -110,6 +110,45 @@ RSpec.describe Partnership, type: :model do
     end
   end
 
+  describe "#status_label" do
+    it "is Active once the partnership has started" do
+      partnership.update!(duration: 1.day.ago..)
+
+      expect(partnership.status_label).to eq("Active")
+    end
+
+    it "is Scheduled before the start date" do
+      partnership.update!(duration: 1.month.from_now..)
+
+      expect(partnership.status_label).to eq("Scheduled")
+    end
+  end
+
+  describe "#sync_partnership_types" do
+    it "discards removed types and builds added ones" do
+      partnership.partnership_types.create!(partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+
+      partnership.sync_partnership_types(
+        [PartnershipTypeEnum::TRAINING_AND_DELIVERY, PartnershipTypeEnum::STUDENT_FEE_MANAGEMENT]
+      )
+      partnership.save!
+
+      expect(partnership.partnership_types.kept.map(&:partnership_type))
+        .to match_array([PartnershipTypeEnum::TRAINING_AND_DELIVERY,
+                         PartnershipTypeEnum::STUDENT_FEE_MANAGEMENT])
+      expect(partnership.partnership_types.where(partnership_type: PartnershipTypeEnum::RECRUITMENT).sole)
+        .to be_discarded
+    end
+
+    it "keeps unchanged types" do
+      partnership.sync_partnership_types([PartnershipTypeEnum::RECRUITMENT])
+      partnership.save!
+
+      expect(partnership.partnership_types.kept.map(&:partnership_type))
+        .to eq([PartnershipTypeEnum::RECRUITMENT])
+    end
+  end
+
   describe ".current_or_scheduled" do
     let(:accredited_provider) { create(:provider, :accredited) }
 

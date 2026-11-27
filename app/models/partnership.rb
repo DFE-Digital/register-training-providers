@@ -62,6 +62,41 @@ class Partnership < ApplicationRecord
     provider
   end
 
+  def scheduled?
+    duration.begin.present? && duration.begin > Time.zone.today
+  end
+
+  def ended?
+    duration.end.is_a?(Date) && duration.end <= Time.zone.today
+  end
+
+  def status_label
+    return "Scheduled" if scheduled?
+    return "Ended" if ended?
+
+    "Active"
+  end
+
+  def status_tag
+    colour = if scheduled?
+               "blue"
+             elsif ended?
+               "grey"
+             else
+               "green"
+             end
+
+    { text: status_label, colour: colour }
+  end
+
+  def sync_partnership_types(types)
+    types = Array(types).compact_blank.map(&:to_s).uniq
+    kept = partnership_types.kept.index_by(&:partnership_type)
+
+    kept.each { |type, record| record.discard unless types.include?(type) }
+    (types - kept.keys).each { |type| partnership_types.build(partnership_type: type, source: "user") }
+  end
+
   def apply_partnership_types(types, source: "user")
     types.each do |type|
       partnership_types.build(partnership_type: type, source: source)

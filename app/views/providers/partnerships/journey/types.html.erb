@@ -13,7 +13,9 @@
   <% if @form.available_partnership_types.empty? %>
     <% content_for(:page_header) { tag.h1(@page_title, class: "govuk-heading-l") } %>
 
-    <p class="govuk-body">No partnership type is available with this partner, so a new partnership cannot be added.</p>
+    <p class="govuk-body">
+      <%= @editing ? "No partnership type is available to record for this partnership." : "No partnership type is available with this partner, so a new partnership cannot be added." %>
+    </p>
     <p class="govuk-body"><%= govuk_link_to("Return to partnerships", @cancel_path) %></p>
   <% else %>
     <%= form.govuk_collection_check_boxes :partnership_types,

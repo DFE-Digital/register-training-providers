@@ -58,7 +58,7 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       get root_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Does the partnership start today?")
+      expect(response.body).to include("Select partnership types")
       expect(response.body).to include(provider.operating_name)
     end
 
@@ -90,10 +90,20 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       expect(checkbox["checked"]).to eq("checked")
     end
 
-    it "returns the user to the partnerships list when the path is invalid" do
-      get step_path("check-your-answers")
+    it "returns the user to the first step when the step is not reachable" do
+      partnership.update!(duration: 1.month.ago..)
+
+      get step_path("end-date")
 
       expect(response).to redirect_to(root_path)
+    end
+
+    it "seeds a deep link from the partnership" do
+      get step_path("check-your-answers")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Check your answers")
+      expect(response.body).to include(partner.operating_name)
     end
   end
 
@@ -142,6 +152,24 @@ RSpec.describe "Provider partnership edit journey", type: :request do
       patch step_path("check-your-answers")
 
       expect(partnership.reload.duration.end).to eq(Float::INFINITY)
+    end
+
+    it "keeps the existing types when the save fails" do
+      partnership.partnership_types.create!(partnership_type: PartnershipTypeEnum::TRAINING_AND_DELIVERY)
+
+      get root_path
+      submit_start_date
+      submit_end_date_question
+      submit_academic_years
+      patch step_path("types"),
+            params: { types: { partnership_types: [PartnershipTypeEnum::TRAINING_AND_DELIVERY] } }
+
+      allow_any_instance_of(Partnership).to receive(:update).and_return(false)
+
+      patch step_path("check-your-answers")
+
+      expect(partnership.partnership_types.kept.map(&:partnership_type))
+        .to match_array([PartnershipTypeEnum::RECRUITMENT, PartnershipTypeEnum::TRAINING_AND_DELIVERY])
     end
 
     it "keeps the end date when the pre-filled dates are submitted unchanged" do
