@@ -23,14 +23,19 @@ module PartnershipHelper
                                enter_end_date: true)
       }
 
-      if actions_allowed
+      # Ending is authorised against the provider whose page is being viewed,
+      # which is what EndsController checks. Changing and deleting also need
+      # the partner itself to be editable.
+      if include_actions && policy(provider).manage_partnerships?
         card[:actions] = []
         if partnership.can_be_ended?
           card[:actions] << { text: "End partnership",
                               href: provider_partnership_end_path(partnership, provider_id: provider.id) }
         end
-        card[:actions] << { text: "Delete",
-                            href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
+        if policy(partnership).update?
+          card[:actions] << { text: "Delete",
+                              href: provider_partnership_delete_path(partnership, provider_id: provider.id) }
+        end
       end
 
       card
